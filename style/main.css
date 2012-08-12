@@ -1,0 +1,258 @@
+
+html, body {
+    padding: 0;
+    border:0;
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    height: 100%;
+    padding-bottom:-50px;
+    background:rgb(245,245,245);
+    -webkit-user-select: none;
+    cursor:default;
+    font-size:11pt;
+}
+
+
+header {
+    position: relative;
+    
+    background: #eee;
+    border-bottom: 2px solid #ccc;
+    min-height: 70px;
+    letter-spacing: 1px;
+    text-shadow: 0px 0px 8px #ddd;
+    
+    color:#1F2527;
+    padding-right:300px;
+}
+h3{
+    margin: 0px;
+    padding-left:30px;
+    padding-top:20px;
+}
+#navi {
+    position:absolute;
+    top:15px;
+    right: 30px;
+    line-height: 40px;    
+}
+#navi > span {
+    display: inline-block;
+    margin: 0px 5px;
+    padding: 0px 10px;
+    cursor: pointer;
+    
+}
+#navi > span:hover{
+    text-decoration: underline;
+}
+#navi > span.active{
+    color:#000;
+    text-decoration: underline;
+    background:#fff;
+    box-shadow: inset 0px 0px 4px #444;
+    border-radius: 5px;
+    text-shadow: none;
+}
+
+#content {
+    min-height: 100%;
+    height:auto !important;
+    height:100%;
+    /*overflow-x: hidden;*/
+    margin-bottom:-50px;
+    
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url(../resources/bg.png) 0 0 repeat;
+}
+.view {
+    overflow: auto;
+}
+
+#examples > table, #api > table{
+    height: 100%;
+}
+#examples table td{
+    
+}
+td:nth-child(1){
+    min-width: 200px;
+    width:1%;
+}
+td {
+    width: 40%;
+    min-width:300px;
+    padding:5px;
+    vertical-align: top;
+}
+td:nth-child(3) {
+    -webkit-user-select: text;
+    cursor: text;    
+}
+
+div.panel {
+    background:rgb(230,230,230);
+    border-radius: 10px;
+    
+    height: 100%;
+    box-sizing: border-box;
+    border:1px solid rgb(210,210,210);
+}
+td:nth-child(3) > div {
+    padding: 0px 5px;
+}
+div.caption {
+    /*width:100%;*/
+    border-bottom:1px solid rgb(200,200,200);
+    text-align: center;
+    font-size:.9em;
+}
+
+ul.menu{
+    padding:5px;
+    list-style: none;
+}
+ul.menu > li {
+    cursor: pointer;
+    padding-left: 10px;
+    position: relative;
+    color: #777;
+}
+ul.menu > li.active { color: black; font-weight: bold;}
+ul.menu > li.active:before {
+    content: ' ';
+    position: absolute;
+    height:100%;
+    left:-5px;
+    width: 4px;    
+    background:#555;
+    border-radius: 3px;    
+}
+
+#menu li {
+    border-bottom: 1px solid #ddd;
+    padding-top:3px;
+    padding-bottom: 3px;
+}
+#menu li:last-child {
+    border-bottom-style: none;    
+}
+
+section.panel {
+    padding: 10px 30px;
+    margin:10px 30px;
+    background:rgb(230,230,230);
+    border-radius: 10px;
+    border:1px solid rgb(210,210,210);
+}
+
+#syntax > table {
+    font-family: monospace;
+}
+
+#syntax tr{
+    white-space: nowrap;    
+}
+#syntax tr.example {
+    color:#333;    
+}
+#syntax table.syntax td {
+    width:auto;
+    min-width: 1px !important;
+    vertical-align: middle;
+    border-right: 1px solid #aaa;
+}
+#syntax .important {
+    background: #80BE4E;
+    border-radius: 12px;
+    border: 2px solid #69A13B;
+    color: #0E1608;
+    display: inline-block;
+    padding: 0px 10px;
+    vertical-align: top;
+}
+#syntax .remember {
+    background: #CE746A;
+    border-radius: 12px;
+    border: 2px solid #CD403B;
+    color: #170907;
+    display: inline-block;
+    padding: 0px 10px;
+    vertical-align: top;
+}
+#syntax .mustknow {
+    background: #E56108;
+    border: 2px solid #CD403B;
+    color: #FCCEB0;
+    font-weight: bold;
+    text-shadow: 0px 0px 3px #B44C06;
+    vertical-align: top;
+    padding: 5px 10px;
+    
+}
+
+#syntax .title {
+    text-decoration: underline;
+}
+
+
+#api #methods, #api #tags {
+    font-family: monospace;
+}
+#methods li {
+    margin: 4px;
+}
+
+footer {
+    
+    height:50px;
+    background:#1F2527;
+    color:#D9DBDE;
+    /*margin-top: -50px;*/
+    position: relative;
+    font-family: 'Consolas';
+    font-size: 30px;
+    padding-left:10%;
+    line-height: 45px;
+    text-shadow: 0px 0px 4px #000;
+}
+footer > code {
+    font-size: 12pt;
+    vertical-align: middle;
+    position: relative;
+}
+
+.scroller {
+    position: absolute;
+    left: 5px; top:5px; bottom:5px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.8);
+    background-image: linear-gradient(bottom, rgba(224,224,224,.3) 15%, rgba(179,179,179,.5) 58%, rgba(232,232,232,.3) 79%);
+    background-image: -o-linear-gradient(bottom, rgba(224,224,224,.3) 15%, rgba(179,179,179,.5) 58%, rgba(232,232,232,.3) 79%);
+    background-image: -moz-linear-gradient(bottom, rgba(224,224,224,.3) 15%, rgba(179,179,179,.5) 58%, rgba(232,232,232,.3) 79%);
+    background-image: -webkit-linear-gradient(bottom, rgba(224,224,224,.3) 15%, rgba(179,179,179,.5) 58%, rgba(232,232,232,.3) 79%);
+    background-image: -ms-linear-gradient(bottom, rgba(224,224,224,.3) 15%, rgba(179,179,179,.5) 58%, rgba(232,232,232,.3) 79%);
+    
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.15, rgba(224,224,224,.3)),
+        color-stop(0.58, rgba(179,179,179,.5)),
+        color-stop(0.79, rgba(232,232,232,.3))
+    );
+    
+    box-shadow: inset 0px 0px 10px rgba(250,250,250,.5);
+    overflow: hidden;
+    cursor: pointer !important;
+}
+.scroller:after {
+    content: 'Drag to Scroll';
+    position: absolute;
+    right:10px;
+    bottom:-10px;
+    font-size: 10pt;
+    text-shadow: none;
+}
