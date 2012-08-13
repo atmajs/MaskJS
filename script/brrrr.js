@@ -1,36 +1,35 @@
-
 if (typeof Date.now === 'undefined') {
-   Date.now = function() {
-      return new Date().getTime();
-   }
+    Date.now = function() {
+        return new Date().getTime();
+    }
 }
 
 if (typeof Function.prototype.bind === 'undefined') {
     Function.prototype.bind = function() {
-       if (arguments.length < 2 && typeof arguments[0] == "undefined") return this;
-       var __method = this,
-       args = Array.prototype.slice.call(arguments),
-       object = args.shift();
-       return function() {
-          return __method.apply(object, args.concat(Array.prototype.slice.call(arguments)));
-       }
+        if (arguments.length < 2 && typeof arguments[0] == "undefined") return this;
+        var __method = this,
+            args = Array.prototype.slice.call(arguments),
+            object = args.shift();
+        return function() {
+            return __method.apply(object, args.concat(Array.prototype.slice.call(arguments)));
+        }
     }
- }
+}
 
 
-var Scroller = Class({
-    construct: function($scroller) {
-        this.scroller = $scroller;
-        this.target = $('#' + $scroller.data('target'));
+var Scroller = function($scroller) {
+    this.scroller = $scroller;
+    this.target = $('#' + $scroller.data('target'));
 
-        this.scroller //
-        .on('mousedown', function(e) {
-            this.lastX = e.pageX;
-            this.startUpdating();
-            return false;
-        }.bind(this));
-        this.updateDelagate = this.update.bind(this);
-    },
+    this.scroller //
+    .on('mousedown', function(e) {
+        this.lastX = e.pageX;
+        this.startUpdating();
+        return false;
+    }.bind(this));
+    this.updateDelagate = this.update.bind(this);
+}
+Scroller.prototype = {
     startUpdating: function() {
         $(document) //
         .on('mouseup.scroller', function() {
@@ -82,7 +81,7 @@ var Scroller = Class({
         this.translateX(this.target, 0);
         this.translateX(this.scroller, 0);
 
-        console.log('container',containerWidth, width);
+        console.log('container', containerWidth, width);
         if (containerWidth > width - 1) {
             this.scroller.hide();
             return;
@@ -114,7 +113,7 @@ var Scroller = Class({
         }
         this.translateX(element, x);
     }
-});
+}
 
 var FormatJSON = (function() {
 
