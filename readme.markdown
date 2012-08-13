@@ -1,8 +1,8 @@
-###MaskJS###
+###MaskJS. Template Engine. Fast and Beautiful.###
 
 ----------
-JS Template Engine. Fast and Beautiful.
 
-Want to write "div > 'Hello, #{name}'", check more at http://tenbits.github.com/maskjs
+Want to write "div > 'Hello, #{name}'", 
+check more at http://tenbits.github.com/MaskJS
 
 
