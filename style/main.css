@@ -261,7 +261,16 @@ footer > code {
     top: -45px; left: -45px; 
     z-index: 99999; position: absolute; border: 0;
     -webkit-transition:-webkit-transform 100ms linear;
+	-moz-transition:-moz-transform 100ms linear;
+	-o-transition:-o-transform 100ms linear;
+	transition:transform 100ms linear;
+}
+.fork img {
+	border:0px;
 }
 .fork:hover{
     -webkit-transform: translate3d(30px,30px,0px);
+	-moz-transform: translate3d(30px,30px,0px);
+	-o-transform: translate3d(30px,30px,0px);
+	transform: translate3d(30px,30px,0px);
 }
