@@ -1,0 +1,5 @@
+{
+	assistant: 'notification.js',
+	style: 'style.css',
+	view: 'notification.mask'
+}
