@@ -2,5 +2,5 @@
 
 <p>Want to write: 
 	<code>div > 'Hello, {name}'</code>  check more at 
-	<a href='tenbits.github.com/CompoJS/#mask'>MaskJS Project</a>
+	<a href='https://tenbits.github.com/CompoJS/#mask'>MaskJS Project</a>
 </p>
