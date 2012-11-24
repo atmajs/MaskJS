@@ -72,9 +72,10 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         
-        document.body.appendChild(mask.renderDom('div'));
+        //document.body.appendChild(mask.renderDom('p { div > "Hello"; "Any " span > "any";}'));
     
-        return;
+        //return;
+
         app = {
             examples: [{
                 id: 'simple',
