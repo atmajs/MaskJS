@@ -2,7 +2,7 @@ var Benchmark = function(name, fn, count) {
     this.name = name;
     this.fn = fn;
     this.count = count;
-}
+};
 Benchmark.prototype.start = function() {
 
     var time = 0;
@@ -16,13 +16,33 @@ Benchmark.prototype.start = function() {
     }
 
     time /= 5;
-    
+
     document.body.appendChild(mask.renderDom('div > "#{name}: #{time}"', {
         name: this.name,
         time: time
     }));
-    console.log('%s: %d', this.name, time);
+
+    if (window.console)
+      console.log('%s: %d', this.name, time);
+};
+
+if (!document.addEventListener)
+  document.addEventListener = function (event, cb) {
+    return document.attachEvent(
+        event === 'DOMContentLoaded' ? 'onreadystatechange' : "on" + event,
+        function (e) {
+          if (document.readyState === "complete")
+            cb(e)
+        }
+    );
+  };
+
+if (typeof Date.now === 'undefined') {
+  Date.now = function() {
+    return new Date().getTime();
+  }
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -42,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         benchmark = new Benchmark('mask-simple', fn, 1000);
 
     benchmark.start();
-    
+
     document.body.appendChild(fn());
 
 });
