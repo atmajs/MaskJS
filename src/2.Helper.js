@@ -5,7 +5,8 @@ var Helper = {
     if (source == null) return target;
     if (target == null) target = {};
     for (key in source)
-      target[key] = source[key];
+      if (hasOwnProperty.call(source, key))
+        target[key] = source[key];
     return target;
   },
 
