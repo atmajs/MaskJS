@@ -5,11 +5,11 @@ function Template(template) {
 }
 
 Template.prototype = {
-  next                : function () {
+  next          : function () {
     this.index++;
     return this;
   },
-  skipWhitespace      : function () {
+  skipWhitespace: function () {
     //regexpNoWhitespace.lastIndex = this.index;
     //var result = regexpNoWhitespace.exec(this.template);
     //if (result){
@@ -17,24 +17,35 @@ Template.prototype = {
     //}
     //return this;
 
-    for (; this.index < this.length; this.index++) {
-      if (this.template.charCodeAt(this.index) !== 32 /*' '*/) return this;
+    var
+        template = this.template,
+        index = this.index,
+        length = this.length;
+
+    for (; index < length; index++) {
+      if (template.charCodeAt(index) !== 32 /*' '*/) break;
     }
+
+    this.index = index;
 
     return this;
   },
-  skipToChar          : function (c) {
-    var index = this.template.indexOf(c, this.index);
-    if (index > -1) {
-      this.index = index;
-      if (this.template.charCodeAt(index - 1) !== 92 /*'\\'*/) {
-        return this;
-      }
-      this.next().skipToChar(c);
-    }
-    return this;
 
+  skipToChar: function (c) {
+    var
+        template = this.template,
+        index;
+
+    do {
+      index = template.indexOf(c, this.index);
+    }
+    while (~index && template.charCodeAt(index - 1) !== 92 /*'\\'*/);
+
+    this.index = index;
+
+    return this;
   },
+
   /*
    skipToAny           : function (chars) {
    var r = regexp[chars];
@@ -51,6 +62,7 @@ Template.prototype = {
    return this;
    },
    */
+
   skipToAttributeBreak: function () {
 
     //regexpAttrEnd.lastIndex = ++this.index;
@@ -80,7 +92,8 @@ Template.prototype = {
     //while(!== ".#>{ ;");
     return this;
   },
-  sliceToChar         : function (c) {
+
+  sliceToChar: function (c) {
     var start = this.index,
         isEscaped, index;
 
@@ -98,6 +111,7 @@ Template.prototype = {
 
     //-return this.skipToChar(c).template.substring(start, this.index);
   }
+
   /*
    ,
    sliceToAny          : function (chars) {
