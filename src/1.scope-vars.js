@@ -9,4 +9,7 @@ var
       ';': /\\>/g
     },
     regexpTabsAndNL = /[\t\n\r]{1,}/g,
-    regexpMultipleSpaces = / {2,}/g;
+    regexpMultipleSpaces = / {2,}/g,
+
+
+    hasOwnProperty = {}.hasOwnProperty;
