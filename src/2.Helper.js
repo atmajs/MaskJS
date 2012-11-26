@@ -11,10 +11,26 @@ var Helper = {
   },
 
   getProperty: function (o, chain) {
-    if (typeof o !== 'object' || chain == null) return o;
-    if (typeof chain === 'string') chain = chain.split('.');
-    if (chain.length === 1) return o[chain[0]];
-    return this.getProperty(o[chain.shift()], chain);
+    var value = o,
+        props,
+        key, i, length;
+
+    if (typeof o !== 'object' || chain == null)
+      return o;
+    if (typeof chain === 'string')
+      props = chain.split('.');
+
+    for (i = 0, length = props.length; i < length; i++) {
+      key = props[i];
+      if (!hasOwnProperty.call(value, key))
+        return;
+
+      value = value[key];
+      if (!value)
+        return value;
+    }
+
+    return value;
   },
 
   templateFunction: function (arr, o) {
