@@ -49,7 +49,7 @@ var Helper = {
         value = null;
         index = key.indexOf(':');
 
-        if (!~index) {
+        if (~index) {
           utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
           if (utility === '') utility = 'condition';
 
