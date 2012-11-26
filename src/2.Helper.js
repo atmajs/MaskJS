@@ -37,10 +37,11 @@ var Helper = {
     var
         output = '',
         utility, value, index,
+        even = true,
         key, i, length;
 
     for (i = 0, length = arr.length; i < length; i++) {
-      if (i % 2 === 0) {
+      if (even) {
         output += arr[i];
       }
       else {
@@ -48,19 +49,23 @@ var Helper = {
         value = null;
         index = key.indexOf(':');
 
-        if (index > -1) {
+        if (!~index) {
           utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
           if (utility === '') utility = 'condition';
 
           key = key.substring(index + 1);
           value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, o) : null;
-
-        } else {
-          value = Helper.getProperty(o, arr[i]);
         }
+        else {
+          value = Helper.getProperty(o, key);
+        }
+
         output += value == null ? '' : value;
       }
+
+      even = !even;
     }
+
     return output;
   }
 };
