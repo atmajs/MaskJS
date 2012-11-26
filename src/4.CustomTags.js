@@ -1,5 +1,5 @@
 function ICustomTag() {
-  if (this.attr == null) this.attr = {};
+  this.attr = {};
 }
 
 ICustomTag.prototype.render = function (values, stream) {
@@ -8,30 +8,44 @@ ICustomTag.prototype.render = function (values, stream) {
 
 var CustomTags = function () {
 
+  var renderICustomTag = ICustomTag.prototype.render;
+
   function List() {
-    this.attr = {}
+    this.attr = {};
+    this.nodes = null;
   }
 
   List.prototype.render = function (values, container, cntx) {
+    var attr = this.attr,
+        attrTemplate = attr.template,
+        nodes,
+        template,
+        fn,
+        i, length;
 
-    values = Helper.getProperty(values, this.attr.value);
-    if (values instanceof Array === false) return container;
+    values = Helper.getProperty(values, attr.value);
+    if (!(values instanceof Array))
+      return container;
 
 
-    if (this.attr.template != null) {
-      var template = document.querySelector(this.attr.template).innerHTML;
-      this.nodes = mask.compile(template);
+    if (attrTemplate != null) {
+      template = document.querySelector(attrTemplate).innerHTML;
+      nodes = mask.compile(template);
     }
 
 
-    if (this.nodes == null) return container;
+    if (nodes == null)
+      return container;
 
-    //-var fn = container instanceof Array ? 'buildHtml' : 'buildDom';
-    var fn = container.buffer != null ? 'buildHtml' : 'buildDom';
+    //- fn = container instanceof Array ? 'buildHtml' : 'buildDom';
+    fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
 
-    for (var i = 0, length = values.length; i < length; i++) {
-      Builder[fn](this.nodes, values[i], container, cntx);
+    for (i = 0, length = values.length; i < length; i++) {
+      fn(nodes, values[i], container, cntx);
     }
+
+    this.nodes = nodes;
+
     return container;
   };
 
@@ -41,8 +55,10 @@ var CustomTags = function () {
   }
 
   Visible.prototype.render = function (values, container, cntx) {
-    if (ValueUtilities.out.isCondition(this.attr.check, values) === false) return container;
-    return ICustomTag.prototype.render.call(this, values, container, cntx);
+    if (!ValueUtilities.out.isCondition(this.attr.check, values))
+      return container;
+    else
+      return renderICustomTag.call(this, values, container, cntx);
   };
 
 
