@@ -1,5 +1,6 @@
 compile:
 	cat  \
+	./src/wrap-test.js.txt  \
 	./src/1.scope-vars.js  \
 	./src/2.Helper.js  \
 	./src/3.Template.js  \
