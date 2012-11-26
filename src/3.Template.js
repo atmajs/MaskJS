@@ -79,34 +79,46 @@ Template.prototype = {
     //    }
     //}while(result != null)
     //return this;
-    var c;
+    var
+        template = this.template,
+        index = this.index,
+        length = this.length,
+        c;
     do {
-      c = this.template.charCodeAt(++this.index);
+      c = template.charCodeAt(++index);
       // if c == # && next() == { - continue */
-      if (c === 35 && this.template.charCodeAt(this.index + 1) === 123) {
-        this.index++;
+      if (c === 35 && template.charCodeAt(index + 1) === 123) {
+        index++;
         c = null;
       }
     }
-    while (c !== 46 && c !== 35 && c !== 62 && c !== 123 && c !== 32 && c !== 59 && this.index < this.length);
+    while (c !== 46 && c !== 35 && c !== 62 && c !== 123 && c !== 32 && c !== 59 && index < length);
     //while(!== ".#>{ ;");
+
+    this.index = index;
+
     return this;
   },
 
   sliceToChar: function (c) {
-    var start = this.index,
-        isEscaped, index;
+    var template = this.template,
+        index = this.index,
+        start = index,
+        isEscaped = false,
+        value;
 
-    while ((index = this.template.indexOf(c, this.index)) > -1) {
-      this.index = index;
-      if (this.template.charCodeAt(index - 1) !== 92 /*'\\'*/) {
+    while (true) {
+      index = template.indexOf(c, index);
+      if (!~index || template.charCodeAt(index - 1) !== 92 /*'\\'*/)
         break;
-      }
       isEscaped = true;
-      this.index++;
+      index++;
     }
 
-    var value = this.template.substring(start, this.index);
+    value = template.substring(start, index);
+
+    this.index = index;
+
     return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
 
     //-return this.skipToChar(c).template.substring(start, this.index);
