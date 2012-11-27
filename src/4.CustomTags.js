@@ -6,7 +6,7 @@ ICustomTag.prototype.render = function (values, stream) {
 	return stream instanceof Array ? Builder.buildHtml(this.nodes, values, stream) : Builder.buildDom(this.nodes, values, stream);
 };
 
-var CustomTags = function () {
+var CustomTags = (function () {
 
 	var renderICustomTag = ICustomTag.prototype.render;
 
@@ -50,7 +50,7 @@ var CustomTags = function () {
 
 
 	function Visible() {
-		this.attr = {}
+		this.attr = {};
 	}
 
 	Visible.prototype.render = function (values, container, cntx) {
@@ -64,7 +64,7 @@ var CustomTags = function () {
 
 
 	function Binding() {
-		this.attr = {}
+		this.attr = {};
 	}
 
 	Binding.prototype.render = function () {
@@ -80,7 +80,7 @@ var CustomTags = function () {
 		if (objectDefineProperty) {
 			try {
 				supportsDefineProperty = Object.defineProperty({}, 'x', {get: function () {
-					return true
+					return true;
 				}}).x;
 			}
 			catch (e) {
@@ -189,4 +189,4 @@ var CustomTags = function () {
 		}
 	};
 
-}();
+}());
