@@ -69,7 +69,8 @@ var CustomTags = function () {
 		var
 				objectDefineProperty = Object.defineProperty,
 				supportsDefineProperty = false,
-				watchedObjects;
+				watchedObjects,
+				ticker;
 
 		// test for support
 		if (objectDefineProperty) {
@@ -120,7 +121,7 @@ var CustomTags = function () {
 				};
 			};
 
-			function ticker() {
+			ticker = function () {
 				var
 						objectWrapper,
 						i, length,
@@ -143,7 +144,7 @@ var CustomTags = function () {
 				}
 
 				setTimeout(ticker, 16);
-			}
+			};
 
 			ticker();
 		}
