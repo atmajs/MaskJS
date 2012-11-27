@@ -48,39 +48,38 @@ Template.prototype = {
 		return this;
 	},
 
-	/*
-	 skipToAny           : function (chars) {
-	 var r = regexp[chars];
-	 if (r == null) {
-	 console.error('Unknown regexp %s: Create', chars);
-	 r = (regexp[chars] = new RegExp('[' + chars + ']', 'g'));
-	 }
-
-	 r.lastIndex = this.index;
-	 var result = r.exec(this.template);
-	 if (result != null) {
-	 this.index = result.index;
-	 }
-	 return this;
-	 },
-	 */
+//	skipToAny: function (chars) {
+//		var r = regexp[chars];
+//		if (r == null) {
+//			console.error('Unknown regexp %s: Create', chars);
+//			r = (regexp[chars] = new RegExp('[' + chars + ']', 'g'));
+//		}
+//
+//		r.lastIndex = this.index;
+//		var result = r.exec(this.template);
+//		if (result != null) {
+//			this.index = result.index;
+//		}
+//		return this;
+//	},
 
 	skipToAttributeBreak: function () {
 
-		//regexpAttrEnd.lastIndex = ++this.index;
-		//var result;
-		//do{
-		//    result = regexpAttrEnd.exec(this.template);
-		//    if (result != null){
-		//        if (result[0] == '#' && this.template.charCodeAt(this.index + 1) === 123) {
-		//            regexpAttrEnd.lastIndex += 2;
-		//            continue;
-		//        }
-		//        this.index = result.index;
-		//        break;
-		//    }
-		//}while(result != null)
-		//return this;
+//		regexpAttrEnd.lastIndex = ++this.index;
+//		var result;
+//		do {
+//			result = regexpAttrEnd.exec(this.template);
+//			if (result != null) {
+//				if (result[0] == '#' && this.template.charCodeAt(this.index + 1) === 123) {
+//					regexpAttrEnd.lastIndex += 2;
+//					continue;
+//				}
+//				this.index = result.index;
+//				break;
+//			}
+//		} while (result != null)
+//		return this;
+
 		var
 				template = this.template,
 				index = this.index,
@@ -127,11 +126,9 @@ Template.prototype = {
 		//-return this.skipToChar(c).template.substring(start, this.index);
 	}
 
-	/*
-	 ,
-	 sliceToAny          : function (chars) {
-	 var start = this.index;
-	 return this.skipToAny(chars).template.substring(start, this.index);
-	 }
-	 */
+//	,
+//	sliceToAny: function (chars) {
+//		var start = this.index;
+//		return this.skipToAny(chars).template.substring(start, this.index);
+//	}
 };
