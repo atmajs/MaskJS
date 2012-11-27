@@ -23,7 +23,9 @@ Template.prototype = {
 				length = this.length;
 
 		for (; index < length; index++) {
-			if (template.charCodeAt(index) !== 32 /*' '*/) break;
+			if (template.charCodeAt(index) !== 32 /*' '*/) {
+				break;
+			}
 		}
 
 		this.index = index;
@@ -109,8 +111,9 @@ Template.prototype = {
 
 		while (true) {
 			index = template.indexOf(c, index);
-			if (!~index || template.charCodeAt(index - 1) !== 92 /*'\\'*/)
+			if (!~index || template.charCodeAt(index - 1) !== 92 /*'\\'*/) {
 				break;
+			}
 			isEscaped = true;
 			index++;
 		}

@@ -39,7 +39,9 @@ global.mask = {
 
 
 		var T = new Template(template);
-		if (serializeOnly == true) T.serialize = true;
+		if (serializeOnly == true) {
+			T.serialize = true;
+		}
 
 		return Parser.parse(T, []);
 
@@ -72,7 +74,9 @@ global.mask = {
 		}
 		if (serialized.attr != null) {
 			for (var key in serialized.attr) {
-				if (serialized.attr[key].template == null) continue;
+				if (serialized.attr[key].template == null) {
+					continue;
+				}
 				serialized.attr[key] = Parser.toFunction(serialized.attr[key].template);
 			}
 		}

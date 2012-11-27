@@ -23,8 +23,9 @@ var CustomTags = function () {
 				fn,
 				i, length;
 
-		if (!(value instanceof Array))
+		if (!(value instanceof Array)) {
 			return container;
+		}
 
 
 		if (attrTemplate != null) {
@@ -33,8 +34,9 @@ var CustomTags = function () {
 		}
 
 
-		if (this.nodes == null)
+		if (this.nodes == null) {
 			return container;
+		}
 
 		//- fn = container instanceof Array ? 'buildHtml' : 'buildDom';
 		fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
@@ -52,10 +54,12 @@ var CustomTags = function () {
 	}
 
 	Visible.prototype.render = function (values, container, cntx) {
-		if (!ValueUtilities.out.isCondition(this.attr.check, values))
+		if (!ValueUtilities.out.isCondition(this.attr.check, values)) {
 			return container;
-		else
+		}
+		else {
 			return renderICustomTag.call(this, values, container, cntx);
+		}
 	};
 
 
@@ -86,8 +90,12 @@ var CustomTags = function () {
 		else {
 			if (Object.prototype.__defineGetter__) {
 				objectDefineProperty = function (obj, prop, desc) {
-					if (hasOwnProp.call(desc, 'get')) obj.__defineGetter__(prop, desc.get);
-					if (hasOwnProp.call(desc, 'set')) obj.__defineSetter__(prop, desc.set);
+					if (hasOwnProp.call(desc, 'get')) {
+						obj.__defineGetter__(prop, desc.get);
+					}
+					if (hasOwnProp.call(desc, 'set')) {
+						obj.__defineSetter__(prop, desc.set);
+					}
 				};
 
 				supportsDefineProperty = true;
@@ -112,8 +120,9 @@ var CustomTags = function () {
 					}
 				}
 
-				if (!found)
+				if (!found) {
 					objectWrapper = watchedObjects[i] = {obj: obj, props: {}};
+				}
 
 				objectWrapper.props[prop] = {
 					value: obj[prop],
@@ -134,13 +143,15 @@ var CustomTags = function () {
 					objectWrapper = watchedObjects[i];
 					props = objectWrapper.props;
 
-					for (prop in props)
+					for (prop in props) {
 						if (hasOwnProp.call(props, prop)) {
 							propObj = props[prop];
 							newValue = objectWrapper.obj[prop];
-							if (newValue !== propObj.value)
+							if (newValue !== propObj.value) {
 								propObj.set.call(null, newValue);
+							}
 						}
+					}
 				}
 
 				setTimeout(ticker, 16);

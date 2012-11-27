@@ -21,7 +21,9 @@ var Parser = {
 	parseAttributes: function (T, node) {
 
 		var key, value, _classNames, quote;
-		if (node.attr == null) node.attr = {};
+		if (node.attr == null) {
+			node.attr = {};
+		}
 
 		for (; T.index < T.length; T.index++) {
 			key = null;
@@ -108,20 +110,30 @@ var Parser = {
 					T.index++;
 
 					var content = T.sliceToChar(c == 39 ? "'" : '"');
-					if (content.indexOf('#{') > -1) content = T.serialize !== true ? this.toFunction(content) : {
-						template: content
-					};
+					if (content.indexOf('#{') > -1) {
+						content = T.serialize !== true ? this.toFunction(content) : {
+							template: content
+						};
+					}
 
 					var t = {
 						content: content
 					};
-					if (current.nodes == null) current.nodes = t;
-					else if (current.nodes.push == null) current.nodes = [current.nodes, t];
-					else current.nodes.push(t);
+					if (current.nodes == null) {
+						current.nodes = t;
+					}
+					else if (current.nodes.push == null) {
+						current.nodes = [current.nodes, t];
+					}
+					else {
+						current.nodes.push(t);
+					}
 					//-current.nodes.push(t);
 
 					if (current.__single) {
-						if (current == null) continue;
+						if (current == null) {
+							continue;
+						}
 						current = current.parent;
 						while (current != null && current.__single != null) {
 							current = current.parent;
@@ -140,7 +152,9 @@ var Parser = {
 				/* ';' */
 				case 125:
 					/* '}' */
-					if (current == null) continue;
+					if (current == null) {
+						continue;
+					}
 
 					do {
 						current = current.parent
@@ -174,9 +188,15 @@ var Parser = {
 				console.log('T', T, 'rest', T.template.substring(T.index));
 			}
 
-			if (current.nodes == null) current.nodes = tag;
-			else if (current.nodes.push == null) current.nodes = [current.nodes, tag];
-			else current.nodes.push(tag);
+			if (current.nodes == null) {
+				current.nodes = tag;
+			}
+			else if (current.nodes.push == null) {
+				current.nodes = [current.nodes, tag];
+			}
+			else {
+				current.nodes.push(tag);
+			}
 			//-if (current.nodes == null) current.nodes = [];
 			//-current.nodes.push(tag);
 
@@ -190,13 +210,17 @@ var Parser = {
 	},
 	cleanObject    : function (obj) {
 		if (obj instanceof Array) {
-			for (var i = 0; i < obj.length; i++) this.cleanObject(obj[i]);
+			for (var i = 0; i < obj.length; i++) {
+				this.cleanObject(obj[i]);
+			}
 			return obj;
 		}
 		delete obj.parent;
 		delete obj.__single;
 
-		if (obj.nodes != null) this.cleanObject(obj.nodes);
+		if (obj.nodes != null) {
+			this.cleanObject(obj.nodes);
+		}
 
 		return obj;
 	}

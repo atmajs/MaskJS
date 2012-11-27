@@ -10,7 +10,9 @@ var Builder = function () {
 
 	return {
 		buildDom : function (nodes, values, container, cntx) {
-			if (nodes == null) return container;
+			if (nodes == null) {
+				return container;
+			}
 
 			if (container == null) {
 				container = document.createDocumentFragment();
@@ -46,7 +48,9 @@ var Builder = function () {
 				var tag = document.createElement(node.tagName);
 				for (var key in node.attr) {
 					var value = typeof node.attr[key] == 'function' ? node.attr[key](values) : node.attr[key];
-					if (value) tag.setAttribute(key, value);
+					if (value) {
+						tag.setAttribute(key, value);
+					}
 				}
 
 				if (node.nodes != null) {
@@ -71,7 +75,9 @@ var Builder = function () {
 
 				if (CustomTags.all[node.tagName] != null) {
 					var custom = new CustomTags.all[node.tagName]();
-					for (var key in node) custom[key] = node[key];
+					for (var key in node) {
+						custom[key] = node[key];
+					}
 					custom.render(values, writer);
 					return writer;
 				}
@@ -89,7 +95,9 @@ var Builder = function () {
 				}
 				if (singleTags[node.tagName] != null) {
 					writer.buffer += '/>';
-					if (node.nodes != null) console.error('Html could be invalid: Single Tag Contains children:', node);
+					if (node.nodes != null) {
+						console.error('Html could be invalid: Single Tag Contains children:', node);
+					}
 				} else {
 					writer.buffer += '>';
 					if (node.nodes != null) {

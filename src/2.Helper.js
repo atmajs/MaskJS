@@ -2,11 +2,17 @@ var Helper = {
 	extend: function (target, source) {
 		var key;
 
-		if (source == null) return target;
-		if (target == null) target = {};
-		for (key in source)
-			if (hasOwnProp.call(source, key))
+		if (source == null) {
+			return target;
+		}
+		if (target == null) {
+			target = {};
+		}
+		for (key in source) {
+			if (hasOwnProp.call(source, key)) {
 				target[key] = source[key];
+			}
+		}
 		return target;
 	},
 
@@ -15,19 +21,23 @@ var Helper = {
 				props,
 				key, i, length;
 
-		if (typeof o !== 'object' || chain == null)
+		if (typeof o !== 'object' || chain == null) {
 			return o;
-		if (typeof chain === 'string')
+		}
+		if (typeof chain === 'string') {
 			props = chain.split('.');
+		}
 
 		for (i = 0, length = props.length; i < length; i++) {
 			key = props[i];
-			if (!hasOwnProp.call(value, key))
+			if (!hasOwnProp.call(value, key)) {
 				return;
+			}
 
 			value = value[key];
-			if (!value)
+			if (!value) {
 				return value;
+			}
 		}
 
 		return value;
@@ -51,7 +61,9 @@ var Helper = {
 
 				if (~index) {
 					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
-					if (utility === '') utility = 'condition';
+					if (utility === '') {
+						utility = 'condition';
+					}
 
 					key = key.substring(index + 1);
 					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, o) : null;

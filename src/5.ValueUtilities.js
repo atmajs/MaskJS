@@ -10,7 +10,9 @@ var ValueUtilities = function () {
 						};
 
 				buffer.index = buffer.data.indexOf('?');
-				if (buffer.index == -1) console.error('Invalid Linear Condition: ? - no found');
+				if (buffer.index == -1) {
+					console.error('Invalid Linear Condition: ? - no found');
+				}
 
 
 				var match, expr = buffer.data.substring(0, buffer.index);
@@ -35,21 +37,29 @@ var ValueUtilities = function () {
 				var c = buffer.data[buffer.index],
 						end = null;
 
-				if (c == null) return;
+				if (c == null) {
+					return;
+				}
 				if (c === '"' || c === "'") {
 					end = buffer.data.indexOf(c, ++buffer.index);
 					obj[key] = buffer.data.substring(buffer.index, end);
 				} else {
 					end = buffer.data.indexOf(':', buffer.index);
-					if (end == -1) end = buffer.data.length;
+					if (end == -1) {
+						end = buffer.data.length;
+					}
 					obj[key] = {
 						value: buffer.data.substring(buffer.index, end)
 					};
 				}
-				if (end != null) buffer.index = ++end;
+				if (end != null) {
+					buffer.index = ++end;
+				}
 			},
 			isCondition = function (con, values) {
-				if (typeof con === 'string') con = parseLinearCondition(con);
+				if (typeof con === 'string') {
+					con = parseLinearCondition(con);
+				}
 				var current = false;
 				for (var i = 0; i < con.assertions.length; i++) {
 					var a = con.assertions[i],
@@ -59,10 +69,14 @@ var ValueUtilities = function () {
 						current = a.left.charCodeAt(0) === 33 ? !Helper.getProperty(values, a.left.substring(1)) : !!Helper.getProperty(values, a.left);
 
 						if (current == true) {
-							if (a.join == '&&') continue;
+							if (a.join == '&&') {
+								continue;
+							}
 							break;
 						}
-						if (a.join == '||') continue;
+						if (a.join == '||') {
+							continue;
+						}
 						break;
 					}
 					var c = a.right.charCodeAt(0);
@@ -97,10 +111,14 @@ var ValueUtilities = function () {
 					}
 
 					if (current == true) {
-						if (a.join == '&&') continue;
+						if (a.join == '&&') {
+							continue;
+						}
 						break;
 					}
-					if (a.join == '||') continue;
+					if (a.join == '||') {
+						continue;
+					}
 					break;
 				}
 				return current;
@@ -111,8 +129,12 @@ var ValueUtilities = function () {
 			var con = parseLinearCondition(line);
 			var result = isCondition(con, values) ? con.case1 : con.case2;
 
-			if (result == null) return '';
-			if (typeof result === 'string') return result;
+			if (result == null) {
+				return '';
+			}
+			if (typeof result === 'string') {
+				return result;
+			}
 			return Helper.getProperty(values, result.value);
 		},
 		out      : {
