@@ -1,8 +1,10 @@
-var ValueUtilities = function () {
+var ValueUtilities = (function () {
 
 	var
 			parseLinearCondition = function (line) {
-				var c = {
+				var
+						match, expr,
+						c = {
 							assertions: []
 						},
 						buffer = {
@@ -10,12 +12,14 @@ var ValueUtilities = function () {
 						};
 
 				buffer.index = buffer.data.indexOf('?');
-				if (buffer.index == -1) {
-					console.error('Invalid Linear Condition: ? - no found');
+
+				if (buffer.index === -1) {
+					console.error('Invalid Linear Condition: "?" is not found');
 				}
 
 
-				var match, expr = buffer.data.substring(0, buffer.index);
+				expr = buffer.data.substring(0, buffer.index);
+
 				while ((match = regexpLinearCondition.exec(expr)) != null) {
 					c.assertions.push({
 						join : match[4],
@@ -45,7 +49,7 @@ var ValueUtilities = function () {
 					obj[key] = buffer.data.substring(buffer.index, end);
 				} else {
 					end = buffer.data.indexOf(':', buffer.index);
-					if (end == -1) {
+					if (end === -1) {
 						end = buffer.data.length;
 					}
 					obj[key] = {
@@ -60,26 +64,27 @@ var ValueUtilities = function () {
 				if (typeof con === 'string') {
 					con = parseLinearCondition(con);
 				}
-				var current = false;
-				for (var i = 0; i < con.assertions.length; i++) {
-					var a = con.assertions[i],
-							value1, value2;
+				var current = false,
+						a, c, value1, value2,
+						i, length;
+				for (i = 0, length = con.assertions.length; i < length; i++) {
+					a = con.assertions[i];
 					if (a.right == null) {
 
 						current = a.left.charCodeAt(0) === 33 ? !Helper.getProperty(values, a.left.substring(1)) : !!Helper.getProperty(values, a.left);
 
-						if (current == true) {
-							if (a.join == '&&') {
+						if (current === true) {
+							if (a.join === '&&') {
 								continue;
 							}
 							break;
 						}
-						if (a.join == '||') {
+						if (a.join === '||') {
 							continue;
 						}
 						break;
 					}
-					var c = a.right.charCodeAt(0);
+					c = a.right.charCodeAt(0);
 					if (c === 34 || c === 39) {
 						value2 = a.right.substring(1, a.right.length - 1);
 					} else if (c > 47 && c < 58) {
@@ -103,20 +108,20 @@ var ValueUtilities = function () {
 							current = value1 >= value2;
 							break;
 						case '!=':
-							current = value1 != value2;
+							current = value1 !== value2;
 							break;
 						case '==':
-							current = value1 == value2;
+							current = value1 === value2;
 							break;
 					}
 
-					if (current == true) {
-						if (a.join == '&&') {
+					if (current === true) {
+						if (a.join === '&&') {
 							continue;
 						}
 						break;
 					}
-					if (a.join == '||') {
+					if (a.join === '||') {
 						continue;
 					}
 					break;
@@ -126,8 +131,8 @@ var ValueUtilities = function () {
 
 	return {
 		condition: function (line, values) {
-			var con = parseLinearCondition(line);
-			var result = isCondition(con, values) ? con.case1 : con.case2;
+			var con = parseLinearCondition(line),
+					result = isCondition(con, values) ? con.case1 : con.case2;
 
 			if (result == null) {
 				return '';
@@ -141,6 +146,6 @@ var ValueUtilities = function () {
 			isCondition: isCondition,
 			parse      : parseLinearCondition
 		}
-	}
-}();
+	};
+}());
 
