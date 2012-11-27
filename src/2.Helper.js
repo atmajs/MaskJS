@@ -5,7 +5,7 @@ var Helper = {
 		if (source == null) return target;
 		if (target == null) target = {};
 		for (key in source)
-			if (hasOwnProperty.call(source, key))
+			if (hasOwnProp.call(source, key))
 				target[key] = source[key];
 		return target;
 	},
@@ -22,7 +22,7 @@ var Helper = {
 
 		for (i = 0, length = props.length; i < length; i++) {
 			key = props[i];
-			if (!hasOwnProperty.call(value, key))
+			if (!hasOwnProp.call(value, key))
 				return;
 
 			value = value[key];

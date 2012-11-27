@@ -12,4 +12,4 @@ var
 		regexpMultipleSpaces = / {2,}/g,
 
 
-		hasOwnProperty = {}.hasOwnProperty;
+		hasOwnProp = {}.hasOwnProperty;

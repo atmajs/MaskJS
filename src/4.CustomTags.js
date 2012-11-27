@@ -86,8 +86,8 @@ var CustomTags = function () {
 		else {
 			if (Object.prototype.__defineGetter__) {
 				objectDefineProperty = function (obj, prop, desc) {
-					if (hasOwnProperty.call(desc, 'get')) obj.__defineGetter__(prop, desc.get);
-					if (hasOwnProperty.call(desc, 'set')) obj.__defineSetter__(prop, desc.set);
+					if (hasOwnProp.call(desc, 'get')) obj.__defineGetter__(prop, desc.get);
+					if (hasOwnProp.call(desc, 'set')) obj.__defineSetter__(prop, desc.set);
 				};
 
 				supportsDefineProperty = true;
@@ -135,7 +135,7 @@ var CustomTags = function () {
 					props = objectWrapper.props;
 
 					for (prop in props)
-						if (hasOwnProperty.call(props, prop)) {
+						if (hasOwnProp.call(props, prop)) {
 							propObj = props[prop];
 							newValue = objectWrapper.obj[prop];
 							if (newValue !== propObj.value)
