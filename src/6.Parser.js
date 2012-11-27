@@ -1,5 +1,5 @@
 var Parser = {
-	toFunction     : function (template) {
+	toFunction: function (template) {
 
 		var arr = template.split('#{'),
 				length = arr.length;
@@ -95,7 +95,7 @@ var Parser = {
 
 	},
 	/** @out : nodes */
-	parse          : function (T, nodes) {
+	parse: function (T, nodes) {
 		var current = T;
 		for (; T.index < T.length; T.index++) {
 			var c = T.template.charCodeAt(T.index);
@@ -149,7 +149,11 @@ var Parser = {
 
 					continue;
 				case 59:
-				/* ';' */
+					/* ';' */
+					/** continue if semi-column, but is not a single tag (else goto 125) */
+					if (current.nodes != null) {
+						continue;
+					}
 				case 125:
 					/* '}' */
 					if (current == null) {
@@ -181,7 +185,7 @@ var Parser = {
 
 			var tag = {
 				tagName: tagName,
-				parent : current
+				parent: current
 			};
 
 			if (current == null) {
@@ -208,7 +212,7 @@ var Parser = {
 		}
 		return T.nodes;
 	},
-	cleanObject    : function (obj) {
+	cleanObject: function (obj) {
 		if (obj instanceof Array) {
 			for (var i = 0; i < obj.length; i++) {
 				this.cleanObject(obj[i]);
