@@ -34,7 +34,7 @@ module.exports = function (grunt) {
 		watch : {
 			scripts: {
 				files: '<config:concat.dist.src>',
-				tasks: 'concat lint'
+				tasks: 'default'
 			}
 		},
 		jshint: {
@@ -58,6 +58,6 @@ module.exports = function (grunt) {
 	});
 
 	// Default task.
-	grunt.registerTask('default', 'concat lint min');
+	grunt.registerTask('default', 'concat min lint');
 
 };
