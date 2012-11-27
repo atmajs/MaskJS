@@ -29,31 +29,74 @@ module.exports = function (grunt) {
 			}
 		},
 		lint  : {
-			files: ['grunt.js', 'lib/mask.js']
+			grunt: 'grunt.js',
+			src  : 'src/*.js',
+			lib  : 'lib/mask.js'
+		},
+		jshint: {
+			options: {
+				curly   : true,
+				eqeqeq  : true,
+				forin   : true,
+				immed   : true,
+				latedef : true,
+				newcap  : true,
+				noarg   : true,
+				noempty : true,
+				nonew   : true,
+				regexp  : true,
+				undef   : true,
+				unused  : true,
+				strict  : true,
+				trailing: true,
+
+				boss     : true,
+				eqnull   : true,
+				es5      : true,
+				lastsemic: true,
+
+				browser: true,
+				node   : true,
+
+				onevar  : true,
+				passfail: true
+			},
+			globals: {},
+			src    : {
+				options: {
+					curly   : true,
+					eqeqeq  : true,
+					forin   : true,
+					immed   : true,
+					latedef : true,
+					newcap  : true,
+					noarg   : true,
+					noempty : true,
+					nonew   : true,
+					regexp  : true,
+					undef   : false,
+					unused  : false,
+					strict  : false,
+					trailing: true,
+
+					boss     : true,
+					eqnull   : true,
+					es5      : true,
+					lastsemic: true,
+
+					browser: true,
+
+					onevar  : true,
+					passfail: true
+				},
+				globals: {}
+			}
 		},
 		watch : {
 			scripts: {
 				files: '<config:concat.dist.src>',
 				tasks: 'default'
 			}
-		},
-		jshint: {
-			options: {
-				curly  : true,
-				eqeqeq : true,
-				immed  : true,
-				latedef: true,
-				newcap : true,
-				noarg  : true,
-				sub    : true,
-				undef  : true,
-				boss   : true,
-				eqnull : true,
-				node   : true,
-				es5    : true,
-				strict : true
-			},
-			globals: {}
 		}
 	});
 
