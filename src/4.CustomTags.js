@@ -12,39 +12,36 @@ var CustomTags = function () {
 
   function List() {
     this.attr = {};
-    this.nodes = null;
   }
 
   List.prototype.render = function (values, container, cntx) {
     var attr = this.attr,
         attrTemplate = attr.template,
+        value = Helper.getProperty(values, attr.value),
         nodes,
         template,
         fn,
         i, length;
 
-    values = Helper.getProperty(values, attr.value);
-    if (!(values instanceof Array))
+    if (!(value instanceof Array))
       return container;
 
 
     if (attrTemplate != null) {
       template = document.querySelector(attrTemplate).innerHTML;
-      nodes = mask.compile(template);
+      this.nodes = nodes = mask.compile(template);
     }
 
 
-    if (nodes == null)
+    if (this.nodes == null)
       return container;
 
     //- fn = container instanceof Array ? 'buildHtml' : 'buildDom';
     fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
 
-    for (i = 0, length = values.length; i < length; i++) {
-      fn(nodes, values[i], container, cntx);
+    for (i = 0, length = value.length; i < length; i++) {
+      fn.call(Builder, this.nodes, value[i], container, cntx);
     }
-
-    this.nodes = nodes;
 
     return container;
   };
