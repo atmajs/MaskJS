@@ -103,11 +103,11 @@ Template.prototype = {
 			index = this.index,
 			start = index,
 			isEscaped = false,
-			value;
+			value, nindex;
 
-		while (true) {
-			index = template.indexOf(c, index);
-			if (!~index || template.charCodeAt(index - 1) !== 92 /*'\\'*/) {
+		while ((nindex = template.indexOf(c, index)) > -1) {
+			index = nindex;
+			if (template.charCodeAt(index - 1) !== 92 /*'\\'*/) {
 				break;
 			}
 			isEscaped = true;
