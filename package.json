@@ -1,0 +1,21 @@
+{
+	"name": "MaskJS",
+	"description": "JavaScript library for DOM operations",
+	"version": "0.0.0",
+	"homepage": "http://tenbits.github.com/LibJS/",
+	"author": "Alexander Kit <source.kit@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tenbits/MaskJS.git"
+	},
+	"bugs": {
+		"url": "https://github.com/tenbits/MaskJS/issues"
+	},
+	"licenses": [
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"grunt": "~0.3.17"
+	},
+	"keywords": []
+}
