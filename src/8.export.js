@@ -17,7 +17,7 @@ global.mask = {
 	 * @arg container - optional, - place to renderDOM, @default - DocumentFragment
 	 * @return container {@default DocumentFragment}
 	 */
-	renderDom      : function (template, values, container, cntx) {
+	renderDom: function (template, values, container, cntx) {
 		//////try {
 		if (typeof template === 'string') {
 			template = this.compile(template);
@@ -33,7 +33,7 @@ global.mask = {
 	 *@arg serializeDOM - build raw maskDOM json, without template functions - used for storing compiled template
 	 *@return maskDOM
 	 */
-	compile        : function (template, serializeOnly) {
+	compile: function (template, serializeOnly) {
 		/** remove unimportant whitespaces */
 		template = template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' ');
 
@@ -50,16 +50,16 @@ global.mask = {
 	registerHandler: function (tagName, TagHandler) {
 		CustomTags.all[tagName] = TagHandler;
 	},
-	getHandler     : function (tagName) {
+	getHandler: function (tagName) {
 		return tagName != null ? CustomTags.all[tagName] : CustomTags.all;
 	},
 	registerUtility: function (utilityName, fn) {
 		ValueUtilities[utilityName] = fn;
 	},
-	serialize      : function (template) {
+	serialize: function (template) {
 		return Parser.cleanObject(this.compile(template, true));
 	},
-	deserialize    : function (serialized) {
+	deserialize: function (serialized) {
 		if (serialized instanceof Array) {
 			for (var i = 0; i < serialized.length; i++) {
 				this.deserialize(serialized[i]);
@@ -85,6 +85,6 @@ global.mask = {
 		}
 		return serialized;
 	},
-	ICustomTag     : ICustomTag,
-	ValueUtils     : ValueUtilities
+	ICustomTag: ICustomTag,
+	ValueUtils: ValueUtilities
 };

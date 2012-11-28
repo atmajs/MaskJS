@@ -2,11 +2,11 @@ var Parser = {
 	toFunction: function (template) {
 
 		var arr = template.split('#{'),
-				length = arr.length;
+			length = arr.length;
 
 		for (var i = 1; i < length; i++) {
 			var key = arr[i],
-					index = key.indexOf('}');
+				index = key.indexOf('}');
 			arr.splice(i, 0, key.substring(0, index));
 			i++;
 			length++;
@@ -20,7 +20,7 @@ var Parser = {
 	},
 	parseAttributes: function (T, node) {
 
-		var key, value, _classNames, quote;
+		var key, value, _classNames, quote, c;
 		if (node.attr == null) {
 			node.attr = {};
 		}
@@ -28,7 +28,7 @@ var Parser = {
 		for (; T.index < T.length; T.index++) {
 			key = null;
 			value = null;
-			var c = T.template.charCodeAt(T.index);
+			c = T.template.charCodeAt(T.index);
 			switch (c) {
 				case 32:
 					//case 9: was replaced while compiling

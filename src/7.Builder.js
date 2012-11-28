@@ -22,14 +22,14 @@ var Builder = function () {
 			}
 
 			var isarray = nodes instanceof Array,
-					length = isarray == true ? nodes.length : 1;
+				length = isarray == true ? nodes.length : 1;
 
 			for (var i = 0, node; isarray == true ? i < length : i < 1; i++) {
 				node = isarray == true ? nodes[i] : nodes;
 
 				if (CustomTags.all[node.tagName] != null) {
 					var handler = CustomTags.all[node.tagName],
-							custom = handler instanceof Function ? new handler(values) : handler;
+						custom = handler instanceof Function ? new handler(values) : handler;
 
 					custom.compoName = node.tagName;
 					custom.nodes = node.nodes;
@@ -68,8 +68,8 @@ var Builder = function () {
 			}
 
 			var isarray = nodes instanceof Array,
-					length = isarray ? nodes.length : 1,
-					node = null;
+				length = isarray ? nodes.length : 1,
+				node = null;
 
 			for (var i = 0; node = isarray ? nodes[i] : nodes, isarray ? i < length : i < 1; i++) {
 

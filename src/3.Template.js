@@ -5,7 +5,7 @@ function Template(template) {
 }
 
 Template.prototype = {
-	next          : function () {
+	next: function () {
 		this.index++;
 		return this;
 	},
@@ -17,10 +17,9 @@ Template.prototype = {
 		//}
 		//return this;
 
-		var
-				template = this.template,
-				index = this.index,
-				length = this.length;
+		var template = this.template,
+			index = this.index,
+			length = this.length;
 
 		for (; index < length; index++) {
 			if (template.charCodeAt(index) !== 32 /*' '*/) {
@@ -34,9 +33,8 @@ Template.prototype = {
 	},
 
 	skipToChar: function (c) {
-		var
-				template = this.template,
-				index;
+		var template = this.template,
+			index;
 
 		do {
 			index = template.indexOf(c, this.index);
@@ -80,11 +78,10 @@ Template.prototype = {
 //		} while (result != null)
 //		return this;
 
-		var
-				template = this.template,
-				index = this.index,
-				length = this.length,
-				c;
+		var template = this.template,
+			index = this.index,
+			length = this.length,
+			c;
 		do {
 			c = template.charCodeAt(++index);
 			// if c == # && next() == { - continue */
@@ -103,10 +100,10 @@ Template.prototype = {
 
 	sliceToChar: function (c) {
 		var template = this.template,
-				index = this.index,
-				start = index,
-				isEscaped = false,
-				value;
+			index = this.index,
+			start = index,
+			isEscaped = false,
+			value;
 
 		while (true) {
 			index = template.indexOf(c, index);

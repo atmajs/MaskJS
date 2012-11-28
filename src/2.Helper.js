@@ -18,8 +18,8 @@ var Helper = {
 
 	getProperty: function (o, chain) {
 		var value = o,
-				props,
-				key, i, length;
+			props,
+			key, i, length;
 
 		if (typeof o !== 'object' || chain == null) {
 			return o;
@@ -29,7 +29,7 @@ var Helper = {
 		}
 
 		for (i = 0, length = props.length; i < length; i++) {
-			key = props[i];			
+			key = props[i];
 			value = value[key];
 			if (!value) {
 				return value;
@@ -40,11 +40,10 @@ var Helper = {
 	},
 
 	templateFunction: function (arr, o) {
-		var
-				output = '',
-				utility, value, index,
-				even = true,
-				key, i, length;
+		var output = '',
+			even = true,
+			utility, value, index,
+			key, i, length;
 
 		for (i = 0, length = arr.length; i < length; i++) {
 			if (even) {
