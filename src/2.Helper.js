@@ -29,11 +29,7 @@ var Helper = {
 		}
 
 		for (i = 0, length = props.length; i < length; i++) {
-			key = props[i];
-			if (!hasOwnProp.call(value, key)) {
-				return;
-			}
-
+			key = props[i];			
 			value = value[key];
 			if (!value) {
 				return value;
