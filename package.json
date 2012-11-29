@@ -1,8 +1,14 @@
 {
 	"name": "MaskJS",
-	"description": "JavaScript library for DOM operations",
-	"version": "0.0.0",
+	"description": "JavaScript Template/Markup Engine",
+	"version": "0.5.1",
 	"homepage": "http://tenbits.github.com/LibJS/",
+	"contributors":[
+		{
+			"name": "Kiryl Yermakou",
+			"email": "rma4ok@gmail.com"
+		}
+	],
 	"author": "Alexander Kit <source.kit@gmail.com>",
 	"repository": {
 		"type": "git",
@@ -12,6 +18,7 @@
 		"url": "https://github.com/tenbits/MaskJS/issues"
 	},
 	"licenses": [
+		"MIT"
 	],
 	"dependencies": {},
 	"devDependencies": {
