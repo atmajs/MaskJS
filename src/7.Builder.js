@@ -1,15 +1,15 @@
 var Builder = function () {
 	var singleTags = {
-		img  : 1,
+		img: 1,
 		input: 1,
-		br   : 1,
-		hr   : 1,
-		link : 1
+		br: 1,
+		hr: 1,
+		link: 1
 	};
 
 
 	return {
-		buildDom : function (nodes, values, container, cntx) {
+		buildDom: function (nodes, values, container, cntx) {
 			if (nodes == null) {
 				return container;
 			}

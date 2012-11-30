@@ -16,12 +16,12 @@ var CustomTags = (function () {
 
 	List.prototype.render = function (values, container, cntx) {
 		var attr = this.attr,
-				attrTemplate = attr.template,
-				value = Helper.getProperty(values, attr.value),
-				nodes,
-				template,
-				fn,
-				i, length;
+			attrTemplate = attr.template,
+			value = Helper.getProperty(values, attr.value),
+			nodes,
+			template,
+			fn,
+			i, length;
 
 		if (!(value instanceof Array)) {
 			return container;
@@ -71,10 +71,10 @@ var CustomTags = (function () {
 		// lazy self definition
 
 		var
-				objectDefineProperty = Object.defineProperty,
-				supportsDefineProperty = false,
-				watchedObjects,
-				ticker;
+			objectDefineProperty = Object.defineProperty,
+			supportsDefineProperty = false,
+			watchedObjects,
+			ticker;
 
 		// test for support
 		if (objectDefineProperty) {
@@ -108,9 +108,9 @@ var CustomTags = (function () {
 
 			objectDefineProperty = function (obj, prop, desc) {
 				var
-						objectWrapper,
-						found = false,
-						i, length;
+					objectWrapper,
+					found = false,
+					i, length;
 
 				for (i = 0, length = watchedObjects.length; i < length; i++) {
 					objectWrapper = watchedObjects[i];
@@ -126,18 +126,18 @@ var CustomTags = (function () {
 
 				objectWrapper.props[prop] = {
 					value: obj[prop],
-					set  : desc.set
+					set: desc.set
 				};
 			};
 
 			ticker = function () {
 				var
-						objectWrapper,
-						i, length,
-						props,
-						prop,
-						propObj,
-						newValue;
+					objectWrapper,
+					i, length,
+					props,
+					prop,
+					propObj,
+					newValue;
 
 				for (i = 0, length = watchedObjects.length; i < length; i++) {
 					objectWrapper = watchedObjects[i];
@@ -163,8 +163,8 @@ var CustomTags = (function () {
 
 		return (Binding.prototype.render = function (values, container) {
 			var
-					attrValue = this.attr.value,
-					value = values[attrValue];
+				attrValue = this.attr.value,
+				value = values[attrValue];
 
 			objectDefineProperty.call(Object, values, attrValue, {
 				get: function () {
@@ -178,14 +178,14 @@ var CustomTags = (function () {
 			container.innerHTML = value;
 			return container;
 		}
-				).apply(this, arguments);
+			).apply(this, arguments);
 	};
 
 	return {
 		all: {
-			list   : List,
+			list: List,
 			visible: Visible,
-			bind   : Binding
+			bind: Binding
 		}
 	};
 
