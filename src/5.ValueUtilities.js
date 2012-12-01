@@ -1,4 +1,16 @@
 var ValueUtilities = (function () {
+	
+	function getAssertionValue(value, model){
+		var c = value.charCodeAt(0);
+		if (c === 34 || c === 39) /* ' || " */{
+			return value.substring(1, value.length - 1);
+		} else if (c == 45 || (c > 47 && c < 58)) /* [=] || [number] */{
+			return value << 0;
+		} else {
+			return Helper.getProperty(model, value);
+		}
+		return '';
+	}
 
 	var parseLinearCondition = function (line) {
 			var c = {
@@ -82,16 +94,9 @@ var ValueUtilities = (function () {
 					}
 					break;
 				}
-				c = a.right.charCodeAt(0);
-				if (c === 34 || c === 39) {
-					value2 = a.right.substring(1, a.right.length - 1);
-				} else if (c > 47 && c < 58) {
-					value2 = a.right;
-				} else {
-					value2 = Helper.getProperty(values, a.right);
-				}
 
-				value1 = Helper.getProperty(values, a.left);
+				value1 = getAssertionValue(a.left,values);
+				value2 = getAssertionValue(a.right,values);
 				switch (a.sign) {
 					case '<':
 						current = value1 < value2;
