@@ -22,7 +22,8 @@
 	],
 	"dependencies": {},
 	"devDependencies": {
-		"grunt": "~0.3.17"
+		"grunt": "~0.3.17",
+		"buster": ">=0.6.3"
 	},
 	"keywords": []
 }
