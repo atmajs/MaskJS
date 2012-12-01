@@ -25,7 +25,7 @@ var Parser = {
 			node.attr = {};
 		}
 
-		for (; T.index < T.length; T.index++) {
+		loop: for (; T.index < T.length;) {
 			key = null;
 			value = null;
 			c = T.template.charCodeAt(T.index);
@@ -33,19 +33,15 @@ var Parser = {
 				case 32:
 					//case 9: was replaced while compiling
 					//case 10:
+					T.index++;
 					continue;
 
 				//case '{;>':
 				case 123:
 				case 59:
 				case 62:
-					if (_classNames != null) {
-						node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? this.toFunction(_classNames) : {
-							template: _classNames
-						}) : _classNames;
-
-					}
-					return;
+					
+					break loop;
 
 				case 46:
 					/* '.' */
@@ -56,7 +52,7 @@ var Parser = {
 					value = T.template.substring(start, T.index);
 
 					_classNames = _classNames != null ? _classNames + ' ' + value : value;
-					T.index--;
+
 					break;
 				case 35:
 					/* '#' */
@@ -66,7 +62,6 @@ var Parser = {
 					T.skipToAttributeBreak();
 					value = T.template.substring(start, T.index);
 
-					T.index--;
 					break;
 				default:
 					key = T.sliceToChar('=');
@@ -78,9 +73,10 @@ var Parser = {
 
 					T.index++;
 					value = T.sliceToChar(quote);
-
+					T.index++;
 					break;
 			}
+
 
 			if (key != null) {
 				//console.log('key', key, value);
@@ -92,6 +88,13 @@ var Parser = {
 				node.attr[key] = value;
 			}
 		}
+		if (_classNames != null) {
+			node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? this.toFunction(_classNames) : {
+				template: _classNames
+			}) : _classNames;
+
+		}
+		
 
 	},
 	/** @out : nodes */
