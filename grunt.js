@@ -14,12 +14,29 @@ module.exports = function (grunt) {
 					'src/4.CustomTags.js',
 					'src/5.ValueUtilities.js',
 					'src/6.Parser.js',
-					'src/7.Builder.js',
-					'src/8.export.js',
-
+					'src/7.Builder.dom.js',
+					'src/8.Mask.js',
+					'src/9.export.js',
 					'src/outro.js.txt'
 				],
 				dest: 'lib/mask.js'
+			},
+			distNode: {
+				src : [
+					'src/intro.js.txt',
+
+					'src/1.scope-vars.js',
+					'src/2.Helper.js',
+					'src/3.Template.js',
+					'src/4.CustomTags.js',
+					'src/5.ValueUtilities.js',
+					'src/6.Parser.js',
+					'src/7.Builder.html.js',
+					'src/8.Mask.js',
+					'src/9.export.js',
+					'src/outro.js.txt'
+				],
+				dest: 'lib/mask.node.js'	
 			}
 		},
 		min   : {

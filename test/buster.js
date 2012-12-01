@@ -1,12 +1,27 @@
 var config = module.exports;
 
-config["mask.lib"] = {
+
+
+config["mask.dom"] = {
     env: "browser",
     rootPath: "../",
     sources: [
         "lib/mask.js"
     ],
     tests: [
-        "test/*-test.js"
+        "test/*-dom.js"
     ]
 };
+
+
+config["mask.lib"] = {
+    env: "node",
+    rootPath: "../",
+    sources: [
+        "lib/mask.node.js"
+    ],
+    tests: [
+        "test/*-node.js"
+    ]
+};
+

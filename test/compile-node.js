@@ -1,5 +1,7 @@
 
-var compile = mask.compile,
+var buster = require('buster'),
+	mask = require('../lib/mask.node.js'),
+	compile = mask.compile,
 	template, node, attr;
 
 

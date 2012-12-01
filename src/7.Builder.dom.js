@@ -9,7 +9,7 @@ var Builder = function () {
 
 
 	return {
-		buildDom: function (nodes, values, container, cntx) {
+		build: function (nodes, values, container, cntx) {
 			if (nodes == null) {
 				return container;
 			}
@@ -54,60 +54,11 @@ var Builder = function () {
 				}
 
 				if (node.nodes != null) {
-					this.buildDom(node.nodes, values, tag, cntx);
+					this.build(node.nodes, values, tag, cntx);
 				}
 				container.appendChild(tag);
 			}
 			return container;
-		},
-		buildHtml: function (nodes, values, writer) {
-			if (writer == null) {
-				writer = {
-					buffer: ''
-				}
-			}
-
-			var isarray = nodes instanceof Array,
-				length = isarray ? nodes.length : 1,
-				node = null;
-
-			for (var i = 0; node = isarray ? nodes[i] : nodes, isarray ? i < length : i < 1; i++) {
-
-				if (CustomTags.all[node.tagName] != null) {
-					var custom = new CustomTags.all[node.tagName]();
-					for (var key in node) {
-						custom[key] = node[key];
-					}
-					custom.render(values, writer);
-					return writer;
-				}
-				if (node.content != null) {
-					writer.buffer += typeof node.content === 'function' ? node.content(values) : node.content;
-					return writer;
-				}
-
-				writer.buffer += '<' + node.tagName;
-				for (var key in node.attr) {
-					var value = typeof node.attr[key] == 'function' ? node.attr[key](values) : node.attr[key];
-					if (value) {
-						writer.buffer += ' ' + key + "='" + value + "'";
-					}
-				}
-				if (singleTags[node.tagName] != null) {
-					writer.buffer += '/>';
-					if (node.nodes != null) {
-						console.error('Html could be invalid: Single Tag Contains children:', node);
-					}
-				} else {
-					writer.buffer += '>';
-					if (node.nodes != null) {
-						this.buildHtml(node.nodes, values, writer);
-					}
-
-					writer.buffer += '</' + node.tagName + '>';
-				}
-			}
-			return writer;
 		}
 	};
 }();
