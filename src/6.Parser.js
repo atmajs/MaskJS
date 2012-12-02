@@ -2,9 +2,10 @@ var Parser = {
 	toFunction: function (template) {
 
 		var arr = template.split('#{'),
-			length = arr.length;
+			length = arr.length,
+			i;
 
-		for (var i = 1; i < length; i++) {
+		for (i = 1; i < length; i++) {
 			var key = arr[i],
 				index = key.indexOf('}');
 			arr.splice(i, 0, key.substring(0, index));
@@ -20,7 +21,7 @@ var Parser = {
 	},
 	parseAttributes: function (T, node) {
 
-		var key, value, _classNames, quote, c;
+		var key, value, _classNames, quote, c, start, i;
 		if (node.attr == null) {
 			node.attr = {};
 		}
@@ -46,7 +47,7 @@ var Parser = {
 				case 46:
 					/* '.' */
 
-					var start = T.index + 1;
+					start = T.index + 1;
 					T.skipToAttributeBreak();
 
 					value = T.template.substring(start, T.index);
@@ -58,20 +59,30 @@ var Parser = {
 					/* '#' */
 					key = 'id';
 
-					var start = T.index + 1;
+					start = T.index + 1;
 					T.skipToAttributeBreak();
 					value = T.template.substring(start, T.index);
 
 					break;
 				default:
-					key = T.sliceToChar('=');
-
+					start = (i = T.index);
+					
+					var whitespaceAt = null;
 					do {
-						quote = T.template.charAt(++T.index)
+						c = T.template.charCodeAt(++i);
+						if (whitespaceAt == null && c == 32){
+							whitespaceAt = i;
+						}
+					}while(c != 61 /* = */ && i <= T.length);
+					
+					key = T.template.substring(start, whitespaceAt || i);
+					
+					do {
+						quote = T.template.charAt(++i)
 					}
 					while (quote == ' ');
 
-					T.index++;
+					T.index = ++i;
 					value = T.sliceToChar(quote);
 					T.index++;
 					break;
