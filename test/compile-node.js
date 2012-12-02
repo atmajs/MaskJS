@@ -13,7 +13,7 @@ buster.testCase('Compile: ', {
 		assert.equals(compile('div;').tagName, 'div');
 	},
 	'right attributes': function() {
-		template = compile("div >div>div> div>	\n\t\t	div.class#id data-type='type'");
+		template = compile("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
 		attr = template.nodes.nodes.nodes.nodes.attr;
 
 		assert(attr['class'] == 'class', 'is not "class"');
