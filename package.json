@@ -23,7 +23,10 @@
 	"dependencies": {},
 	"devDependencies": {
 		"grunt": "~0.3.17",
-		"buster": ">=0.6.3"
+		"buster": "~0.6.3"
 	},
-	"keywords": []
+	"keywords": [],
+	"engines" : {
+        "node" : "~0.8.9"
+    }
 }
