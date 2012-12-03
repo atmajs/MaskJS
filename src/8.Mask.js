@@ -24,7 +24,7 @@ var cache = {},
 		 *@return maskDOM
 		 */
 		compile: function (template, serializeOnly) {
-			if (hasOwnProperty.call(cache, template)){
+			if (hasOwnProp.call(cache, template)){
 				return cache[template];
 			}
 
