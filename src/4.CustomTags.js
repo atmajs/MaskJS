@@ -3,7 +3,8 @@ function ICustomTag() {
 }
 
 ICustomTag.prototype.render = function (values, stream) {
-	return stream instanceof Array ? Builder.buildHtml(this.nodes, values, stream) : Builder.buildDom(this.nodes, values, stream);
+	//-return stream instanceof Array ? Builder.buildHtml(this.nodes, values, stream) : Builder.buildDom(this.nodes, values, stream);
+	return Builder.build(this.nodes, values, stream);
 };
 
 var CustomTags = (function () {
@@ -20,7 +21,6 @@ var CustomTags = (function () {
 			value = Helper.getProperty(values, attr.value),
 			nodes,
 			template,
-			fn,
 			i, length;
 
 		if (!(value instanceof Array)) {
@@ -38,11 +38,10 @@ var CustomTags = (function () {
 			return container;
 		}
 
-		//- fn = container instanceof Array ? 'buildHtml' : 'buildDom';
-		fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
+		//- var fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
 
 		for (i = 0, length = value.length; i < length; i++) {
-			fn.call(Builder, this.nodes, value[i], container, cntx);
+			Builder.build(this.nodes, value[i], container, cntx);
 		}
 
 		return container;
