@@ -20,7 +20,7 @@ buster.testCase("Render", {
 		assert(dom.getAttribute('id') == 'ID', 'id is not ID');
 		assert(dom.getAttribute('class') == 'CLASS', 'class is not CLASS');
 		assert(dom.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
-		
-		assert(dom.innerText == 'NAME', 'text is not NAME');
+
+		assert(dom.textContent == 'NAME', 'text is not NAME');
 	}
 })
