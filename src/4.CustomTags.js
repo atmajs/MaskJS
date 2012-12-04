@@ -30,7 +30,7 @@ var CustomTags = (function () {
 
 		if (attrTemplate != null) {
 			template = document.querySelector(attrTemplate).innerHTML;
-			this.nodes = nodes = mask.compile(template);
+			this.nodes = nodes = Mask.compile(template);
 		}
 
 
