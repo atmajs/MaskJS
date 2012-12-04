@@ -28,12 +28,10 @@ var cache = {},
 				return cache[template];
 			}
 
+
 			/** remove unimportant whitespaces */
-			template = template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' ');
-
-
-			var T = new Template(template);
-			if (serializeOnly == true) {
+			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
+			if (serializeOnly === true) {
 				T.serialize = true;
 			}
 
@@ -54,8 +52,9 @@ var cache = {},
 			return Parser.cleanObject(this.compile(template, true));
 		},
 		deserialize: function (serialized) {
+			var i, key, attr;
 			if (serialized instanceof Array) {
-				for (var i = 0; i < serialized.length; i++) {
+				for (i = 0; i < serialized.length; i++) {
 					this.deserialize(serialized[i]);
 				}
 				return serialized;
@@ -67,11 +66,14 @@ var cache = {},
 				return serialized;
 			}
 			if (serialized.attr != null) {
-				for (var key in serialized.attr) {
-					if (serialized.attr[key].template == null) {
-						continue;
+				attr = serialized.attr;
+				for (key in attr) {
+					if (hasOwnProp.call(attr, key) === true){
+						if (attr[key].template == null) {
+							continue;
+						}
+						attr[key] = Parser.toFunction(attr[key].template);
 					}
-					serialized.attr[key] = Parser.toFunction(serialized.attr[key].template);
 				}
 			}
 			if (serialized.nodes != null) {
