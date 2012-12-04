@@ -4,7 +4,7 @@ var ValueUtilities = (function () {
 		var c = value.charCodeAt(0);
 		if (c === 34 || c === 39) /* ' || " */{
 			return value.substring(1, value.length - 1);
-		} else if (c == 45 || (c > 47 && c < 58)) /* [=] || [number] */{
+		} else if (c === 45 || (c > 47 && c < 58)) /* [=] || [number] */{
 			return value << 0;
 		} else {
 			return Helper.getProperty(model, value);
@@ -75,10 +75,10 @@ var ValueUtilities = (function () {
 				con = parseLinearCondition(con);
 			}
 			var current = false,
-				a, 
-				value1, 
+				a,
+				value1,
 				value2,
-				i, 
+				i,
 				length;
 
 			for (i = 0, length = con.assertions.length; i < length; i++) {

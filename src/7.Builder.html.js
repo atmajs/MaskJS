@@ -1,4 +1,4 @@
-var Builder = function () {
+var Builder = (function () {
 	var singleTags = {
 		img: 1,
 		input: 1,
@@ -68,4 +68,4 @@ var Builder = function () {
 			return writer;
 		}
 	};
-}();
+})();

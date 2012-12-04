@@ -1,2 +1,2 @@
 
-}(this, typeof document === 'undefined' ? null : document);
+})(this, typeof document === 'undefined' ? null : document);

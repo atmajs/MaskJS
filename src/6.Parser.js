@@ -17,7 +17,7 @@ var Parser = {
 		template = null;
 		return function (o) {
 			return Helper.templateFunction(arr, o);
-		}
+		};
 	},
 	parseAttributes: function (T, node) {
 
@@ -70,17 +70,17 @@ var Parser = {
 					var whitespaceAt = null;
 					do {
 						c = T.template.charCodeAt(++i);
-						if (whitespaceAt == null && c == 32){
+						if (whitespaceAt == null && c === 32){
 							whitespaceAt = i;
 						}
-					}while(c != 61 /* = */ && i <= T.length);
+					}while(c !== 61 /* = */ && i <= T.length);
 					
 					key = T.template.substring(start, whitespaceAt || i);
 					
 					do {
-						quote = T.template.charAt(++i)
+						quote = T.template.charAt(++i);
 					}
-					while (quote == ' ');
+					while (quote === ' ');
 
 					T.index = ++i;
 					value = T.sliceToChar(quote);
@@ -109,7 +109,7 @@ var Parser = {
 
 	},
 	/** @out : nodes */
-	parse: function (T, nodes) {
+	parse: function (T) {
 		var current = T;
 		for (; T.index < T.length; T.index++) {
 			var c = T.template.charCodeAt(T.index);
@@ -123,7 +123,7 @@ var Parser = {
 
 					T.index++;
 
-					var content = T.sliceToChar(c == 39 ? "'" : '"');
+					var content = T.sliceToChar(c === 39 ? "'" : '"');
 					if (content.indexOf('#{') > -1) {
 						content = T.serialize !== true ? this.toFunction(content) : {
 							template: content
@@ -168,6 +168,7 @@ var Parser = {
 					if (current.nodes != null) {
 						continue;
 					}
+					/* falls through */
 				case 125:
 					/* '}' */
 					if (current == null) {
@@ -175,7 +176,7 @@ var Parser = {
 					}
 
 					do {
-						current = current.parent
+						current = current.parent;
 					}
 					while (current != null && current.__single != null);
 
@@ -185,7 +186,7 @@ var Parser = {
 
 			var start = T.index;
 			do {
-				c = T.template.charCodeAt(++T.index)
+				c = T.template.charCodeAt(++T.index);
 			}
 			while (c !== 32 && c !== 35 && c !== 46 && c !== 59 && c !== 123 && c !== 62 && T.index <= T.length);
 			/** while !: ' ', # , . , ; , { <*/
