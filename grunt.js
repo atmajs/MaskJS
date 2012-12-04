@@ -36,7 +36,7 @@ module.exports = function (grunt) {
 					'src/9.export.js',
 					'src/outro.js.txt'
 				],
-				dest: 'lib/mask.node.js'	
+				dest: 'lib/mask.node.js'
 			}
 		},
 		min   : {
@@ -47,7 +47,7 @@ module.exports = function (grunt) {
 		},
 		lint  : {
 			grunt: 'grunt.js',
-			src  : 'src/*.js',
+			//src  : 'src/*.js',
 			lib  : 'lib/mask.js'
 		},
 		jshint: {
@@ -75,39 +75,10 @@ module.exports = function (grunt) {
 				browser: true,
 				node   : true,
 
-				onevar  : true,
+				onevar  : false,
 				passfail: true
 			},
-			globals: {},
-			src    : {
-				options: {
-					curly   : true,
-					eqeqeq  : true,
-					forin   : true,
-					immed   : true,
-					latedef : true,
-					newcap  : true,
-					noarg   : true,
-					noempty : true,
-					nonew   : true,
-					regexp  : true,
-					undef   : false,
-					unused  : false,
-					strict  : false,
-					trailing: true,
-
-					boss     : true,
-					eqnull   : true,
-					es5      : true,
-					lastsemic: true,
-
-					browser: true,
-
-					onevar  : true,
-					passfail: true
-				},
-				globals: {}
-			}
+			globals: {}
 		},
 		watch : {
 			scripts: {
