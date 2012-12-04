@@ -22,5 +22,12 @@ buster.testCase("Render", {
 		assert(dom.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
 
 		assert(dom.textContent == 'NAME', 'text is not NAME');
+	},
+	'right model insertion with check': function(){
+		var dom = render('div.#{:enabled?"enabled":"disabled"}', {
+			enabled: true			
+		}).querySelector('div');
+
+		assert(dom.getAttribute('class') == 'enabled', 'div has not "enabled" class');
 	}
 })
