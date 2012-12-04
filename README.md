@@ -1,6 +1,5 @@
-<h3>Mask JS</h3>
-<hr/>
 <img src='http://libjs.it/images/mask.png' style='float:right' height="64"/>
+<hr/>
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
