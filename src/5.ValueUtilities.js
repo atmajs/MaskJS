@@ -13,7 +13,7 @@ var ValueUtilities = (function () {
 	}
 
 	var parseLinearCondition = function (line) {
-			var c = {
+			var cond = {
 					assertions: []
 				},
 				buffer = {
@@ -31,7 +31,7 @@ var ValueUtilities = (function () {
 			expr = buffer.data.substring(0, buffer.index);
 
 			while ((match = regexpLinearCondition.exec(expr)) != null) {
-				c.assertions.push({
+				cond.assertions.push({
 					join: match[4],
 					left: match[1],
 					sign: match[2],
@@ -40,12 +40,12 @@ var ValueUtilities = (function () {
 			}
 
 			buffer.index++;
-			parseCase(buffer, c, 'case1');
+			parseCase(buffer, cond, 'case1');
 
 			buffer.index++;
-			parseCase(buffer, c, 'case2');
+			parseCase(buffer, cond, 'case2');
 
-			return c;
+			return cond;
 		},
 		parseCase = function (buffer, obj, key) {
 			var c = buffer.data[buffer.index],
@@ -75,8 +75,12 @@ var ValueUtilities = (function () {
 				con = parseLinearCondition(con);
 			}
 			var current = false,
-				a, c, value1, value2,
-				i, length;
+				a, 
+				value1, 
+				value2,
+				i, 
+				length;
+
 			for (i = 0, length = con.assertions.length; i < length; i++) {
 				a = con.assertions[i];
 				if (a.right == null) {
