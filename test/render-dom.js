@@ -29,5 +29,16 @@ buster.testCase("Render", {
 		}).querySelector('div');
 
 		assert(dom.getAttribute('class') == 'enabled', 'div has not "enabled" class');
+	},
+
+	'tag-less template check': function(){
+		var dom = render('.#{:enabled?"enabled":"disabled"} { .item; .item; .item > "Last" }', {
+			enabled: true			
+		}).querySelector('.enabled');
+
+		assert(dom != null, 'Div with .enabled class not rendered');
+
+		assert(dom.querySelectorAll('.item').length === 3, 'Div should have 3 childs with class .item');
+		assert(dom.querySelectorAll('.item')[2].textContent == 'Last', 'Last Div should have text "Last"');
 	}
 })

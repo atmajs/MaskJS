@@ -183,16 +183,19 @@ var Parser = {
 					continue;
 			}
 
-
-			var start = T.index;
-			do {
-				c = T.template.charCodeAt(++T.index);
+			var tagName = null;
+			if (c === 46 /* . */ || c === 35 /* # */){
+				tagName = 'div';
+			}else{
+				var start = T.index;
+				do {
+					c = T.template.charCodeAt(++T.index);
+				}
+				while (c !== 32 && c !== 35 && c !== 46 && c !== 59 && c !== 123 && c !== 62 && T.index <= T.length);
+				/** while !: ' ', # , . , ; , { <*/
+		
+				tagName = T.template.substring(start, T.index);
 			}
-			while (c !== 32 && c !== 35 && c !== 46 && c !== 59 && c !== 123 && c !== 62 && T.index <= T.length);
-			/** while !: ' ', # , . , ; , { <*/
-
-
-			var tagName = T.template.substring(start, T.index);
 
 			if (tagName === '') {
 				console.error('Parse Error: Undefined tag Name %d/%d %s', T.index, T.length, T.template.substring(T.index, T.index + 10));
