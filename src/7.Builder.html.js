@@ -25,16 +25,20 @@ var Builder = (function () {
 				node = isarray ? nodes[i] : nodes;
 
 				if (CustomTags.all[node.tagName] != null) {
-					var handler = CustomTags.all[node.tagName],
-						custom = handler instanceof Function ? new handler(values) : handler;
+					try{
+						var handler = CustomTags.all[node.tagName],
+							custom = handler instanceof Function ? new handler(values) : handler;
 
-					custom.compoName = node.tagName;
-					custom.nodes = node.nodes;
-					custom.attr = custom.attr == null ? node.attr : Helper.extend(custom.attr, node.attr);
+						custom.compoName = node.tagName;
+						custom.nodes = node.nodes;
+						custom.attr = custom.attr == null ? node.attr : Helper.extend(custom.attr, node.attr);
 
-					(cntx.components || (cntx.components = [])).push(custom);
-					custom.parent = cntx;
-					custom.render(values, writer, custom);
+						(cntx.components || (cntx.components = [])).push(custom);
+						custom.parent = cntx;
+						custom.render(values, writer, custom);
+					} catch(error){
+						console.error('Custom Tag Handler:', node.tagName, error);
+					}
 					
 					continue;
 				}
