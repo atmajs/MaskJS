@@ -83,6 +83,13 @@ var cache = {},
 			}
 			return serialized;
 		},
+		clearCache: function(key){
+			if (typeof key === 'string'){
+				delete cache[key];
+			}else{
+				cache = {};
+			}
+		},
 		ICustomTag: ICustomTag,
 		ValueUtils: ValueUtilities
 	};
