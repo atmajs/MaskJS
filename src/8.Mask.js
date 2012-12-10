@@ -25,6 +25,8 @@ var cache = {},
 		 */
 		compile: function (template, serializeOnly) {
 			if (hasOwnProp.call(cache, template)){
+				/** if Object doesnt contains property that check is faster 
+					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 				return cache[template];
 			}
 
