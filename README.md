@@ -3,10 +3,10 @@
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is template/markup engine.
+	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup engine.
 	
 <div><pre><code>
-div.container {
+.container {
 	h4 > 'Title'
 	section.content data-id='myID' {
 		code >'$ print("Hello #{name}!")'
@@ -22,4 +22,9 @@ div.container {
 	</ul>
 </p>
 
-<small>You may also want to checkout some more additional features, at <a href='http://libjs.it'>LibJS Project</a> - like <a href='http://libjs.it/#/compos/dualbind'>2 Way Data Binding Compo</a></small>
+<p>
+	<small><a href='http://libjs.it/#/mask'>Documentation</a></small>
+	</p>
+<p>
+	<small>You may also want to checkout some more additional features, at <a href='http://libjs.it'>LibJS Project</a> - like <a href='http://libjs.it/#/compos/dualbind'>Two Way Data Binding Component</a></small>
+	</p>
