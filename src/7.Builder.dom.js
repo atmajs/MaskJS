@@ -25,7 +25,8 @@ var Builder = {
 
 					custom.compoName = node.tagName;
 					custom.nodes = node.nodes;
-					custom.attr = custom.attr == null ? node.attr : Helper.extend(custom.attr, node.attr);
+					/*	creating new attr object for custom handler, preventing collisions due to template caching */
+					custom.attr = Helper.extend(custom.attr, node.attr);
 
 					(cntx.components || (cntx.components = [])).push(custom);
 					custom.parent = cntx;
