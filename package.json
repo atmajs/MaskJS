@@ -9,6 +9,7 @@
 			"email": "rma4ok@gmail.com"
 		}
 	],
+	"main": "./lib/mask.node.js",
 	"author": "Alexander Kit <source.kit@gmail.com>",
 	"repository": {
 		"type": "git",
