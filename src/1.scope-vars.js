@@ -12,4 +12,5 @@ var
 	regexpMultipleSpaces = / {2,}/g,
 
 
-	hasOwnProp = {}.hasOwnProperty;
+	hasOwnProp = {}.hasOwnProperty,
+	oncustomCreated = null;

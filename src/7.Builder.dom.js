@@ -31,6 +31,11 @@ var Builder = {
 					(cntx.components || (cntx.components = [])).push(custom);
 					custom.parent = cntx;
 					custom.render(values, container, custom);
+					
+					if (oncustomCreated != null){
+						oncustomCreated(custom, values, container);
+					}
+					
 				}catch(error){
 					console.error('Custom Tag Handler:', node.tagName, error);
 				}
