@@ -70,7 +70,7 @@ var cache = {},
 		/**
 		 *	@deprecated
 		 *	Serialize Mask Template into JSON presentation.
-		 *	
+		 *
 		 *	It seems that serialization/deserialization make no performace
 		 *	improvements, as mask.compile is fast enough.
 		 *
@@ -124,18 +124,22 @@ var cache = {},
 		
 		/**
 		 *	API should be normalized.
-		 *	
+		 *
 		 *	Export ValueUtilities for use as Helper
 		 *
 		 *	Helper Functions are:
 		 *
-		 *		'name=="A"?"Is A":"Is not A"'			
+		 *		'name=="A"?"Is A":"Is not A"'
 		 *		condition: function(inlineCondition, model){}
 		 *
 		 *		'name=="A"?'
 		 *		out.isCondition: function(condition, model){}
 		 */
-		ValueUtils: ValueUtilities
+		ValueUtils: ValueUtilities,
+		
+		plugin: function(source){
+			eval(source);
+		}
 	};
 
 
