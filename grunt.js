@@ -37,6 +37,12 @@ module.exports = function (grunt) {
 					'src/outro.js.txt'
 				],
 				dest: 'lib/mask.node.js'
+			},
+			reloadPlugin: {
+				src : [
+					'src/10.HotReload.js'
+				],
+				dest: 'lib/plugin.reload.js'
 			}
 		},
 		min   : {
@@ -76,7 +82,8 @@ module.exports = function (grunt) {
 				node   : true,
 
 				onevar  : false,
-				passfail: true
+				passfail: true,
+				eval: true
 			},
 			globals: {}
 		},
