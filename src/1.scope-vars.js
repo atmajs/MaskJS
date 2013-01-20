@@ -13,4 +13,4 @@ var
 
 
 	hasOwnProp = {}.hasOwnProperty,
-	oncustomCreated = null;
+	listeners = null;

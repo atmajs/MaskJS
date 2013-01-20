@@ -1,8 +1,6 @@
 (function() {
 
-	var _render = Compo.render,
-		_dispose = Compo.dispose,
-		_cache = {};
+	var _cache = {};
 
 
 	function onremove(compo) {
@@ -34,7 +32,8 @@
 			parent, x;
 
 		for (; i < length; i++) {
-			x = cache[i].compo;
+			x = cache[i].instance;
+			console.log('cache', cache[i]);
 			parent = x.$ && x.$.parent()[0];
 
 			if (!parent) {
@@ -63,11 +62,24 @@
 		}
 
 		(_cache[custom.compoName] || (_cache[custom.compoName] = [])).push({
-			nodes: compo.nodes,
+			nodes: custom.nodes,
 			attr: custom.attr,
-			model: model
+			model: model,
+			instance: custom
 		});
 
+	}
+
+
+	mask.delegateReload = function() {
+		var compos = arguments,
+				length = arguments.length;
+
+			return function() {
+				for (var i = 0; i < length; i++) {
+					reload(compos[i]);
+				}
+			};
 	}
 
 }());
