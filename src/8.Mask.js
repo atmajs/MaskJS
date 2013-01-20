@@ -139,6 +139,13 @@ var cache = {},
 		
 		plugin: function(source){
 			eval(source);
+		},
+		on: function(event, fn){
+			if (listeners == null){
+				listeners = {};
+			}
+			
+			(listeners[event] || (listeners[event] = [])).push(callback);
 		}
 	};
 
