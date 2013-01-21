@@ -3,37 +3,23 @@
 	var _cache = {};
 
 
-	function onremove(compo) {
-
-		var cache = _cache[compo.compoName];
-
-		if (!cache) {
-			debugger;
-		}
-
-		for (var i = 0, length = cache.length; i < length; i++) {
-			if (cache[i].compo === compo) {
-				cache.splice(i, 1);
-				break;
-			}
-		}
-	}
-
 	function reload(compoName) {
 		var cache = _cache[compoName];
 
 		_cache[compoName] = [];
 
 		if (!cache) {
+			console.log('error', compoName, _cache);
 			return;
 		}
 		var i = 0,
 			length = cache.length,
 			parent, x;
 
+		console.log('doReload', length);
 		for (; i < length; i++) {
+			
 			x = cache[i].instance;
-			console.log('cache', cache[i]);
 			parent = x.$ && x.$.parent()[0];
 
 			if (!parent) {
@@ -46,8 +32,8 @@
 			} else {
 				x.$ && x.$.remove();
 			}
-
-			Compo.render({
+			
+			mask.render({
 				compoName: compoName,
 				attr: x.attr,
 				nodes: x.nodes
@@ -55,7 +41,8 @@
 		}
 	}
 
-	oncustomCreated = function(custom, model, container) {
+	
+	mask.on('customCreated', function(custom, model, container) {
 
 		if (!custom.compoName) {
 			debugger;
@@ -68,18 +55,18 @@
 			instance: custom
 		});
 
-	}
-
+	});
 
 	mask.delegateReload = function() {
 		var compos = arguments,
 				length = arguments.length;
 
-			return function() {
+			return function(source) {
+				eval(source);
 				for (var i = 0; i < length; i++) {
 					reload(compos[i]);
 				}
 			};
-	}
+	};
 
 }());
