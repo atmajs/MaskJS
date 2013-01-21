@@ -13,7 +13,7 @@ var Builder = {
 
 		var isarray = nodes instanceof Array,
 			length = isarray === true ? nodes.length : 1,
-			i, node;
+			i, node, j;
 
 		for (i = 0; i < length; i++) {
 			node = isarray === true ? nodes[i] : nodes;
@@ -32,8 +32,13 @@ var Builder = {
 					custom.parent = cntx;
 					custom.render(values, container, custom);
 					
-					if (oncustomCreated != null){
-						oncustomCreated(custom, values, container);
+					if (listeners != null){
+						var fns = listeners['customCreated'];
+						if (fns != null){
+							for(j = 0; j < fns.length; j++){
+								fns[j](custom, values, container);
+							}
+						}
 					}
 					
 				}catch(error){

@@ -36,6 +36,16 @@ var Builder = (function () {
 						(cntx.components || (cntx.components = [])).push(custom);
 						custom.parent = cntx;
 						custom.render(values, writer, custom);
+						
+						if (listeners != null){
+							var fns = listeners['customCreated'];
+							if (fns != null){
+								for(j = 0; j < fns.length; j++){
+									fns[j](custom, values, container);
+								}
+							}
+						}
+					
 					} catch(error){
 						console.error('Custom Tag Handler:', node.tagName, error);
 					}
