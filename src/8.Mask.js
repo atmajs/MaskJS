@@ -146,7 +146,12 @@ var cache = {},
 			}
 			
 			(listeners[event] || (listeners[event] = [])).push(callback);
-		}
+		},
+		
+		/**
+		 *	Stub for reload.js, which will be used by includejs.autoreload
+		 */
+		delegateReload: function(){}
 	};
 
 
