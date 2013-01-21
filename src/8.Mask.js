@@ -145,7 +145,7 @@ var cache = {},
 				listeners = {};
 			}
 			
-			(listeners[event] || (listeners[event] = [])).push(callback);
+			(listeners[event] || (listeners[event] = [])).push(fn);
 		},
 		
 		/**
