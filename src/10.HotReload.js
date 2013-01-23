@@ -16,9 +16,9 @@
 			length = cache.length,
 			parent, x;
 
-		console.log('doReload', length);
+
 		for (; i < length; i++) {
-			
+
 			x = cache[i].instance;
 			parent = x.$ && x.$.parent()[0];
 
@@ -32,16 +32,17 @@
 			} else {
 				x.$ && x.$.remove();
 			}
-			
+
 			mask.render({
 				tagName: compoName,
 				attr: x.attr,
-				nodes: x.nodes
+				/*obsolete: template nodes will be created by component controller*/
+				//nodes: x.nodes
 			}, cache[i].model, parent, x);
 		}
 	}
 
-	
+
 	mask.on('customCreated', function(custom, model, container) {
 
 		if (!custom.compoName) {
