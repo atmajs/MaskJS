@@ -86,8 +86,11 @@ Template.prototype = {
 			c = template.charCodeAt(++index);
 			// if c == # && next() == { - continue */
 			if (c === 35 && template.charCodeAt(index + 1) === 123) {
-				index++;
-				c = null;
+				// goto end of template declaration
+				this.index = index;
+				this.sliceToChar('}');
+				this.index++;
+				return;
 			}
 		}
 		while (c !== 46 && c !== 35 && c !== 62 && c !== 123 && c !== 32 && c !== 59 && index < length);
