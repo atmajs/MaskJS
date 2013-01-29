@@ -35,7 +35,7 @@ var Builder = (function () {
 
 						(cntx.components || (cntx.components = [])).push(custom);
 						custom.parent = cntx;
-						custom.render(values, writer, custom);
+						
 						
 						if (listeners != null){
 							var fns = listeners['customCreated'];
@@ -45,6 +45,8 @@ var Builder = (function () {
 								}
 							}
 						}
+
+						custom.render(values, writer, custom);
 					
 					} catch(error){
 						console.error('Custom Tag Handler:', node.tagName, error);
