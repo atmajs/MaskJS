@@ -25,7 +25,9 @@ var Builder = (function () {
 				node = isarray ? nodes[i] : nodes;
 
 				if (CustomTags.all[node.tagName] != null) {
+					/* if (!DEBUG)
 					try{
+					*/
 						var handler = CustomTags.all[node.tagName],
 							custom = handler instanceof Function ? new handler(values) : handler;
 
@@ -47,10 +49,11 @@ var Builder = (function () {
 						}
 
 						custom.render(values, writer, custom);
-					
+					/* if (!DEBUG)
 					} catch(error){
 						console.error('Custom Tag Handler:', node.tagName, error);
 					}
+					*/
 					
 					continue;
 				}
