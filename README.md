@@ -25,7 +25,7 @@
 </p>
 
 <p>
-	<a href='http://libjs.it/#/mask-try'>maskFiddle</a>
+	<a href='http://libjs.it/mask-try'>maskFiddle</a>
 </p>
 
 <p>
