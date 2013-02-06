@@ -1,25 +1,23 @@
-var Helper = {
-	extend: function (target, source) {
-		var key;
+var extend = function(target, source) {
+	var key;
 
-		if (source == null) {
-			return target;
-		}
-		if (target == null) {
-			target = {};
-		}
-		for (key in source) {
-			if (hasOwnProp.call(source, key)) {
-				target[key] = source[key];
-			}
-		}
+	if (source == null) {
 		return target;
-	},
+	}
+	if (target == null) {
+		target = {};
+	}
+	for (key in source) {
+		if (hasOwnProp.call(source, key)) {
+			target[key] = source[key];
+		}
+	}
+	return target;
+},
 
-	getProperty: function (o, chain) {
+	getProperty = function(o, chain) {
 		var value = o,
-			props,
-			key, i, length;
+			props, key, i, length;
 
 		if (typeof o !== 'object' || chain == null) {
 			return o;
@@ -39,17 +37,15 @@ var Helper = {
 		return value;
 	},
 
-	templateFunction: function (arr, o) {
+	templateFunction = function(arr, o) {
 		var output = '',
 			even = true,
-			utility, value, index,
-			key, i, length;
+			utility, value, index, key, i, length;
 
 		for (i = 0, length = arr.length; i < length; i++) {
 			if (even) {
 				output += arr[i];
-			}
-			else {
+			} else {
 				key = arr[i];
 				value = null;
 				index = key.indexOf(':');
@@ -62,9 +58,8 @@ var Helper = {
 
 					key = key.substring(index + 1);
 					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, o) : null;
-				}
-				else {
-					value = Helper.getProperty(o, key);
+				} else {
+					value = getProperty(o, key);
 				}
 
 				output += value == null ? '' : value;
@@ -74,5 +69,4 @@ var Helper = {
 		}
 
 		return output;
-	}
-};
+	};

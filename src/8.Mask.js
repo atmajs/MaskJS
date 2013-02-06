@@ -32,12 +32,16 @@ var cache = {},
 
 
 			/** remove unimportant whitespaces */
-			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
+
+			_template = template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' ');
+			_length = _template.length;
+			_index = 0;
+
 			if (serializeOnly === true) {
-				T.serialize = true;
+				_serialize = true;
 			}
 
-			return (cache[template] = Parser.parse(T));
+			return (cache[template] = Parser.parse());
 		},
 		/**
 		 *	Define Custom Tag Handler
@@ -121,7 +125,7 @@ var cache = {},
 			}
 		},
 		ICustomTag: ICustomTag,
-		
+
 		/**
 		 *	API should be normalized.
 		 *
@@ -136,7 +140,7 @@ var cache = {},
 		 *		out.isCondition: function(condition, model){}
 		 */
 		ValueUtils: ValueUtilities,
-		
+
 		plugin: function(source){
 			eval(source);
 		},
@@ -144,10 +148,10 @@ var cache = {},
 			if (listeners == null){
 				listeners = {};
 			}
-			
+
 			(listeners[event] || (listeners[event] = [])).push(fn);
 		},
-		
+
 		/**
 		 *	Stub for reload.js, which will be used by includejs.autoreload
 		 */

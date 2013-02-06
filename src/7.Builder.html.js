@@ -9,7 +9,7 @@ var Builder = (function () {
 
 
 	return {
-		
+
 		build: function (nodes, values, writer, cntx) {
 			if (writer == null) {
 				writer = {
@@ -33,12 +33,12 @@ var Builder = (function () {
 
 						custom.compoName = node.tagName;
 						custom.nodes = node.nodes;
-						custom.attr = Helper.extend(custom.attr, node.attr);
+						custom.attr = extend(custom.attr, node.attr);
 
 						(cntx.components || (cntx.components = [])).push(custom);
 						custom.parent = cntx;
-						
-						
+
+
 						if (listeners != null){
 							var fns = listeners['customCreated'];
 							if (fns != null){
@@ -54,7 +54,7 @@ var Builder = (function () {
 						console.error('Custom Tag Handler:', node.tagName, error);
 					}
 					*/
-					
+
 					continue;
 				}
 				if (node.content != null) {

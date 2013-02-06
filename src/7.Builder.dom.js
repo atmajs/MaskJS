@@ -28,12 +28,12 @@ var Builder = {
 					custom.compoName = node.tagName;
 					custom.nodes = node.nodes;
 					/*	creating new attr object for custom handler, preventing collisions due to template caching */
-					custom.attr = Helper.extend(custom.attr, node.attr);
+					custom.attr = extend(custom.attr, node.attr);
 
 					(cntx.components || (cntx.components = [])).push(custom);
 					custom.parent = cntx;
-					
-					
+
+
 					if (listeners != null){
 						var fns = listeners['customCreated'];
 						if (fns != null){
@@ -44,7 +44,7 @@ var Builder = {
 					}
 
 					custom.render(values, container, custom);
-				/* if (!DEBUG)	
+				/* if (!DEBUG)
 				}catch(error){
 					console.error('Custom Tag Handler:', node.tagName, error.toString());
 				}
