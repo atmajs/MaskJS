@@ -33,15 +33,11 @@ var cache = {},
 
 			/** remove unimportant whitespaces */
 
-			_template = template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' ');
-			_length = _template.length;
-			_index = 0;
-
 			if (serializeOnly === true) {
 				_serialize = true;
 			}
 
-			return (cache[template] = Parser.parse());
+			return (cache[template] = Parser(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' ')));
 		},
 		/**
 		 *	Define Custom Tag Handler

@@ -1,5 +1,70 @@
-var Parser = {
-	toFunction: function(template) {
+var Parser = (function() {
+
+	var _template = null,
+		_index = null,
+		_length = null,
+		_serialize = null;
+
+
+
+	function skipWhitespace() {
+		for (; _index < _length; _index++) {
+			if (_template.charCodeAt(index) !== 32 /*' '*/ ) {
+				break;
+			}
+		}
+	}
+
+	function skipToChar(c) {
+		var index;
+		do {
+			index = _template.indexOf(c, _index);
+		}
+		while (~index && _template.charCodeAt(index - 1) !== 92 /*'\\'*/ );
+
+		_index = index;
+	}
+
+	function skipToAttributeBreak() {
+		var c;
+		do {
+			c = _template.charCodeAt(++_index);
+			// if c == # && next() == { - continue */
+			if (c === 35 && _template.charCodeAt(_index + 1) === 123) {
+				// goto end of template declaration
+
+				sliceToChar('}');
+				_index++;
+				return;
+			}
+		}
+		while (c !== 46 && c !== 35 && c !== 62 && c !== 123 && c !== 32 && c !== 59 && _index < _length);
+		//while(!== ".#>{ ;");
+	}
+
+	function sliceToChar(c) {
+		var start = _index,
+			isEscaped = false,
+			value, nindex;
+
+		while ((nindex = _template.indexOf(c, _index)) > -1) {
+			_index = nindex;
+			if (_template.charCodeAt(_index - 1) !== 92 /*'\\'*/ ) {
+				break;
+			}
+			isEscaped = true;
+			_index++;
+		}
+
+		value = _template.substring(start, _index);
+
+
+		return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
+	};
+
+
+	function toFunction(template) {
+
 
 		var arr = template.split('#{'),
 			length = arr.length,
@@ -18,8 +83,9 @@ var Parser = {
 		return function(o) {
 			return templateFunction(arr, o);
 		};
-	},
-	parseAttributes: function(node) {
+	}
+
+	function parseAttributes(node) {
 
 		var key, value, _classNames, quote, c, start, i;
 		if (node.attr == null) {
@@ -92,7 +158,7 @@ var Parser = {
 			if (key != null) {
 				//console.log('key', key, value);
 				if (value.indexOf('#{') > -1) {
-					value = _serialize !== true ? this.toFunction(value) : {
+					value = _serialize !== true ? toFunction(value) : {
 						template: value
 					};
 				}
@@ -100,16 +166,22 @@ var Parser = {
 			}
 		}
 		if (_classNames != null) {
-			node.attr['class'] = _classNames.indexOf('#{') > -1 ? (_serialize !== true ? this.toFunction(_classNames) : {
+			node.attr['class'] = _classNames.indexOf('#{') > -1 ? (_serialize !== true ? toFunction(_classNames) : {
 				template: _classNames
 			}) : _classNames;
 
 		}
 
 
-	},
+	}
+
+
 	/** @out : nodes */
-	parse: function() {
+	return function parse(template) {
+		_template = template;
+		_length = template.length;
+		_index = 0;
+
 		var nodes = [],
 			current = {
 				nodes: nodes
@@ -129,7 +201,7 @@ var Parser = {
 
 				var content = sliceToChar(c === 39 ? "'" : '"');
 				if (content.indexOf('#{') > -1) {
-					content = _serialize !== true ? this.toFunction(content) : {
+					content = _serialize !== true ? toFunction(content) : {
 						template: content
 					};
 				}
@@ -207,7 +279,7 @@ var Parser = {
 			};
 
 			if (current == null) {
-				console.log('T', T, 'rest', _template.substring(_index));
+				console.log('T', current, 'rest', _template.substring(_index));
 			}
 
 			if (current.nodes == null) {
@@ -222,26 +294,29 @@ var Parser = {
 
 			current = tag;
 
-			this.parseAttributes(current);
+			parseAttributes(current);
 
 			_index--;
 		}
 		return nodes;
-	},
-	cleanObject: function(obj) {
-		if (obj instanceof Array) {
-			for (var i = 0; i < obj.length; i++) {
-				this.cleanObject(obj[i]);
-			}
-			return obj;
-		}
-		delete obj.parent;
-		delete obj.__single;
+	};
 
-		if (obj.nodes != null) {
-			this.cleanObject(obj.nodes);
-		}
 
+}());
+
+function cleanObject(obj) {
+	if (obj instanceof Array) {
+		for (var i = 0; i < obj.length; i++) {
+			cleanObject(obj[i]);
+		}
 		return obj;
 	}
-};
+	delete obj.parent;
+	delete obj.__single;
+
+	if (obj.nodes != null) {
+		cleanObject(obj.nodes);
+	}
+
+	return obj;
+}
