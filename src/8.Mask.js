@@ -12,7 +12,7 @@ var cache = {},
 			if (typeof template === 'string') {
 				template = this.compile(template);
 			}
-			return Builder.build(template, model, container, cntx);
+			return Builder(template, model, container, cntx);
 			//////} catch (e) {
 			//////	console.error('maskJS', e.message, template);
 			//////}
