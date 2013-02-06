@@ -24,7 +24,7 @@ var cache = {},
 		 *@return maskDOM
 		 */
 		compile: function (template, serializeOnly) {
-			if (hasOwnProp.call(cache, template)){
+			if (cache[template] != null){
 				/** if Object doesnt contains property that check is faster
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 				return cache[template];

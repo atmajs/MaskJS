@@ -8,9 +8,12 @@ var extend = function(target, source) {
 		target = {};
 	}
 	for (key in source) {
+		/* if (!SAFE)
 		if (hasOwnProp.call(source, key)) {
-			target[key] = source[key];
+			continue;
 		}
+		*/
+		target[key] = source[key];
 	}
 	return target;
 },

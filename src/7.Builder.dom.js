@@ -59,11 +59,14 @@ var Builder = {
 			var tag = document.createElement(node.tagName),
 				attr = node.attr;
 			for (var key in attr) {
+				/* if (!SAFE)
 				if (hasOwnProp.call(attr, key) === true){
-					var value = typeof attr[key] === 'function' ? attr[key](values) : attr[key];
-					if (value) {
-						tag.setAttribute(key, value);
-					}
+					continue;
+				}
+				*/
+				var value = typeof attr[key] === 'function' ? attr[key](values) : attr[key];
+				if (value) {
+					tag.setAttribute(key, value);
 				}
 			}
 
