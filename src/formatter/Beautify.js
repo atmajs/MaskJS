@@ -124,6 +124,14 @@ var Beautify = (function(){
 	}
 
 	function wrapString(str){
+		if (str.indexOf('"') == -1){
+			return '"' + str.trim() + '"';
+		}
+
+		if (str.indexOf("'") == -1){
+			return "'" + str.trim() + "'";
+		}
+
 		return '"' + str.replace(/"/g,'\\"').trim() + '"';
 	}
 
