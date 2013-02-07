@@ -1,2 +1,2 @@
 
-})(this, typeof document === 'undefined' ? null : document);
+})(typeof window !== 'undefined' ? window : global, typeof document === 'undefined' ? null : document);

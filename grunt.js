@@ -43,6 +43,16 @@ module.exports = function (grunt) {
 					'src/10.HotReload.js'
 				],
 				dest: 'lib/plugin.reload.js'
+			},
+			formatter: {
+				src : [
+					'src/intro.js.txt',
+					'src/formatter/Beautify.js',
+					'src/formatter/HTMLtoMask.js',
+					'src/formatter/exports.js',
+					'src/outro.js.txt'
+				],
+				dest: 'lib/formatter.js'
 			}
 		},
 		min   : {
