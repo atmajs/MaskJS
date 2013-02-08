@@ -18,7 +18,7 @@ buster.testCase('Compile: ', {
 
 		assert(attr['class'] == 'class', 'is not "class"');
 		assert(attr['id'] == 'id', 'is not "id"');
-		assert(attr['data-type'] == 'type', 'is not "type"');
+		assert(attr['data-type'] == 'type', 'is not "type": '+ attr['data-type']);
 
 	},
 	'has literal': function() {
@@ -38,10 +38,10 @@ buster.testCase('Compile: ', {
 
 		assert(combined == '12345', 'Combined Text Failed:' + combined);
 	},
-	
+
 	'valid model templating': function(){
 		template = compile('div.#{class}##{id   } data-type="mytype: #{  type }" { "content" "other #{ util:one}" }');
-		
+
 		assert(typeof template.attr.class, 'function');
 		assert(typeof template.attr.id, 'function');
 		assert(typeof template.attr['data-type'], 'function');
