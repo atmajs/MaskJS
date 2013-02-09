@@ -62,7 +62,7 @@ var HTMLtoMask = (function() {
 			chars = true;
 
 			// Make sure we're not in a script or style element
-			if (!stack.last() || !special[stack.last()]) {
+			if (!special[stack.last()]) {
 
 				// Comment
 				if (html.indexOf("<!--") == 0) {
@@ -105,15 +105,22 @@ var HTMLtoMask = (function() {
 				}
 
 			} else {
-				html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text) {
-					text = text.replace(/<!--(.*?)-->/g, "$1").replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
+				var match = new RegExp("<\/[\s]*" + stack.last() + "[^>]*>").exec(html);
 
-					if (handler.chars) handler.chars(text);
+				if (!match){
+					handler.chars(html);
+					html = "";
+					break;
+				}
 
-					return "";
-				});
 
-				parseEndTag("", stack.last());
+				var text = html.substring(0, match.index);
+				if (text) {
+					handler.chars(text);
+				}
+
+				html = html.substring(match.index + match[0].length);
+				handler.end(stack.pop());
 			}
 
 			if (html == last) throw "Parse Error: " + html;
