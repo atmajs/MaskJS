@@ -1,5 +1,5 @@
 var Helper = {
-	extend: function (target, source) {
+	extend: function(target, source) {
 		var key;
 
 		if (source == null) {
@@ -16,10 +16,9 @@ var Helper = {
 		return target;
 	},
 
-	getProperty: function (o, chain) {
+	getProperty: function(o, chain) {
 		var value = o,
-			props,
-			key, i, length;
+			props, key, i, length;
 
 		if (typeof o !== 'object' || chain == null) {
 			return o;
@@ -39,17 +38,52 @@ var Helper = {
 		return value;
 	},
 
-	templateFunction: function (arr, o) {
+	/**
+	 *	We support for now - node and attr model interpolation
+	 */
+	interpolate: function(arr, model, type, element, name) {
+		var	length = arr.length,
+			output = new Array(length),
+			even = true,
+			utility, value, index, key, i;
+
+		for (i = 0, length = arr.length; i < length; i++) {
+			if (even) {
+				output[i] = arr[i];
+			} else {
+				key = arr[i];
+				value = null;
+				index = key.indexOf(':');
+
+				if (~index) {
+					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+					if (utility === '') {
+						utility = 'condition';
+					}
+
+					key = key.substring(index + 1);
+					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, model, type, element, name) : null;
+				} else {
+					value = Helper.getProperty(model, key);
+				}
+
+				output[i] = value == null ? '' : value;
+			}
+
+			even = !even;
+		}
+		return output;
+	},
+
+	templateFunction: function(arr, o) {
 		var output = '',
 			even = true,
-			utility, value, index,
-			key, i, length;
+			utility, value, index, key, i, length;
 
 		for (i = 0, length = arr.length; i < length; i++) {
 			if (even) {
 				output += arr[i];
-			}
-			else {
+			} else {
 				key = arr[i];
 				value = null;
 				index = key.indexOf(':');
@@ -62,8 +96,7 @@ var Helper = {
 
 					key = key.substring(index + 1);
 					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, o) : null;
-				}
-				else {
+				} else {
 					value = Helper.getProperty(o, key);
 				}
 

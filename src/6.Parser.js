@@ -15,8 +15,8 @@ var Parser = {
 		}
 
 		template = null;
-		return function(o) {
-			return Helper.templateFunction(arr, o);
+		return function(model, type, element, name) {
+			return Helper.interpolate(arr, model, type, element, name);
 		};
 	},
 	parseAttributes: function(T, node) {
