@@ -55,19 +55,19 @@ var Builder = {
 					var arr = node.content(values, 'node'),
 						str = '';
 					for (j = 0, jmax = arr.length; j < jmax; j++) {
-						if (typeof arr[j] === 'string') {
-							str += arr[j];
+						if (typeof arr[j] === 'object') {
+							/* In this casee arr[j] should be any element */
+							if (str !== '') {
+								container.appendChild(document.createTextNode(arr[j]));
+								str = '';
+							}
+							container.appendChild(arr[j]);
 							continue;
 						}
 
-						if (str !== '') {
-							container.appendChild(document.createTextNode(arr[j]));
-							str = '';
-						}
-
-						container.appendChild(arr[j]);
+						str += arr[j];
 					}
-					if (str !== ''){
+					if (str !== '') {
 						container.appendChild(document.createTextNode(str));
 					}
 				} else {
@@ -88,7 +88,7 @@ var Builder = {
 					} else {
 						value = attr[key];
 					}
-					if (value){
+					if (value) {
 						tag.setAttribute(key, value);
 					}
 				}
