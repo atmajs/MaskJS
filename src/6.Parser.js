@@ -1,17 +1,39 @@
 var Parser = {
 	toFunction: function(template) {
 
-		var arr = template.split('#{'),
-			length = arr.length,
-			i;
+		var	START = '#{',
+			END = '}',
+			FIND_LENGHT = 2,
+			arr = [],
+			index = 0,
+			lastIndex = 0,
+			i = 0,
+			end = 0;
+		while((index = template.indexOf(START, index)) > -1){
 
-		for (i = 1; i < length; i++) {
-			var key = arr[i],
-				index = key.indexOf('}');
-			arr.splice(i, 0, key.substring(0, index));
+			end = template.indexOf(END, index + FIND_LENGHT);
+			if (end == -1){
+				index += FIND_LENGHT;
+				continue;
+			}
+
+			if (lastIndex < index){
+				arr[i] = template.substring(lastIndex, index);
+				i++;
+			}
+
+			if (i == 0){
+				arr[i] = '';
+				i++;
+			}
+
+			arr[i] = template.substring(index + FIND_LENGHT, end);
 			i++;
-			length++;
-			arr[i] = key.substring(index + 1);
+			lastIndex = index = end + 1;
+		}
+
+		if (lastIndex < template.length){
+			arr[i] = template.substring(lastIndex);
 		}
 
 		template = null;
