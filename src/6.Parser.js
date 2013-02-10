@@ -22,7 +22,7 @@ var Parser = {
 				i++;
 			}
 
-			if (i == 0){
+			if (index == lastIndex){
 				arr[i] = '';
 				i++;
 			}
@@ -37,8 +37,8 @@ var Parser = {
 		}
 
 		template = null;
-		return function(model, type, element, name) {
-			return Helper.interpolate(arr, model, type, element, name);
+		return function(model, type, cntx, element, name) {
+			return Helper.interpolate(arr, model, type, cntx, element, name);
 		};
 	},
 	parseAttributes: function(T, node) {

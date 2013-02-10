@@ -57,6 +57,11 @@ var cache = {},
 		getHandler: function (tagName) {
 			return tagName != null ? CustomTags.all[tagName] : CustomTags.all;
 		},
+
+
+		registerAttrHandler: function(attrName, Handler){
+			CustomAttributes[attrName] = Handler;
+		},
 		/**
 		 *	Register Utility Function. Template Example: '#{myUtil:key}'
 		 *		utility interface:
@@ -121,7 +126,7 @@ var cache = {},
 			}
 		},
 		ICustomTag: ICustomTag,
-		
+
 		/**
 		 *	API should be normalized.
 		 *
@@ -136,7 +141,7 @@ var cache = {},
 		 *		out.isCondition: function(condition, model){}
 		 */
 		ValueUtils: ValueUtilities,
-		
+
 		plugin: function(source){
 			eval(source);
 		},
@@ -144,10 +149,10 @@ var cache = {},
 			if (listeners == null){
 				listeners = {};
 			}
-			
+
 			(listeners[event] || (listeners[event] = [])).push(fn);
 		},
-		
+
 		/**
 		 *	Stub for reload.js, which will be used by includejs.autoreload
 		 */

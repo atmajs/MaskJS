@@ -12,6 +12,7 @@ module.exports = function (grunt) {
 					'src/2.Helper.js',
 					'src/3.Template.js',
 					'src/4.CustomTags.js',
+					'src/4.CustomAttributes.js',
 					'src/5.ValueUtilities.js',
 					'src/6.Parser.js',
 					'src/7.Builder.dom.js',
@@ -24,11 +25,11 @@ module.exports = function (grunt) {
 			distNode: {
 				src : [
 					'src/intro.js.txt',
-
 					'src/1.scope-vars.js',
 					'src/2.Helper.js',
 					'src/3.Template.js',
 					'src/4.CustomTags.js',
+					'src/4.CustomAttributes.js',
 					'src/5.ValueUtilities.js',
 					'src/6.Parser.js',
 					'src/7.Builder.html.js',

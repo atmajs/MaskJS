@@ -41,7 +41,7 @@ var Helper = {
 	/**
 	 *	We support for now - node and attr model interpolation
 	 */
-	interpolate: function(arr, model, type, element, name) {
+	interpolate: function(arr, model, type, cntx, element, name) {
 		var	length = arr.length,
 			output = new Array(length),
 			even = true,
@@ -62,7 +62,7 @@ var Helper = {
 					}
 
 					key = key.substring(index + 1);
-					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, model, type, element, name) : null;
+					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, model, type, cntx, element, name) : null;
 				} else {
 					value = Helper.getProperty(model, key);
 				}

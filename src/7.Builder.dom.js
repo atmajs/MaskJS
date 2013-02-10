@@ -52,13 +52,13 @@ var Builder = {
 			}
 			if (node.content != null) {
 				if (typeof node.content === 'function') {
-					var arr = node.content(values, 'node'),
+					var arr = node.content(values, 'node', cntx, container),
 						str = '';
 					for (j = 0, jmax = arr.length; j < jmax; j++) {
 						if (typeof arr[j] === 'object') {
 							/* In this casee arr[j] should be any element */
 							if (str !== '') {
-								container.appendChild(document.createTextNode(arr[j]));
+								container.appendChild(document.createTextNode(str));
 								str = '';
 							}
 							container.appendChild(arr[j]);
@@ -83,13 +83,18 @@ var Builder = {
 				if (hasOwnProp.call(attr, key) === true) {
 					var value;
 					if (typeof attr[key] === 'function') {
-						var arr = attr[key](values, 'attr', tag, key);
+						var arr = attr[key](values, 'attr', cntx, tag, key);
 						value = arr.join('');
 					} else {
 						value = attr[key];
 					}
 					if (value) {
-						tag.setAttribute(key, value);
+
+						if (CustomAttributes[key] != null){
+							CustomAttributes[key](node, values, value, tag, cntx);
+						}else{
+							tag.setAttribute(key, value);
+						}
 					}
 				}
 			}
