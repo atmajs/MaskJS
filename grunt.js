@@ -47,7 +47,7 @@ module.exports = function (grunt) {
 			},
 			formatter: {
 				src : [
-					'src/intro.js.txt',
+					'src/formatter/intro.js.txt',
 					'src/formatter/Beautify.js',
 					'src/formatter/HTMLtoMask.js',
 					'src/formatter/exports.js',

@@ -1,3 +1,5 @@
 
-global.mask.beautify = Beautify;
-global.mask.HTMLtoMask = HTMLtoMask;
+return {
+	beautify: (mask.beautify = Beautify),
+	HTMLtoMask: (mask.HTMLtoMask = HTMLtoMask)
+};
