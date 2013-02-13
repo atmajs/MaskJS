@@ -62,7 +62,7 @@ var Helper = {
 					}
 
 					key = key.substring(index + 1);
-					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, model, type, cntx, element, name) : null;
+					value = typeof ModelUtils[utility] === 'function' ? ModelUtils[utility](key, model, type, cntx, element, name) : null;
 				} else {
 					value = Helper.getProperty(model, key);
 				}
@@ -95,7 +95,7 @@ var Helper = {
 					}
 
 					key = key.substring(index + 1);
-					value = typeof ValueUtilities[utility] === 'function' ? ValueUtilities[utility](key, o) : null;
+					value = typeof ModelUtils[utility] === 'function' ? ModelUtils[utility](key, o) : null;
 				} else {
 					value = Helper.getProperty(o, key);
 				}

@@ -53,7 +53,7 @@ var CustomTags = (function () {
 	}
 
 	Visible.prototype.render = function (values, container, cntx) {
-		if (!ValueUtilities.out.isCondition(this.attr.check, values)) {
+		if (!ConditionUtil.isCondition(this.attr.check, values)) {
 			return container;
 		}
 		else {

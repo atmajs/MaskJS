@@ -1,7 +1,7 @@
 var buster = require('buster'),
 	mask = require('../lib/mask.node.js'),
-	isCondition = mask.ValueUtils.out.isCondition,
-	condition = mask.ValueUtils.condition,
+	isCondition = mask.Utils.Condition.isCondition,
+	condition = mask.Utils.Condition.condition,
 	template, node, attr;
 
 buster.testCase("Value Utils", {

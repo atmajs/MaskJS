@@ -70,7 +70,7 @@ var cache = {},
 		 *
 		 */
 		registerUtility: function (utilityName, fn) {
-			ValueUtilities[utilityName] = fn;
+			ModelUtils[utilityName] = fn;
 		},
 		/**
 		 *	@deprecated
@@ -128,6 +128,8 @@ var cache = {},
 		ICustomTag: ICustomTag,
 
 		/**
+		 *  Deprecated
+		 *
 		 *	API should be normalized.
 		 *
 		 *	Export ValueUtilities for use as Helper
@@ -140,7 +142,14 @@ var cache = {},
 		 *		'name=="A"?'
 		 *		out.isCondition: function(condition, model){}
 		 */
-		ValueUtils: ValueUtilities,
+		ValueUtils: {
+			condition: ConditionUtil.condition,
+			out: ConditionUtil
+		},
+
+		Utils: {
+			Condition: ConditionUtil
+		},
 
 		plugin: function(source){
 			eval(source);
