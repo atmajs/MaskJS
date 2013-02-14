@@ -23,7 +23,12 @@ var ConditionUtil = (function() {
 			},
 			match, expr;
 
-		buffer.index = buffer.data.indexOf('?') || buffer.data.length;
+		buffer.index = buffer.data.indexOf('?');
+
+		if (buffer.index == -1){
+			buffer.index = buffer.data.length;
+		}
+
 		expr = buffer.data.substring(0, buffer.index);
 
 		while ((match = regexpLinearCondition.exec(expr)) != null) {
