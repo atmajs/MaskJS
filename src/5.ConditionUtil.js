@@ -42,8 +42,6 @@ var ConditionUtil = (function() {
 
 		buffer.index++;
 		parseCase(buffer, cond, 'case1');
-
-		buffer.index++;
 		parseCase(buffer, cond, 'case2');
 
 		return cond;
