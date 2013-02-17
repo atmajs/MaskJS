@@ -1,6 +1,6 @@
 var
 	regexpWhitespace = /\s/g,
-	regexpLinearCondition = /([!]?['"A-Za-z0-9_\-\.]+)([!<>=]{1,2})?([^\|&]+)?([\|&]{2})?/g,
+	regexpLinearCondition = /([(]?)([!]?['"A-Za-z0-9_\-\.$]+)(([!<>=]{1,3})([^\|&()]+))?([\|&]{2})?([)]?([\|&]{2})?)/g,
 	regexpEscapedChar = {
 		"'": /\\'/g,
 		'"': /\\"/g,
