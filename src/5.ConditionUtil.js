@@ -191,7 +191,7 @@ var ConditionUtil = (function() {
 
 	}
 
-	function isCondition(assertions, values) {
+	function isCondition(assertions, model) {
 		if (typeof assertions === 'string') {
 			assertions = parseLinearCondition(assertions).assertions;
 		}
@@ -208,9 +208,9 @@ var ConditionUtil = (function() {
 			a = assertions[i];
 
 			if (a.assertions) {
-				current = isCondition(a.assertions, values);
+				current = isCondition(a.assertions, model);
 			} else {
-				value1 = typeof a.left == 'object' ? Helper.getProperty(values, a.left.value) : a.left;
+				value1 = typeof a.left == 'object' ? Helper.getProperty(model, a.left.value) : a.left;
 
 				if (a.right == null) {
 					current = !! value1;
@@ -219,7 +219,7 @@ var ConditionUtil = (function() {
 					}
 
 				} else {
-					value2 = typeof a.right == 'object' ? Helper.getProperty(values, a.right.value) : a.right;
+					value2 = typeof a.right == 'object' ? Helper.getProperty(model, a.right.value) : a.right;
 					switch (a.sign) {
 					case '<':
 						current = value1 < value2;
@@ -258,17 +258,17 @@ var ConditionUtil = (function() {
 	}
 
 	return {
-		condition: function(line, values) {
+		condition: function(line, model) {
 			var con = parseLinearCondition(line),
-				result = isCondition(con.assertions, values) ? con.case1 : con.case2;
+				result = isCondition(con.assertions, model) ? con.case1 : con.case2;
 
 			if (result == null) {
 				return '';
 			}
 			if (typeof result === 'object' && result.value) {
-				return Helper.getProperty(values, result.value);
+				return Helper.getProperty(model, result.value);
 			}
-			
+
 			return result;
 		},
 		isCondition: isCondition,
