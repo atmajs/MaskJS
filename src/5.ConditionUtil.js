@@ -1,49 +1,5 @@
 var ConditionUtil = (function() {
 
-	function getAssertionValue(value, model) {
-		var c = value.charCodeAt(0);
-		if (c === 34 /*'*/ || c === 39 /*"*/ ) {
-			return value.substring(1, value.length - 1);
-		}
-
-		if (c === 45 || (c > 47 && c < 58)) { /* [-] || [number] */
-			return value << 0;
-		}
-
-		if (c == 116 /*t*/ && value === 'true') {
-			return true;
-		}
-
-		if (c == 102 /*f*/ && value === 'false') {
-			return false;
-		}
-
-		return Helper.getProperty(model, value);
-	}
-
-	function parseDirective2(token) {
-		var c = token.charCodeAt(0);
-		if (c === 34 /*'*/ || c === 39 /*"*/ ) {
-			return token.substring(1, token.length - 1);
-		}
-
-		if (c === 45 || (c > 47 && c < 58)) { /* [-] || [number] */
-			return token - 0;
-		}
-
-		if (c == 116 /*t*/ && token === 'true') {
-			return true;
-		}
-
-		if (c == 102 /*f*/ && token === 'false') {
-			return false;
-		}
-
-		return {
-			value: token
-		};
-	}
-
 	function parseDirective(T, currentChar) {
 		var c = currentChar,
 			start = T.index,
@@ -309,10 +265,11 @@ var ConditionUtil = (function() {
 			if (result == null) {
 				return '';
 			}
-			if (typeof result === 'string') {
-				return result;
+			if (typeof result === 'object' && result.value) {
+				return Helper.getProperty(values, result.value);
 			}
-			return Helper.getProperty(values, result.value);
+			
+			return result;
 		},
 		isCondition: isCondition,
 		parse: parseLinearCondition,
