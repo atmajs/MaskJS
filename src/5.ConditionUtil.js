@@ -13,9 +13,7 @@ var ConditionUtil = (function() {
 
 		if (c === 34 /*"*/ || c === 39 /*'*/ ) {
 
-			var _a1 = T.template.charAt(T.index);
 			T.index++;
-			var _a2 = T.template.charAt(T.index);
 			token = T.sliceToChar(c === 39 ? "'" : '"');
 			T.index++;
 
@@ -102,7 +100,7 @@ var ConditionUtil = (function() {
 					console.error('Unary operation not valid');
 				}
 
-				current.join = c == 38 ? '&&' : '||';
+				current.join = c === 38 ? '&&' : '||';
 
 				output.push(current);
 				current = {};
@@ -154,43 +152,18 @@ var ConditionUtil = (function() {
 		T.length = length;
 		T.index = questionMark + 1;
 
-		ternary['case1'] = parseDirective(T);
+		ternary.case1 = parseDirective(T);
 		T.skipWhitespace();
 
 		if (T.template.charCodeAt(T.index) === 58 /*:*/ ) {
 			T.index++; // skip ':'
-			ternary['case2'] = parseDirective(T);
+			ternary.case2 = parseDirective(T);
 		}
 
 
 		return (_cache[line] = ternary);
 	}
-
-	function parseCase(T) {
-		T.skipWhitespace();
-
-		var c = T.template.charCodeAt(T.index);
-		switch (c) {
-		case 34:
-		case 39:
-			var start = T.index;
-			T.index++;
-
-			var _char = String.fromCharCode(c),
-				value = T.sliceToChar(_char);
-			T.index++;
-			return value;
-		default:
-			var start = T.index;
-			do {
-				c = T.template.charCodeAt(++T.index);
-			} while (T.index < T.length && c !== 58 /*:*/ && c !== 32 /* */ );
-
-			return T.template.substring(start, T.index);
-		}
-
-	}
-
+	
 	function isCondition(assertions, model) {
 		if (typeof assertions === 'string') {
 			assertions = parseLinearCondition(assertions).assertions;
@@ -210,7 +183,7 @@ var ConditionUtil = (function() {
 			if (a.assertions) {
 				current = isCondition(a.assertions, model);
 			} else {
-				value1 = typeof a.left == 'object' ? Helper.getProperty(model, a.left.value) : a.left;
+				value1 = typeof a.left === 'object' ? Helper.getProperty(model, a.left.value) : a.left;
 
 				if (a.right == null) {
 					current = !! value1;
@@ -219,7 +192,7 @@ var ConditionUtil = (function() {
 					}
 
 				} else {
-					value2 = typeof a.right == 'object' ? Helper.getProperty(model, a.right.value) : a.right;
+					value2 = typeof a.right === 'object' ? Helper.getProperty(model, a.right.value) : a.right;
 					switch (a.sign) {
 					case '<':
 						current = value1 < value2;

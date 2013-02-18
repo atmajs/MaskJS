@@ -83,8 +83,7 @@ var Builder = {
 				if (hasOwnProp.call(attr, key) === true) {
 					var value;
 					if (typeof attr[key] === 'function') {
-						var arr = attr[key](values, 'attr', cntx, tag, key);
-						value = arr.join('');
+						value = attr[key](values, 'attr', cntx, tag, key).join('');
 					} else {
 						value = attr[key];
 					}

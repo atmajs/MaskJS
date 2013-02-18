@@ -1,7 +1,7 @@
 var Parser = {
 	toFunction: function(template) {
 
-		var	START = '#{',
+		var START = '#{',
 			END = '}',
 			FIND_LENGHT = 2,
 			arr = [],
@@ -9,20 +9,20 @@ var Parser = {
 			lastIndex = 0,
 			i = 0,
 			end = 0;
-		while((index = template.indexOf(START, index)) > -1){
+		while ((index = template.indexOf(START, index)) > -1) {
 
 			end = template.indexOf(END, index + FIND_LENGHT);
-			if (end == -1){
+			if (end === -1) {
 				index += FIND_LENGHT;
 				continue;
 			}
 
-			if (lastIndex < index){
+			if (lastIndex < index) {
 				arr[i] = template.substring(lastIndex, index);
 				i++;
 			}
 
-			if (index == lastIndex){
+			if (index === lastIndex) {
 				arr[i] = '';
 				i++;
 			}
@@ -32,7 +32,7 @@ var Parser = {
 			lastIndex = index = end + 1;
 		}
 
-		if (lastIndex < template.length){
+		if (lastIndex < template.length) {
 			arr[i] = template.substring(lastIndex);
 		}
 
@@ -44,7 +44,7 @@ var Parser = {
 	parseAttributes: function(T, node) {
 
 		var template = T.template,
-			key, value, _classNames, quote, c, start, i;
+			key, value, _classNames, c, start;
 		if (node.attr == null) {
 			node.attr = {};
 		}
@@ -52,7 +52,7 @@ var Parser = {
 		loop: for (; T.index < T.length;) {
 			key = null;
 			value = null;
-			c = T.template.charCodeAt(T.index);
+			c = template.charCodeAt(T.index);
 			switch (c) {
 			case 32:
 				//case 9: was replaced while compiling
@@ -73,7 +73,7 @@ var Parser = {
 				start = T.index + 1;
 				T.skipToAttributeBreak();
 
-				value = T.template.substring(start, T.index);
+				value = template.substring(start, T.index);
 
 				_classNames = _classNames != null ? _classNames + ' ' + value : value;
 
@@ -84,14 +84,14 @@ var Parser = {
 
 				start = T.index + 1;
 				T.skipToAttributeBreak();
-				value = T.template.substring(start, T.index);
+				value = template.substring(start, T.index);
 
 				break;
 			default:
 				key = this.parseAttributeValue(T);
-				if (T.template.charCodeAt(T.index) !== 61 /* = */){
+				if (template.charCodeAt(T.index) !== 61 /* = */ ) {
 					value = key;
-				}else{
+				} else {
 					T.index++;
 					T.skipWhitespace();
 					value = this.parseAttributeValue(T);
@@ -123,21 +123,21 @@ var Parser = {
 	parseAttributeValue: function(T) {
 		var c = T.template.charCodeAt(T.index),
 			value;
-		if (c === 34 /* " */ || c === 39 /* ' */){
+		if (c === 34 /* " */ || c === 39 /* ' */ ) {
 			T.index++;
 			value = T.sliceToChar(c === 34 ? '"' : "'");
 			T.index++;
 			return value;
 		}
-		var start = T.index, c;
+		var start = T.index;
 
 		do {
 			c = T.template.charCodeAt(++T.index);
-		} while(c!= 61 /*=*/ && c !== 32 && c !== 123 /*{*/ && c !== 62 /*>*/ && c !== 59 /*;*/ && T.index < T.length);
+		} while (c !== 61 /*=*/ && c !== 32 && c !== 123 /*{*/ && c !== 62 /*>*/ && c !== 59 /*;*/ && T.index < T.length);
 
 		value = T.template.substring(start, T.index);
 
-		if (c === 32){
+		if (c === 32) {
 			T.skipWhitespace();
 		}
 
@@ -175,7 +175,7 @@ var Parser = {
 				} else {
 					current.nodes.push(t);
 				}
-				//-current.nodes.push(t);
+				
 
 				if (current.__single) {
 					if (current == null) {
@@ -200,7 +200,9 @@ var Parser = {
 				/** continue if semi-column, but is not a single tag (else goto 125) */
 				if (current.nodes != null) {
 					continue;
-				} /* falls through */
+				}
+
+				/* falls through */
 			case 125:
 				/* '}' */
 				if (current == null) {

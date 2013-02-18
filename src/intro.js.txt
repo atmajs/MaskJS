@@ -1,4 +1,6 @@
+
 (function (root, factory) {
+    'use strict';
 
     var doc = typeof document === 'undefined' ? null : document,
         construct = function(){
@@ -13,3 +15,4 @@
         root.mask = construct();
     }
 }(this, function (document) {
+    'use strict';
