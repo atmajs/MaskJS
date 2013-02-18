@@ -32,5 +32,5 @@
 	<small><a href='http://libjs.it/#/mask'>Documentation</a></small>
 	</p>
 <p>
-	<small>You may also want to checkout some more additional features, like <a href='http://libjs.it/#/compos/dualbind'>Two Way Data Binding Component</a></small>
+	<small>You may also want to checkout some more additional features, like <a href='https://github.com/tenbits/mask-binding'>Binding Components</a></small>
 	</p>
