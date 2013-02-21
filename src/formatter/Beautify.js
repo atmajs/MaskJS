@@ -93,8 +93,8 @@ var Beautify = (function() {
 				continue;
 			}
 			var value = node.attr[key];
-			
-			if (minimizeAttributes == false || value.test(/\s/)){
+
+			if (minimizeAttributes == false || /\s/.test(value)){
 				value = wrapString(value);
 			}
 
