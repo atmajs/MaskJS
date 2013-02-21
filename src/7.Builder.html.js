@@ -16,6 +16,9 @@ var Builder = (function () {
 					buffer: ''
 				}
 			}
+			if (cntx == null){
+				cntx = {};
+			}
 
 			var isarray = nodes instanceof Array,
 				length = isarray ? nodes.length : 1,
@@ -58,16 +61,16 @@ var Builder = (function () {
 					continue;
 				}
 				if (node.content != null) {
-					writer.buffer += typeof node.content === 'function' ? node.content(values) : node.content;
+					writer.buffer += typeof node.content === 'function' ? node.content(values).join('') : node.content;
 					continue;
 				}
 
 				writer.buffer += '<' + node.tagName;
 
 				for (var key in node.attr) {
-					var value = typeof node.attr[key] == 'function' ? node.attr[key](values) : node.attr[key];
+					var value = typeof node.attr[key] == 'function' ? node.attr[key](values).join('') : node.attr[key];
 					if (value) {
-						writer.buffer += ' ' + key + "='" + value + "'";
+						writer.buffer += ' ' + key + '="' + value.replace(/"/g,'\\"') + '"';
 					}
 				}
 				if (singleTags[node.tagName] != null) {
@@ -84,7 +87,7 @@ var Builder = (function () {
 					writer.buffer += '</' + node.tagName + '>';
 				}
 			}
-			return writer;
+			return writer.buffer;
 		}
 	};
 })();
