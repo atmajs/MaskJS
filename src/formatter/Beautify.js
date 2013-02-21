@@ -92,7 +92,11 @@ var Beautify = (function() {
 			if (key == 'id' || key == 'class') { /* the properties was not deleted as this template can be used later */
 				continue;
 			}
-			var value = minimizeAttributes && !value.test(/\s/) ? node.attr[key] : wrapString(value);
+			var value = node.attr[key];
+			
+			if (minimizeAttributes == false || value.test(/\s/)){
+				value = wrapString(value);
+			}
 
 			attr += ' ' + key + '=' + value;
 		}
