@@ -91,7 +91,7 @@ var beautify = (function() {
 		var attr = '';
 
 		for (var key in node.attr) {
-			if (hasOwnProp.call(node.attr, key)) {
+			if (hasOwnProp(node.attr, key)) {
 				if (key === 'id' || key === 'class') { /* the properties was not deleted as this template can be used later */
 					continue;
 				}
