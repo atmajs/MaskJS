@@ -1,10 +1,12 @@
-var Beautify = (function() {
+var beautify = (function() {
 
 	var minimizeAttributes;
 
 	function doindent(count) {
 		var output = '';
-		while (count--) output += ' ';
+		while (count--) {
+			output += ' ';
+		}
 		return output;
 	}
 
@@ -71,7 +73,7 @@ var Beautify = (function() {
 
 	function stringifyNodeHead(node) {
 		var tagName = node.tagName,
-			_id = node.attr['id'] || '',
+			_id = node.attr.id || '',
 			_class = node.attr['class'] || '';
 
 		if (_id) {
@@ -89,12 +91,14 @@ var Beautify = (function() {
 		var attr = '';
 
 		for (var key in node.attr) {
-			if (key == 'id' || key == 'class') { /* the properties was not deleted as this template can be used later */
-				continue;
-			}
-			var value = minimizeAttributes && !value.test(/\s/) ? node.attr[key] : wrapString(value);
+			if (hasOwnProp.call(node.attr, key)) {
+				if (key === 'id' || key === 'class') { /* the properties was not deleted as this template can be used later */
+					continue;
+				}
+				var value = minimizeAttributes && !value.test(/\s/) ? node.attr[key] : wrapString(value);
 
-			attr += ' ' + key + '=' + value;
+				attr += ' ' + key + '=' + value;
+			}
 		}
 
 		if (tagName === 'div' && (_id || _class)) {
@@ -106,11 +110,11 @@ var Beautify = (function() {
 
 
 	function isEmpty(node) {
-		return node.nodes == null || (node.nodes instanceof Array && node.nodes.length == 0);
+		return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
 	}
 
 	function isSingle(node) {
-		return node.nodes && (node.nodes instanceof Array === false || node.nodes.length == 1);
+		return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
 	}
 
 	function getSingle(node) {
@@ -121,11 +125,11 @@ var Beautify = (function() {
 	}
 
 	function wrapString(str) {
-		if (str.indexOf('"') == -1) {
+		if (str.indexOf('"') === -1) {
 			return '"' + str.trim() + '"';
 		}
 
-		if (str.indexOf("'") == -1) {
+		if (str.indexOf("'") === -1) {
 			return "'" + str.trim() + "'";
 		}
 

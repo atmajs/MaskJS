@@ -1,4 +1,6 @@
 (function (root, factory) {
+    /*jshint node:true */
+    /*global define:true */
 
     function construct(mask){
         if (mask == null){

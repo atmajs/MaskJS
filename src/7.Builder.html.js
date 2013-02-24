@@ -14,7 +14,7 @@ var Builder = (function () {
 			if (writer == null) {
 				writer = {
 					buffer: ''
-				}
+				};
 			}
 
 			var isarray = nodes instanceof Array,
@@ -28,8 +28,8 @@ var Builder = (function () {
 					/* if (!DEBUG)
 					try{
 					*/
-						var handler = CustomTags.all[node.tagName],
-							custom = handler instanceof Function ? new handler(values) : handler;
+						var Handler = CustomTags.all[node.tagName],
+							custom = Handler instanceof Function ? new Handler(values) : Handler;
 
 						custom.compoName = node.tagName;
 						custom.nodes = node.nodes;
@@ -40,7 +40,7 @@ var Builder = (function () {
 						
 						
 						if (listeners != null){
-							var fns = listeners['customCreated'];
+							var fns = listeners.customCreated;
 							if (fns != null){
 								for(j = 0; j < fns.length; j++){
 									fns[j](custom, values, container);
@@ -65,9 +65,11 @@ var Builder = (function () {
 				writer.buffer += '<' + node.tagName;
 
 				for (var key in node.attr) {
-					var value = typeof node.attr[key] == 'function' ? node.attr[key](values) : node.attr[key];
-					if (value) {
-						writer.buffer += ' ' + key + "='" + value + "'";
+					if (hasOwnProp.call(node.attr, key)) {
+						var value = typeof node.attr[key] === 'function' ? node.attr[key](values) : node.attr[key];
+						if (value) {
+							writer.buffer += ' ' + key + "='" + value + "'";
+						}
 					}
 				}
 				if (singleTags[node.tagName] != null) {

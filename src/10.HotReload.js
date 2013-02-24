@@ -29,8 +29,8 @@
 
 			if (x.remove) {
 				x.remove();
-			} else {
-				x.$ && x.$.remove();
+			} else if (x.$) {
+				x.$.remove();
 			}
 
 			mask.render({
@@ -45,7 +45,7 @@
 	mask.on('customCreated', function(custom, model, container) {
 
 		if (!custom.compoName) {
-			debugger;
+			throw "'compoName' is missing";
 		}
 
 		(_cache[custom.compoName] || (_cache[custom.compoName] = [])).push({

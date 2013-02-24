@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 
 					'src/1.scope-vars.js',
 					'src/2.Helper.js',
+					'src/3.ConditionUtil.js',
 					'src/3.Template.js',
 					'src/4.CustomTags.js',
 					'src/4.CustomAttributes.js',
@@ -32,6 +33,7 @@ module.exports = function(grunt) {
 					'src/intro.js.txt',
 					'src/1.scope-vars.js',
 					'src/2.Helper.js',
+					'src/3.ConditionUtil.js',
 					'src/3.Template.js',
 					'src/4.CustomTags.js',
 					'src/4.CustomAttributes.js',
@@ -53,7 +55,7 @@ module.exports = function(grunt) {
 			formatter: {
 				src: [
 					'src/formatter/intro.js.txt',
-					'src/formatter/Beautify.js',
+					'src/formatter/beautify.js',
 					'src/formatter/HTMLtoMask.js',
 					'src/formatter/exports.js',
 					'src/outro.js.txt'
@@ -92,7 +94,8 @@ module.exports = function(grunt) {
 				browser: true,
 
 				onevar: false,
-				passfail: true
+				passfail: true,
+				evil: true
 			},
 
 			grunt: {
@@ -106,6 +109,17 @@ module.exports = function(grunt) {
 			},
 
 			dist: {
+				options: {
+					undef: false,
+					unused: false,
+					strict: false
+				},
+				files: {
+					src: ['src/**/*.js']
+				}
+			},
+
+			lib: {
 				files: {
 					src: ['lib/mask.js']
 				}
@@ -113,8 +127,7 @@ module.exports = function(grunt) {
 
 			node: {
 				options: {
-					node: true,
-					browser: false
+					node: true
 				},
 				files: {
 					src: ['lib/mask.node.js']
@@ -128,9 +141,6 @@ module.exports = function(grunt) {
 			},
 
 			plugin: {
-				options: {
-					'eval': true
-				},
 				files: {
 					src: ['lib/plugin.reload.js']
 				}
@@ -138,13 +148,14 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			dist: {
-				files: '<%= concat.dist.src %>',
-				tasks: 'default'
+				files: 'src/**',
+				tasks: 'build'
 			}
 		}
 	});
 
-	// Default task.
-	grunt.registerTask('default', ['concat', 'uglify', 'jshint']);
+	grunt.registerTask('build', ['concat', 'uglify', 'jshint']);
 
+	// Default task.
+	grunt.registerTask('default', ['build', 'watch']);
 };
