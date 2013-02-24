@@ -34,7 +34,7 @@ var Builder = {
 
 
 				if (listeners != null) {
-					var fns = listeners['customCreated'];
+					var fns = listeners.customCreated;
 					if (fns != null) {
 						for (j = 0, jmax = fns.length; j < jmax; j++) {
 							fns[j](custom, values, container);
@@ -56,7 +56,7 @@ var Builder = {
 						str = '';
 					for (j = 0, jmax = arr.length; j < jmax; j++) {
 						if (typeof arr[j] === 'object') {
-							/* In this casee arr[j] should be any element */
+							/* In this case arr[j] should be any element */
 							if (str !== '') {
 								container.appendChild(document.createTextNode(str));
 								str = '';
@@ -80,7 +80,7 @@ var Builder = {
 			var tag = document.createElement(node.tagName),
 				attr = node.attr;
 			for (var key in attr) {
-				if (hasOwnProp.call(attr, key) === true) {
+				if (hasOwnProp(attr, key) === true) {
 					var value;
 					if (typeof attr[key] === 'function') {
 						value = attr[key](values, 'attr', cntx, tag, key).join('');

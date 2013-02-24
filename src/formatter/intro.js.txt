@@ -1,4 +1,8 @@
 (function (root, factory) {
+    /*jshint node:true */
+    /*global define:true */
+
+    'use strict';
 
     function construct(mask){
         if (mask == null){
@@ -15,4 +19,10 @@
         construct(root.mask);
     }
 }(this, function (mask) {
+    'use strict';
 
+    var
+      _hasOwnProperty = {}.hasOwnProperty,
+      hasOwnProp = function(obj, prop) {
+        return _hasOwnProperty.call(obj, prop);
+      };

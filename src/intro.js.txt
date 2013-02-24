@@ -1,5 +1,8 @@
 
 (function (root, factory) {
+    /*jshint node:true */
+    /*global define:true */
+
     'use strict';
 
     var doc = typeof document === 'undefined' ? null : document,

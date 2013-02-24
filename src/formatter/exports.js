@@ -1,5 +1,5 @@
 
 return {
-	beautify: (mask.beautify = Beautify),
+	beautify: (mask.beautify = beautify),
 	HTMLtoMask: (mask.HTMLtoMask = HTMLtoMask)
 };

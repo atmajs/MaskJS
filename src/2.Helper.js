@@ -2,14 +2,15 @@ var Helper = {
 	extend: function(target, source) {
 		var key;
 
-		if (source == null) {
-			return target;
-		}
-		if (target == null) {
+		//TODO: remove this fall through
+		// Whoever uses `extend` should pass an object
+		if (!target) {
 			target = {};
 		}
+
+		// if source == null for loop won't run
 		for (key in source) {
-			if (hasOwnProp.call(source, key)) {
+			if (hasOwnProp(source, key)) {
 				target[key] = source[key];
 			}
 		}
@@ -18,21 +19,12 @@ var Helper = {
 
 	getProperty: function(o, chain) {
 		var value = o,
-			props, key, i, length;
+			props = chain.split('.'),
+			i = -1,
+			length = props.length;
 
-		if (typeof o !== 'object' || chain == null) {
-			return o;
-		}
-		if (typeof chain === 'string') {
-			props = chain.split('.');
-		}
-
-		for (i = 0, length = props.length; i < length; i++) {
-			key = props[i];
-			value = value[key];
-			if (!value) {
-				return value;
-			}
+		while (value && ++i < length) {
+			value = value[props[i]];
 		}
 
 		return value;
@@ -56,7 +48,7 @@ var Helper = {
 				index = key.indexOf(':');
 
 				if (~index) {
-					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+					utility = index > 0 ? key.substring(0, index).replace(regexp_whitespace, '') : '';
 					if (utility === '') {
 						utility = 'condition';
 					}
@@ -89,7 +81,7 @@ var Helper = {
 				index = key.indexOf(':');
 
 				if (~index) {
-					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+					utility = index > 0 ? key.substring(0, index).replace(regexp_whitespace, '') : '';
 					if (utility === '') {
 						utility = 'condition';
 					}

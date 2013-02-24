@@ -23,14 +23,15 @@
  *
  */
 
- /** Modified to parse html to mask markup */
+/** Modified to parse html to mask markup */
 
 var HTMLtoMask = (function() {
+	/*jshint latedef:false */
 
 	// Regular Expressions for parsing tags and attributes
-	var startTag = /^<([\w:]+)((?:\s+[\w-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+	var startTag = /^<([\w:]+)((?:\s+[\w\-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
 		endTag = /^<\/([\w:]+)[^>]*>/,
-		attr = /([\w-]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+		attr = /([\w\-]+)(?:\s*=\s*(?:(?:"((?:\\"|[^"])*)")|(?:'((?:\\'|[^'])*)')|([^>\s]+)))?/g;
 
 	// Empty Elements - HTML 4.01
 	var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed");
@@ -52,7 +53,8 @@ var HTMLtoMask = (function() {
 	var special = makeMap("script,style");
 
 	var htmlParser = function(html, handler) {
-		var index, chars, match, stack = [],
+
+		var index, chars, match, text, stack = [],
 			last = html;
 		stack.last = function() {
 			return this[this.length - 1];
@@ -65,17 +67,19 @@ var HTMLtoMask = (function() {
 			if (!special[stack.last()]) {
 
 				// Comment
-				if (html.indexOf("<!--") == 0) {
+				if (html.indexOf("<!--") === 0) {
 					index = html.indexOf("-->");
 
 					if (index >= 0) {
-						if (handler.comment) handler.comment(html.substring(4, index));
+						if (handler.comment) {
+							handler.comment(html.substring(4, index));
+						}
 						html = html.substring(index + 3);
 						chars = false;
 					}
 
 					// end tag
-				} else if (html.indexOf("</") == 0) {
+				} else if (html.indexOf("</") === 0) {
 					match = html.match(endTag);
 
 					if (match) {
@@ -85,7 +89,7 @@ var HTMLtoMask = (function() {
 					}
 
 					// start tag
-				} else if (html.indexOf("<") == 0) {
+				} else if (html.indexOf("<") === 0) {
 					match = html.match(startTag);
 
 					if (match) {
@@ -98,23 +102,25 @@ var HTMLtoMask = (function() {
 				if (chars) {
 					index = html.indexOf("<");
 
-					var text = index < 0 ? html : html.substring(0, index);
+					text = index < 0 ? html : html.substring(0, index);
 					html = index < 0 ? "" : html.substring(index);
 
-					if (handler.chars) handler.chars(text);
+					if (handler.chars) {
+						handler.chars(text);
+					}
 				}
 
 			} else {
-				var match = new RegExp("<\/[\s]*" + stack.last() + "[^>]*>").exec(html);
+				match = new RegExp("<\/\\s*" + stack.last() + "[^>]*>").exec(html);
 
-				if (!match){
+				if (!match) {
 					handler.chars(html);
 					html = "";
 					break;
 				}
 
 
-				var text = html.substring(0, match.index);
+				text = html.substring(0, match.index);
 				if (text) {
 					handler.chars(text);
 				}
@@ -123,7 +129,9 @@ var HTMLtoMask = (function() {
 				handler.end(stack.pop());
 			}
 
-			if (html == last) throw "Parse Error: " + html;
+			if (html === last) {
+				throw "Parse Error: " + html;
+			}
 			last = html;
 		}
 
@@ -137,13 +145,15 @@ var HTMLtoMask = (function() {
 				}
 			}
 
-			if (closeSelf[tagName] && stack.last() == tagName) {
+			if (closeSelf[tagName] && stack.last() === tagName) {
 				parseEndTag("", tagName);
 			}
 
-			unary = empty[tagName] || !! unary;
+			unary = empty[tagName] || !!unary;
 
-			if (!unary) stack.push(tagName);
+			if (!unary) {
+				stack.push(tagName);
+			}
 
 			if (handler.start) {
 				var attrs = [];
@@ -158,23 +168,34 @@ var HTMLtoMask = (function() {
 					});
 				});
 
-				if (handler.start) handler.start(tagName, attrs, unary);
+				if (handler.start) {
+					handler.start(tagName, attrs, unary);
+				}
 			}
 		}
 
 		function parseEndTag(tag, tagName) {
+			var pos;
 			// If no tag name is provided, clean shop
-			if (!tagName) var pos = 0;
+			if (!tagName) {
+				pos = 0;
+			}
 
 			// Find the closest opened tag of the same type
-			else
-			for (var pos = stack.length - 1; pos >= 0; pos--)
-			if (stack[pos] == tagName) break;
+			else {
+				pos = stack.length - 1;
+				while (pos >= 0 && stack[pos] !== tagName) {
+					pos--;
+				}
+			}
 
 			if (pos >= 0) {
 				// Close all the open elements, up the stack
-				for (var i = stack.length - 1; i >= pos; i--)
-				if (handler.end) handler.end(stack[i]);
+				for (var i = stack.length - 1; i >= pos; i--) {
+					if (handler.end) {
+						handler.end(stack[i]);
+					}
+				}
 
 				// Remove the open elements from the stack
 				stack.length = pos;
@@ -185,8 +206,9 @@ var HTMLtoMask = (function() {
 	function makeMap(str) {
 		var obj = {},
 			items = str.split(",");
-		for (var i = 0; i < items.length; i++)
-		obj[items[i]] = true;
+		for (var i = 0; i < items.length; i++) {
+			obj[items[i]] = true;
+		}
 		return obj;
 	}
 
@@ -197,25 +219,25 @@ var HTMLtoMask = (function() {
 			start: function(tag, attrs, unary) {
 				results += tag;
 
-				for (var i = 0; i < attrs.length; i++)
-				results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
+				for (var i = 0; i < attrs.length; i++) {
+					results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
+				}
 
-				results += unary ? ";" : "{"
+				results += unary ? ";" : "{";
 			},
-			end: function(tag) {
+			end: function(/*tag*/) {
 				results += "}";
 			},
 			chars: function(text) {
 				results += '"' + text.replace(/"/g, '\\"') + '"';
 			},
-			comment: function(text) {
+			comment: function(/*text*/) {
 
 			}
 		});
 
 
-
-		return Beautify(results.replace(/"[\s]+"/g, ''));
+		return beautify(results.replace(/"[\s]+"/g, ''));
 
 	};
 

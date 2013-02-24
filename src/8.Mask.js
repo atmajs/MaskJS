@@ -24,7 +24,7 @@ var cache = {},
 		 *@return maskDOM
 		 */
 		compile: function (template, serializeOnly) {
-			if (hasOwnProp.call(cache, template)){
+			if (hasOwnProp(cache, template)){
 				/** if Object doesnt contains property that check is faster
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 				return cache[template];
@@ -32,7 +32,7 @@ var cache = {},
 
 
 			/** remove unimportant whitespaces */
-			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
+			var T = new Template(template.replace(regexp_tabsAndNL, '').replace(regexp_multipleSpaces, ' '));
 			if (serializeOnly === true) {
 				T.serialize = true;
 			}
@@ -101,7 +101,7 @@ var cache = {},
 			if (serialized.attr != null) {
 				attr = serialized.attr;
 				for (key in attr) {
-					if (hasOwnProp.call(attr, key) === true){
+					if (hasOwnProp(attr, key) === true){
 						if (attr[key].template == null) {
 							continue;
 						}
