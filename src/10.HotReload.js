@@ -1,4 +1,7 @@
 (function() {
+	/*global console:true, mask:true */
+
+	"use strict";
 
 	var _cache = {};
 
@@ -42,7 +45,7 @@
 	}
 
 
-	mask.on('customCreated', function(custom, model, container) {
+	mask.on('customCreated', function(custom, model) {
 
 		if (!custom.compoName) {
 			throw "'compoName' is missing";

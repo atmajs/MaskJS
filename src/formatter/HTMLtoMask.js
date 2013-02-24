@@ -225,13 +225,13 @@ var HTMLtoMask = (function() {
 
 				results += unary ? ";" : "{";
 			},
-			end: function(tag) {
+			end: function(/*tag*/) {
 				results += "}";
 			},
 			chars: function(text) {
 				results += '"' + text.replace(/"/g, '\\"') + '"';
 			},
-			comment: function(text) {
+			comment: function(/*text*/) {
 
 			}
 		});

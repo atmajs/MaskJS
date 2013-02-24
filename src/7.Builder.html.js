@@ -43,7 +43,7 @@ var Builder = (function () {
 							var fns = listeners.customCreated;
 							if (fns != null){
 								for(var j = 0; j < fns.length; j++){
-									fns[j](custom, values, container);
+									fns[j](custom, values);
 								}
 							}
 						}

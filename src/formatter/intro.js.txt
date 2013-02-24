@@ -2,6 +2,8 @@
     /*jshint node:true */
     /*global define:true */
 
+    'use strict';
+
     function construct(mask){
         if (mask == null){
             throw 'MaskJS Core is not Loaded';
@@ -17,4 +19,6 @@
         construct(root.mask);
     }
 }(this, function (mask) {
+    'use strict';
 
+    var hasOwnProp = {}.hasOwnProperty;
