@@ -11,6 +11,10 @@ var
 	regexp_tabsAndNL = /[\t\n\r]+/g,
 	regexp_multipleSpaces = / {2,}/g,
 
-	hasOwnProp = {}.hasOwnProperty,
+	_hasOwnProperty = {}.hasOwnProperty,
+	hasOwnProp = function(obj, prop) {
+		return _hasOwnProperty.call(obj, prop);
+	},
+
 // TODO: remove listeners from here
 	listeners = null;

@@ -10,7 +10,7 @@ var Helper = {
 
 		// if source == null for loop won't run
 		for (key in source) {
-			if (hasOwnProp.call(source, key)) {
+			if (hasOwnProp(source, key)) {
 				target[key] = source[key];
 			}
 		}

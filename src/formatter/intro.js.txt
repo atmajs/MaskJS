@@ -21,4 +21,8 @@
 }(this, function (mask) {
     'use strict';
 
-    var hasOwnProp = {}.hasOwnProperty;
+    var
+      _hasOwnProperty = {}.hasOwnProperty,
+      hasOwnProp = function(obj, prop) {
+        return _hasOwnProperty.call(obj, prop);
+      };

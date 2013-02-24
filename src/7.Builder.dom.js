@@ -80,7 +80,7 @@ var Builder = {
 			var tag = document.createElement(node.tagName),
 				attr = node.attr;
 			for (var key in attr) {
-				if (hasOwnProp.call(attr, key) === true) {
+				if (hasOwnProp(attr, key) === true) {
 					var value;
 					if (typeof attr[key] === 'function') {
 						value = attr[key](values, 'attr', cntx, tag, key).join('');

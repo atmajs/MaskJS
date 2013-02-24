@@ -65,7 +65,7 @@ var Builder = (function () {
 				writer.buffer += '<' + node.tagName;
 
 				for (var key in node.attr) {
-					if (hasOwnProp.call(node.attr, key)) {
+					if (hasOwnProp(node.attr, key)) {
 						var value = typeof node.attr[key] === 'function' ? node.attr[key](values) : node.attr[key];
 						if (value) {
 							writer.buffer += ' ' + key + "='" + value + "'";
