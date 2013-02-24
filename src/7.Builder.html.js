@@ -42,7 +42,7 @@ var Builder = (function () {
 						if (listeners != null){
 							var fns = listeners.customCreated;
 							if (fns != null){
-								for(j = 0; j < fns.length; j++){
+								for(var j = 0; j < fns.length; j++){
 									fns[j](custom, values, container);
 								}
 							}
