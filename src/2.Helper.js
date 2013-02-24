@@ -56,7 +56,7 @@ var Helper = {
 				index = key.indexOf(':');
 
 				if (~index) {
-					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+					utility = index > 0 ? key.substring(0, index).replace(regexp_whitespace, '') : '';
 					if (utility === '') {
 						utility = 'condition';
 					}
@@ -89,7 +89,7 @@ var Helper = {
 				index = key.indexOf(':');
 
 				if (~index) {
-					utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+					utility = index > 0 ? key.substring(0, index).replace(regexp_whitespace, '') : '';
 					if (utility === '') {
 						utility = 'condition';
 					}

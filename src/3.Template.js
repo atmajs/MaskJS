@@ -121,7 +121,7 @@ Template.prototype = {
 
 		this.index = index;
 
-		return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
+		return isEscaped ? value.replace(regexp_escapedChar[c], c) : value;
 
 		//-return this.skipToChar(c).template.substring(start, this.index);
 	}

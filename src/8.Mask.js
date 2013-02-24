@@ -32,7 +32,7 @@ var cache = {},
 
 
 			/** remove unimportant whitespaces */
-			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
+			var T = new Template(template.replace(regexp_tabsAndNL, '').replace(regexp_multipleSpaces, ' '));
 			if (serializeOnly === true) {
 				T.serialize = true;
 			}
