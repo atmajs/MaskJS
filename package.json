@@ -3,14 +3,15 @@
 	"description": "JavaScript Template/Markup Engine",
 	"version": "0.5.1",
 	"homepage": "http://tenbits.github.com/LibJS/",
-	"contributors":[
+	"author": "Alexander Kit <source.kit@gmail.com>",
+	"contributors": [
 		{
 			"name": "Kiryl Yermakou",
 			"email": "rma4ok@gmail.com"
 		}
 	],
 	"main": "./lib/mask.node.js",
-	"author": "Alexander Kit <source.kit@gmail.com>",
+
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tenbits/MaskJS.git"
@@ -21,16 +22,26 @@
 	"licenses": [
 		"MIT"
 	],
+
+	"keywords": [],
+	"engines": {
+		"node": ">= 0.8.0"
+	},
+
+	"scripts": {
+		"test": "node_modules/.bin/buster-test -r specification"
+	},
+
 	"dependencies": {},
 	"devDependencies": {
+		"grunt": "~0.4.0",
+
+		"grunt-contrib-concat": "~0.1.3",
+		"grunt-contrib-jshint": "~0.1.1",
+		"grunt-contrib-uglify": "~0.1.1",
+		"grunt-contrib-watch": "~0.2.0",
+
 		"includejs": "~0.6.8",
 		"buster": "~0.6.3"
-	},
-	"scripts" : {
-        "test" : "node_modules/.bin/buster-test -r specification"
-    },
-	"keywords": [],
-	"engines" : {
-        "node" : "~0.8.9"
-    }
+	}
 }
