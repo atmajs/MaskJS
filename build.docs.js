@@ -1,5 +1,5 @@
 /**
- *	require apiviewer in npm global
+ *	requires git:tenbits/docleaf in npm globals
  **/
 
 global.config = {
@@ -10,13 +10,10 @@ global.config = {
 include.exports = {
 	process: function(config, done){
 
-		var apiviewer = require('docleaf'),
+		var docleaf = require('docleaf'),
 			output = '/docs/mask.html';
 
-		console.log('--------------', apiviewer);
-
-
-		apiviewer.process([{
+		docleaf.process([{
 	        name: 'Mask',
 	        path: 'src/8.Mask.js',
 	        lib: 'mask.js'
