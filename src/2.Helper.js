@@ -1,14 +1,10 @@
 var Helper = {
 	extend: function(target, source) {
-		var key;
 
-		if (source == null) {
-			return target;
-		}
 		if (target == null) {
 			target = {};
 		}
-		for (key in source) {
+		for (var key in source) {
 			if (hasOwnProp.call(source, key)) {
 				target[key] = source[key];
 			}
@@ -18,21 +14,12 @@ var Helper = {
 
 	getProperty: function(o, chain) {
 		var value = o,
-			props, key, i, length;
+			props = chain.split('.'),
+			i = -1,
+			length = props.length;
 
-		if (typeof o !== 'object' || chain == null) {
-			return o;
-		}
-		if (typeof chain === 'string') {
-			props = chain.split('.');
-		}
-
-		for (i = 0, length = props.length; i < length; i++) {
-			key = props[i];
-			value = value[key];
-			if (!value) {
-				return value;
-			}
+		while(value != null && ++i < length){
+			value = value[props[i]]
 		}
 
 		return value;
