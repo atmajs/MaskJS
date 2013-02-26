@@ -1,11 +1,13 @@
-var Beautify = (function() {
+var beautify = (function() {
 
 	var _minimizeAttributes,
 		_indent;
 
 	function doindent(count) {
 		var output = '';
-		while (count--) output += ' ';
+		while (count--) {
+			output += ' ';
+		}
 		return output;
 	}
 
@@ -150,7 +152,7 @@ var Beautify = (function() {
 			_indent = settings && settings.indent || 4;
 			_minimizeAttributes = _indent === 0 || settings && settings.minimizeAttributes;
 		}
-		
+
 
 		return run(input);
 	};
