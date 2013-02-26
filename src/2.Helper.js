@@ -19,7 +19,7 @@ var Helper = {
 			length = props.length;
 
 		while(value != null && ++i < length){
-			value = value[props[i]]
+			value = value[props[i]];
 		}
 
 		return value;

@@ -1,4 +1,6 @@
+
 (function (root, factory) {
+    'use strict';
 
     function construct(mask){
         if (mask == null){
@@ -15,4 +17,3 @@
         construct(root.mask);
     }
 }(this, function (mask) {
-

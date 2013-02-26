@@ -159,7 +159,7 @@ global.config = {
 
 	watch: {
 		action: 'watch',
-		files: 'src/**.js',
+		files: 'src/**',
 		config: config
 	},
 
