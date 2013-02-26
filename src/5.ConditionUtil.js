@@ -1,3 +1,10 @@
+
+/**
+ *	ConditionUtil
+ *
+ *	Helper to work with conditional expressions
+ **/
+
 var ConditionUtil = (function() {
 
 	function parseDirective(T, currentChar) {
@@ -163,7 +170,7 @@ var ConditionUtil = (function() {
 
 		return (_cache[line] = ternary);
 	}
-	
+
 	function isCondition(assertions, model) {
 		if (typeof assertions === 'string') {
 			assertions = parseLinearCondition(assertions).assertions;
@@ -231,6 +238,19 @@ var ConditionUtil = (function() {
 	}
 
 	return {
+		/**
+		 *	condition(ternary[, model]) -> result
+		 *	- ternary (String)
+		 *	- model (Object): Data Model
+		 *
+		 *	Ternary Operator is evaluated via ast parsing.
+		 *	All this expressions are valid:
+		 *		('name=="me"',{name: 'me'}) -> true
+		 *		('name=="me"?"yes"',{name: 'me'}) -> "yes"
+		 *		('name=="me"? surname',{name: 'me', surname: 'you'}) -> 'you'
+		 *		('name=="me" ? surname : "none"',{}) -> 'none'
+		 *
+		 **/
 		condition: function(line, model) {
 			var con = parseLinearCondition(line),
 				result = isCondition(con.assertions, model) ? con.case1 : con.case2;
@@ -244,10 +264,24 @@ var ConditionUtil = (function() {
 
 			return result;
 		},
+		/**
+		 *	isCondition(condition, model) -> Boolean
+		 * - condition (String)
+		 * - model (Object)
+		 *
+		 *	Evaluate condition via ast parsing using specified model data
+		 **/
 		isCondition: isCondition,
+
+		/**
+		 *	parse(condition) -> Object
+		 * - condition (String)
+		 * 
+		 *	Parse condition to an AstTree.
+		 **/
 		parse: parseLinearCondition,
 
-		/** deprecated - moved to parent */
+		/* deprecated - moved to parent */
 		out: {
 			isCondition: isCondition,
 			parse: parseLinearCondition

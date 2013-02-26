@@ -1,37 +1,42 @@
+
+/** 
+ *  mask
+ *
+ **/
+
 var cache = {},
 	Mask = {
 
 		/**
-		 * @arg template - {template{string} | maskDOM{array}}
-		 * @arg model - template values
-		 * @arg container - optional, - place to renderDOM, @default - DocumentFragment
-		 * @return container {@default DocumentFragment}
-		 */
+		 *	mask.render(template[, model, container = DocumentFragment, cntx]) -> container
+		 * - template (String | MaskDOM): Mask String or Mask DOM Json template to render from.
+		 * - model (Object): template values
+		 * - container (IAppendChild): objet with implemented appendChild methd
+		 * - cntx (Object): this object will store custom components tree
+		 *
+		 * Create new Document Fragment from template or append rendered template to container
+		 **/
 		render: function (template, model, container, cntx) {
-			//////try {
 			if (typeof template === 'string') {
 				template = this.compile(template);
 			}
 			return Builder.build(template, model, container, cntx);
-			//////} catch (e) {
-			//////	console.error('maskJS', e.message, template);
-			//////}
-			//////return null;
 		},
 		/**
-		 *@arg template - string to be parsed into maskDOM
-		 *@arg serializeDOM - build raw maskDOM json, without template functions - used for storing compiled template
-		 *@return maskDOM
-		 */
+		 *	mask.compile(template) -> MaskDOM
+		 * - template (String): string to be parsed into MaskDOM
+		 *
+		 * 	Create MaskDOM from Mask markup
+		 **/
 		compile: function (template, serializeOnly) {
 			if (hasOwnProp.call(cache, template)){
-				/** if Object doesnt contains property that check is faster
-					then "!=null" http://jsperf.com/not-in-vs-null/2 */
+				/* if Object doesnt contains property that check is faster
+				then "!=null" http://jsperf.com/not-in-vs-null/2 */
 				return cache[template];
 			}
 
 
-			/** remove unimportant whitespaces */
+			/* remove unimportant whitespaces */
 			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
 			if (serializeOnly === true) {
 				T.serialize = true;
@@ -40,20 +45,31 @@ var cache = {},
 			return (cache[template] = Parser.parse(T));
 		},
 		/**
-		 *	Define Custom Tag Handler
-		 *		render interface:
-		 *		<b>function render(model, container, cntx){ this.nodes; this.attr; }</b>
-		 *	@tagName - {String} - Tag Name
-		 *	@TagHandler -
-		 *			{Function} - Handler Class with render() function in prototype
-		 *			{Object} - with render() function property
-		 */
+		 * 	mask.registerHandler(tagName, tagHandler) -> Void
+		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
+		 * - tagHandler (Function|Object):
+		 *
+		 *	When Mask.Builder matches the tag binded to this tagHandler, it -
+		 *	creates instances of the class(in case of Function) or uses specified object.
+		 *	Shallow copies -
+		 *		.nodes(MaskDOM) - Template Object of this node
+		 *		.attr(Object) - Attributes of this node
+		 *	And calls
+		 *		.render(model, container, cntx)
+		 *
+		 *	Custom Handler now can handle rendering of underlined nodes.
+		 *	The most simple example to continue rendering is:
+		 *	mask.render(this.nodes, model, container, cntx);
+		 **/
 		registerHandler: function (tagName, TagHandler) {
 			CustomTags.all[tagName] = TagHandler;
 		},
 		/**
-		 *	@return registered Custom Tag Handler
-		 */
+		 *	mask.getHandler(tagName) -> Function | Object
+		 * - tagName (String):
+		 *
+		 *	Get Registered Handler
+		 **/
 		getHandler: function (tagName) {
 			return tagName != null ? CustomTags.all[tagName] : CustomTags.all;
 		},
@@ -63,24 +79,29 @@ var cache = {},
 			CustomAttributes[attrName] = Handler;
 		},
 		/**
+		 *	mask.registerUtility(utilName, fn) -> void
+		 * - utilName (String): name of the utility
+		 * - fn (Function): util handler
+		 *
 		 *	Register Utility Function. Template Example: '#{myUtil:key}'
 		 *		utility interface:
-		 *		<b>function(key, model){}</b>
-		 *		@return returns value to insert into template;
+		 *		<b>function(key, model, type, cntx, element, name){}</b>
 		 *
-		 */
+		 **/
 		registerUtility: function (utilityName, fn) {
 			ModelUtils[utilityName] = fn;
 		},
-		/**
-		 *	@deprecated
-		 *	Serialize Mask Template into JSON presentation.
+		/** deprecated
+		 *	mask.serialize(template) -> void
+		 * - template (String | MaskDOM): render
+		 *
+		 *	Build raw MaskDOM json, without template functions - used for storing compiled templates
 		 *
 		 *	It seems that serialization/deserialization make no performace
 		 *	improvements, as mask.compile is fast enough.
 		 *
 		 *	@TODO Should this be really removed?
-		 */
+		 **/
 		serialize: function (template) {
 			return Parser.cleanObject(this.compile(template, true));
 		},
@@ -115,9 +136,12 @@ var cache = {},
 			return serialized;
 		},
 		/**
+		 * mask.clearCache([key]) -> void
+		 * - key (String): template to remove from cache
+		 *
 		 *	Mask Caches all templates, so this function removes
 		 *	one or all templates from cache
-		 */
+		 **/
 		clearCache: function(key){
 			if (typeof key === 'string'){
 				delete cache[key];
@@ -127,27 +151,22 @@ var cache = {},
 		},
 		ICustomTag: ICustomTag,
 
-		/**
-		 *  Deprecated
+		/** deprecated
+		 *	mask.ValueUtils -> Object
 		 *
-		 *	API should be normalized.
-		 *
-		 *	Export ValueUtilities for use as Helper
-		 *
-		 *	Helper Functions are:
-		 *
-		 *		'name=="A"?"Is A":"Is not A"'
-		 *		condition: function(inlineCondition, model){}
-		 *
-		 *		'name=="A"?'
-		 *		out.isCondition: function(condition, model){}
-		 */
+		 *	see Utils.Condition Object instead
+		 **/
 		ValueUtils: {
 			condition: ConditionUtil.condition,
 			out: ConditionUtil
 		},
 
 		Utils: {
+			/**
+			 * mask.Utils.Condition -> ConditionUtil
+			 *
+			 * [[ConditionUtil]]
+			 **/
 			Condition: ConditionUtil
 		},
 
@@ -162,12 +181,17 @@ var cache = {},
 			(listeners[event] || (listeners[event] = [])).push(fn);
 		},
 
-		/**
+		/*
 		 *	Stub for reload.js, which will be used by includejs.autoreload
 		 */
 		delegateReload: function(){}
 	};
 
 
-/** Obsolete - to keep backwards compatiable */
+/**	deprecated
+ *	mask.renderDom(template[, model, container, cntx]) -> container
+ *
+ * Use [[mask.render]] instead
+ * (to keep backwards compatiable)
+ **/
 Mask.renderDom = Mask.render;

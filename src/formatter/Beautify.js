@@ -1,6 +1,7 @@
 var Beautify = (function() {
 
-	var minimizeAttributes;
+	var _minimizeAttributes,
+		_indent;
 
 	function doindent(count) {
 		var output = '';
@@ -41,7 +42,7 @@ var Beautify = (function() {
 		}
 
 		if (outer) {
-			return output.join('\n');
+			return output.join(_indent === 0 ? '' : '\n');
 		}
 
 	}
@@ -59,12 +60,12 @@ var Beautify = (function() {
 
 		if (isSingle(node)) {
 			output.push(stringifyNodeHead(node) + ' > ');
-			run(getSingle(node), 4, output);
+			run(getSingle(node), _indent, output);
 			return;
 		}
 
 		output.push(stringifyNodeHead(node) + '{');
-		run(node.nodes, 4, output);
+		run(node.nodes, _indent, output);
 		output.push('}');
 		return;
 	}
@@ -94,7 +95,7 @@ var Beautify = (function() {
 			}
 			var value = node.attr[key];
 
-			if (minimizeAttributes == false || /\s/.test(value)){
+			if (_minimizeAttributes == false || /\s/.test(value)){
 				value = wrapString(value);
 			}
 
@@ -141,7 +142,15 @@ var Beautify = (function() {
 			input = mask.compile(input);
 		}
 
-		minimizeAttributes = settings && settings.minimizeAttributes;
+
+		if (typeof settings === 'number'){
+			_indent = settings;
+			_minimizeAttributes = _indent === 0;
+		}else{
+			_indent = settings && settings.indent || 4;
+			_minimizeAttributes = _indent === 0 || settings && settings.minimizeAttributes;
+		}
+		
 
 		return run(input);
 	};

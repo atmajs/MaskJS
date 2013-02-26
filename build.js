@@ -1,3 +1,9 @@
+/**
+ *	IncludeJSBuild
+ *
+ *	``` $ includejs build.js ```
+ **/
+
 var JSHint = {
 	options: {
 		curly   : true,
@@ -32,6 +38,12 @@ var JSHint = {
 };
 
 var builds = {
+	/**
+	 *	mask
+	 *
+	 *	```/lib/mask.js```
+	 *	Mask with DOM Based Builder
+	 **/
 	'mask': [
 		'src/intro.js.txt',
 		'src/1.scope-vars.js',
@@ -47,6 +59,12 @@ var builds = {
 		'src/9.export.js',
 		'src/outro.js.txt'
 	],
+	/**
+	 *	mask.node
+	 *
+	 *	```/lib/mask.node.js```
+	 *	Mask with HTML Builder
+	 **/
 	'mask.node': [
 		'src/intro.js.txt',
 		'src/1.scope-vars.js',
@@ -62,9 +80,26 @@ var builds = {
 		'src/9.export.js',
 		'src/outro.js.txt'
 	],
+	/**
+	 *	plugin.reload
+	 *
+	 *	```/lib/plugin.reload.js```
+	 *	Reload plugin to use in includejs environment.
+	 *	Each component will be reinitialized on file-change
+	 **/
 	'plugin.reload': [
 		'src/10.HotReload.js'
 	],
+	/**
+	 *	formatter
+	 *
+	 *	```/lib/formatter.js```
+	 *	[[Formatter]] for Mask to
+	 *
+	 * + convert HTML to Mask
+	 * + stringify [[MaskDOM]]
+	 * + beautify Mask Markup
+	 **/
 	'formatter': [
 		'src/formatter/intro.js.txt',
 		'src/formatter/Beautify.js',
@@ -104,4 +139,30 @@ config.push({
 	files: 'lib/mask.js'
 });
 
-global.config = config;
+global.config = {
+	build: config,
+	
+	docs: {
+		action: 'custom',
+		script: 'build.docs.js'
+	},
+
+	handlers: {
+		action: 'copy',
+		files: {
+			'../compos/sys/lib/sys.js': 'lib/handlers/sys.js',
+			'../compos/layout/lib/layout.js': 'lib/handlers/layout.js',
+			'../compos/utils/lib/utils.js': 'lib/handlers/utils.js',
+			'../mask.binding/lib/mask.binding.js': 'lib/handlers/mask.binding.js'
+		}
+	},
+
+	watch: {
+		action: 'watch',
+		files: 'src/**.js',
+		config: config
+	},
+
+	defaults: ['build'],
+};
+

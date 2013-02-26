@@ -11,3 +11,4 @@ var regexpWhitespace = /\s/g,
 	regexpMultipleSpaces = / {2,}/g,
 	hasOwnProp = {}.hasOwnProperty,
 	listeners = null;
+
