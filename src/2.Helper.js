@@ -13,6 +13,10 @@ var Helper = {
 	},
 
 	getProperty: function(o, chain) {
+		if (chain === '.'){
+			return o;
+		}
+
 		var value = o,
 			props = chain.split('.'),
 			i = -1,

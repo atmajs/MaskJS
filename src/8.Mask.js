@@ -1,5 +1,5 @@
 
-/** 
+/**
  *  mask
  *
  **/
@@ -167,7 +167,18 @@ var cache = {},
 			 *
 			 * [[ConditionUtil]]
 			 **/
-			Condition: ConditionUtil
+			Condition: ConditionUtil,
+
+			/**
+			 *	mask.Util.getProperty(model, path) -> value
+			 *	- model (Object | ...)
+			 *	- path (String): Property or dot chainable path to retrieve the value
+			 *	if path is '.' returns model itself
+			 *	```javascript
+			 *	mask.render('span > #{.}', 'Some string') // -> '<span>Some string</span>
+			 *	```
+			 **/
+			getProperty: Helper.getProperty
 		},
 
 		plugin: function(source){
