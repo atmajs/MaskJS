@@ -1,68 +1,68 @@
-var Builder = {
-	build: function(node, model, container, cntx) {
-		if (node == null) {
-			return container;
-		}
-
-		if (container == null) {
-			container = document.createDocumentFragment();
-		}
-		if (cntx == null) {
-			cntx = {
-				components: null
-			};
-		}
-
-
-		var parent = null,
-			element = container,
-			stack = [node],
-			stackIndex = 0;
-
-		while (node != null) {
-			element = createNode(node, model, element, cntx);
-
-			if (node.currentNode) {
-				console.warn('this node is already visited', node);
-			}
-
-
-			node.currentNode = node.firstChild;
-
-			if (node.currentNode != null) {
-				parent = node;
-				node = node.currentNode;
-
-				parent.currentNode = node.nextNode;
-				stack[++stackIndex] = element
-
-			} else {
-
-
-				while (parent != null) {
-					if (parent.currentNode != null) {
-						node = parent.currentNode;
-						parent.currentNode = parent.currentNode.nextNode;
-						break;
-					}
-					stackIndex--;
-					node.currentNode = null;
-
-					node = parent = parent.parent;
-				}
-
-				element = stack[stackIndex];
-			}
-		}
-
+function builder_build(node, model, container, cntx) {
+	if (node == null) {
 		return container;
 	}
-};
+
+	if (container == null) {
+		container = document.createDocumentFragment();
+	}
+
+	if (cntx == null) {
+		cntx = {
+			components: null
+		};
+	}
+
+
+	var parent = null,
+		element = container,
+		stack = [node],
+		stackIndex = 0;
+
+	while (node != null) {
+		element = createNode(node, model, element, cntx);
+
+		if (node.currentNode) {
+			console.warn('this node is already visited', node);
+		}
+
+
+		node.currentNode = node.firstChild;
+
+		if (node.currentNode != null) {
+			parent = node;
+			node = node.currentNode;
+
+			parent.currentNode = node.nextNode;
+			stack[++stackIndex] = element
+
+		} else {
+
+
+			while (parent != null) {
+				if (parent.currentNode != null) {
+					node = parent.currentNode;
+					parent.currentNode = parent.currentNode.nextNode;
+					break;
+				}
+				stackIndex--;
+				node.currentNode = null;
+
+				node = parent = parent.parent;
+			}
+
+			element = stack[stackIndex];
+		}
+	}
+
+	return container;
+}
+
 
 
 function createNode(node, model, container, cntx) {
 
-	var j, jmax;
+	var j, jmax, x;
 
 	if (CustomTags.all[node.tagName] != null) {
 /* if (!DEBUG)
@@ -100,30 +100,32 @@ function createNode(node, model, container, cntx) {
 	}
 
 	if (node.content != null) {
-		if (typeof node.content === 'function') {
-			var arr = node.content(model, 'node', cntx, container),
-				str = '';
-
-			j = 0;
-			jmax = arr.length;
-
-			for (; j < jmax; j++) {
-				if (typeof arr[j] === 'object') { /* In this casee arr[j] should be any element */
-					if (str !== '') {
-						container.appendChild(document.createTextNode(str));
-						str = '';
-					}
-					container.appendChild(arr[j]);
-					continue;
-				}
-
-				str += arr[j];
-			}
-			if (str !== '') {
-				container.appendChild(document.createTextNode(str));
-			}
-		} else {
+		if (typeof node.content !== 'function') {
 			container.appendChild(document.createTextNode(node.content));
+			return null;
+		}
+
+		var arr = node.content(model, 'node', cntx, container),
+			text = '';
+
+		for (j = 0, jmax = arr.length; j < jmax; j++) {
+			x = arr[j];
+
+			if (typeof x === 'string') {
+				text += x;
+				continue;
+			}
+
+			// In this casee arr[j] should be any HTMLElement
+			if (text !== '') {
+				container.appendChild(document.createTextNode(text));
+				text = '';
+			}
+
+			container.appendChild(x);
+		}
+		if (text !== '') {
+			container.appendChild(document.createTextNode(text));
 		}
 
 		return null;
@@ -131,8 +133,7 @@ function createNode(node, model, container, cntx) {
 
 	var tag = document.createElement(node.tagName),
 		attr = node.attr,
-		key,
-		value;
+		key, value;
 
 	for (key in attr) {
 
@@ -146,8 +147,8 @@ function createNode(node, model, container, cntx) {
 			value = attr[key];
 		}
 
+		// null or empty string will not be handled
 		if (value) {
-			// null or empty string will not be handled
 			if (hasOwnProp.call(CustomAttributes, key) === true) {
 				CustomAttributes[key](node, model, value, tag, cntx);
 			} else {

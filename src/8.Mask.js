@@ -20,7 +20,7 @@ var cache = {},
 			if (typeof template === 'string') {
 				template = this.compile(template);
 			}
-			return Builder.build(template, model, container, cntx);
+			return builder_build(template, model, container, cntx);
 		},
 		/**
 		 *	mask.compile(template) -> MaskDOM

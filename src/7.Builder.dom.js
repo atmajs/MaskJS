@@ -1,108 +1,113 @@
-var Builder = {
-	build: function(nodes, values, container, cntx) {
-		if (nodes == null) {
-			return container;
+function builder_build(node, model, container, cntx) {
+	if (node == null) {
+		return container;
+	}
+
+	if (container == null) {
+		container = document.createDocumentFragment();
+	}
+	if (cntx == null) {
+		cntx = {};
+	}
+
+	do {
+		var element = createNode(node, model, container, cntx);
+
+		if (node.firstChild != null) {
+			this.build(node.firstChild, model, element, cntx);
 		}
 
-		if (container == null) {
-			container = document.createDocumentFragment();
-		}
-		if (cntx == null) {
-			cntx = {};
-		}
+	} while ((node = node.nextNode) != null);
 
-		var isarray = nodes instanceof Array,
-			length = isarray === true ? nodes.length : 1,
-			i, node, j, jmax;
+	return container;
+}
 
-		for (i = 0; i < length; i++) {
-			node = isarray === true ? nodes[i] : nodes;
 
-			if (CustomTags.all[node.tagName] != null) {
+function createNode(node, model, container, cntx) {
+
+	var j, jmax;
+
+	if (CustomTags.all[node.tagName] != null) {
 /* if (!DEBUG)
 				try {
 				*/
-				var Handler = CustomTags.all[node.tagName],
-					custom = Handler instanceof Function ? new Handler(values) : Handler;
+		var Handler = CustomTags.all[node.tagName],
+			custom = Handler instanceof Function ? new Handler(model) : Handler;
 
-				custom.compoName = node.tagName;
-				custom.nodes = node.nodes; /*	creating new attr object for custom handler, preventing collisions due to template caching */
-				custom.attr = util_extend(custom.attr, node.attr);
+		custom.compoName = node.tagName;
+		custom.nodes = node.nodes; /*	creating new attr object for custom handler, preventing collisions due to template caching */
+		custom.attr = util_extend(custom.attr, node.attr);
 
-				(cntx.components || (cntx.components = [])).push(custom);
-				custom.parent = cntx;
+		(cntx.components || (cntx.components = [])).push(custom);
+		custom.parent = cntx;
 
 
-				if (listeners != null) {
-					var fns = listeners['customCreated'];
-					if (fns != null) {
-						for (j = 0, jmax = fns.length; j < jmax; j++) {
-							fns[j](custom, values, container);
-						}
-					}
+		if (listeners != null) {
+			var fns = listeners['customCreated'];
+			if (fns != null) {
+				for (j = 0, jmax = fns.length; j < jmax; j++) {
+					fns[j](custom, model, container);
 				}
+			}
+		}
 
-				custom.render(values, container, custom);
+		custom.render(model, container, custom);
 /* if (!DEBUG)
 				}catch(error){
 					console.error('Custom Tag Handler:', node.tagName, error.toString());
 				}
 				*/
-				continue;
-			}
-			if (node.content != null) {
-				if (typeof node.content === 'function') {
-					var arr = node.content(values, 'node', cntx, container),
-						str = '';
-					for (j = 0, jmax = arr.length; j < jmax; j++) {
-						if (typeof arr[j] === 'object') {
-							/* In this casee arr[j] should be any element */
-							if (str !== '') {
-								container.appendChild(document.createTextNode(str));
-								str = '';
-							}
-							container.appendChild(arr[j]);
-							continue;
-						}
-
-						str += arr[j];
-					}
+		return null;
+	}
+	if (node.content != null) {
+		if (typeof node.content === 'function') {
+			var arr = node.content(model, 'node', cntx, container),
+				str = '';
+			for (j = 0, jmax = arr.length; j < jmax; j++) {
+				if (typeof arr[j] === 'object') {
+					// In this casee arr[j] should be HTMLElement
 					if (str !== '') {
 						container.appendChild(document.createTextNode(str));
+						str = '';
 					}
-				} else {
-					container.appendChild(document.createTextNode(node.content));
+					container.appendChild(arr[j]);
+					continue;
 				}
 
-				continue;
+				str += arr[j];
 			}
-
-			var tag = document.createElement(node.tagName),
-				attr = node.attr;
-			for (var key in attr) {
-				if (hasOwnProp.call(attr, key) === true) {
-					var value;
-					if (typeof attr[key] === 'function') {
-						value = attr[key](values, 'attr', cntx, tag, key).join('');
-					} else {
-						value = attr[key];
-					}
-					if (value) {
-
-						if (CustomAttributes[key] != null){
-							CustomAttributes[key](node, values, value, tag, cntx);
-						}else{
-							tag.setAttribute(key, value);
-						}
-					}
-				}
+			if (str !== '') {
+				container.appendChild(document.createTextNode(str));
 			}
-
-			if (node.nodes != null) {
-				this.build(node.nodes, values, tag, cntx);
-			}
-			container.appendChild(tag);
+		} else {
+			container.appendChild(document.createTextNode(node.content));
 		}
-		return container;
+
+		return null;
 	}
-};
+
+	var tag = document.createElement(node.tagName),
+		attr = node.attr;
+	for (var key in attr) {
+		if (hasOwnProp.call(attr, key) === true) {
+			var value;
+			if (typeof attr[key] === 'function') {
+				value = attr[key](model, 'attr', cntx, tag, key).join('');
+			} else {
+				value = attr[key];
+			}
+			if (value) {
+
+				if (CustomAttributes[key] != null) {
+					CustomAttributes[key](node, model, value, tag, cntx);
+				} else {
+					tag.setAttribute(key, value);
+				}
+			}
+		}
+	}
+
+	container.appendChild(tag);
+
+	return tag;
+}
