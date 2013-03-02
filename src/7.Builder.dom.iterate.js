@@ -8,29 +8,32 @@ var Builder = {
 			container = document.createDocumentFragment();
 		}
 		if (cntx == null) {
-			cntx = {};
+			cntx = {
+				components: null
+			};
 		}
 
 
-		var parent, element = container,
+		var parent = null,
+			element = container,
 			stack = [node],
 			stackIndex = 0;
 
 		while (node != null) {
+			element = createNode(node, model, element, cntx);
 
-			if (node.currentNode == null) {
-				element = createNode(node, model, element, cntx);
-
-				node.currentNode = node.firstChild;
+			if (node.currentNode) {
+				console.warn('this node is already visited', node);
 			}
 
+
+			node.currentNode = node.firstChild;
 
 			if (node.currentNode != null) {
 				parent = node;
 				node = node.currentNode;
 
 				parent.currentNode = node.nextNode;
-
 				stack[++stackIndex] = element
 
 			} else {
@@ -43,12 +46,13 @@ var Builder = {
 						break;
 					}
 					stackIndex--;
+					node.currentNode = null;
+
 					node = parent = parent.parent;
 				}
 
 				element = stack[stackIndex];
 			}
-
 		}
 
 		return container;
@@ -65,10 +69,11 @@ function createNode(node, model, container, cntx) {
 				try {
 				*/
 		var Handler = CustomTags.all[node.tagName],
-			custom = Handler instanceof Function ? new Handler(model) : Handler;
+			custom = typeof Handler === 'function' ? new Handler(model) : Handler;
 
 		custom.compoName = node.tagName;
-		custom.nodes = node.nodes; /*	creating new attr object for custom handler, preventing collisions due to template caching */
+		custom.firstChild = node.firstChild;
+		//creating new attr object for custom handler, preventing collisions due to template caching
 		custom.attr = Helper.extend(custom.attr, node.attr);
 
 		(cntx.components || (cntx.components = [])).push(custom);
@@ -93,6 +98,7 @@ function createNode(node, model, container, cntx) {
 
 		return null;
 	}
+
 	if (node.content != null) {
 		if (typeof node.content === 'function') {
 			var arr = node.content(model, 'node', cntx, container),
@@ -124,24 +130,31 @@ function createNode(node, model, container, cntx) {
 	}
 
 	var tag = document.createElement(node.tagName),
-		attr = node.attr;
-	for (var key in attr) {
-		if (hasOwnProp.call(attr, key) === true) {
-			var value;
-			if (typeof attr[key] === 'function') {
-				value = attr[key](model, 'attr', cntx, tag, key).join('');
-			} else {
-				value = attr[key];
-			}
-			if (value) {
+		attr = node.attr,
+		key,
+		value;
 
-				if (CustomAttributes[key] != null) {
-					CustomAttributes[key](node, model, value, tag, cntx);
-				} else {
-					tag.setAttribute(key, value);
-				}
+	for (key in attr) {
+
+		if (hasOwnProp.call(attr, key) === false) {
+			continue;
+		}
+
+		if (typeof attr[key] === 'function') {
+			value = attr[key](model, 'attr', cntx, tag, key).join('');
+		} else {
+			value = attr[key];
+		}
+
+		if (value) {
+			// null or empty string will not be handled
+			if (hasOwnProp.call(CustomAttributes, key) === true) {
+				CustomAttributes[key](node, model, value, tag, cntx);
+			} else {
+				tag.setAttribute(key, value);
 			}
 		}
+
 	}
 
 	container.appendChild(tag);
