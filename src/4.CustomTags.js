@@ -4,7 +4,7 @@ function ICustomTag() {
 
 ICustomTag.prototype.render = function (values, stream) {
 	//-return stream instanceof Array ? Builder.buildHtml(this.nodes, values, stream) : Builder.buildDom(this.nodes, values, stream);
-	return Builder.build(this.nodes, values, stream);
+	return Builder.build(this.firstChild, values, stream);
 };
 
 var CustomTags = (function () {
@@ -34,14 +34,15 @@ var CustomTags = (function () {
 		}
 
 
-		if (this.nodes == null) {
+		if (this.firstChild == null) {
 			return container;
 		}
 
 		//- var fn = Builder[container.buffer != null ? 'buildHtml' : 'buildDom'];
 
+
 		for (i = 0, length = value.length; i < length; i++) {
-			Builder.build(this.nodes, value[i], container, cntx);
+			Builder.build(this.firstChild, value[i], container, cntx);
 		}
 
 		return container;
