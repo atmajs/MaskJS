@@ -59,6 +59,23 @@ var builds = {
 		'src/9.export.js',
 		'src/outro.js.txt'
 	],
+
+	'mask.alpha': [
+		'src/intro.js.txt',
+		'src/1.scope-vars.js',
+		'src/2.Helper.js',
+		'src/3.Template.js',
+		'src/4.CustomTags.js',
+		'src/4.CustomAttributes.js',
+		'src/5.ConditionUtil.js',
+		'src/5.ValueUtilities.js',
+		'src/6.Parser.linked.js',
+		'src/7.Builder.dom.iterate.js',
+		'src/8.Mask.js',
+		'src/9.export.js',
+		'src/outro.js.txt'
+	],
+
 	/**
 	 *	mask.node
 	 *
@@ -109,7 +126,6 @@ var builds = {
 	]
 };
 
-
 var config = [{
 	action: 'settings',
 	io: {
@@ -130,7 +146,7 @@ for(var key in builds){
 
 config.push({
 	action: 'jshint',
-	files: ['lib/mask.js', 'lib/formatter.js'],
+	files: ['lib/mask.js', 'lib/mask.alpha.js', 'lib/formatter.js'],
 	jshint: JSHint
 });
 
@@ -139,9 +155,10 @@ config.push({
 	files: 'lib/mask.js'
 });
 
+
 global.config = {
 	build: config,
-	
+
 	docs: {
 		action: 'custom',
 		script: 'build.docs.js'
@@ -165,4 +182,3 @@ global.config = {
 
 	defaults: ['build'],
 };
-
