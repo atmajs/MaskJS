@@ -179,7 +179,7 @@ var cache = {},
 			 *	mask.render('span > #{.}', 'Some string') // -> <span>Some string</span>
 			 *	```
 			 **/
-			getProperty: Helper.getProperty
+			getProperty: util_getProperty
 		},
 
 		plugin: function(source){

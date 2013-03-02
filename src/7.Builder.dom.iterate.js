@@ -74,7 +74,7 @@ function createNode(node, model, container, cntx) {
 		custom.compoName = node.tagName;
 		custom.firstChild = node.firstChild;
 		//creating new attr object for custom handler, preventing collisions due to template caching
-		custom.attr = Helper.extend(custom.attr, node.attr);
+		custom.attr = util_extend(custom.attr, node.attr);
 
 		(cntx.components || (cntx.components = [])).push(custom);
 		custom.parent = cntx;

@@ -18,7 +18,7 @@ var CustomTags = (function () {
 	List.prototype.render = function (values, container, cntx) {
 		var attr = this.attr,
 			attrTemplate = attr.template,
-			value = Helper.getProperty(values, attr.value),
+			value = util_getProperty(values, attr.value),
 			nodes,
 			template,
 			i, length;

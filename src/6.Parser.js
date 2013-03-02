@@ -38,7 +38,7 @@ var Parser = {
 
 		template = null;
 		return function(model, type, cntx, element, name) {
-			return Helper.interpolate(arr, model, type, cntx, element, name);
+			return util_interpolate(arr, model, type, cntx, element, name);
 		};
 	},
 	parseAttributes: function(T, node) {
@@ -175,7 +175,7 @@ var Parser = {
 				} else {
 					current.nodes.push(t);
 				}
-				
+
 
 				if (current.__single) {
 					if (current == null) {

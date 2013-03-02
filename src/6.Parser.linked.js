@@ -38,7 +38,7 @@ var Parser = (function() {
 
 		template = null;
 		return function(model, type, cntx, element, name) {
-			return Helper.interpolate(arr, model, type, cntx, element, name);
+			return util_interpolate(arr, model, type, cntx, element, name);
 		};
 	}
 
@@ -270,7 +270,7 @@ var Parser = (function() {
 
 				T.index--;
 			}
-			
+
 			return T.firstChild;
 		},
 		cleanObject: function(obj) {
