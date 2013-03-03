@@ -1,5 +1,4 @@
-
-function create_container(){
+function create_container() {
 	return document.createDocumentFragment();
 }
 
@@ -54,18 +53,17 @@ function create_node(node, model, container, cntx) {
 		for (j = 0, jmax = arr.length; j < jmax; j++) {
 			x = arr[j];
 
-			if (typeof x === 'string') {
-				text += x;
-				continue;
+			if (typeof x === 'object') {
+
+				// In this casee arr[j] should be any HTMLElement
+				if (text !== '') {
+					container.appendChild(document.createTextNode(text));
+					text = '';
+				}
+				container.appendChild(x);
 			}
 
-			// In this casee arr[j] should be any HTMLElement
-			if (text !== '') {
-				container.appendChild(document.createTextNode(text));
-				text = '';
-			}
-
-			container.appendChild(x);
+			text += x;
 		}
 		if (text !== '') {
 			container.appendChild(document.createTextNode(text));
