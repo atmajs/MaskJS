@@ -17,7 +17,8 @@ function builder_build(node, model, container, cntx) {
 	var parent = null,
 		element = container,
 		stack = [node],
-		stackIndex = 0;
+		stackIndex = 0,
+		currentElement;
 
 	while (node != null) {
 		element = create_node(node, model, element, cntx);
@@ -26,6 +27,9 @@ function builder_build(node, model, container, cntx) {
 			console.warn('this node is already visited', node);
 		}
 
+		if (element != null){
+			currentElement = element;
+		}
 
 		// do not handle children on custom tag and textContent;
 		node.currentNode = element == null ? null : node.firstChild;
@@ -35,7 +39,7 @@ function builder_build(node, model, container, cntx) {
 			node = node.currentNode;
 
 			parent.currentNode = node.nextNode;
-			stack[++stackIndex] = element;
+			//stack[++stackIndex] = element;
 			continue;
 
 		}
@@ -44,7 +48,10 @@ function builder_build(node, model, container, cntx) {
 			if (parent.currentNode != null) {
 				node = parent.currentNode;
 				parent.currentNode = parent.currentNode.nextNode;
-				stackIndex--;
+
+
+				element = currentElement.parentNode;
+				//stackIndex--;
 				break;
 			}
 
@@ -58,7 +65,7 @@ function builder_build(node, model, container, cntx) {
 		}
 
 
-		element = stack[stackIndex];
+		//element = stack[stackIndex];
 
 	}
 
