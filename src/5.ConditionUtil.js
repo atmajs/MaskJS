@@ -1,4 +1,3 @@
-
 /**
  *	ConditionUtil
  *
@@ -39,7 +38,7 @@ var ConditionUtil = (function() {
 		c !== 40 /*(*/ && //
 		c !== 41 /*)*/ && //
 		c !== 38 /*&*/ && //
-		c !== 124/*|*/ );
+		c !== 124 /*|*/ );
 
 		token = T.template.substring(start, T.index);
 
@@ -65,7 +64,12 @@ var ConditionUtil = (function() {
 
 
 	function parseAssertion(T, output) {
-		var current = {},
+		var current = {
+			assertions: [],
+			join: null,
+			left: null,
+			right: null
+		},
 			c;
 
 		if (output == null) {
@@ -110,7 +114,12 @@ var ConditionUtil = (function() {
 				current.join = c === 38 ? '&&' : '||';
 
 				output.push(current);
-				current = {};
+				current = {
+					assertions: [],
+					join: null,
+					left: null,
+					right: null
+				};
 
 				++T.index;
 				continue;

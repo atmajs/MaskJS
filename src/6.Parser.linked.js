@@ -1,275 +1,254 @@
 var Parser = (function() {
 
-	function createInterpoleFunction(template) {
-		var START = '#{',
-			END = '}',
-			FIND_LENGHT = 2,
-			arr = [],
-			index = 0,
-			lastIndex = 0,
-			i = 0,
-			end = 0;
-		while ((index = template.indexOf(START, index)) > -1) {
+	var _template, _length, _index, _serialize, _c;
 
-			end = template.indexOf(END, index + FIND_LENGHT);
-			if (end === -1) {
-				index += FIND_LENGHT;
-				continue;
-			}
+	function Tag(tagName, parent) {
+		this.tagName = tagName;
+		this.parent = parent;
+		this.attr = {};
 
-			if (lastIndex < index) {
-				arr[i] = template.substring(lastIndex, index);
-				i++;
-			}
+		this.firstChild = null;
+		this.lastChild = null;
+		this.nextNode = null;
+		this.currentNode = null;
 
-			if (index === lastIndex) {
-				arr[i] = '';
-				i++;
-			}
 
-			arr[i] = template.substring(index + FIND_LENGHT, end);
-			i++;
-			lastIndex = index = end + 1;
-		}
-
-		if (lastIndex < template.length) {
-			arr[i] = template.substring(lastIndex);
-		}
-
-		template = null;
-		return function(model, type, cntx, element, name) {
-			return util_interpolate(arr, model, type, cntx, element, name);
-		};
+		this.__single = null;
 	}
 
-	function appendChild(parent, node){
+	function TextNode(text, parent) {
+		this.content = text;
+		this.parent = parent;
+		this.nextNode = null;
+	}
+
+
+
+	function appendChild(parent, node) {
 		if (parent.firstChild == null) {
 			parent.firstChild = node;
 		}
-
 		if (parent.lastChild != null) {
 			parent.lastChild.nextNode = node;
 		}
-
 		parent.lastChild = node;
 	}
 
+
+	function parseAttributes(attr) {
+
+		var key, value, _classNames, start;
+
+
+		while (_index < _length) {
+			key = null;
+			value = null;
+			_c = _template.charCodeAt(_index);
+
+			if (_c === 32) {
+				_index++;
+				continue;
+			}
+
+			// {;>
+			if (_c === 123 || _c === 59 || _c === 62) {
+				break;
+			}
+
+			// .
+			if (_c === 46) {
+
+				_index++;
+				value = sliceToken();
+
+				_classNames = _classNames == null ? value : _classNames + ' ' + value;
+
+				continue;
+			}
+
+
+			// #
+			if (_c === 35) {
+				_index++;
+
+				key = 'id';
+				value = sliceToken();
+
+			} else {
+				key = parseAttributeValue();
+				if (_template.charCodeAt(_index) !== 61 /* = */ ) {
+					value = key;
+				} else {
+					_c = _template.charCodeAt(++_index);
+					skipWhitespace();
+
+					value = parseAttributeValue();
+				}
+			}
+
+			if (key != null) {
+
+				attr[key] = value.indexOf('#{') === -1 ? value : (_serialize !== true ? util_createInterpoleFunction(value) : {
+					template: _classNames
+				});
+
+			}
+		}
+
+		if (_classNames != null) {
+			attr['class'] = _classNames.indexOf('#{') === -1 ? _classNames : (_serialize !== true ? util_createInterpoleFunction(_classNames) : {
+				template: _classNames
+			});
+
+		}
+	}
+
+	function parseAttributeValue() {
+		var value;
+		if (_c === 34 /* " */ || _c === 39 /* ' */ ) {
+			_index++;
+			value = sliceToChar(_c === 34 ? '"' : "'");
+			_index++;
+			return value;
+		}
+
+		value = sliceToken();
+		skipWhitespace();
+		return value;
+	}
+
+	function sliceToken() {
+
+		var start = _index;
+		do {
+			_c = _template.charCodeAt(++_index);
+			// if c == # && next() == { : continue */
+			if (_c === 35 && _template.charCodeAt(_index + 1) === 123) {
+				// goto end of template declaration
+				sliceToChar('}');
+				continue;
+			}
+		}
+		while (_c !== 46 && _c !== 35 && _c !== 62 && _c !== 123 && _c !== 32 && _c !== 59 && _c !== 61 && _index < _length);
+		//while .#>{ ;=
+
+
+		return _template.substring(start, _index);
+	}
+
+	function skipWhitespace() {
+
+		while (_c === 32 /* */  && _index < _length){
+			_c = _template.charCodeAt(++_index);
+		}
+	}
+
+	function sliceToChar(c) {
+		var start = _index,
+			isEscaped = false,
+			value, nindex;
+
+		while ((nindex = _template.indexOf(c, _index)) > -1) {
+			_index = nindex;
+			if (_template.charCodeAt(_index - 1) !== 92 /*'\\'*/ ) {
+				break;
+			}
+			isEscaped = true;
+			_index++;
+		}
+
+		value = _template.substring(start, _index);
+		return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
+	}
+
+
 	return {
 
-		parseAttributes: function(T, node) {
-
-			var template = T.template,
-				key, value, _classNames, c, start;
-
-			
-			loop: for (; T.index < T.length;) {
-				key = null;
-				value = null;
-				c = template.charCodeAt(T.index);
-				switch (c) {
-				case 32:
-					//case 9: was replaced while compiling
-					//case 10:
-					T.index++;
-					continue;
-
-					//case '{;>':
-				case 123:
-				case 59:
-				case 62:
-
-					break loop;
-
-				case 46:
-					/* '.' */
-
-					start = T.index + 1;
-					T.skipToAttributeBreak();
-
-					value = template.substring(start, T.index);
-
-					_classNames = _classNames != null ? _classNames + ' ' + value : value;
-
-					break;
-				case 35:
-					/* '#' */
-					key = 'id';
-
-					start = T.index + 1;
-					T.skipToAttributeBreak();
-					value = template.substring(start, T.index);
-
-					break;
-				default:
-					key = this.parseAttributeValue(T);
-					if (template.charCodeAt(T.index) !== 61 /* = */ ) {
-						value = key;
-					} else {
-						T.index++;
-						T.skipWhitespace();
-						value = this.parseAttributeValue(T);
-					}
-
-					break;
-				}
-
-
-				if (key != null) {
-					//console.log('key', key, value);
-					if (value.indexOf('#{') > -1) {
-						value = T.serialize !== true ? createInterpoleFunction(value) : {
-							template: value
-						};
-					}
-					node.attr[key] = value;
-				}
-			}
-			if (_classNames != null) {
-				node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? createInterpoleFunction(_classNames) : {
-					template: _classNames
-				}) : _classNames;
-
-			}
-
-
-		},
-		parseAttributeValue: function(T) {
-			var c = T.template.charCodeAt(T.index),
-				value;
-			if (c === 34 /* " */ || c === 39 /* ' */ ) {
-				T.index++;
-				value = T.sliceToChar(c === 34 ? '"' : "'");
-				T.index++;
-				return value;
-			}
-			var start = T.index;
-
-			do {
-				c = T.template.charCodeAt(++T.index);
-			} while (c !== 61 /*=*/ && c !== 32 && c !== 123 /*{*/ && c !== 62 /*>*/ && c !== 59 /*;*/ && T.index < T.length);
-
-			value = T.template.substring(start, T.index);
-
-			if (c === 32) {
-				T.skipWhitespace();
-			}
-
-			return value;
-		},
 		/** @out : nodes */
 		parse: function(T) {
-			var current = T;
-			for (; T.index < T.length; T.index++) {
-				var c = T.template.charCodeAt(T.index);
-				switch (c) {
+			_template = T.template;
+			_index = T.index;
+			_length = T.length;
+			_serialize = T.serialize;
+
+			var current = new Tag(),
+				fragment = current;
+
+			for (; _index < _length; _index++) {
+				_c = _template.charCodeAt(_index);
+				switch (_c) {
 				case 32:
 					continue;
+					// '
 				case 39:
-					/* ' */
+					// "
 				case 34:
-					/* " */
 
-					T.index++;
+					_index++;
 
-					var content = T.sliceToChar(c === 39 ? "'" : '"');
+					var content = sliceToChar(_c === 39 ? "'" : '"');
 					if (content.indexOf('#{') > -1) {
-						content = T.serialize !== true ? createInterpoleFunction(content) : {
+						content = _serialize !== true ? util_createInterpoleFunction(content) : {
 							template: content
 						};
 					}
 
-					var textNode = {
-						content: content,
-						parent: current,
-						nextNode: null,
-						firstChild: null
-					};
+					//-appendChild(current, new TextNode(content, current));
+					appendChild(current, new TextNode(content, current));
 
-					appendChild(current, textNode);
+					if (current.__single === true) {
 
-					if (current.__single) {
-						if (current == null) {
-							continue;
-						}
-						current = current.parent;
-						while (current != null && current.__single != null) {
-							current = current.parent;
-						}
+						while ((current = current.parent) != null && current.__single != null);
+
 					}
 					continue;
-				case 62:
-					/* '>' */
+
+				case 62: // >
 					current.__single = true;
 					continue;
-				case 123:
-					/* '{' */
+				case 123: // {
 
 					continue;
-				case 59:
-					/* ';' */
-					/** continue if semi-column, but is not a single tag (else goto 125) */
+
+				case 59: // ;
+					// continue if semi-column, but is not a single tag (else goto 125)
 					if (current.firstChild != null) {
 						continue;
 					}
-
 					/* falls through */
-				case 125:
-					/* '}' */
-					if (current == null) {
+				case 125: // }
+					if (current == null){
 						continue;
 					}
 
-					do {
+					current = current.parent;
+					while (current != null && current.__single != null) {
 						current = current.parent;
 					}
-					while (current != null && current.__single != null);
-
 					continue;
 				}
 
 				var tagName = null;
-				if (c === 46 /* . */ || c === 35 /* # */ ) {
+				if (_c === 46 /* . */ || _c === 35 /* # */ ) {
 					tagName = 'div';
 				} else {
-					var start = T.index;
-					do {
-						c = T.template.charCodeAt(++T.index);
-					}
-					while (c !== 32 && c !== 35 && c !== 46 && c !== 59 && c !== 123 && c !== 62 && T.index <= T.length);
-					// while !: ' ', # , . , ; , { <
-
-					tagName = T.template.substring(start, T.index);
+					tagName = sliceToken();
 				}
 
 				if (tagName === '') {
-					console.error('Parse Error: Undefined tag Name %d/%d %s', T.index, T.length, T.template.substring(T.index, T.index + 10));
+					console.error('Parse Error: Undefined tag Name %d/%d %s', _index, length, _template.substring(_index, _index + 10));
 				}
 
-				var tag = {
-					tagName: tagName,
-					parent: current,
-					firstChild: null,
-					lastChild: null,
-					currentNode: null,
-					nextNode: null,
-					attr: {},
-					__single: null
-				};
 
-				if (current == null) {
-					console.log('T', T, 'rest', T.template.substring(T.index));
-				}
 
-				appendChild(current, tag);
+				var tag = new Tag(tagName, current);
+				parseAttributes(tag.attr);
 
-				current = tag;
-
-				this.parseAttributes(T, current);
-
-				T.index--;
+				appendChild(current, current = tag);
+				_index--;
 			}
 
-			return T.firstChild;
+			return fragment.firstChild;
 		},
 		cleanObject: function(obj) {
 			if (obj instanceof Array) {

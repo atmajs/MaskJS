@@ -71,3 +71,45 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 	}
 	return output;
 }
+
+function util_createInterpoleFunction(template) {
+	var START = '#{',
+		END = '}',
+		FIND_LENGHT = 2,
+		arr = [],
+		index = 0,
+		lastIndex = 0,
+		i = 0,
+		end = 0;
+	while ((index = template.indexOf(START, index)) > -1) {
+
+		end = template.indexOf(END, index + FIND_LENGHT);
+		if (end === -1) {
+			index += FIND_LENGHT;
+			continue;
+		}
+
+		if (lastIndex < index) {
+			arr[i] = template.substring(lastIndex, index);
+			i++;
+		}
+
+		if (index === lastIndex) {
+			arr[i] = '';
+			i++;
+		}
+
+		arr[i] = template.substring(index + FIND_LENGHT, end);
+		i++;
+		lastIndex = index = end + 1;
+	}
+
+	if (lastIndex < template.length) {
+		arr[i] = template.substring(lastIndex);
+	}
+
+	template = null;
+	return function(model, type, cntx, element, name) {
+		return util_interpolate(arr, model, type, cntx, element, name);
+	};
+}
