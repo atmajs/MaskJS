@@ -1,66 +1,9 @@
-function builder_build(node, model, container, cntx) {
-	if (node == null) {
-		return container;
-	}
 
-	if (container == null) {
-		container = document.createDocumentFragment();
-	}
-
-	if (cntx == null) {
-		cntx = {
-			components: null
-		};
-	}
-
-
-	var parent = null,
-		element = container,
-		stack = [node],
-		stackIndex = 0;
-
-	while (node != null) {
-		element = createNode(node, model, element, cntx);
-
-		if (node.currentNode) {
-			console.warn('this node is already visited', node);
-		}
-
-
-		node.currentNode = node.firstChild;
-
-		if (node.currentNode != null) {
-			parent = node;
-			node = node.currentNode;
-
-			parent.currentNode = node.nextNode;
-			stack[++stackIndex] = element;
-
-		} else {
-
-
-			while (parent != null) {
-				if (parent.currentNode != null) {
-					node = parent.currentNode;
-					parent.currentNode = parent.currentNode.nextNode;
-					break;
-				}
-				stackIndex--;
-				node.currentNode = null;
-
-				node = parent = parent.parent;
-			}
-
-			element = stack[stackIndex];
-		}
-	}
-
-	return container;
+function create_container(){
+	return document.createDocumentFragment();
 }
 
-
-
-function createNode(node, model, container, cntx) {
+function create_node(node, model, container, cntx) {
 
 	var j, jmax, x;
 

@@ -184,7 +184,7 @@ var Parser = (function() {
 						content: content,
 						parent: current,
 						nextNode: null,
-
+						firstChild: null
 					};
 
 					appendChild(current, textNode);

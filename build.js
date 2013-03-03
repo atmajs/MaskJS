@@ -53,8 +53,9 @@ var builds = {
 		'src/4.CustomAttributes.js',
 		'src/5.ConditionUtil.js',
 		'src/5.ValueUtilities.js',
-		'src/6.Parser.js',
-		'src/7.Builder.dom.js',
+		'src/6.Parser.linked.js',
+		'src/7.Builder.recursion.js',
+		'src/8.CreateDocumentFragment.js',
 		'src/8.Mask.js',
 		'src/9.export.js',
 		'src/outro.js.txt'
@@ -70,7 +71,8 @@ var builds = {
 		'src/5.ConditionUtil.js',
 		'src/5.ValueUtilities.js',
 		'src/6.Parser.linked.js',
-		'src/7.Builder.dom.iterate.js',
+		'src/7.Builder.iterate.js',
+		'src/8.CreateDocumentFragment.js',
 		'src/8.Mask.js',
 		'src/9.export.js',
 		'src/outro.js.txt'
