@@ -44,13 +44,19 @@ function builder_build(node, model, container, cntx) {
 			if (parent.currentNode != null) {
 				node = parent.currentNode;
 				parent.currentNode = parent.currentNode.nextNode;
+				stackIndex--;
 				break;
 			}
-			stackIndex--;
+
 			node.currentNode = null;
 
 			node = parent = parent.parent;
 		}
+
+		if (stackIndex < 0){
+			console.warn('stack underflow', stackIndex, stack);
+		}
+
 
 		element = stack[stackIndex];
 
