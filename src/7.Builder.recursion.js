@@ -7,7 +7,9 @@ function builder_build(node, model, container, cntx) {
 		container = create_container();
 	}
 	if (cntx == null) {
-		cntx = {};
+		cntx = {
+			components: null
+		};
 	}
 
 	do {

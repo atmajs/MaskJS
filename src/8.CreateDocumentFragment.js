@@ -7,9 +7,9 @@ function create_node(node, model, container, cntx) {
 	var j, jmax, x;
 
 	if (CustomTags.all[node.tagName] != null) {
-/* if (!DEBUG)
-				try {
-				*/
+		/* if (!DEBUG)
+		try {
+		*/
 		var Handler = CustomTags.all[node.tagName],
 			custom = typeof Handler === 'function' ? new Handler(model) : Handler;
 
@@ -32,11 +32,11 @@ function create_node(node, model, container, cntx) {
 		}
 
 		custom.render(model, container, custom);
-/* if (!DEBUG)
-				}catch(error){
-					console.error('Custom Tag Handler:', node.tagName, error.toString());
-				}
-				*/
+		/* if (!DEBUG)
+		}catch(error){
+			console.error('Custom Tag Handler:', node.tagName, error.toString());
+		}
+		*/
 
 		return null;
 	}

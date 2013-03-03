@@ -4,9 +4,13 @@ function util_extend(target, source) {
 		target = {};
 	}
 	for (var key in source) {
+		/* if (!SAFE) */
 		if (hasOwnProp.call(source, key)) {
+		/*	endif */
 			target[key] = source[key];
+		/* if (!SAFE) */
 		}
+		/* endif */
 	}
 	return target;
 }
@@ -53,7 +57,9 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 				}
 
 				key = key.substring(index + 1);
-				value = typeof ModelUtils[utility] === 'function' ? ModelUtils[utility](key, model, type, cntx, element, name) : null;
+				if (typeof ModelUtils[utility] === 'function'){
+					value = ModelUtils[utility](key, model, type, cntx, element, name);
+				}
 			} else {
 				value = util_getProperty(model, key);
 			}

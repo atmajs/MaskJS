@@ -14,30 +14,29 @@ var CustomTags = (function () {
 		this.attr = {};
 	}
 
-	List.prototype.render = function (values, container, cntx) {
+	List.prototype.render = function (model, container, cntx) {
 		var attr = this.attr,
 			attrTemplate = attr.template,
-			value = util_getProperty(values, attr.value),
-			nodes,
+			array = util_getProperty(model, attr.value),
 			template,
 			i, length;
 
-		if (!(value instanceof Array)) {
+		if (!(array instanceof Array)) {
 			return container;
 		}
 
 
 		if (attrTemplate != null) {
 			template = document.querySelector(attrTemplate).innerHTML;
-			this.nodes = nodes = Mask.compile(template);
+			this.firstNode = Mask.compile(template);
 		}
 
 		if (this.firstChild == null) {
 			return container;
 		}
 
-		for (i = 0, length = value.length; i < length; i++) {
-			builder_build(this.firstChild, value[i], container, cntx);
+		for (i = 0, length = array.length; i < length; i++) {
+			builder_build(this.firstChild, array[i], container, cntx);
 		}
 
 		return container;
