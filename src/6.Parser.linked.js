@@ -60,10 +60,8 @@ var Parser = (function() {
 
 			var template = T.template,
 				key, value, _classNames, c, start;
-			if (node.attr == null) {
-				node.attr = {};
-			}
 
+			
 			loop: for (; T.index < T.length;) {
 				key = null;
 				value = null;
@@ -254,7 +252,7 @@ var Parser = (function() {
 					lastChild: null,
 					currentNode: null,
 					nextNode: null,
-					attr: null,
+					attr: {},
 					__single: null
 				};
 
