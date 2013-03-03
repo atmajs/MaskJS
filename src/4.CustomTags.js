@@ -32,7 +32,6 @@ var CustomTags = (function () {
 			this.nodes = nodes = Mask.compile(template);
 		}
 
-
 		if (this.firstChild == null) {
 			return container;
 		}

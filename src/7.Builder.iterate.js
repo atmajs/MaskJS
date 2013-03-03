@@ -27,7 +27,8 @@ function builder_build(node, model, container, cntx) {
 		}
 
 
-		node.currentNode = node.firstChild;
+		// do not handle children on custom tag and textContent;
+		node.currentNode = element == null ? null : node.firstChild;
 
 		if (node.currentNode != null) {
 			parent = node;

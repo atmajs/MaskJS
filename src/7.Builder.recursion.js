@@ -13,8 +13,13 @@ function builder_build(node, model, container, cntx) {
 	do {
 		var element = create_node(node, model, container, cntx);
 
+		if (element == null){
+			// it was custom handler or textConent - do not handle those children
+			break;
+		}
+
 		if (node.firstChild != null) {
-			this.build(node.firstChild, model, element, cntx);
+			builder_build(node.firstChild, model, element, cntx);
 		}
 
 	} while ((node = node.nextNode) != null);
