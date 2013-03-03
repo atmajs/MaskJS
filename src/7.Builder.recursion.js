@@ -15,7 +15,7 @@ function builder_build(node, model, container, cntx) {
 
 		if (element == null){
 			// it was custom handler or textConent - do not handle those children
-			break;
+			continue;
 		}
 
 		if (node.firstChild != null) {
