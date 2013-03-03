@@ -127,7 +127,7 @@ var Parser = (function() {
 				}
 			}
 			if (_classNames != null) {
-				node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? this.toFunction(_classNames) : {
+				node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? createInterpoleFunction(_classNames) : {
 					template: _classNames
 				}) : _classNames;
 
@@ -175,7 +175,7 @@ var Parser = (function() {
 
 					var content = T.sliceToChar(c === 39 ? "'" : '"');
 					if (content.indexOf('#{') > -1) {
-						content = T.serialize !== true ? this.toFunction(content) : {
+						content = T.serialize !== true ? createInterpoleFunction(content) : {
 							template: content
 						};
 					}
