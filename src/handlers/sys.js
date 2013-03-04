@@ -55,7 +55,7 @@
 			}
 
 			if (this.attr['for']){
-				foreach(this.firstChild, model, container, cntx);
+				foreach(this, model, container, cntx);
 			}
 		}
 	}
@@ -75,15 +75,15 @@
 
 		if (attrTemplate != null) {
 			template = document.querySelector(attrTemplate).innerHTML;
-			this.firstNode = Mask.compile(template);
+			node.firstNode = Mask.compile(template);
 		}
 
-		if (this.firstChild == null) {
+		if (node.firstChild == null) {
 			return container;
 		}
 
 		for (i = 0, length = array.length; i < length; i++) {
-			builder_build(this.firstChild, array[i], container, cntx);
+			builder_build(node.firstChild, array[i], container, cntx);
 		}
 
 		return container;
