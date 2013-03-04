@@ -23,7 +23,7 @@
 	],
 	"dependencies": {},
 	"devDependencies": {
-		"includejs": "~0.6.8",
+		"includejs": ">0.6.8",
 		"buster": "~0.6.3"
 	},
 	"scripts" : {

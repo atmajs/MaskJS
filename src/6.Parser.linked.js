@@ -134,11 +134,8 @@ var Parser = (function() {
 				break;
 			}
 
-			if (_index === _length){
-				return _template.substring(start, _index - 1);
-			}
 		}
-		while (_c !== 46 && _c !== 35 && _c !== 62 && _c !== 123 && _c !== 32 && _c !== 59 && _c !== 61);
+		while (_c !== 46 && _c !== 35 && _c !== 62 && _c !== 123 && _c !== 32 && _c !== 59 && _c !== 61 && _index <= _length);
 		// .#>{ ;=
 
 		_index--;
