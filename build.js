@@ -118,7 +118,7 @@ var builds = {
 	 **/
 	'formatter': [
 		'src/formatter/intro.js.txt',
-		'src/formatter/beautify.js',
+		'src/formatter/stringify.js',
 		'src/formatter/HTMLtoMask.js',
 		'src/formatter/exports.js',
 		'src/outro.js.txt'
