@@ -1,6 +1,6 @@
 'use strict';
 
-var beautify = (function() {
+var stringify = (function() {
 
 
 	var _minimizeAttributes,
@@ -16,7 +16,7 @@ var beautify = (function() {
 
 
 
-	function run(ast, indent, output) {
+	function run(node, indent, output) {
 
 		var outer, i;
 
@@ -31,14 +31,17 @@ var beautify = (function() {
 
 		var index = output.length;
 
+		do {
+			stringify(node, indent, output);
+		} while((node = node.nextNode));
 
-		if (ast instanceof Array) {
-			for (i = 0; i < ast.length; i++) {
-				stringify(ast[i], indent, output);
-			}
-		} else {
-			stringify(ast, indent, output);
-		}
+		//////if (ast instanceof Array) {
+		//////	for (i = 0; i < ast.length; i++) {
+		//////		stringify(ast[i], indent, output);
+		//////	}
+		//////} else {
+		//////	stringify(ast, indent, output);
+		//////}
 
 
 		var spaces = doindent(indent);
@@ -70,7 +73,7 @@ var beautify = (function() {
 		}
 
 		output.push(stringifyNodeHead(node) + '{');
-		run(node.nodes, _indent, output);
+		run(node.firstChild, _indent, output);
 		output.push('}');
 		return;
 	}
@@ -117,18 +120,22 @@ var beautify = (function() {
 
 
 	function isEmpty(node) {
-		return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
+		return node.firstChild == null;
+		// - return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
 	}
 
 	function isSingle(node) {
-		return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
+		return node.firstChild === node.lastChild;
+		// - return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
 	}
 
 	function getSingle(node) {
-		if (node.nodes instanceof Array) {
-			return node.nodes[0];
-		}
-		return node.nodes;
+		return node.firstChild;
+
+		//if (node.nodes instanceof Array) {
+		//	return node.nodes[0];
+		//}
+		//return node.nodes;
 	}
 
 	function wrapString(str) {
@@ -143,6 +150,9 @@ var beautify = (function() {
 		return '"' + str.replace(/"/g, '\\"').trim() + '"';
 	}
 
+	/**
+	 *	- settings (Number | Object) - Indention Number (0 - for minification)
+	 **/
 	return function(input, settings) {
 		if (typeof input === 'string') {
 			input = mask.compile(input);

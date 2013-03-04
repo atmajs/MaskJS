@@ -7,14 +7,14 @@
 
 return {
 	/* deprecated */
-	beautify: (mask.beautify = beautify),
+	beautify: (mask.stringify = stringify),
 
 	/**
 	 *	mask.stringify(template[, settings=4]) -> String
 	 * - template(String | MaskDOM): Mask Markup or Mask AST
 	 * - settings(Number): indention space count, when 0 then markup will be minified
 	 **/
-	stringify: (mask.beautify = beautify),
+	stringify: (mask.stringify = stringify),
 
 	/**
 	 *	mask.HTMLtoMask(html) -> String
