@@ -14,7 +14,7 @@ buster.testCase('Compile: ', {
 	},
 	'right attributes': function() {
 		template = compile("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
-		attr = template.nodes.nodes.nodes.nodes.attr;
+		attr = template.firstChild.firstChild.firstChild.firstChild.attr;
 
 		assert(attr['class'] == 'class', 'is not "class"');
 		assert(attr['id'] == 'id', 'is not "id"');
@@ -22,11 +22,14 @@ buster.testCase('Compile: ', {
 
 	},
 	'has literal': function() {
-		template = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
-		node = template[template.length - 1];
+		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
+
+		while(node.nextNode){
+			node = node.nextNode;
+		}
 
 		assert(node.tagName == 'div', 'literals container is not "div"');
-		assert(node.nodes.content == 'mycontent', "Literal failed");
+		assert(node.firstChild.content == 'mycontent', "Literal failed");
 
 	},
 
@@ -34,7 +37,9 @@ buster.testCase('Compile: ', {
 		var combined = '';
 		template = compile('"1"	"2"		"3"		"4"		"5"');
 
-		while (template.length) combined += template.shift().content;
+		do {
+			combined += template.content;
+		} while((template = template.nextNode));
 
 		assert(combined == '12345', 'Combined Text Failed:' + combined);
 	},
@@ -45,6 +50,6 @@ buster.testCase('Compile: ', {
 		assert(typeof template.attr.class, 'function');
 		assert(typeof template.attr.id, 'function');
 		assert(typeof template.attr['data-type'], 'function');
-		assert(typeof template.nodes[1].content, 'function');
+		assert(typeof template.firstChild.content, 'function');
 	}
 })

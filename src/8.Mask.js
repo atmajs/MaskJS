@@ -62,7 +62,7 @@ var cache = {},
 		 *	mask.render(this.nodes, model, container, cntx);
 		 **/
 		registerHandler: function (tagName, TagHandler) {
-			CustomTags.all[tagName] = TagHandler;
+			CustomTags[tagName] = TagHandler;
 		},
 		/**
 		 *	mask.getHandler(tagName) -> Function | Object
@@ -71,7 +71,7 @@ var cache = {},
 		 *	Get Registered Handler
 		 **/
 		getHandler: function (tagName) {
-			return tagName != null ? CustomTags.all[tagName] : CustomTags.all;
+			return tagName != null ? CustomTags[tagName] : CustomTags;
 		},
 
 
@@ -149,7 +149,8 @@ var cache = {},
 				cache = {};
 			}
 		},
-		ICustomTag: ICustomTag,
+		//- removed as needed interface can be implemented without this
+		//- ICustomTag: ICustomTag,
 
 		/** deprecated
 		 *	mask.ValueUtils -> Object

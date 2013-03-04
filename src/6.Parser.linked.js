@@ -37,7 +37,7 @@ var Parser = (function() {
 
 	function parseAttributes(attr) {
 
-		var key, value, _classNames, start;
+		var key, value, _classNames;
 
 
 		while (_index < _length) {
@@ -46,29 +46,30 @@ var Parser = (function() {
 			_c = _template.charCodeAt(_index);
 
 			if (_c === 32) {
+				// [ ]
 				_index++;
 				continue;
 			}
 
-			// {;>
 			if (_c === 123 || _c === 59 || _c === 62) {
+				// {;>
 				break;
 			}
 
-			// .
-			if (_c === 46) {
 
+			if (_c === 46) {
+				// .
 				_index++;
 				value = sliceToken();
-
 				_classNames = _classNames == null ? value : _classNames + ' ' + value;
 
 				continue;
 			}
 
 
-			// #
+
 			if (_c === 35) {
+				// #
 				_index++;
 
 				key = 'id';
@@ -87,20 +88,23 @@ var Parser = (function() {
 			}
 
 			if (key != null) {
-
-				attr[key] = value.indexOf('#{') === -1 ? value : (_serialize !== true ? util_createInterpoleFunction(value) : {
-					template: _classNames
-				});
-
+				attr[key] = ensureTemplateFunction(value);
 			}
 		}
 
 		if (_classNames != null) {
-			attr['class'] = _classNames.indexOf('#{') === -1 ? _classNames : (_serialize !== true ? util_createInterpoleFunction(_classNames) : {
-				template: _classNames
-			});
-
+			attr['class'] = ensureTemplateFunction(_classNames);
 		}
+	}
+
+
+	function ensureTemplateFunction(content) {
+		if (content.indexOf('#{') === -1) {
+			return content;
+		}
+		return _serialize !== true ? util_createInterpoleFunction(content) : {
+			template: content
+		};
 	}
 
 	function parseAttributeValue() {
@@ -121,24 +125,29 @@ var Parser = (function() {
 
 		var start = _index;
 		do {
-			_c = _template.charCodeAt(++_index);
+			_c = _template.charCodeAt(_index++);
 			// if c == # && next() == { : continue */
-			if (_c === 35 && _template.charCodeAt(_index + 1) === 123) {
+			if (_c === 35 && _template.charCodeAt(_index) === 123) {
 				// goto end of template declaration
 				sliceToChar('}');
-				continue;
+				_index += 2;
+				break;
+			}
+
+			if (_index === _length){
+				return _template.substring(start, _index - 1);
 			}
 		}
-		while (_c !== 46 && _c !== 35 && _c !== 62 && _c !== 123 && _c !== 32 && _c !== 59 && _c !== 61 && _index < _length);
-		//while .#>{ ;=
+		while (_c !== 46 && _c !== 35 && _c !== 62 && _c !== 123 && _c !== 32 && _c !== 59 && _c !== 61);
+		// .#>{ ;=
 
-
+		_index--;
 		return _template.substring(start, _index);
 	}
 
 	function skipWhitespace() {
 
-		while (_c === 32 /* */  && _index < _length){
+		while (_c === 32 /* */ && _index < _length) {
 			_c = _template.charCodeAt(++_index);
 		}
 	}
@@ -150,7 +159,7 @@ var Parser = (function() {
 
 		while ((nindex = _template.indexOf(c, _index)) > -1) {
 			_index = nindex;
-			if (_template.charCodeAt(_index - 1) !== 92 /*'\\'*/ ) {
+			if (_template.charCodeAt(nindex - 1) !== 92 /*'\\'*/ ) {
 				break;
 			}
 			isEscaped = true;
@@ -159,6 +168,18 @@ var Parser = (function() {
 
 		value = _template.substring(start, _index);
 		return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
+	}
+
+	function skipToChar(c) {
+		var nindex;
+
+		while ((nindex = _template.indexOf(c, _index)) > -1) {
+			_index = nindex;
+			if (_template.charCodeAt(nindex - 1) !== 92 /*'\\'*/ ) {
+				continue;
+			}
+			return;
+		}
 	}
 
 
@@ -174,50 +195,38 @@ var Parser = (function() {
 			var current = new Tag(),
 				fragment = current;
 
-			for (; _index < _length; _index++) {
+			while (_index < _length) {
 				_c = _template.charCodeAt(_index);
-				switch (_c) {
-				case 32:
-					continue;
-					// '
-				case 39:
-					// "
-				case 34:
 
+				// IF statements should be faster then switch due to strict comparison
+
+				if (_c === 32 || _c === 123) {
+					// [ ]{
 					_index++;
-
-					var content = sliceToChar(_c === 39 ? "'" : '"');
-					if (content.indexOf('#{') > -1) {
-						content = _serialize !== true ? util_createInterpoleFunction(content) : {
-							template: content
-						};
-					}
-
-					//-appendChild(current, new TextNode(content, current));
-					appendChild(current, new TextNode(content, current));
-
-					if (current.__single === true) {
-
-						while ((current = current.parent) != null && current.__single != null);
-
-					}
 					continue;
+				}
 
-				case 62: // >
+				if (_c === 62) {
+					// >
+					_index++;
 					current.__single = true;
 					continue;
-				case 123: // {
+				}
 
-					continue;
-
-				case 59: // ;
+				if (_c === 59) {
+					// ;
 					// continue if semi-column, but is not a single tag (else goto 125)
 					if (current.firstChild != null) {
+						_index++;
 						continue;
 					}
-					/* falls through */
-				case 125: // }
-					if (current == null){
+				}
+
+				if (_c === 59 || _c === 125) {
+					// ;}
+					_index++;
+
+					if (current == null) {
 						continue;
 					}
 
@@ -225,6 +234,25 @@ var Parser = (function() {
 					while (current != null && current.__single != null) {
 						current = current.parent;
 					}
+
+					continue;
+				}
+
+				if (_c === 39 || _c === 34) {
+					// '"
+					_index++;
+
+					var content = ensureTemplateFunction(sliceToChar(_c === 39 ? "'" : '"'));
+					appendChild(current, new TextNode(content, current));
+
+					if (current.__single === true) {
+
+						while ((current = current.parent) != null && current.__single != null);
+
+					}
+
+
+					_index++;
 					continue;
 				}
 
@@ -239,13 +267,10 @@ var Parser = (function() {
 					console.error('Parse Error: Undefined tag Name %d/%d %s', _index, length, _template.substring(_index, _index + 10));
 				}
 
-
-
 				var tag = new Tag(tagName, current);
 				parseAttributes(tag.attr);
 
 				appendChild(current, current = tag);
-				_index--;
 			}
 
 			return fragment.firstChild;

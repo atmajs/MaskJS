@@ -1,7 +1,10 @@
-(function(global, mask) {
+(function(mask){
+	'use strict'
+var $ = window.jQuery || window.Zepto || window.$;
 
-	"use strict";
-var $ = global.jQuery || global.Zepto || global.$;
+if ($ == null){
+	console.warn('Without jQuery/Zepto etc. binder is limited (mouse dom event bindings)');
+}
 /**
  *	Resolve object, of if property do not exists - create
  */
@@ -163,17 +166,23 @@ function addEventListener(element, event, listener) {
 	}
 }
 /**
- * visible handler. Used to bind rectly to display:X/none
+ * visible handler. Used to bind directly to display:X/none
  *
  * attr =
  *    check - expression to evaluate
  *    bind - listen for a property change
-*/
+ */
 
-mask.registerHandler(':visible', Class({
-	Extends: mask.ValueUtils.out,
+function VisibleHandler() {};
+
+mask.registerHandler(':visible', VisibleHandler);
+
+
+VisibleHandler.prototype = {
+	constructor: VisibleHandler,
+
 	refresh: function(model, container) {
-		container.style.display = this.isCondition(this.attr.check, model) ? '' : 'none';
+		container.style.display = mask.Util.Condition.isCondition(this.attr.check, model) ? '' : 'none';
 	},
 	render: function(model, container, cntx) {
 		this.refresh(model, container);
@@ -181,11 +190,11 @@ mask.registerHandler(':visible', Class({
 		if (this.attr.bind) {
 			addObjectObserver(model, this.attr.bind, this.refresh.bind(this, model, container));
 		}
-		if (this.nodes) {
-			mask.render(this.nodes, model, container, cntx);
+		if (this.firstChild) {
+			mask.render(this.firstChild, model, container, cntx);
 		}
 	}
-}));
+};
 /**
  *  Mask Custom Tag Handler
  *	attr =
@@ -202,9 +211,9 @@ function Bind() {}
 
 Bind.prototype.render = function(model, container, cntx) {
 
-	if (this.nodes) {
+	if (this.firstChild != null) {
 		/** continue render if binder has nodes */
-		mask.render(this.nodes, model, container, cntx);
+		mask.render(this.firstChild, model, container, cntx);
 	}
 
 	new BindingProvider(model, container, this, 'single');
@@ -212,7 +221,7 @@ Bind.prototype.render = function(model, container, cntx) {
 };
 
 /**
- *	Mask Custom Utility - for use in node values and attribute values
+ *	Mask Custom Utility - for use in textContent and attribute values
  */
 
 
@@ -326,6 +335,11 @@ BindingProvider.prototype = {
 	},
 	objectWay: {
 		get: function(obj, property) {
+
+			if (property[0] === ':'){
+				return mask.Util.ConditionUtil.condition(property.substring(1));
+			}
+
 			return getProperty(obj, property);
 		},
 		set: function(obj, property, value) {
@@ -377,8 +391,8 @@ mask.registerHandler(':dualbind', DualbindHandler);
 function DualbindHandler() {}
 
 DualbindHandler.prototype.render = function(model, container, cntx) {
-	if (this.nodes) {
-		mask.render(this.nodes, model, container, cntx);
+	if (this.firstChild) {
+		mask.render(this.firstChild, model, container, cntx);
 	}
 
 	if (cntx.components) {
@@ -526,7 +540,9 @@ function ValidateGroup() {}
 ValidateGroup.prototype = {
 	constructor: ValidateGroup,
 	render: function(model, container, cntx) {
-		mask.render(this.nodes, model, container, cntx);
+		if (this.firstChild){
+			mask.render(this.firstChild, model, container, cntx);
+		}
 	},
 	validate: function() {
 		var validations = getValidations(this);
@@ -577,6 +593,7 @@ mask.registerAttrHandler('x-on', function(node, model, value, element, cntx){
 		var event = x.substring(0, x.indexOf(':')),
 			handler = x.substring(x.indexOf(':') + 1).trim(),
 			Handler = getHandler(cntx, handler);
+			
 		if (Handler){
 			addEventListener(element, event, Handler);
 		}
@@ -595,4 +612,5 @@ function getHandler(controller, name){
 	return getHandler(controller.parent, name);
 }
 
-}(typeof window === 'undefined' ? global : window, typeof mask === 'undefined' ? null : mask));
+
+}(Mask));

@@ -64,8 +64,9 @@ var ConditionUtil = (function() {
 
 
 	function parseAssertion(T, output) {
+		// use shadow class
 		var current = {
-			assertions: [],
+			assertions: null,
 			join: null,
 			left: null,
 			right: null
@@ -115,7 +116,7 @@ var ConditionUtil = (function() {
 
 				output.push(current);
 				current = {
-					assertions: [],
+					assertions: null,
 					join: null,
 					left: null,
 					right: null

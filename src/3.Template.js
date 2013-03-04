@@ -2,8 +2,6 @@ function Template(template) {
 	this.template = template;
 	this.index = 0;
 	this.length = template.length;
-	this.firstChild = null;
-	this.lastChild = null;
 }
 
 Template.prototype = {

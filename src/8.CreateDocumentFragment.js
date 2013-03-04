@@ -6,11 +6,11 @@ function create_node(node, model, container, cntx) {
 
 	var j, jmax, x;
 
-	if (CustomTags.all[node.tagName] != null) {
+	if (CustomTags[node.tagName] != null) {
 		/* if (!DEBUG)
 		try {
 		*/
-		var Handler = CustomTags.all[node.tagName],
+		var Handler = CustomTags[node.tagName],
 			custom = typeof Handler === 'function' ? new Handler(model) : Handler;
 
 		custom.compoName = node.tagName;
