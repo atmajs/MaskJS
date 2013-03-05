@@ -1,0 +1,4 @@
+div {
+	input type='text' value='input2';
+	div > button > 'Input 2'
+}
