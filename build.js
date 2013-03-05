@@ -74,7 +74,7 @@ global.config = {
 
 	'watch': {
 		files: 'src/**',
-		config: 'import'
+		config: '#[import]'
 	},
 
 	'defaults': ['import']
