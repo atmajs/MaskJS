@@ -20,18 +20,10 @@ function builder_build(node, model, container, cntx) {
 			continue;
 		}
 
-		//if (node.firstChild != null) {
-		//	builder_build(node.firstChild, model, element, cntx);
-		//}
-		if (node.nodes instanceof Array === false){
-			node.nodes = [node.nodes];
+		if (node.firstChild != null) {
+			builder_build(node.firstChild, model, element, cntx);
 		}
-		if (node.nodes.length){
-			for(var i = 0, x, length = node.nodes.length; i < length; i++){
-				x = node.nodes[i];
-				builder_build(x, model, element, cntx);
-			}
-		}
+		
 
 	} while ((node = node.nextNode) != null);
 
