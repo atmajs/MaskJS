@@ -4,177 +4,117 @@
  *	``` $ includejs build.js ```
  **/
 
-var JSHint = {
-	options: {
-		curly   : true,
-		eqeqeq  : true,
-		forin   : true,
-		immed   : true,
-		latedef : true,
-		newcap  : true,
-		noarg   : true,
-		noempty : true,
-		nonew   : true,
-		regexp  : true,
-		undef   : true,
-		unused  : true,
-		strict  : true,
-		trailing: true,
-
-		boss     : true,
-		eqnull   : true,
-		es5      : true,
-		lastsemic: true,
-		browser: true,
-		node   : true,
-		onevar  : false,
-		evil: true,
-		sub: true,
-	},
-	globals: {
-		define: true,
-		require: true,
-	}
-};
-
-var builds = {
-	/**
-	 *	mask
-	 *
-	 *	```/lib/mask.js```
-	 *	Mask with DOM Based Builder
-	 **/
-	'mask': [
-		'src/intro.js.txt',
-		'src/1.scope-vars.js',
-		'src/2.Helper.js',
-		'src/3.Template.js',
-		'src/5.ConditionUtil.js',
-		'src/5.Custom.js',
-		'src/6.Parser.linked.js',
-		'src/7.Builder.recursion.js',
-		'src/8.CreateDocumentFragment.js',
-		'src/8.Mask.js',
-		'src/9.export.handlers.js',
-		'src/9.export.js',
-		'src/outro.js.txt'
-	],
-
-	////'mask.alpha': [
-	////	'src/intro.js.txt',
-	////	'src/1.scope-vars.js',
-	////	'src/2.Helper.js',
-	////	'src/3.Template.js',
-	////	'src/5.ConditionUtil.js',
-	////	'src/5.Custom.js',
-	////	'src/6.Parser.linked.js',
-	////	'src/7.Builder.recursion.js',
-	////	'src/8.CreateDocumentFragment.js',
-	////	'src/8.Mask.js',
-	////	'src/9.export.js',
-	////	'src/outro.js.txt'
-	////],
-
-	/**
-	 *	mask.node
-	 *
-	 *	```/lib/mask.node.js```
-	 *	Mask with HTML Builder
-	 **/
-	'mask.node': [
-		'src/intro.js.txt',
-		'src/1.scope-vars.js',
-		'src/2.Helper.js',
-		'src/3.Template.js',
-		'src/5.ConditionUtil.js',
-		'src/5.Custom.js',
-		'src/6.Parser.linked.js',
-		'src/7.Builder.recursion.js',
-		'src/8.CreateHtmlStream.js',
-		'src/8.Mask.js',
-		'src/handlers/sys.js',
-		'src/9.export.js',
-		'src/outro.js.txt'
-	],
-	/**
-	 *	plugin.reload
-	 *
-	 *	```/lib/plugin.reload.js```
-	 *	Reload plugin to use in includejs environment.
-	 *	Each component will be reinitialized on file-change
-	 **/
-	'plugin.reload': [
-		'src/10.HotReload.js'
-	],
-	/**
-	 *	formatter
-	 *
-	 *	```/lib/formatter.js```
-	 *	[[Formatter]] for Mask to
-	 *
-	 * + convert HTML to Mask
-	 * + stringify [[MaskDOM]]
-	 * + beautify Mask Markup
-	 **/
-	'formatter': [
-		'src/formatter/intro.js.txt',
-		'src/formatter/stringify.js',
-		'src/formatter/HTMLtoMask.js',
-		'src/formatter/exports.js',
-		'src/outro.js.txt'
-	]
-};
-
-var config = [{
-	action: 'settings',
-	io: {
-		extensions: {
-			js: ['condcomments:read', 'importer:read']
-		}
-	}
-}];
+/**
+ *	mask
+ *
+ *	```/lib/mask.js```
+ *	Mask with DOM Based Builder
+ **/
 
 
-for(var key in builds){
-	config.push({
-		action: 'concat',
-		files: builds[key],
-		dist: 'lib/' + key + '.js'
-	});
-}
+/**
+ *	mask.node
+ *
+ *	```/lib/mask.node.js```
+ *	Mask with HTML Builder
+ **/
 
-config.push({
-	action: 'jshint',
-	files: ['lib/mask.js', 'lib/formatter.js'],
-	jshint: JSHint
-});
+/**
+ *	plugin.reload
+ *
+ *	```/lib/plugin.reload.js```
+ *	Reload plugin to use in includejs environment.
+ *	Each component will be reinitialized on file-change
+ **/
 
-config.push({
-	action: 'uglify',
-	files: 'lib/mask.js'
-});
+/**
+ *	formatter
+ *
+ *	```/lib/formatter.js```
+ *	[[Formatter]] for Mask to
+ *
+ * + convert HTML to Mask
+ * + stringify [[MaskDOM]]
+ * + beautify Mask Markup
+ **/
+
 
 
 global.config = {
-	build: config,
+	'settings': {
+		io: {
+			extensions: {
+				js: ['condcomments:read', 'importer:read']
+			}
+		}
+	},
+	'import': {
+		files: 'builds/**',
+		output: 'lib/'
+	},
+	'jshint': {
+		files: ['lib/mask.js', 'lib/formatter.js'],
+		jshint: JSHint()
+	},
+	'uglify': {
+		files: 'lib/mask.js'
+	},
 
-	docs: {
+	'docs': {
 		action: 'custom',
 		script: 'build.docs.js'
 	},
 
-	handlers: {
+	'handlers': {
 		action: 'copy',
 		files: {
 			'../mask.binding/lib/mask.binding.embeded.js': 'src/handlers/mask.binding.js'
 		}
 	},
 
-	watch: {
-		action: 'watch',
+	'watch': {
 		files: 'src/**',
-		config: config
+		config: 'import'
 	},
 
-	defaults: ['build'],
+	'defaults': ['import']
 };
+
+
+
+
+function JSHint() {
+
+	return {
+		options: {
+			curly: true,
+			eqeqeq: true,
+			forin: true,
+			immed: true,
+			latedef: true,
+			newcap: true,
+			noarg: true,
+			noempty: true,
+			nonew: true,
+			regexp: true,
+			undef: true,
+			unused: true,
+			strict: true,
+			trailing: true,
+
+			boss: true,
+			eqnull: true,
+			es5: true,
+			lastsemic: true,
+			browser: true,
+			node: true,
+			onevar: false,
+			evil: true,
+			sub: true,
+		},
+		globals: {
+			define: true,
+			require: true,
+		}
+	};
+}

@@ -1,4 +1,3 @@
-
 (function (root, factory) {
     'use strict';
 

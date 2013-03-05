@@ -14,6 +14,7 @@ var Parser = (function() {
 
 
 		this.__single = null;
+		this.nodes = [];
 	}
 
 	function TextNode(text, parent) {
@@ -32,6 +33,7 @@ var Parser = (function() {
 			parent.lastChild.nextNode = node;
 		}
 		parent.lastChild = node;
+		parent.nodes.push(node);
 	}
 
 
