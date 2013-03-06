@@ -9,10 +9,11 @@ var Parser = (function() {
 
 		this.firstChild = null;
 		this.lastChild = null;
+
+		this.previousNode = null;
 		this.nextNode = null;
+
 		this.currentNode = null;
-
-
 		this.__single = null;
 		//- this.nodes = [];
 	}
@@ -31,6 +32,8 @@ var Parser = (function() {
 		}
 		if (parent.lastChild != null) {
 			parent.lastChild.nextNode = node;
+
+			node.previuosNode = parent.lastChild;
 		}
 		parent.lastChild = node;
 		//- parent.nodes.push(node);
