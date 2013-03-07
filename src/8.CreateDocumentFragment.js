@@ -2,7 +2,7 @@ function create_container() {
 	return document.createDocumentFragment();
 }
 
-function create_node(node, model, container, cntx) {
+function create_node(node, model, cntx, component, container) {
 
 	var j, jmax, x;
 
@@ -11,15 +11,30 @@ function create_node(node, model, container, cntx) {
 		try {
 		*/
 		var Handler = CustomTags[node.tagName],
-			custom = typeof Handler === 'function' ? new Handler(model) : Handler;
+			controller = typeof Handler === 'function' ? new Handler(model) : Handler;
 
-		custom.compoName = node.tagName;
-		custom.firstChild = node.firstChild;
-		//creating new attr object for custom handler, preventing collisions due to template caching
-		custom.attr = util_extend(custom.attr, node.attr);
 
-		(cntx.components || (cntx.components = [])).push(custom);
-		custom.parent = cntx;
+
+		var child = new Component(node, model, cntx, controller, container);
+
+		if (component.components == null){
+			component.components = new Node;
+		}
+
+		component.components.appendChild(child);
+
+		controller.render(child, model, cntx, container);
+
+
+
+
+		////custom.compoName = node.tagName;
+		////custom.firstChild = node.firstChild;
+		//////creating new attr object for custom handler, preventing collisions due to template caching
+		////custom.attr = util_extend(custom.attr, node.attr);
+		////
+		////(cntx.components || (cntx.components = [])).push(custom);
+		////custom.parent = cntx;
 
 
 		if (listeners != null) {
@@ -31,7 +46,7 @@ function create_node(node, model, container, cntx) {
 			}
 		}
 
-		custom.render(model, container, custom);
+		//custom.render(model, container, custom);
 		/* if (!DEBUG)
 		}catch(error){
 			console.error('Custom Tag Handler:', node.tagName, error.toString());
@@ -103,4 +118,13 @@ function create_node(node, model, container, cntx) {
 
 	return tag;
 
+}
+
+function create_elementsContainer(){
+	return {
+		elements: [],
+		appendChild: function(element){
+			this.elements.push(element);
+		}
+	};
 }

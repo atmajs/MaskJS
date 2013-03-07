@@ -1,4 +1,4 @@
-function builder_build(node, model, container, cntx) {
+function builder_build(node, model, cntx, component, container, childs) {
 	if (node == null) {
 		return container;
 	}
@@ -6,24 +6,26 @@ function builder_build(node, model, container, cntx) {
 	if (container == null) {
 		container = create_container();
 	}
-	if (cntx == null) {
-		cntx = {
-			components: null
-		};
+	if (component == null) {
+		component = new Component();
 	}
 
 	do {
-		var element = create_node(node, model, container, cntx);
+		var child = create_node(node, model, cntx, component, container);
 
-		if (element == null){
+		if (child == null){
 			// it was custom handler or textConent - do not handle those children
 			continue;
 		}
 
-		if (node.firstChild != null) {
-			builder_build(node.firstChild, model, element, cntx);
+		if (childs != null){
+			childs.push(child);
 		}
-		
+
+		if (node.firstChild != null) {
+			builder_build(node.firstChild, model, cntx, component, child);
+		}
+
 
 	} while ((node = node.nextNode) != null);
 

@@ -16,11 +16,11 @@ var cache = {},
 		 *
 		 * Create new Document Fragment from template or append rendered template to container
 		 **/
-		render: function (template, model, container, cntx) {
+		render: function (template, model, cntx, component, container) {
 			if (typeof template === 'string') {
 				template = this.compile(template);
 			}
-			return builder_build(template, model, container, cntx);
+			return builder_build(template, model, cntx, component, container);
 		},
 		/**
 		 *	mask.compile(template) -> MaskDOM

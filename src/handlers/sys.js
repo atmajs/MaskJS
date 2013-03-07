@@ -9,7 +9,7 @@
 
 	Sys.prototype = {
 		construct: Sys,
-		render: function(model, container, cntx){
+		render: function(compo, model, cntx, container){
 
 			if (this.attr['if']){
 				var check = this.attr['if'];
@@ -29,7 +29,7 @@
 				if (prev.compoName == '%' && prev.attr['if']){
 
 					if (prev.state === false){
-						builder_build(this.firstChild, model, container, cntx);
+						compo.render(model, cntx, container);
 					}
 					return;
 				}
@@ -38,7 +38,8 @@
 			}
 
 			if (this.attr['use']){
-				builder_build(this.firstChild, util_getProperty(model, this.attr['use']), container, cntx);
+				//-builder_build(this.firstChild, util_getProperty(model, this.attr['use']), container, cntx);
+				compo.render(util_getProperty(model, this.attr['use']), cntx, container);
 				return;
 			}
 
@@ -55,14 +56,15 @@
 			}
 
 			if (this.attr['for']){
-				foreach(this, model, container, cntx);
+				foreach(compo, model, cntx, container);
 			}
 		}
 	}
 
 
-	function foreach(node, model, container, cntx){
-		var attr = node.attr,
+	function foreach(compo, model, cntx, container){
+		
+		var attr = compo.node.attr,
 			attrTemplate = attr.template,
 			array = util_getProperty(model, attr['for']),
 			template,
@@ -75,15 +77,18 @@
 
 		if (attrTemplate != null) {
 			template = document.querySelector(attrTemplate).innerHTML;
-			node.firstNode = Mask.compile(template);
+			compo.node.firstNode = Mask.compile(template);
 		}
 
-		if (node.firstChild == null) {
+		if (compo.node.firstChild == null) {
 			return container;
 		}
 
 		for (i = 0, length = array.length; i < length; i++) {
-			builder_build(node.firstChild, array[i], container, cntx);
+
+			//builder_build(node.firstChild, array[i], cntx, container);
+
+			compo.render(array[i], cntx, container);
 		}
 
 		return container;

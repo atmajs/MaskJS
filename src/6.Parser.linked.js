@@ -1,43 +1,43 @@
-var Parser = (function() {
+var Parser = (function(Node, TextNode) {
 
 	var _template, _length, _index, _serialize, _c;
 
-	function Tag(tagName, parent) {
-		this.tagName = tagName;
-		this.parent = parent;
-		this.attr = {};
-
-		this.firstChild = null;
-		this.lastChild = null;
-
-		this.previousNode = null;
-		this.nextNode = null;
-
-		this.currentNode = null;
-		this.__single = null;
-		//- this.nodes = [];
-	}
-
-	function TextNode(text, parent) {
-		this.content = text;
-		this.parent = parent;
-		this.nextNode = null;
-	}
-
-
-
-	function appendChild(parent, node) {
-		if (parent.firstChild == null) {
-			parent.firstChild = node;
-		}
-		if (parent.lastChild != null) {
-			parent.lastChild.nextNode = node;
-
-			node.previuosNode = parent.lastChild;
-		}
-		parent.lastChild = node;
-		//- parent.nodes.push(node);
-	}
+	//function Tag(tagName, parent) {
+	//	this.tagName = tagName;
+	//	this.parent = parent;
+	//	this.attr = {};
+	//
+	//	this.firstChild = null;
+	//	this.lastChild = null;
+	//
+	//	this.previousNode = null;
+	//	this.nextNode = null;
+	//
+	//	this.currentNode = null;
+	//	this.__single = null;
+	//	//- this.nodes = [];
+	//}
+	//
+	//function TextNode(text, parent) {
+	//	this.content = text;
+	//	this.parent = parent;
+	//	this.nextNode = null;
+	//}
+	//
+	//
+	//
+	//function appendChild(parent, node) {
+	//	if (parent.firstChild == null) {
+	//		parent.firstChild = node;
+	//	}
+	//	if (parent.lastChild != null) {
+	//		parent.lastChild.nextNode = node;
+	//
+	//		node.previuosNode = parent.lastChild;
+	//	}
+	//	parent.lastChild = node;
+	//	//- parent.nodes.push(node);
+	//}
 
 
 	function parseAttributes(attr) {
@@ -194,7 +194,7 @@ var Parser = (function() {
 			_length = T.length;
 			_serialize = T.serialize;
 
-			var current = new Tag(),
+			var current = new Node(),
 				fragment = current;
 
 			while (_index < _length) {
@@ -245,7 +245,7 @@ var Parser = (function() {
 					_index++;
 
 					var content = ensureTemplateFunction(sliceToChar(_c === 39 ? "'" : '"'));
-					appendChild(current, new TextNode(content, current));
+					current.appendChild(new TextNode(content, current));
 
 					if (current.__single === true) {
 
@@ -269,10 +269,10 @@ var Parser = (function() {
 					console.error('Parse Error: Undefined tag Name %d/%d %s', _index, length, _template.substring(_index, _index + 10));
 				}
 
-				var tag = new Tag(tagName, current);
-				parseAttributes(tag.attr);
+				var node = new Node(tagName, current);
+				parseAttributes(node.attr);
 
-				appendChild(current, current = tag);
+				current.appendChild(current = node);
 			}
 
 			return fragment.firstChild;
@@ -294,4 +294,4 @@ var Parser = (function() {
 			return obj;
 		}
 	};
-}());
+}(Node, TextNode));
