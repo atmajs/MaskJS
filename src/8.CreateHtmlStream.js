@@ -78,7 +78,7 @@ var creat_node = (function() {
 			stream.buffer += '>';
 		}
 
-		return null;
+		return stream;
 	}
 
 }());

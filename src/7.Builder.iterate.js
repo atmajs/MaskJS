@@ -1,4 +1,5 @@
-function builder_build(node, model, container, cntx) {
+function builder_build(node, model, container, cntx, component, childs) {
+
 	if (node == null) {
 		return container;
 	}
@@ -7,44 +8,69 @@ function builder_build(node, model, container, cntx) {
 		container = create_container();
 	}
 
-	if (cntx == null) {
-		cntx = {
-			components: null
-		};
+	if (component == null) {
+		component = new Component;
 	}
 
 
 	var parent = null,
 		element = container,
-		stack = [node],
+		stack = [element],
 		stackIndex = 0;
 
-	while (node != null) {
-		element = create_node(node, model, element, cntx);
 
+
+	while (node != null) {
+
+		if (node.type === 1){
+			element = create_node(node, model, element, cntx, component);
+		}
+
+		if (node.type === 4){
+
+			var Handler = node.controller,
+			controller = typeof Handler === 'function' ? new Handler(model) : Handler;
+
+			controller.attr = util_extend(controller.attr, node.attr);
+
+			controller.first = node.first;
+			controller.parent = component;
+
+			controller.render(model, container, cntx);
+
+			component.append(controller);
+
+			element = null;
+
+		}
 
 		// do not handle children on custom tag and textContent;
-		if (element != null && node.firstChild != null) {
+		if (element != null && node.first != null) {
 
 			parent = node;
-			node = (node.currentNode = node.firstChild);
+			node = (node.current = node.first);
 
-			parent.currentNode = node.nextNode;
+			parent.current = node.next;
 			stack[++stackIndex] = element;
 			continue;
 		}
 
 		while (parent != null) {
-			if (parent.currentNode != null) {
-				node = parent.currentNode;
-				parent.currentNode = parent.currentNode.nextNode;
+			if (parent.current != null) {
+				node = parent.current;
+				parent.current = parent.current.next;
 				stackIndex--;
 				break;
 			}
 
-			node.currentNode = null;
-
+			node.current = null;
 			node = (parent = parent.parent);
+
+			////if (node != null && node.type === 4){
+			////	currentModel = node.model;
+			////	currentContainer = node.container;
+			////	currentCompo = node;
+			////}
 		}
 
 
@@ -52,6 +78,7 @@ function builder_build(node, model, container, cntx) {
 		element = stack[stackIndex];
 
 	}
+
 
 	return container;
 }

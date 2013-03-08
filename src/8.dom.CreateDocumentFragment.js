@@ -6,48 +6,46 @@ function create_node(node, model, container, cntx, component) {
 
 	var tagName = node.tagName,
 		attr = node.attr,
-		nodes = node.nodes,
+		nodes = node.first,
 		j, jmax, x;
 
-	if (CustomTags[tagName] != null) {
-		/* if (!DEBUG)
-		try {
-		*/
-		var Handler = CustomTags[tagName],
-			controller = typeof Handler === 'function' ? new Handler(model) : Handler;
-
-
-		controller.compoName = tagName;
-		controller.nodes = nodes;
-		controller.attr = util_extend(controller.attr, attr);
-		controller.parent = component;
-
-		controller.render(model, container, cntx);
-
-		if (component.components == null) {
-			component.components = [];
-		}
-		component.components.push(controller);
-
-
-
-		if (listeners != null) {
-			var fns = listeners['compoCreated'];
-			if (fns != null) {
-				for (j = 0, jmax = fns.length; j < jmax; j++) {
-					fns[j](child, model, container);
-				}
-			}
-		}
-
-		/* if (!DEBUG)
-		}catch(error){
-			console.error('Custom Tag Handler:', node.tagName, error.toString());
-		}
-		*/
-
-		return null;
-	}
+	//if (CustomTags[tagName] != null) {
+	//	console.error('tagName');
+	//	/* if (!DEBUG)
+	//	try {
+	//	*/
+	//	var Handler = CustomTags[tagName],
+	//		controller = typeof Handler === 'function' ? new Handler(model) : Handler;
+	//
+	//
+	//	controller.compoName = tagName;
+	//	controller.first = nodes;
+	//	controller.attr = util_extend(controller.attr, attr);
+	//	controller.parent = component;
+	//
+	//	controller.render(model, container, cntx);
+	//
+	//	component.append(controller);
+	//
+	//
+	//
+	//	if (listeners != null) {
+	//		var fns = listeners['compoCreated'];
+	//		if (fns != null) {
+	//			for (j = 0, jmax = fns.length; j < jmax; j++) {
+	//				fns[j](child, model, container);
+	//			}
+	//		}
+	//	}
+	//
+	//	/* if (!DEBUG)
+	//	}catch(error){
+	//		console.error('Custom Tag Handler:', node.tagName, error.toString());
+	//	}
+	//	*/
+	//
+	//	return null;
+	//}
 
 	if (node.content != null) {
 		var content = node.content;
@@ -70,7 +68,12 @@ function create_node(node, model, container, cntx, component) {
 					container.appendChild(document.createTextNode(text));
 					text = '';
 				}
+				if (x.nodeType == null){
+					console.error('Not a HTMLElement', x);
+					continue;
+				}
 				container.appendChild(x);
+				continue;
 			}
 
 			text += x;

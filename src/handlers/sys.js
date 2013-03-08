@@ -3,33 +3,69 @@
 
 	mask.registerHandler('%', Sys);
 
-
 	function Sys(){}
 
-
 	Sys.prototype = {
-		construct: Sys,
-		render: function(compo, model, cntx, container){
+		constructor: Sys,
+		renderStart: function(model, cntx, container){
+			if (this.attr['foreach'] != null){
+				var array = util_getProperty(model, this.attr['foreach']),
+					//template = this.first,
+					template = this.nodes,
+					last = null,
+					item = null;
 
-			if (this.attr['if']){
-				var check = this.attr['if'];
+				if (length === 0) {
+					return;
+				}
+
+				this.nodes = [];
+				for(var i = 0, x, length = array.length; i < length; i++){
+					x = array[i];
+
+					item = new Component();
+					//item.first = template;
+					item.nodes = template;
+					item.model = x;
+					item.container = container;
+
+					this.nodes[i] = item;
+
+					////if (last == null){
+					////	this.first = item;
+					////	last = this.first;
+					////}else{
+					////	last.next = item;
+					////	last = item;
+					////}
+				}
+
+				//this.last = item;
+			}
+		},
+		render: null,
+		render2: function(model, container, cntx){
+			var attr = this.attr;
+
+			if (attr['if'] != null){
+				var check = attr['if'];
 
 				this.state = ConditionUtil.isCondition(check, model);
 
 				if (this.state){
-					builder_build(this.firstChild, model, container, cntx);
+					builder_build(this.nodes, model, container, cntx, this);
 				}
 				return;
 			}
 
-			if (this.attr['else']){
-				var compos = cntx && cntx.parent && cntx.parent.components,
-					prev = compos && compos[compos.length - 2] || {};
+			if (attr['else'] != null){
+				var compos = this.parent.components,
+					prev = compos && compos[compos.length - 2];
 
-				if (prev.compoName == '%' && prev.attr['if']){
+				if (prev != null && prev.compoName == '%' && prev.attr['if'] != null){
 
 					if (prev.state === false){
-						compo.render(model, cntx, container);
+						builder_build(this.nodes, model, container, cntx, this);
 					}
 					return;
 				}
@@ -37,36 +73,38 @@
 				return;
 			}
 
-			if (this.attr['use']){
-				//-builder_build(this.firstChild, util_getProperty(model, this.attr['use']), container, cntx);
-				compo.render(util_getProperty(model, this.attr['use']), cntx, container);
+			if (attr['use'] != null){
+				builder_build(this.nodes, util_getProperty(model, attr['use']), container, cntx, this);
 				return;
 			}
 
-			if (this.attr['debugger']){
+			if (attr['debugger'] != null){
 				debugger;
 				return;
 			}
 
-			if (this.attr['log']){
-				var key = this.attr.log,
+			if (attr['log'] != null){
+				var key = attr.log,
 					value = util_getProperty(model, key);
+
 				console.log('Key: %s, Value: %s', key, value);
 				return;
 			}
 
-			if (this.attr['for']){
-				foreach(compo, model, cntx, container);
+			if (attr['foreach']){
+				foreach(this, model, container, cntx);
 			}
 		}
 	}
 
+	Component.defineCompo('%', Sys);
 
-	function foreach(compo, model, cntx, container){
-		
-		var attr = compo.node.attr,
+
+	function foreach(compo, model, container, cntx){
+
+		var attr = compo.attr,
 			attrTemplate = attr.template,
-			array = util_getProperty(model, attr['for']),
+			array = util_getProperty(model, attr['foreach']),
 			template,
 			i, length;
 
@@ -77,18 +115,17 @@
 
 		if (attrTemplate != null) {
 			template = document.querySelector(attrTemplate).innerHTML;
-			compo.node.firstNode = Mask.compile(template);
+			compo.firstNode = Mask.compile(template);
 		}
 
-		if (compo.node.firstChild == null) {
+		if (compo.first == null) {
 			return container;
 		}
 
 		for (i = 0, length = array.length; i < length; i++) {
-
-			//builder_build(node.firstChild, array[i], cntx, container);
-
-			compo.render(array[i], cntx, container);
+			debugger;
+			builder_build(compo.first, array[i], container, cntx, compo);
+			//compo.process(array[i], container, cntx);
 		}
 
 		return container;

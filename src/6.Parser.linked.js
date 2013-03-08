@@ -1,44 +1,56 @@
-var Parser = (function(Node, TextNode) {
+var Parser = (function(Node, TextNode, Fragment, Component) {
 
-	var _template, _length, _index, _serialize, _c;
-
-
-	function appendChild(parent, node) {
-		if (parent.firstChild == null) {
-			parent.firstChild = node;
+	function appendChild(parent, node){
+		if (parent.first == null) {
+			parent.first = node;
 		}
-		if (parent.lastChild != null) {
-			parent.lastChild.nextNode = node;
+		if (parent.last != null) {
+			parent.last.next = node;
 
-			node.previuosNode = parent.lastChild;
+			node.previuos = parent.last;
 		}
-		parent.lastChild = node;
-
+		parent.last = node;
 	}
-	//////
-	//////function Node(tagName, parent) {
-	//////	this.tagName = tagName;
-	//////	this.parent = parent;
-	//////	this.attr = {};
-	//////
-	//////	this.__single = null;
-	//////
-	//////	this.nodes = null; //[];
-	//////}
-	//////
-	//////function TextNode(text, parent) {
-	//////	this.content = text;
-	//////	this.parent = parent;
-	//////	//this.nextNode = null;
-	//////}
-	//////
-	//////
-	//////function appendChild(parent, node){
-	//////	if (parent.nodes == null){
-	//////		parent.nodes = [];
-	//////	}
-	//////	parent.nodes.push(node);
-	//////}
+
+	function Node(tagName, parent) {
+		this.tagName = tagName;
+		this.parent = parent;
+		this.attr = {};
+
+		this.__single = null;
+
+		this.nodes = null;
+		this.type = 1;
+	}
+
+	function TextNode(text, parent) {
+		this.content = text;
+		this.parent = parent;
+		//this.nextNode = null;
+		this.type = 1;
+	}
+
+	function Fragment(){
+		this.nodes = [];
+		this.type = 3;
+	}
+
+	function Component(compoName, parent, controller){
+		this.compoName = compoName;
+		this.parent = parent;
+		this.controller = controller;
+		this.nodes = null;
+		this.components = null;
+		this.type = 4;
+		this.attr = {};
+	}
+
+	function appendChild(parent, node){
+		if (parent.nodes == null){
+			parent.nodes = [];
+		}
+		parent.nodes.push(node);
+	}
 
 
 
@@ -87,7 +99,7 @@ var Parser = (function(Node, TextNode) {
 
 			//_serialize = T.serialize;
 
-			var current = new Node(),
+			var current = new Fragment(),
 				fragment = current,
 				state = 2,
 				last = 3,
@@ -140,7 +152,13 @@ var Parser = (function(Node, TextNode) {
 
 					} else if (last === state_tag) {
 
-						appendChild(current, current = new Node(token, current));
+						if (CustomTags[token] != null){
+							appendChild(current, current = new Component(token, current, CustomTags[token]));
+
+						}else{
+							appendChild(current, current = new Node(token, current));
+						}
+
 						state = state_attr;
 
 					} else if (last === state_literal) {
@@ -332,7 +350,7 @@ var Parser = (function(Node, TextNode) {
 			//	throw '';
 			//}
 
-			return fragment.firstChild || fragment.nodes;
+			return fragment;//fragment.firstChild || fragment.nodes;
 		},
 		cleanObject: function(obj) {
 			if (obj instanceof Array) {
@@ -351,4 +369,4 @@ var Parser = (function(Node, TextNode) {
 			return obj;
 		}
 	};
-}(Node, TextNode));
+}(Node, TextNode, Fragment, Component));
