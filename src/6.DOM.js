@@ -47,12 +47,12 @@ Component.prototype.render = function(model, cntx, container){
 	this.elements = [];
 
 
-	builder_build(node, model, cntx, this, container, this.elements);
+	Builder.build(node, model, cntx, this, container, this.elements);
 
 
 };
 
- 
+
 
 
 (function() {
