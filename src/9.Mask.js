@@ -37,12 +37,14 @@ var cache = {},
 
 
 			/* remove unimportant whitespaces */
-			var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
-			if (serializeOnly === true) {
-				T.serialize = true;
-			}
+			//var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
+			//var T = new Template(template);
+			//
+			//if (serializeOnly === true) {
+			//	T.serialize = true;
+			//}
 
-			return (cache[template] = Parser.parse(T));
+			return (cache[template] = Parser.parse(template));
 		},
 		/**
 		 * 	mask.registerHandler(tagName, tagHandler) -> Void

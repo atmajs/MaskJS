@@ -20,21 +20,11 @@ function create_node(node, model, cntx, component, container) {
 		if (component.components == null){
 			component.components = new Node;
 		}
-
+		
 		component.components.appendChild(child);
 
 		controller.render(child, model, cntx, container);
 
-
-
-
-		////custom.compoName = node.tagName;
-		////custom.firstChild = node.firstChild;
-		//////creating new attr object for custom handler, preventing collisions due to template caching
-		////custom.attr = util_extend(custom.attr, node.attr);
-		////
-		////(cntx.components || (cntx.components = [])).push(custom);
-		////custom.parent = cntx;
 
 
 		if (listeners != null) {

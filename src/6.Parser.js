@@ -1,46 +1,5 @@
 var Parser = {
-	toFunction: function(template) {
 
-		var START = '#{',
-			END = '}',
-			FIND_LENGHT = 2,
-			arr = [],
-			index = 0,
-			lastIndex = 0,
-			i = 0,
-			end = 0;
-		while ((index = template.indexOf(START, index)) > -1) {
-
-			end = template.indexOf(END, index + FIND_LENGHT);
-			if (end === -1) {
-				index += FIND_LENGHT;
-				continue;
-			}
-
-			if (lastIndex < index) {
-				arr[i] = template.substring(lastIndex, index);
-				i++;
-			}
-
-			if (index === lastIndex) {
-				arr[i] = '';
-				i++;
-			}
-
-			arr[i] = template.substring(index + FIND_LENGHT, end);
-			i++;
-			lastIndex = index = end + 1;
-		}
-
-		if (lastIndex < template.length) {
-			arr[i] = template.substring(lastIndex);
-		}
-
-		template = null;
-		return function(model, type, cntx, element, name) {
-			return util_interpolate(arr, model, type, cntx, element, name);
-		};
-	},
 	parseAttributes: function(T, node) {
 
 		var template = T.template,
@@ -104,7 +63,7 @@ var Parser = {
 			if (key != null) {
 				//console.log('key', key, value);
 				if (value.indexOf('#{') > -1) {
-					value = T.serialize !== true ? this.toFunction(value) : {
+					value = T.serialize !== true ? util_createInterpolateFunction(value) : {
 						template: value
 					};
 				}
@@ -112,7 +71,7 @@ var Parser = {
 			}
 		}
 		if (_classNames != null) {
-			node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? this.toFunction(_classNames) : {
+			node.attr['class'] = _classNames.indexOf('#{') > -1 ? (T.serialize !== true ? util_createInterpolateFunction(_classNames) : {
 				template: _classNames
 			}) : _classNames;
 
@@ -133,11 +92,11 @@ var Parser = {
 
 		do {
 			c = T.template.charCodeAt(++T.index);
-		} while (c !== 61 /*=*/ && c !== 32 && c !== 123 /*{*/ && c !== 62 /*>*/ && c !== 59 /*;*/ && T.index < T.length);
+		} while (c !== 61 /*=*/ && c > 32 && c !== 123 /*{*/ && c !== 62 /*>*/ && c !== 59 /*;*/ && T.index < T.length);
 
 		value = T.template.substring(start, T.index);
 
-		if (c === 32) {
+		if (c < 33) {
 			T.skipWhitespace();
 		}
 
@@ -160,7 +119,7 @@ var Parser = {
 
 				var content = T.sliceToChar(c === 39 ? "'" : '"');
 				if (content.indexOf('#{') > -1) {
-					content = T.serialize !== true ? this.toFunction(content) : {
+					content = T.serialize !== true ? util_createInterpolateFunction(content) : {
 						template: content
 					};
 				}

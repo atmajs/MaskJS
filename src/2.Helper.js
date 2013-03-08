@@ -72,7 +72,7 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 	return output;
 }
 
-function util_createInterpoleFunction(template) {
+function util_createInterpolateFunction(template) {
 	var START = '#{',
 		END = '}',
 		FIND_LENGHT = 2,

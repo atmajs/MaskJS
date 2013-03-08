@@ -12,7 +12,7 @@ Template.prototype = {
 			length = this.length;
 
 		for (; index < length; index++) {
-			if (template.charCodeAt(index) !== 32 /*' '*/) {
+			if (template.charCodeAt(index) > 32 /*' '*/) {
 				break;
 			}
 		}
@@ -22,6 +22,28 @@ Template.prototype = {
 		return this;
 	},
 
+	skipToAttributeBreak: function () {
+
+		var template = this.template,
+			index = this.index,
+			length = this.length,
+			c;
+		do {
+			c = template.charCodeAt(++index);
+			// if c == # && next() == { - continue */
+			if (c === 35 && template.charCodeAt(index + 1) === 123) {
+				// goto end of template declaration
+				this.index = index;
+				this.sliceToChar('}');
+				this.index++;
+				return;
+			}
+		}
+		while (c !== 46 && c !== 35 && c !== 62 && c !== 123 && c !== 32 && c !== 59 && index < length);
+		//while(!== ".#>{ ;");
+
+		this.index = index;
+	},
 	sliceToChar: function (c) {
 		var template = this.template,
 			index = this.index,
