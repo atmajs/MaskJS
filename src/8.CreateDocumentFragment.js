@@ -20,7 +20,7 @@ function create_node(node, model, cntx, component, container) {
 		if (component.components == null){
 			component.components = new Node;
 		}
-		
+
 		component.components.appendChild(child);
 
 		controller.render(child, model, cntx, container);
@@ -28,10 +28,10 @@ function create_node(node, model, cntx, component, container) {
 
 
 		if (listeners != null) {
-			var fns = listeners['customCreated'];
+			var fns = listeners['compoCreated'];
 			if (fns != null) {
 				for (j = 0, jmax = fns.length; j < jmax; j++) {
-					fns[j](custom, model, container);
+					fns[j](child, model, container);
 				}
 			}
 		}

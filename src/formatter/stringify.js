@@ -32,7 +32,7 @@ var stringify = (function() {
 		var index = output.length;
 
 		do {
-			stringify(node, indent, output);
+			processNode(node, indent, output);
 		} while((node = node.nextNode));
 
 		//////if (ast instanceof Array) {
@@ -55,30 +55,30 @@ var stringify = (function() {
 
 	}
 
-	function stringify(node, currentIndent, output) {
+	function processNode(node, currentIndent, output) {
 		if (typeof node.content === 'string') {
 			output.push(wrapString(node.content));
 			return;
 		}
 
 		if (isEmpty(node)) {
-			output.push(stringifyNodeHead(node) + ';');
+			output.push(processNodeHead(node) + ';');
 			return;
 		}
 
 		if (isSingle(node)) {
-			output.push(stringifyNodeHead(node) + ' > ');
+			output.push(processNodeHead(node) + ' > ');
 			run(getSingle(node), _indent, output);
 			return;
 		}
 
-		output.push(stringifyNodeHead(node) + '{');
+		output.push(processNodeHead(node) + '{');
 		run(node.firstChild, _indent, output);
 		output.push('}');
 		return;
 	}
 
-	function stringifyNodeHead(node) {
+	function processNodeHead(node) {
 		var tagName = node.tagName,
 			_id = node.attr.id || '',
 			_class = node.attr['class'] || '';

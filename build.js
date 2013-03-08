@@ -77,7 +77,7 @@ global.config = {
 		config: '#[import]'
 	},
 
-	'defaults': ['import']
+	'defaults': ['import', 'jshint', 'uglify']
 };
 
 
