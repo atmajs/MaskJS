@@ -1,4 +1,4 @@
-/**  
+/**
 	Converts All HTML files in directory and sub-.
 
 	Copy thif file to target directory.
@@ -9,10 +9,10 @@
 	or:
 	> "includejs npm install maskjs" (maskjs dependency is then installed in working directory of includejs).
 
-	
+
 	then:
 
-	> "includejs custom htmlToMask.js"
+	> "includejs custom htmlToMask"
 */
 
 require('maskjs');

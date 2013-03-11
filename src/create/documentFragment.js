@@ -19,21 +19,27 @@ function create_node(node, model, container, cntx/*, controller*/) {
 			return null;
 		}
 
-		var arr = content(model, 'node', cntx, container),
+		var result = content(model, 'node', cntx, container),
 			text = '';
 
-		for (j = 0, jmax = arr.length; j < jmax; j++) {
-			x = arr[j];
+		if (typeof result === 'string'){
+			container.appendChild(document.createTextNode(result));
+			return null;
+		}
+
+		// result is array with some htmlelements
+		for (j = 0, jmax = result.length; j < jmax; j++) {
+			x = result[j];
 
 			if (typeof x === 'object') {
-
-				// In this casee arr[j] should be any HTMLElement
+				// In this casee result[j] should be any HTMLElement
 				if (text !== '') {
 					container.appendChild(document.createTextNode(text));
 					text = '';
 				}
 				if (x.nodeType == null){
-					console.error('Not a HTMLElement', x);
+					console.warn('Not a HTMLElement', x, node, model);
+					text += x.toString();
 					continue;
 				}
 				container.appendChild(x);
@@ -59,7 +65,11 @@ function create_node(node, model, container, cntx/*, controller*/) {
 		}
 
 		if (typeof attr[key] === 'function') {
-			value = attr[key](model, 'attr', cntx, tag, key).join('');
+			value = attr[key](model, 'attr', cntx, tag, key);
+			if (value instanceof Array){
+				value = value.join('');
+			}
+
 		} else {
 			value = attr[key];
 		}

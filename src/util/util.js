@@ -38,19 +38,27 @@ function util_getProperty(o, chain) {
 
 function util_interpolate(arr, model, type, cntx, element, name) {
 	var length = arr.length,
-		output = new Array(length),
+		i = 0,
+		array = null,
+		string = '',
 		even = true,
-		utility, value, index, key, i;
+		utility, value, index, key;
 
-	for (i = 0, length = arr.length; i < length; i++) {
-		if (even) {
-			output[i] = arr[i];
+	for (; i < length; i++) {
+		if (even === true) {
+			if (array == null){
+				string += arr[i];
+			} else{
+				array.push(arr[i]);
+			}
 		} else {
 			key = arr[i];
 			value = null;
 			index = key.indexOf(':');
 
-			if (~index) {
+			if (index === -1) {
+				value = util_getProperty(model, key);
+			} else {
 				utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
 				if (utility === '') {
 					utility = 'condition';
@@ -60,16 +68,27 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 				if (typeof ModelUtils[utility] === 'function'){
 					value = ModelUtils[utility](key, model, type, cntx, element, name);
 				}
-			} else {
-				value = util_getProperty(model, key);
 			}
 
-			output[i] = value == null ? '' : value;
+			if (value != null){
+
+				if (typeof value === 'object' && array == null){
+					array = [string];
+				}
+
+				if (array == null){
+					string += value;
+				} else {
+					array.push(value);
+				}
+
+			}
 		}
 
 		even = !even;
 	}
-	return output;
+
+	return array == null ? string : array;
 }
 
 function util_createInterpolateFunction(template) {
