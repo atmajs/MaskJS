@@ -25,7 +25,7 @@
 				var compos = this.parent.components,
 					prev = compos && compos[compos.length - 2];
 
-				if (prev != null && prev.compoName == '%' && prev.attr['if'] != null){
+				if (prev != null && prev.compoName === '%' && prev.attr['if'] != null){
 
 					if (prev.state){
 						this.nodes = null;
@@ -59,12 +59,7 @@
 			if (attr['foreach'] != null){
 				var array = util_getProperty(model, attr['foreach']),
 					nodes = this.nodes,
-					last = null,
 					item = null;
-
-				if (length === 0) {
-					return;
-				}
 
 				this.nodes = [];
 				for(var i = 0, x, length = array.length; i < length; i++){

@@ -66,4 +66,4 @@ Component.prototype = {
 
 Component.create = function(fn){
 	util_extend(fn.prototype, Component.prototype);
-}
+};

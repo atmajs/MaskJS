@@ -1,10 +1,17 @@
+
+// source /src/plugin.intro.js.txt
 (function(mask){
 	'use strict'
+
+
+// source /src/vars.js
 var $ = window.jQuery || window.Zepto || window.$;
 
 if ($ == null){
 	console.warn('Without jQuery/Zepto etc. binder is limited (mouse dom event bindings)');
 }
+
+// source /src/helpers.js
 /**
  *	Resolve object, of if property do not exists - create
  */
@@ -105,7 +112,7 @@ function removeObjectObserver(obj, property, callback) {
 	}
 
 	var currentValue = getProperty(obj, property);
-	if (arguments.length == 2) {
+	if (arguments.length === 2) {
 		setProperty(obj, property, currentValue);
 		delete obj.__observers[property];
 		return;
@@ -115,7 +122,7 @@ function removeObjectObserver(obj, property, callback) {
 		length = arr.length,
 		i = 0;
 	for (; i < length; i++) {
-		if (callback == arr[i]) {
+		if (callback === arr[i]) {
 			arr.split(i, 1);
 			i--;
 			length--;
@@ -165,6 +172,8 @@ function addEventListener(element, event, listener) {
 		element.attachEvent("on" + event, listener);
 	}
 }
+
+// source /src/visible.handler.js
 /**
  * visible handler. Used to bind directly to display:X/none
  *
@@ -173,7 +182,7 @@ function addEventListener(element, event, listener) {
  *    bind - listen for a property change
  */
 
-function VisibleHandler() {};
+function VisibleHandler() {}
 
 mask.registerHandler(':visible', VisibleHandler);
 
@@ -184,17 +193,16 @@ VisibleHandler.prototype = {
 	refresh: function(model, container) {
 		container.style.display = mask.Util.Condition.isCondition(this.attr.check, model) ? '' : 'none';
 	},
-	render: function(model, container, cntx) {
+	renderStart: function(model, cntx, container) {
 		this.refresh(model, container);
 
 		if (this.attr.bind) {
 			addObjectObserver(model, this.attr.bind, this.refresh.bind(this, model, container));
 		}
-		if (this.firstChild) {
-			mask.render(this.firstChild, model, container, cntx);
-		}
 	}
 };
+
+// source /src/bind.handler.js
 /**
  *  Mask Custom Tag Handler
  *	attr =
@@ -204,21 +212,19 @@ VisibleHandler.prototype = {
  */
 
 
+function Bind() {}
 
 mask.registerHandler(':bind', Bind);
 
-function Bind() {}
 
-Bind.prototype.render = function(model, container, cntx) {
 
-	if (this.firstChild != null) {
-		/** continue render if binder has nodes */
-		mask.render(this.firstChild, model, container, cntx);
-	}
+Bind.prototype.renderStart = function(model, cntx, container) {
 
 	new BindingProvider(model, container, this, 'single');
 
 };
+
+// source /src/bind.util.js
 
 /**
  *	Mask Custom Utility - for use in textContent and attribute values
@@ -248,6 +254,8 @@ mask.registerUtility('bind', function(property, model, type, cntx, element, attr
 	return 'Unknown';
 });
 
+// source /src/bindingProvider.js
+
 var Providers = {};
 
 mask.registerBinding = function(type, binding) {
@@ -257,7 +265,7 @@ mask.registerBinding = function(type, binding) {
 mask.BindingProvider = BindingProvider;
 
 function BindingProvider(model, element, node, bindingType){
-	if (this.constructor == BindingProvider) {
+	if (this.constructor === BindingProvider) {
 
 		/** Initialize custom provider.
 		 * That could be defined by customName or by tagName
@@ -369,6 +377,8 @@ BindingProvider.prototype = {
 		}
 	}
 };
+
+// source /src/dualbind.handler.js
 /**
  *	Mask Custom Handler
  *
@@ -385,42 +395,43 @@ BindingProvider.prototype = {
  *
  *
  */
-mask.registerHandler(':dualbind', DualbindHandler);
-
-
 function DualbindHandler() {}
 
-DualbindHandler.prototype.render = function(model, container, cntx) {
-	if (this.firstChild) {
-		mask.render(this.firstChild, model, container, cntx);
-	}
+mask.registerHandler(':dualbind', DualbindHandler);
 
-	if (cntx.components) {
-		for (var i = 0, x, length = cntx.components.length; i < length; i++) {
-			x = cntx.components[i];
+DualbindHandler.prototype.renderEnd = function(elements, model, cntx, container) {
 
-			if (x.compoName == ':validate') {
+	if (this.components) {
+		for (var i = 0, x, length = this.components.length; i < length; i++) {
+			x = this.components[i];
+
+			if (x.compoName === ':validate') {
 				(this.validations || (this.validations = [])).push(x);
 			}
 		}
 
 	}
 	new BindingProvider(model, container, this);
+
 };
+
+// source /src/validate.js
 (function() {
 
 	mask.registerValidator = function(type, validator) {
 		Validators[type] = validator;
 	};
 
+	function Validate() {}
 
 	mask.registerHandler(':validate', Validate);
 
 
-	function Validate() {}
+
+
 	Validate.prototype = {
 		constructor: Validate,
-		render: function(model, container, cntx) {
+		renderStart: function(model, cntx, container) {
 			this.element = container;
 			this.model = model;
 		},
@@ -468,11 +479,11 @@ DualbindHandler.prototype.render = function(model, container, cntx) {
 					console.error('Unknown Validator:', key, this);
 					continue;
 				}
-				var validator = Validators[key];
-				if (typeof validator === 'function') {
-					validator = new validator(this);
+				var Validator = Validators[key];
+				if (typeof Validator === 'function') {
+					Validator = new Validator(this);
 				}
-				this.validators.push(validator);
+				this.validators.push(Validator);
 			}
 		}
 	};
@@ -522,28 +533,22 @@ DualbindHandler.prototype.render = function(model, container, cntx) {
 			validate: function(node, str) {
 				return str.length <= parseInt(node.attr.maxLength, 10);
 			}
-		},
-		check: {
-			validate: function(node, str) {
-				//...
-			}
 		}
+
 	};
 
 
 
 }());
+
+// source /src/validate.group.js
+function ValidateGroup() {}
+
 mask.registerHandler(':validate:group', ValidateGroup);
 
-function ValidateGroup() {}
 
 ValidateGroup.prototype = {
 	constructor: ValidateGroup,
-	render: function(model, container, cntx) {
-		if (this.firstChild){
-			mask.render(this.firstChild, model, container, cntx);
-		}
-	},
 	validate: function() {
 		var validations = getValidations(this);
 
@@ -580,12 +585,14 @@ function getValidations(component, out){
 	return out;
 }
 
+// source /src/bind.signals.js
+
 /**
  *	Mask Custom Attribute
  *	Bind Closest Controllers Handler Function to dom event(s)
  */
 
-mask.registerAttrHandler('x-on', function(node, model, value, element, cntx){
+mask.registerAttrHandler('x-signal', function(node, model, value, element, cntx){
 
 	var arr = value.split(';');
 	for(var i = 0, x, length = arr.length; i < length; i++){
@@ -593,7 +600,7 @@ mask.registerAttrHandler('x-on', function(node, model, value, element, cntx){
 		var event = x.substring(0, x.indexOf(':')),
 			handler = x.substring(x.indexOf(':') + 1).trim(),
 			Handler = getHandler(cntx, handler);
-			
+
 		if (Handler){
 			addEventListener(element, event, Handler);
 		}
@@ -606,11 +613,15 @@ function getHandler(controller, name){
 	if (controller == null) {
 		return null;
 	}
-	if (typeof controller[name] === 'function'){
-		return controller[name].bind(controller);
+	if (controller.slots != null && typeof controller.slots[name] === 'function'){
+		return controller.slots[name].bind(controller);
 	}
 	return getHandler(controller.parent, name);
 }
 
 
+// source /src/plugin.outro.js.txt
+
+
 }(Mask));
+

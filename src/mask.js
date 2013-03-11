@@ -8,13 +8,15 @@ var cache = {},
 	Mask = {
 
 		/**
-		 *	mask.render(template[, model, container = DocumentFragment, cntx]) -> container
+		 *	mask.render(template[, model, cntx, container = DocumentFragment, controller]) -> container
 		 * - template (String | MaskDOM): Mask String or Mask DOM Json template to render from.
 		 * - model (Object): template values
-		 * - container (IAppendChild): objet with implemented appendChild methd
-		 * - cntx (Object): this object will store custom components tree
+		 * - cntx (Object): can store any additional information, that custom handler may need,
+		 * this object stays untouched and is passed to all custom handlers
+		 * - container: container where template is render into
+		 * - controller (Object): instance of an controller that own this template
 		 *
-		 * Create new Document Fragment from template or append rendered template to container
+		 *	Create new Document Fragment from template or append rendered template to container
 		 **/
 		render: function (template, model, cntx, container, controller) {
 			if (typeof template === 'string') {
@@ -28,21 +30,12 @@ var cache = {},
 		 *
 		 * 	Create MaskDOM from Mask markup
 		 **/
-		compile: function (template, serializeOnly) {
+		compile: function (template) {
 			if (hasOwnProp.call(cache, template)){
 				/* if Object doesnt contains property that check is faster
 				then "!=null" http://jsperf.com/not-in-vs-null/2 */
 				return cache[template];
 			}
-
-
-			/* remove unimportant whitespaces */
-			//var T = new Template(template.replace(regexpTabsAndNL, '').replace(regexpMultipleSpaces, ' '));
-			//var T = new Template(template);
-			//
-			//if (serializeOnly === true) {
-			//	T.serialize = true;
-			//}
 
 			return (cache[template] = Parser.parse(template));
 		},
@@ -57,7 +50,8 @@ var cache = {},
 		 *		.nodes(MaskDOM) - Template Object of this node
 		 *		.attr(Object) - Attributes of this node
 		 *	And calls
-		 *		.render(model, container, cntx)
+		 *		.renderStart(model, cntx, container)
+		 *		.renderEnd(elements, model, cntx, container)
 		 *
 		 *	Custom Handler now can handle rendering of underlined nodes.
 		 *	The most simple example to continue rendering is:
@@ -93,50 +87,40 @@ var cache = {},
 		registerUtility: function (utilityName, fn) {
 			ModelUtils[utilityName] = fn;
 		},
-		/** deprecated
-		 *	mask.serialize(template) -> void
-		 * - template (String | MaskDOM): render
-		 *
-		 *	Build raw MaskDOM json, without template functions - used for storing compiled templates
-		 *
-		 *	It seems that serialization/deserialization make no performace
-		 *	improvements, as mask.compile is fast enough.
-		 *
-		 *	@TODO Should this be really removed?
-		 **/
-		serialize: function (template) {
-			return Parser.cleanObject(this.compile(template, true));
-		},
-		deserialize: function (serialized) {
-			var i, key, attr;
-			if (serialized instanceof Array) {
-				for (i = 0; i < serialized.length; i++) {
-					this.deserialize(serialized[i]);
-				}
-				return serialized;
-			}
-			if (serialized.content != null) {
-				if (serialized.content.template != null) {
-					serialized.content = Parser.toFunction(serialized.content.template);
-				}
-				return serialized;
-			}
-			if (serialized.attr != null) {
-				attr = serialized.attr;
-				for (key in attr) {
-					if (hasOwnProp.call(attr, key) === true){
-						if (attr[key].template == null) {
-							continue;
-						}
-						attr[key] = Parser.toFunction(attr[key].template);
-					}
-				}
-			}
-			if (serialized.nodes != null) {
-				this.deserialize(serialized.nodes);
-			}
-			return serialized;
-		},
+		////// time for remove
+		//////serialize: function (template) {
+		//////	return Parser.cleanObject(this.compile(template, true));
+		//////},
+		//////deserialize: function (serialized) {
+		//////	var i, key, attr;
+		//////	if (serialized instanceof Array) {
+		//////		for (i = 0; i < serialized.length; i++) {
+		//////			this.deserialize(serialized[i]);
+		//////		}
+		//////		return serialized;
+		//////	}
+		//////	if (serialized.content != null) {
+		//////		if (serialized.content.template != null) {
+		//////			serialized.content = Parser.toFunction(serialized.content.template);
+		//////		}
+		//////		return serialized;
+		//////	}
+		//////	if (serialized.attr != null) {
+		//////		attr = serialized.attr;
+		//////		for (key in attr) {
+		//////			if (hasOwnProp.call(attr, key) === true){
+		//////				if (attr[key].template == null) {
+		//////					continue;
+		//////				}
+		//////				attr[key] = Parser.toFunction(attr[key].template);
+		//////			}
+		//////		}
+		//////	}
+		//////	if (serialized.nodes != null) {
+		//////		this.deserialize(serialized.nodes);
+		//////	}
+		//////	return serialized;
+		//////},
 		/**
 		 * mask.clearCache([key]) -> void
 		 * - key (String): template to remove from cache

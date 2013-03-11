@@ -9,7 +9,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	}
 
 	if (controller == null) {
-		controller = new Component;
+		controller = new Component();
 	}
 
 	var type = node.type;
@@ -48,9 +48,11 @@ function builder_build(node, model, cntx, container, controller, childs) {
 			(controller.components || (controller.components = [])).push(handler);
 
 			if (listeners != null && listeners['compoCreated'] != null) {
-				var fns = listeners.compoCreated;
+				var fns = listeners.compoCreated,
+					jmax = fns.length,
+					j = 0;
 
-				for (j = 0, jmax = fns.length; j < jmax; j++) {
+				for (; j < jmax; j++) {
 					fns[j](handler, model, cntx, container);
 				}
 
@@ -101,7 +103,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		/* if (!DEBUG)
 		try{
 		*/
-		node.renderEnd(childs);
+		node.renderEnd(childs, model, cntx, container);
 		/* if (!DEBUG)
 		} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
 		*/

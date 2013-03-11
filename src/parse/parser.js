@@ -1,57 +1,13 @@
 var Parser = (function(Node, TextNode, Fragment, Component) {
 
 	var _serialize;
-	////function appendChild(parent, node){
-	////	if (parent.first == null) {
-	////		parent.first = node;
-	////	}
-	////	if (parent.last != null) {
-	////		parent.last.next = node;
-	////
-	////		node.previuos = parent.last;
-	////	}
-	////	parent.last = node;
-	////}
 
-	////function Node(tagName, parent) {
-	////	this.tagName = tagName;
-	////	this.parent = parent;
-	////	this.attr = {};
-	////
-	////	this.__single = null;
-	////
-	////	this.nodes = null;
-	////	this.type = 1;
-	////}
-	////
-	////function TextNode(text, parent) {
-	////	this.content = text;
-	////	this.parent = parent;
-	////	//this.nextNode = null;
-	////	this.type = 1;
-	////}
-	////
-	////function Fragment(){
-	////	this.nodes = [];
-	////	this.type = 3;
-	////}
-	////
-	////function Component(compoName, parent, controller){
-	////	this.compoName = compoName;
-	////	this.parent = parent;
-	////	this.controller = controller;
-	////	this.nodes = null;
-	////	this.components = null;
-	////	this.type = 4;
-	////	this.attr = {};
-	////}
-
-	function appendChild(parent, node){
-		if (parent.nodes == null){
-			parent.nodes = [];
-		}
-		parent.nodes.push(node);
-	}
+	//function appendChild(parent, node){
+	//	if (parent.nodes == null){
+	//		parent.nodes = [];
+	//	}
+	//	parent.nodes.push(node);
+	//}
 
 
 
@@ -69,7 +25,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 	function _throw(template, index, state, type) {
 		var i = 0,
-			nindex, line = 0,
+			line = 0,
 			row = 0,
 			newLine = /[\r\n]+/g,
 			match;
@@ -109,8 +65,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				token = null,
 				key = null,
 				value = null,
-				c, index = 0,
-				length = template.length;
+				index = 0,
+				length = template.length,
+				next, c, start;
 
 			var go_tag = 2,
 				state_tag = 3,
@@ -154,20 +111,35 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					} else if (last === state_tag) {
 
-						if (CustomTags[token] != null){
-							appendChild(current, current = new Component(token, current, CustomTags[token]));
+						next = CustomTags[token] != null
+								? new Component(token, current, CustomTags[token])
+								: new Node(token, current);
 
+						if (current.nodes == null){
+							current.nodes = [next];
 						}else{
-							appendChild(current, current = new Node(token, current));
+							current.nodes.push(next);
 						}
+
+						current = next;
+
 
 						state = state_attr;
 
 					} else if (last === state_literal) {
 
-						appendChild(current, new TextNode(token, current));
+						next = new TextNode(token, current);
+
+						if (current.nodes == null){
+							current.nodes = [next];
+						}else{
+							current.nodes.push(next);
+						}
+
 						if (current.__single === true) {
-							while ((current = current.parent) != null && current.__single != null);
+							do {
+								current = current.parent;
+							} while (current != null && current.__single != null);
 						}
 						state = go_tag;
 
@@ -242,9 +214,11 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					index++;
 
 
-					var start = index,
-						isEscaped = false,
-						value, nindex, _char = c === 39 ? "'" : '"';
+
+					var isEscaped = false,
+						nindex, _char = c === 39 ? "'" : '"';
+
+					start = index;
 
 					while ((nindex = template.indexOf(_char, index)) > -1) {
 						index = nindex;
@@ -301,8 +275,6 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 				/* TOKEN */
 
-				var start = index,
-					isInterpolated = null;
 
 				//////// @TODO - better error handling - this is in some how tricky as mask
 				//////// can consume fast any syntax
@@ -314,6 +286,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				////////}
 				////////// endif
 
+				var isInterpolated = null;
+
+				start = index;
 				while (index < length) {
 
 					c = template.charCodeAt(index);

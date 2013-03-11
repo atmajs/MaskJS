@@ -2,11 +2,10 @@ function create_container() {
 	return document.createDocumentFragment();
 }
 
-function create_node(node, model, container, cntx, controller) {
+function create_node(node, model, container, cntx/*, controller*/) {
 
 	var tagName = node.tagName,
 		attr = node.attr,
-		nodes = node.first,
 		type = node.type,
 		j, jmax, x, content;
 

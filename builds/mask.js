@@ -10,7 +10,7 @@
 // import ../src/extends.js
 // import ../src/dom/dom.js
 // import ../src/parse/parser.js
-// import ../src/build/builder.dom.recursion.js
+// import ../src/build/builder.recursion.js
 // import ../src/mask.js
 
 
