@@ -1,49 +1,50 @@
 var Parser = (function(Node, TextNode, Fragment, Component) {
 
-	function appendChild(parent, node){
-		if (parent.first == null) {
-			parent.first = node;
-		}
-		if (parent.last != null) {
-			parent.last.next = node;
+	var _serialize;
+	////function appendChild(parent, node){
+	////	if (parent.first == null) {
+	////		parent.first = node;
+	////	}
+	////	if (parent.last != null) {
+	////		parent.last.next = node;
+	////
+	////		node.previuos = parent.last;
+	////	}
+	////	parent.last = node;
+	////}
 
-			node.previuos = parent.last;
-		}
-		parent.last = node;
-	}
-
-	function Node(tagName, parent) {
-		this.tagName = tagName;
-		this.parent = parent;
-		this.attr = {};
-
-		this.__single = null;
-
-		this.nodes = null;
-		this.type = 1;
-	}
-
-	function TextNode(text, parent) {
-		this.content = text;
-		this.parent = parent;
-		//this.nextNode = null;
-		this.type = 1;
-	}
-
-	function Fragment(){
-		this.nodes = [];
-		this.type = 3;
-	}
-
-	function Component(compoName, parent, controller){
-		this.compoName = compoName;
-		this.parent = parent;
-		this.controller = controller;
-		this.nodes = null;
-		this.components = null;
-		this.type = 4;
-		this.attr = {};
-	}
+	////function Node(tagName, parent) {
+	////	this.tagName = tagName;
+	////	this.parent = parent;
+	////	this.attr = {};
+	////
+	////	this.__single = null;
+	////
+	////	this.nodes = null;
+	////	this.type = 1;
+	////}
+	////
+	////function TextNode(text, parent) {
+	////	this.content = text;
+	////	this.parent = parent;
+	////	//this.nextNode = null;
+	////	this.type = 1;
+	////}
+	////
+	////function Fragment(){
+	////	this.nodes = [];
+	////	this.type = 3;
+	////}
+	////
+	////function Component(compoName, parent, controller){
+	////	this.compoName = compoName;
+	////	this.parent = parent;
+	////	this.controller = controller;
+	////	this.nodes = null;
+	////	this.components = null;
+	////	this.type = 4;
+	////	this.attr = {};
+	////}
 
 	function appendChild(parent, node){
 		if (parent.nodes == null){
@@ -58,6 +59,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		if (content.indexOf('#{') === -1) {
 			return content;
 		}
+
 
 		return _serialize !== true ? util_createInterpolateFunction(content) : {
 			template: content

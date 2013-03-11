@@ -1,2 +1,2 @@
 
-// import ../src/10.HotReload.js
+// import ../src/auto-reload.js

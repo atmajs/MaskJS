@@ -2,10 +2,15 @@ var ModelUtils = {
 	condition: ConditionUtil.condition
 },
 	CustomAttributes = {
-
+		'class': null,
+		id: null,
+		style: null,
+		name: null,
+		type: null
 	},
 	CustomTags = {
 		// Most common html tags
+		// http://jsperf.com/not-in-vs-null/3
 		div: null,
 		span: null,
 		input: null,
@@ -28,5 +33,9 @@ var ModelUtils = {
 		pre: null,
 		ul: null,
 		li: null,
-		ol: null
+		ol: null,
+		i: null,
+		b: null,
+		strong: null,
+		form: null
 	};

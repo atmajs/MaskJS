@@ -3,18 +3,18 @@
 
 
 
-// import ../src/1.scope-vars.js
-// import ../src/2.Helper.js
-// import ../src/3.Template.js
-// import ../src/4.ConditionUtil.js
-// import ../src/5.Custom.js
-// import ../src/6.DOM.js
-// import ../src/6.Parser.linked.js
-// import ../src/7.dom.Builder.recursion.js
-// import ../src/9.Mask.js
+// import ../src/scope-vars.js
+// import ../src/util/util.js
+// import ../src/util/string.js
+// import ../src/util/condition.js
+// import ../src/extends.js
+// import ../src/dom/dom.js
+// import ../src/parse/parser.js
+// import ../src/build/builder.dom.recursion.js
+// import ../src/mask.js
 
 
-// import ../src/8.dom.CreateDocumentFragment.js
+// import ../src/create/documentFragment.js
 
 
 /* Handlers */

@@ -14,7 +14,7 @@ if (typeof DEBUG === 'boolean' && DEBUG) {
 				console.log('error', compoName, _cache);
 				return;
 			}
-			
+
 			var i = 0,
 				length = cache.length,
 				parent, x;
@@ -39,19 +39,20 @@ if (typeof DEBUG === 'boolean' && DEBUG) {
 				mask.render({
 					tagName: compoName,
 					attr: x.attr,
-					firstChild: x.firstChild
-				}, cache[i].model, parent, x);
+					nodes: x.nodes
+				}, cache[i].model, cntx, parent, x);
 			}
 		}
 
 
-		mask.on('customCreated', function(custom, model, container) {
+		mask.on('compoCreated', function(custom, model, cntx, container) {
 
 			(_cache[custom.compoName] || (_cache[custom.compoName] = [])).push({
-				firstChild: custom.firstChild,
+				nodes: custom.nodes,
 				attr: custom.attr,
 				model: model,
-				instance: custom
+				instance: custom,
+				cntx: cntx
 			});
 
 		});

@@ -2,55 +2,18 @@ function create_container() {
 	return document.createDocumentFragment();
 }
 
-function create_node(node, model, container, cntx, component) {
+function create_node(node, model, container, cntx, controller) {
 
 	var tagName = node.tagName,
 		attr = node.attr,
-		nodes = node.nodes,
-		j, jmax, x;
-
-	if (CustomTags[tagName] != null) {
-		/* if (!DEBUG)
-		try {
-		*/
-		var Handler = CustomTags[tagName],
-			controller = typeof Handler === 'function' ? new Handler(model) : Handler;
+		nodes = node.first,
+		type = node.type,
+		j, jmax, x, content;
 
 
-		controller.compoName = tagName;
-		controller.nodes = nodes;
-		controller.attr = util_extend(controller.attr, attr);
-		controller.parent = component;
-
-		controller.render(model, container, cntx);
-
-		if (component.components == null) {
-			component.components = [];
-		}
-		component.components.push(controller);
-
-
-
-		if (listeners != null) {
-			var fns = listeners['compoCreated'];
-			if (fns != null) {
-				for (j = 0, jmax = fns.length; j < jmax; j++) {
-					fns[j](child, model, container);
-				}
-			}
-		}
-
-		/* if (!DEBUG)
-		}catch(error){
-			console.error('Custom Tag Handler:', node.tagName, error.toString());
-		}
-		*/
-
-		return null;
-	}
-
-	if (node.content != null) {
-		var content = node.content;
+	// Dom.TEXTNODE
+	if (type === 2) {
+		content = node.content;
 
 		if (typeof content !== 'function') {
 			container.appendChild(document.createTextNode(content));
@@ -70,7 +33,12 @@ function create_node(node, model, container, cntx, component) {
 					container.appendChild(document.createTextNode(text));
 					text = '';
 				}
+				if (x.nodeType == null){
+					console.error('Not a HTMLElement', x);
+					continue;
+				}
 				container.appendChild(x);
+				continue;
 			}
 
 			text += x;
@@ -99,7 +67,7 @@ function create_node(node, model, container, cntx, component) {
 
 		// null or empty string will not be handled
 		if (value) {
-			if (hasOwnProp.call(CustomAttributes, key) === true) {
+			if (typeof CustomAttributes[key] === 'function') {
 				CustomAttributes[key](node, model, value, tag, cntx);
 			} else {
 				tag.setAttribute(key, value);
@@ -112,13 +80,4 @@ function create_node(node, model, container, cntx, component) {
 
 	return tag;
 
-}
-
-function create_elementsContainer() {
-	return {
-		elements: [],
-		appendChild: function(element) {
-			this.elements.push(element);
-		}
-	};
 }
