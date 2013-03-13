@@ -85,7 +85,9 @@ function create_node(node, model, container, cntx/*, controller*/) {
 
 	}
 
-	container.appendChild(tag);
+	if (container != null){
+		container.appendChild(tag);
+	}
 
 	return tag;
 

@@ -327,7 +327,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			//	throw '';
 			//}
 
-			return fragment;//fragment.firstChild || fragment.nodes;
+
+			return fragment.nodes.length === 1 ? fragment.nodes[0] : fragment;
 		},
 		cleanObject: function(obj) {
 			if (obj instanceof Array) {

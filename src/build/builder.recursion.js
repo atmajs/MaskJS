@@ -6,7 +6,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	var type = node.type;
 
-	if (container == null && !(type === 1 && (node.nodes == null || node.nodes.length < 2))) {
+	if (container == null && type !== 1) {
 		container = create_container();
 	}
 
