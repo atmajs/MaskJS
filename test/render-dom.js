@@ -8,27 +8,27 @@ buster.testCase("Render", {
 		assert(dom.querySelector('.test') != null);
 	},
 	'right model insertion': function() {
-		var dom = render('div##{id}.#{klass} data-type="#{type}" > "#{name}"', {
+		var div = render('div##{id}.#{klass} data-type="#{type}" > "#{name}"', {
 			name: 'NAME',
 			id: 'ID',
 			klass: 'CLASS',
 			type: 'TYPE'
 		});
 
-		assert(dom != null, 'DIV not redered');
-		assert(dom.tagName != 'DIV', 'right DIV not redered');
+		assert(div != null, 'DIV not redered');
+		assert(div.tagName === 'DIV', 'right DIV not redered');
 
 
-		assert(dom.getAttribute('id') == 'ID', 'id is not ID');
-		assert(dom.getAttribute('class') == 'CLASS', 'class is not CLASS');
-		assert(dom.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
+		assert(div.getAttribute('id') == 'ID', 'id is not ID');
+		assert(div.getAttribute('class') == 'CLASS', 'class is not CLASS');
+		assert(div.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
 
-		assert(dom.textContent == 'NAME', 'text is not NAME');
+		assert(div.textContent == 'NAME', 'text is not NAME');
 	},
 	'right model insertion with check': function(){
 		var dom = render('div.#{:enabled?"enabled":"disabled"}', {
 			enabled: true
-		}).querySelector('div');
+		});
 
 		assert(dom.getAttribute('class') == 'enabled', 'div has not "enabled" class');
 	},
