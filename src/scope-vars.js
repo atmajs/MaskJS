@@ -1,5 +1,4 @@
 var regexpWhitespace = /\s/g,
-	//-removed-regexpLinearCondition = /([(]?)([!]?['"A-Za-z0-9_\-\.$]+)(([!<>=]{1,3})([^\|&()]+))?([\|&]{2})?([)]?([\|&]{2})?)/g,
 	regexpEscapedChar = {
 		"'": /\\'/g,
 		'"': /\\"/g,
@@ -7,8 +6,5 @@ var regexpWhitespace = /\s/g,
 		'>': /\\>/g,
 		';': /\\>/g
 	},
-	regexpTabsAndNL = /[\t\n\r]{1,}/g,
-	regexpMultipleSpaces = / {2,}/g,
 	hasOwnProp = {}.hasOwnProperty,
 	listeners = null;
-
