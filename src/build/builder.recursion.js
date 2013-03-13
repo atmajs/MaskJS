@@ -4,7 +4,9 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		return container;
 	}
 
-	if (container == null) {
+	var type = node.type;
+
+	if (container == null && !(type === 1 && (node.nodes == null || node.nodes.length < 2))) {
 		container = create_container();
 	}
 
@@ -12,13 +14,13 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		controller = new Component();
 	}
 
-	var type = node.type;
+
 
 	// Dom.NODE || Dom.TEXTNODE
 	if (type === 1 || type === 2) {
 		var child = create_node(node, model, container, cntx, controller);
 		if (child == null) {
-			return container;
+			return container || child;
 		}
 		if (childs != null) {
 			childs.push(child);
