@@ -20,25 +20,27 @@ var cache = {},
 		 **/
 		render: function (template, model, cntx, container, controller) {
 			if (typeof template === 'string') {
-				template = this.compile(template);
+				if (hasOwnProp.call(cache, template)){
+					/* if Object doesnt contains property that check is faster
+					then "!=null" http://jsperf.com/not-in-vs-null/2 */
+					template = cache[template];
+				}else{
+					template = Parser.parse(template);
+				}
 			}
 			return builder_build(template, model, cntx, container, controller);
 		},
+
+		/* deprecated, renamed to parse */
+		compile: Parser.parse,
+
 		/**
-		 *	mask.compile(template) -> MaskDOM
+		 *	mask.parse(template) -> MaskDOM
 		 * - template (String): string to be parsed into MaskDOM
 		 *
 		 * 	Create MaskDOM from Mask markup
 		 **/
-		compile: function (template) {
-			if (hasOwnProp.call(cache, template)){
-				/* if Object doesnt contains property that check is faster
-				then "!=null" http://jsperf.com/not-in-vs-null/2 */
-				return cache[template];
-			}
-
-			return (cache[template] = Parser.parse(template));
-		},
+		parse: Parser.parse,
 		/**
 		 * 	mask.registerHandler(tagName, tagHandler) -> Void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
@@ -168,7 +170,7 @@ var cache = {},
 			 **/
 			getProperty: util_getProperty
 		},
-
+		Dom: Dom,
 		plugin: function(source){
 			eval(source);
 		},
