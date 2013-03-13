@@ -13,10 +13,12 @@ buster.testCase("Render", {
 			id: 'ID',
 			klass: 'CLASS',
 			type: 'TYPE'
-		}).querySelector('div');
-		
+		});
+
 		assert(dom != null, 'DIV not redered');
-		
+		assert(dom.tagName != 'DIV', 'right DIV not redered');
+
+
 		assert(dom.getAttribute('id') == 'ID', 'id is not ID');
 		assert(dom.getAttribute('class') == 'CLASS', 'class is not CLASS');
 		assert(dom.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
@@ -25,7 +27,7 @@ buster.testCase("Render", {
 	},
 	'right model insertion with check': function(){
 		var dom = render('div.#{:enabled?"enabled":"disabled"}', {
-			enabled: true			
+			enabled: true
 		}).querySelector('div');
 
 		assert(dom.getAttribute('class') == 'enabled', 'div has not "enabled" class');
@@ -33,10 +35,11 @@ buster.testCase("Render", {
 
 	'tag-less template check': function(){
 		var dom = render('.#{:enabled?"enabled":"disabled"} { .item; .item; .item > "Last" }', {
-			enabled: true			
-		}).querySelector('.enabled');
+			enabled: true
+		});
 
 		assert(dom != null, 'Div with .enabled class not rendered');
+		assert(dom.getAttribute('class') === 'enabled', 'Div shoud have class "enabled"');
 
 		assert(dom.querySelectorAll('.item').length === 3, 'Div should have 3 childs with class .item');
 		assert(dom.querySelectorAll('.item')[2].textContent == 'Last', 'Last Div should have text "Last"');

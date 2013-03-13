@@ -9,15 +9,15 @@ buster.testCase('Compile: ', {
 		assert.equals(typeof compile, 'function');
 	},
 	'tagName is div': function() {
-		assert.equals(compile('div;').nodes[0].tagName, 'div');
+		assert.equals(compile('div;').tagName, 'div');
 	},
 	'single variations': function() {
 		testSingle([ //
 		'.myklass', //
 		'.myklass;', //
 		'\r.myklass;;;' //
-		], function(nodes) {
-			assert(nodes[0].attr.class === 'myklass', '!= myklass');
+		], function(node) {
+			assert(node.attr.class === 'myklass', '!= myklass');
 		});
 
 
@@ -26,8 +26,8 @@ buster.testCase('Compile: ', {
 		'.myklass#myid \n\t data-attr="value";', //
 		'.myklass#myid data-attr=value', //
 		'.myklass#myid data-attr=value;' //
-		], function(nodes) {
-			var attr = nodes[0].attr;
+		], function(node) {
+			var attr = node.attr;
 			assert(attr.class === 'myklass', '!= myklass');
 			assert(attr.id === 'myid', '!= id');
 			assert(attr['data-attr'] === 'value', 'data-attr != value');
@@ -39,8 +39,8 @@ buster.testCase('Compile: ', {
 		'.key attr=value > "node";', //
 		'.key attr=value { "node" }', //
 		'.key attr=value { "node"; };', //
-		], function(nodes) {
-			nodes = nodes[0].nodes;
+		], function(node) {
+			var nodes = node.nodes;
 
 			assert(nodes.length == 1, 'shoud have 1 child');
 			assert(nodes[0].content === 'node', 'content shoud be "node"');
@@ -54,12 +54,12 @@ buster.testCase('Compile: ', {
 		'span { #myid { .my_-class { "node"} } }', //
 		'span { #myid { .my_-class { "node"}; }; }', //
 		'span { #myid > .my_-class value = 10 { "node"};  }', //
-		], function(nodes) {
+		], function(node) {
 
-			assert(nodes[0].tagName == 'span', 'container shoud be span');
+			assert(node && node.tagName == 'span', 'container shoud be span');
 
+			var nodes = node.nodes;
 
-			nodes = nodes[0].nodes;
 			assert(nodes.length == 1, 'shoud have 1 sub-child');
 			assert(nodes[0].attr.id, 'sub-child shoud have id myid');
 
@@ -84,8 +84,8 @@ buster.testCase('Compile: ', {
 
 	},
 	'right attributes': function() {
-		dom = compile("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
-		attr = getProperty(dom, 'nodes.0.nodes.0.nodes.0.nodes.0.nodes.0.attr');
+		var div = compile("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
+		attr = getProperty(div, 'nodes.0.nodes.0.nodes.0.nodes.0.attr');
 
 		assert(attr['class'] == 'class', 'is not "class"');
 		assert(attr['id'] == 'id', 'is not "id"');
@@ -116,7 +116,7 @@ buster.testCase('Compile: ', {
 	'valid model templating': function() {
 		dom = compile('div.#{class}##{id   } data-type="mytype: #{  type }" { "content" "other #{ util:one}" }');
 
-		var node = dom.nodes[0];
+		var node = dom;
 		assert(typeof node.attr.class, 'function');
 		assert(typeof node.attr.id, 'function');
 		assert(typeof node.attr['data-type'], 'function');
@@ -143,11 +143,7 @@ function testSingle(template, fn) {
 	var nodes;
 	for (var i = 0, x, length = template.length; i < length; i++) {
 
-		x = template[i];
-		nodes = compile(x).nodes;
-		assert(nodes.length === 1, '!= 1 ' + x, nodes);
-
-		fn(nodes, i);
+		fn(compile(template[i]), i);
 	}
 }
 
