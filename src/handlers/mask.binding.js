@@ -191,7 +191,7 @@ VisibleHandler.prototype = {
 	constructor: VisibleHandler,
 
 	refresh: function(model, container) {
-		container.style.display = mask.Util.Condition.isCondition(this.attr.check, model) ? '' : 'none';
+		container.style.display = mask.Utils.Condition.isCondition(this.attr.check, model) ? '' : 'none';
 	},
 	renderStart: function(model, cntx, container) {
 		this.refresh(model, container);
@@ -345,7 +345,7 @@ BindingProvider.prototype = {
 		get: function(obj, property) {
 
 			if (property[0] === ':'){
-				return mask.Util.ConditionUtil.condition(property.substring(1));
+				return mask.Utils.ConditionUtil.condition(property.substring(1));
 			}
 
 			return getProperty(obj, property);
@@ -604,6 +604,10 @@ mask.registerAttrHandler('x-signal', function(node, model, value, element, cntx)
 		if (Handler){
 			addEventListener(element, event, Handler);
 		}
+
+		// if DEBUG
+		!Handler && console.warn('No slot found for signal', handler);
+		// endif
 	}
 
 });
@@ -613,9 +617,20 @@ function getHandler(controller, name){
 	if (controller == null) {
 		return null;
 	}
-	if (controller.slots != null && typeof controller.slots[name] === 'function'){
-		return controller.slots[name].bind(controller);
+
+	if (controller.slots != null && typeof controller.slots[name] !== 'undefined'){
+		var slot = controller.slots[name];
+		if (typeof slot === 'string'){
+			slot = controller[slot];
+		}
+
+		// if DEBUG
+		typeof slot !== 'function' && console.error('Controller defines slot, but that is not a function', controller, name);
+		// endif
+
+		return slot.bind(controller);
 	}
+
 	return getHandler(controller.parent, name);
 }
 

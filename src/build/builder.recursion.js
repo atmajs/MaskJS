@@ -14,11 +14,26 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		controller = new Component();
 	}
 
+	if (node instanceof Array){
+		for(var j = 0, jmax = node.length; j < jmax; j++){
+			builder_build(node[j], model, cntx, container, controller, childs);
+		}
+		return container;
+	}
 
+	if (type == null){
+		// in case if node was added manually, but type was not set
+		if (node.tagName != null){
+			type = 1;
+		}
+		else if (node.content != null){
+			type = 2;
+		}
+	}
 
 	// Dom.NODE || Dom.TEXTNODE
 	if (type === 1 || type === 2) {
-		var child = create_node(node, model, container, cntx, controller);
+		var child = create_node(node, model, cntx, container);
 		if (child == null) {
 			return container || child;
 		}
@@ -43,6 +58,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 			try{
 			*/
 
+			handler.compoName = node.tagName;
 			handler.attr = util_extend(handler.attr, node.attr);
 			handler.nodes = node.nodes;
 			handler.parent = controller;
@@ -60,20 +76,18 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 			}
 
-			if (typeof handler.renderStart === 'function') {
-				handler.renderStart(model, container, cntx);
-			}
-
 			if (typeof handler.render === 'function') {
-				console.warn('.render', node, handler);
-
 				// with render implementation, handler overrides render behaviour of subnodes
-				handler.render(model, container, cntx);
+				handler.render(model, cntx, container);
 				return container;
 			}
 
+			if (typeof handler.renderStart === 'function') {
+				handler.renderStart(model, cntx, container);
+			}
+
 			// temporal workaround for backwards compo where we used this.tagName = 'div' in .render fn
-			if (handler.tagName && handler.tagName !== node.compoName){
+			if (handler.tagName != null && handler.tagName !== node.compoName){
 				handler.nodes = {
 					tagName: handler.tagName,
 					attr: handler.attr,

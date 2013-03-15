@@ -80,7 +80,7 @@ var ConditionUtil = (function() {
 		if (typeof T === 'string') {
 			T = new Template(T);
 		}
-		do {
+		outer: while(1) {
 			T.skipWhitespace();
 
 			if (T.index >= T.length) {
@@ -132,12 +132,12 @@ var ConditionUtil = (function() {
 				// )
 			case 41:
 				T.index++;
-				break;
+				break outer;
 			default:
 				current[current.left == null ? 'left' : 'right'] = parseDirective(T, c);
 				continue;
 			}
-		} while (1);
+		};
 
 		if (current.left || current.assertions) {
 			output.push(current);
@@ -155,28 +155,33 @@ var ConditionUtil = (function() {
 		}
 
 		var length = line.length,
-			ternary = {},
+			ternary = {
+				assertions: null,
+				case1: null,
+				case2: null
+			},
 			questionMark = line.indexOf('?'),
 			T = new Template(line);
 
 
-		if (questionMark > -1) {
+		if (questionMark !== -1) {
 			T.length = questionMark;
 		}
 
 		ternary.assertions = parseAssertion(T);
 
-		T.length = length;
-		T.index = questionMark + 1;
+		if (questionMark !== -1){
+			T.length = length;
+			T.index = questionMark + 1;
 
-		ternary.case1 = parseDirective(T);
-		T.skipWhitespace();
+			ternary.case1 = parseDirective(T);
+			T.skipWhitespace();
 
-		if (T.template.charCodeAt(T.index) === 58 /*:*/ ) {
-			T.index++; // skip ':'
-			ternary.case2 = parseDirective(T);
+			if (T.template.charCodeAt(T.index) === 58 /*:*/ ) {
+				T.index++; // skip ':'
+				ternary.case2 = parseDirective(T);
+			}
 		}
-
 
 		return (_cache[line] = ternary);
 	}
@@ -203,7 +208,7 @@ var ConditionUtil = (function() {
 				value1 = typeof a.left === 'object' ? util_getProperty(model, a.left.value) : a.left;
 
 				if (a.right == null) {
-					current = !! value1;
+					current = value1;
 					if (a.sign === '!') {
 						current = !current;
 					}
@@ -233,16 +238,26 @@ var ConditionUtil = (function() {
 				}
 			}
 
-			if (current === true) {
+			if (current) {
 				if (a.join === '&&') {
 					continue;
 				}
-				break;
+
+				break; // we are in OR and current is truthy
 			}
+			
 			if (a.join === '||') {
 				continue;
 			}
-			break;
+
+			if (a.join === '&&'){
+				// find OR in stack (false && false && false || true -> true)
+				for(++i; i<length; i++){
+					if (assertions[i].join === '||'){
+						break;
+					}
+				}
+			}
 		}
 		return current;
 	}
@@ -263,7 +278,11 @@ var ConditionUtil = (function() {
 		 **/
 		condition: function(line, model) {
 			var con = parseLinearCondition(line),
-				result = isCondition(con.assertions, model) ? con.case1 : con.case2;
+				result = isCondition(con.assertions, model);
+
+			if (con.case1 != null){
+				result =  result ? con.case1 : con.case2;
+			}
 
 			if (result == null) {
 				return '';

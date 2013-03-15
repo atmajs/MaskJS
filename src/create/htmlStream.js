@@ -15,7 +15,7 @@ var creat_node = (function() {
 		link: 1
 	};
 
-	return function(node, model, stream, cntx) {
+	return function(node, model, cntx, stream) {
 
 		var tagName = node.tagName,
 			attr = node.attr,

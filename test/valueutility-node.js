@@ -61,5 +61,40 @@ buster.testCase("Value Utils", {
 				id: 'ID'
 			}
 		}) == 'ID', 'Are equal, but returns not ID');
-	}
+
+
+		assert(condition('action-title || action', {
+			'action': 'action'
+		}) == 'action', 'OR shoud return "action"');
+
+		assert(!condition('action-title || action', {
+			'nothing': 'action'
+		}), 'OR shoud be falsy');
+
+		assert(condition('name && (action-title || action)', {
+			'action-title': 'a',
+			name: 1
+		}) == 'a', 'x AND OR should return "a"');
+
+		assert(condition('name && (action-title || action) || "nothing"', {
+			'action-title': 'a',
+			name: 0
+		}) == 'nothing', 'x AND OR should return "nothing"');
+
+		assert(condition('name && (action-title || action) || "nothing"', {
+			'action-title': '',
+			name: 1
+		}) == 'nothing', '(0 && (0||0)) || 1 should return "nothing"');
+
+		assert(condition('name && (action-title || action) || "nothing"', {
+			'action': 'a',
+			name: 1
+		}) == 'a', '(1 && (0||1)) || 1 should return "a"');
+
+		assert(condition('!name && (action-title || action) || "nothing"', {
+			'action-title': 'a',
+			name: 0
+		}) == 'a', '(!0 && (1||0)) || 1 should return "a"');
+	},
+
 })

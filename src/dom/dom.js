@@ -4,7 +4,12 @@ var Dom = {
 	TEXTNODE: 2,
 	FRAGMENT: 3,
 	COMPONENT: 4,
-	CONTROLLER: 9
+	CONTROLLER: 9,
+
+	Node: Node,
+	TextNode: TextNode,
+	Fragment: Fragment,
+	Component: Component
 };
 
 function Node(tagName, parent) {
@@ -48,8 +53,7 @@ Fragment.prototype = {
 };
 
 function Component(compoName, parent, controller){
-
-	this.compoName = compoName;
+	this.tagName = compoName;
 	this.parent = parent;
 	this.controller = controller;
 	this.attr = {};
@@ -63,8 +67,4 @@ Component.prototype = {
 	controller: null,
 	nodes: null,
 	components: null
-};
-
-Component.create = function(fn){
-	util_extend(fn.prototype, Component.prototype);
 };
