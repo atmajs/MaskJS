@@ -60,6 +60,13 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 			handler.compoName = node.tagName;
 			handler.attr = util_extend(handler.attr, node.attr);
+
+			for(var key in handler.attr){
+				if (typeof handler.attr[key] === 'function'){
+					handler.attr[key] = handler.attr[key](model, 'attr', cntx);
+				}
+			}
+
 			handler.nodes = node.nodes;
 			handler.parent = controller;
 
