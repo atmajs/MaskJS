@@ -3,7 +3,8 @@ var Dom = {
 	NODE: 1,
 	TEXTNODE: 2,
 	FRAGMENT: 3,
-	COMPONENT: 4
+	COMPONENT: 4,
+	CONTROLLER: 9
 };
 
 function Node(tagName, parent) {

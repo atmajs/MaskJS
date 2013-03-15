@@ -39,7 +39,7 @@
 			source = document.getElementById(this.attr.source).innerHTML;
 		}
 		if (this.firstChild) {
-			source = this.firstChild.content;
+			source = this.nodes[0].content;
 		}
 
 		if (source == null) {

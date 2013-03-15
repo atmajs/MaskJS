@@ -65,10 +65,23 @@ function builder_build(node, model, cntx, container, controller, childs) {
 			}
 
 			if (typeof handler.render === 'function') {
+				console.warn('.render', node, handler);
+
 				// with render implementation, handler overrides render behaviour of subnodes
 				handler.render(model, container, cntx);
 				return container;
 			}
+
+			// temporal workaround for backwards compo where we used this.tagName = 'div' in .render fn
+			if (handler.tagName && handler.tagName !== node.compoName){
+				handler.nodes = {
+					tagName: handler.tagName,
+					attr: handler.attr,
+					nodes: handler.nodes,
+					type: 1
+				};
+			}
+
 			/* if (!DEBUG)
 			} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
 			*/
