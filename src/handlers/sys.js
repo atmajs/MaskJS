@@ -31,7 +31,7 @@
 					}
 					return;
 				}
-				console.error('Previous Node should be "% if=\'condition\'"');
+				console.error('Previous Node should be "% if=\'condition\'"', prev, this.parent);
 				return;
 			}
 

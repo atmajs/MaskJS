@@ -72,6 +72,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			var go_tag = 2,
 				state_tag = 3,
 				state_attr = 5,
+				go_attrVal = 6,
 				state_literal = 8,
 				go_up = 9;
 
@@ -83,9 +84,16 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					continue;
 				}
 
-				if (last === state_attr && classNames != null) {
-					current.attr['class'] = ensureTemplateFunction(classNames);
-					classNames = null;
+				if (last === state_attr){
+					if (classNames != null) {
+						current.attr['class'] = ensureTemplateFunction(classNames);
+						classNames = null;
+					}
+					if (key != null){
+						current.attr[key] = key;
+						key = null;
+						token = null;
+					}
 				}
 
 				if (token != null) {
@@ -149,8 +157,13 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				}
 
 				if (index >= length) {
-					if (state === state_attr && classNames != null) {
-						current.attr['class'] = ensureTemplateFunction(classNames);
+					if (state === state_attr){
+						if (classNames != null) {
+							current.attr['class'] = ensureTemplateFunction(classNames)
+						}
+						if (key != null){
+							current.attr[key] = key;
+						}
 					}
 
 					break;
@@ -207,7 +220,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (c === 39 || c === 34) {
 					// '"
 					// Literal - could be as textnode or attribute value
-					if (state !== state_attr) {
+					if (state === go_attrVal){
+						state = state_attr;
+					}else {
 						last = state = state_literal;
 					}
 
@@ -258,19 +273,32 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						// .
 						index++;
 						key = 'class';
+						state = go_attrVal;
 					}
 
-					if (c === 35) {
+					else if (c === 35) {
 						// #
 						index++;
 						key = 'id';
+						state = go_attrVal;
 					}
 
-					if (c === 61) {
+					else if (c === 61) {
 						// =;
 						index++;
+						state = go_attrVal;
 						continue;
+					} else {
+
+						if (key != null){
+							token = key;
+							continue;
+						}
 					}
+				}
+
+				if (state === go_attrVal){
+					state = state_attr;
 				}
 
 				/* TOKEN */
@@ -305,13 +333,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					}
 
 					if (c === 46 || c === 35 || c === 62 || c === 123 || c < 33 || c === 59 || c === 61){
+						// .#>{ ;=
 						break;
 					}
 
 					index++;
 				}
 
-				// .#>{ ;=
+
 
 				token = template.substring(start, index);
 
@@ -322,10 +351,10 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			}
 
-			//if (isNaN(c)){
-			//	console.log(c, _index, _length);
-			//	throw '';
-			//}
+			if (isNaN(c)){
+				console.log(c, _index, _length);
+				throw '';
+			}
 
 
 			return fragment.nodes.length === 1 ? fragment.nodes[0] : fragment;

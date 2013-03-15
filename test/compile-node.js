@@ -91,6 +91,21 @@ buster.testCase('Compile: ', {
 		assert(attr['id'] == 'id', 'is not "id"');
 		assert(attr['data-type'] == 'type', 'is not "type": ' + attr['data-type']);
 
+		testSingle([ //
+			'input checked;',
+			'input checked',
+			'input checked;;',
+			'input checked {}',
+			'input key=value checked;',
+			'input checked key=value;',
+			'input checked key=value { div; };',
+			'input property checked key=value { span };',
+			'input checked prop key=value >  span > "-";',
+		], function(node, index){
+			assert('checked' in node.attr, 'Node has no property checked:' + index);
+		});
+
+
 	},
 	'has literal': function() {
 		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
