@@ -84,7 +84,7 @@
 	function List() {};
 	mask.registerHandler('list', List);
 
-	List.prototype.renderStart = function(model) {
+	List.prototype.renderStart = function(model, container) {
 		var array = util_getProperty(model, this.attr.value),
 			nodes = this.nodes,
 			item = null;
