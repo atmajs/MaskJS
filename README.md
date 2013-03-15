@@ -3,7 +3,7 @@
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup engine.
+	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup/mvc engine.
 
 <div><pre><code>
 .container {
@@ -30,7 +30,27 @@
 
 <p>
 	<small><a href='http://libjs.it/#/mask'>Documentation</a></small>
-	</p>
+</p>
 <p>
-	<small>You may also want to checkout some more additional features, like <a href='https://github.com/tenbits/mask-binding'>Binding Components</a></small>
-	</p>
+
+<small>
+	Default build contains <a href='https://github.com/tenbits/mask-binding'>mask.bindings</a>,
+	<a href='https://github.com/tenbits/CompoJS'>CompoJS</a> libraries.
+</small>
+</p>
+
+###Changelog
+------------
+<table>
+<tr>
+	<td>v0.6.9</td>
+	<td>
+		<ul>
+			<li>++ parser: performance / preserve new lines</li>
+			<li>++ custom handlers: use .renderStart/.renderEnd for better performance</li>
+			<li>embed bindings / % handler [if,else,each]/ compo / jmask libraries</li>
+		</ul>
+
+	</td>
+</tr>
+</table>
