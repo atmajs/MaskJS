@@ -4,13 +4,12 @@ function util_extend(target, source) {
 		target = {};
 	}
 	for (var key in source) {
-		/* if (!SAFE) */
-		if (hasOwnProp.call(source, key)) {
-		/*	endif */
-			target[key] = source[key];
-		/* if (!SAFE) */
+		// if !SAFE
+		if (hasOwnProp.call(source, key) === false) {
+			continue;
 		}
-		/* endif */
+		// endif
+		target[key] = source[key];
 	}
 	return target;
 }
@@ -95,8 +94,7 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 				if (typeof value === 'object' && array == null){
 					array = [string];
 				}
-
-				if (array == null){
+				else if (array == null){
 					string += value;
 				} else {
 					array.push(value);
@@ -111,44 +109,3 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 	return array == null ? string : array;
 }
 
-function util_createInterpolateFunction(template) {
-	var START = '#{',
-		END = '}',
-		FIND_LENGHT = 2,
-		arr = [],
-		index = 0,
-		lastIndex = 0,
-		i = 0,
-		end = 0;
-	while ((index = template.indexOf(START, index)) > -1) {
-
-		end = template.indexOf(END, index + FIND_LENGHT);
-		if (end === -1) {
-			index += FIND_LENGHT;
-			continue;
-		}
-
-		if (lastIndex < index) {
-			arr[i] = template.substring(lastIndex, index);
-			i++;
-		}
-
-		if (index === lastIndex) {
-			arr[i] = '';
-			i++;
-		}
-
-		arr[i] = template.substring(index + FIND_LENGHT, end);
-		i++;
-		lastIndex = index = end + 1;
-	}
-
-	if (lastIndex < template.length) {
-		arr[i] = template.substring(lastIndex);
-	}
-
-	template = null;
-	return function(model, type, cntx, element, name) {
-		return util_interpolate(arr, model, type, cntx, element, name);
-	};
-}

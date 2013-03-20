@@ -1,25 +1,72 @@
 var Parser = (function(Node, TextNode, Fragment, Component) {
 
-	var _serialize;
-
-	//function appendChild(parent, node){
-	//	if (parent.nodes == null){
-	//		parent.nodes = [];
-	//	}
-	//	parent.nodes.push(node);
-	//}
+	var	interp_code_START = 35, // #
+		interp_code_OPEN = 123, // {
+		interp_code_CLOSE = 125, // }
+		interp_CLOSE = '}',
+		_serialize;
 
 
+	function ensureTemplateFunction(template) {
+		var index = -1;
 
-	function ensureTemplateFunction(content) {
-		if (content.indexOf('#{') === -1) {
-			return content;
+		/*
+		 * - single char indexOf is much faster then '#{' search
+		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
+		 * for better performance
+		 */
+		while((index = template.indexOf('#', index)) !== -1){
+			if (template.charCodeAt(index + 1) === interp_code_OPEN){
+				break;
+			}
+			index++;
+		}
+
+		if (index === -1){
+			return template;
 		}
 
 
-		return _serialize !== true ? util_createInterpolateFunction(content) : {
-			template: content
+		var array = [],
+			lastIndex = 0,
+			i = 0,
+			end = 0;
+
+
+		while(true) {
+			var end = template.indexOf(interp_CLOSE, index + 2);
+			if (end === -1) {
+				break;
+			}
+
+			array[i++] = lastIndex === index ? '' : template.substring(lastIndex, index);
+			array[i++] = template.substring(index + 2, end);
+
+
+			lastIndex = index = end + 1;
+
+			while((index = template.indexOf('#', index)) !== -1){
+				if (template.charCodeAt(index + 1) === interp_code_OPEN){
+					break;
+				}
+				index++;
+			}
+
+			if (index === -1){
+				break;
+			}
+
+		}
+
+		if (lastIndex < template.length) {
+			array[i] = template.substring(lastIndex);
+		}
+
+		template = null;
+		return function(model, type, cntx, element, name) {
+			return util_interpolate(array, model, type, cntx, element, name);
 		};
+
 	}
 
 
@@ -61,13 +108,15 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				fragment = current,
 				state = 2,
 				last = 3,
-				classNames = null,
-				token = null,
-				key = null,
-				value = null,
 				index = 0,
 				length = template.length,
-				next, c, start;
+				classNames,
+				token,
+				key,
+				value,
+				next,
+				c,
+				start;
 
 			var go_tag = 2,
 				state_tag = 3,
@@ -249,9 +298,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						token = token.replace(regexpEscapedChar[_char], _char);
 					}
 
-					if (token.indexOf('#{') !== -1) {
-						token = util_createInterpolateFunction(token);
-					}
+					token = ensureTemplateFunction(token);
 
 					index++;
 					continue;
@@ -303,7 +350,6 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 				/* TOKEN */
 
-
 				//////// @TODO - better error handling - this is in some how tricky as mask
 				//////// can consume fast any syntax
 				////////// if (DEBUG)
@@ -321,15 +367,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					c = template.charCodeAt(index);
 
-					if (c === 35 && template.charCodeAt(index + 1) === 123 /* { */ ) {
+					if (c === interp_code_START && template.charCodeAt(index + 1) === interp_code_OPEN) {
 						isInterpolated = true;
-						// goto end of template declaration
 						++index;
 						do {
+							// goto end of template declaration
 							c = template.charCodeAt(++index);
-							// @TODO check if not escaped or find out smth else
 						}
-						while (c !== 125 /* } */ && index < length);
+						while (c !== interp_code_CLOSE && index < length);
 					}
 
 					if (c === 46 || c === 35 || c === 62 || c === 123 || c < 33 || c === 59 || c === 61){
@@ -346,7 +391,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 
 				if (isInterpolated === true && (state === state_attr && key === 'class') === false) {
-					token = util_createInterpolateFunction(token);
+					token = ensureTemplateFunction(token);
 				}
 
 			}
