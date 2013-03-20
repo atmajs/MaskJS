@@ -2,7 +2,7 @@ function create_container() {
 	return document.createDocumentFragment();
 }
 
-function create_node(node, model, cntx, container/*, controller*/) {
+function create_node(node, model, cntx, container, controller) {
 
 	var tagName = node.tagName,
 		attr = node.attr,
@@ -77,7 +77,7 @@ function create_node(node, model, cntx, container/*, controller*/) {
 		// null or empty string will not be handled
 		if (value) {
 			if (typeof CustomAttributes[key] === 'function') {
-				CustomAttributes[key](node, model, value, tag, cntx);
+				CustomAttributes[key](node, value, tag, model, cntx, controller);
 			} else {
 				tag.setAttribute(key, value);
 			}

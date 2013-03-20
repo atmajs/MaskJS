@@ -5,6 +5,7 @@ var Dom = {
 	FRAGMENT: 3,
 	COMPONENT: 4,
 	CONTROLLER: 9,
+	SET: 10,
 
 	Node: Node,
 	TextNode: TextNode,

@@ -592,21 +592,21 @@ function getValidations(component, out){
  *	Bind Closest Controllers Handler Function to dom event(s)
  */
 
-mask.registerAttrHandler('x-signal', function(node, model, value, element, cntx){
+mask.registerAttrHandler('x-signal', function(node, attrValue, element, model, cntx, controller){
 
-	var arr = value.split(';');
+	var arr = attrValue.split(';');
 	for(var i = 0, x, length = arr.length; i < length; i++){
 		x = arr[i];
 		var event = x.substring(0, x.indexOf(':')),
 			handler = x.substring(x.indexOf(':') + 1).trim(),
-			Handler = getHandler(cntx, handler);
+			Handler = getHandler(controller, handler);
 
 		if (Handler){
 			addEventListener(element, event, Handler);
 		}
 
 		// if DEBUG
-		!Handler && console.warn('No slot found for signal', handler);
+		!Handler && console.warn('No slot found for signal', handler, controller);
 		// endif
 	}
 

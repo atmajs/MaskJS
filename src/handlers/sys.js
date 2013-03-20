@@ -22,7 +22,7 @@
 
 			if (attr['else'] != null) {
 				var compos = this.parent.components,
-					prev = compos && compos[compos.length - 2];
+					prev = compos && compos[compos.length - 1];
 
 				if (prev != null && prev.compoName === '%' && prev.attr['if'] != null) {
 

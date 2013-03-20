@@ -15,7 +15,7 @@ buster.testCase("Render", {
 			type: 'TYPE'
 		});
 
-		assert(div != null, 'DIV not redered');
+		assert(div != null, 'DIV not rendered');
 		assert(div.tagName === 'DIV', 'right DIV not redered');
 
 
@@ -25,12 +25,21 @@ buster.testCase("Render", {
 
 		assert(div.textContent == 'NAME', 'text is not NAME');
 	},
+	'right text interpolation': function(){
+		var div = render('"#{name}#{id} i #{klass}am#{type}end"', {
+			name: 'NAME',
+			id: 'ID',
+			klass: 'CLASS',
+			type: 'TYPE'
+		});
+		assert(div.textContent == 'NAMEID i CLASSamTYPEend', 'text was not proper interpolated');
+	},
 	'right model insertion with check': function(){
 		var dom = render('div.#{:enabled?"enabled":"disabled"}', {
 			enabled: true
 		});
 
-		assert(dom.getAttribute('class') == 'enabled', 'div has not "enabled" class');
+		assert(dom.getAttribute('class') == 'enabled', 'div has no "enabled" class');
 	},
 
 	'tag-less template check': function(){

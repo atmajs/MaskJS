@@ -19,6 +19,14 @@ var cache = {},
 		 *	Create new Document Fragment from template or append rendered template to container
 		 **/
 		render: function (template, model, cntx, container, controller) {
+
+			// if DEBUG
+			if (container && typeof container.appendChild !== 'function'){
+				console.error('.render(template[, model, cntx, container, controller]', 'Container should implement .appendChild method');
+				console.warn('Args:', arguments);
+			}
+			// endif
+
 			if (typeof template === 'string') {
 				if (hasOwnProp.call(cache, template)){
 					/* if Object doesnt contains property that check is faster

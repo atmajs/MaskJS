@@ -4,7 +4,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		return container;
 	}
 
-	var type = node.type;
+	var type = node.type, elements;
 
 	if (container == null && type !== 1) {
 		container = create_container();
@@ -14,7 +14,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		controller = new Component();
 	}
 
-	if (node instanceof Array){
+	if (type === 10 /*SET*/ || node instanceof Array){
 		for(var j = 0, jmax = node.length; j < jmax; j++){
 			builder_build(node[j], model, cntx, container, controller, childs);
 		}
@@ -33,7 +33,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	// Dom.NODE || Dom.TEXTNODE
 	if (type === 1 || type === 2) {
-		var child = create_node(node, model, cntx, container);
+		var child = create_node(node, model, cntx, container, controller);
 		if (child == null) {
 			return container || child;
 		}
@@ -69,8 +69,6 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 			handler.nodes = node.nodes;
 			handler.parent = controller;
-
-			(controller.components || (controller.components = [])).push(handler);
 
 			if (listeners != null && listeners['compoCreated'] != null) {
 				var fns = listeners.compoCreated,
@@ -111,9 +109,10 @@ function builder_build(node, model, cntx, container, controller, childs) {
 			node = handler;
 		}
 
+		(controller.components || (controller.components = [])).push(node);
 
 		controller = node;
-		childs = [];
+		elements = [];
 
 		if (node.model != null) {
 			model = node.model;
@@ -126,24 +125,36 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		return container;
 	}
 
+	if (childs != null && elements == null){
+		elements = childs;
+	}
 
 	var isarray = nodes instanceof Array,
 		length = isarray === true ? nodes.length : 1,
 		i = 0;
 
 	for (; i < length; i++) {
-		builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, childs);
+		builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, elements);
 	}
 
 	if (type === 4 && typeof node.renderEnd === 'function') {
 		/* if (!DEBUG)
 		try{
 		*/
-		node.renderEnd(childs, model, cntx, container);
+		node.renderEnd(elements, model, cntx, container);
 		/* if (!DEBUG)
 		} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
 		*/
 
+	}
+
+	if (childs != null && childs !== elements){
+		var il = childs.length,
+			jl = elements.length,
+			j = -1;
+		while(++j < jl){
+			childs[il + j] = elements[j];
+		}
 	}
 
 	return container;
