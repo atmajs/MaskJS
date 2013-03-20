@@ -8,7 +8,7 @@ buster.testCase("Render", {
 		assert(dom.querySelector('.test') != null);
 	},
 	'right model insertion': function() {
-		var div = render('div##[id].#[klass] data-type="#[type]" > "#[name]"', {
+		var div = render('div#~[id].~[klass] data-type="~[type]" > "~[name]"', {
 			name: 'NAME',
 			id: 'ID',
 			klass: 'CLASS',
@@ -26,7 +26,7 @@ buster.testCase("Render", {
 		assert(div.textContent == 'NAME', 'text is not NAME');
 	},
 	'right text interpolation': function(){
-		var div = render('"#[name]#[id] i #[klass]am#[type]end"', {
+		var div = render('"~[name]~[id] i ~[klass]am~[type]end"', {
 			name: 'NAME',
 			id: 'ID',
 			klass: 'CLASS',
@@ -35,7 +35,7 @@ buster.testCase("Render", {
 		assert(div.textContent == 'NAMEID i CLASSamTYPEend', 'text was not proper interpolated');
 	},
 	'right model insertion with check': function(){
-		var dom = render('div.#[:enabled?"enabled":"disabled"]', {
+		var dom = render('div.~[:enabled?"enabled":"disabled"]', {
 			enabled: true
 		});
 
@@ -43,7 +43,7 @@ buster.testCase("Render", {
 	},
 
 	'tag-less template check': function(){
-		var dom = render('.#[:enabled?"enabled":"disabled"] { .item; .item; .item > "Last" }', {
+		var dom = render('.~[:enabled?"enabled":"disabled"] { .item; .item; .item > "Last" }', {
 			enabled: true
 		});
 

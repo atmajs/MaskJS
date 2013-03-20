@@ -47,8 +47,9 @@
 	<td>
 		<ul>
 			<li>
-				Use #[] for string interpolation instead of #{}, as mask templates are already overloaded with {} usage
-				<div><code>mask.setInterpolationQuotes('#{','}')</code> - for fallback</div>
+				Use ~[] for string interpolation instead of #{}, as mask templates are already overloaded with '#','{' and '}' usage
+				<div><code>mask.setInterpolationQuotes('#{','}')</code> - for fallback (or any other start/end, caution - start
+				should be of 2 chars and the end of 1)</div>
 			</li>
 		</ul>
 	</td>

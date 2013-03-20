@@ -1,9 +1,9 @@
 var Parser = (function(Node, TextNode, Fragment, Component) {
 
-	var interp_START = '#',
+	var interp_START = '~',
 		interp_CLOSE = ']',
 
-		interp_code_START = 35, // #
+		interp_code_START = 126, // ~
 		interp_code_OPEN = 91,  // [
 		interp_code_CLOSE = 93, // ]
 		_serialize;
