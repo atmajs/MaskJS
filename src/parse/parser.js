@@ -72,12 +72,19 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 	}
 
 
-	function _throw(template, index, state, type) {
+	function _throw(template, index, state, token) {
 		var i = 0,
 			line = 0,
 			row = 0,
 			newLine = /[\r\n]+/g,
-			match;
+			match,
+			parsing = {
+				2: 'tag',
+				3: 'tag',
+				5: 'attribute key',
+				6: 'attribute value',
+				8: 'literal'
+			}[state];
 		while (true) {
 			match = newLine.exec(template);
 			if (match == null) {
@@ -92,7 +99,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		row = index - i;
 
-		var message = ['Mask - Unexpected', type, ' at(', line, ':', row + ') - ', String.fromCharCode(template[index])];
+		var message = ['Mask - Unexpected', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
 
 		console.error(message.join(' '));
 	}
@@ -352,16 +359,6 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 				/* TOKEN */
 
-				//////// @TODO - better error handling - this is in some how tricky as mask
-				//////// can consume fast any syntax
-				////////// if (DEBUG)
-				////////c = template.charCodeAt(index++);
-				////////if (c < 33 || c === 123 /* { */ || c == 61 /* = */ || c == 62 /* > */ ) {
-				////////	_throw(template, index, state);
-				////////	break;
-				////////}
-				////////// endif
-
 				var isInterpolated = null;
 
 				start = index;
@@ -384,12 +381,25 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						break;
 					}
 
+					// if DEBUG
+					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C){
+						// '"/<
+						_throw(template, index, state, String.fromCharCode(c));
+						break;
+					}
+					// endif
+
 					index++;
 				}
 
-
-
 				token = template.substring(start, index);
+
+				// if DEBUG
+				if (!token){
+					_throw(template, index, state, '*EMPTY*');
+					break;
+				}
+				// endif
 
 
 				if (isInterpolated === true && (state === state_attr && key === 'class') === false) {
@@ -402,6 +412,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				console.log(c, _index, _length);
 				throw '';
 			}
+
+			// if DEBUG
+			if (current.parent != null && current.parent !== fragment && current.nodes != null) {
+				console.warn('Mask - ', current.parent.tagName, JSON.stringify(current.parent.attr), 'was not proper closed.');
+			}
+			// endif
 
 
 			return fragment.nodes.length === 1 ? fragment.nodes[0] : fragment;
