@@ -193,7 +193,18 @@ var cache = {},
 		/*
 		 *	Stub for reload.js, which will be used by includejs.autoreload
 		 */
-		delegateReload: function(){}
+		delegateReload: function(){},
+
+		/**
+		 *	mask.setInterpolationQuotes(start,end) -> void
+		 * -start (String): Must contain 2 Characters
+		 * -end (String): Must contain 1 Character
+		 *
+		 * Starting from 0.6.9 mask uses #[] for string interpolation.
+		 * #{} was changed to #[], while template is already overloaded with {} usage.
+		 * 
+		 **/
+		setInterpolationQuotes: Parser.setInterpolationQuotes
 	};
 
 

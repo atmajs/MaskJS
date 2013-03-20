@@ -43,6 +43,15 @@
 ------------
 <table>
 <tr>
+	<td>v0.6.95</td>
+	<td>
+		<ul>
+			<li>
+				Use #[] for string interpolation instead of #{}, as mask templates are already overloaded with {} usage
+				<div><code>mask.setInterpolationQuotes('#{','}')</code> - for fallback</div>
+			</li>
+		</ul>
+	</td>
 	<td>v0.6.9</td>
 	<td>
 		<ul>

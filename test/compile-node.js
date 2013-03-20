@@ -129,7 +129,7 @@ buster.testCase('Compile: ', {
 	},
 
 	'valid model templating': function() {
-		dom = compile('div.#{class}##{id   } data-type="mytype: #{  type }" { "content" "other #{ util:one}" }');
+		dom = compile('div.#[class]##[id   ] data-type="mytype: #[  type ]" { "content" "other #[ util:one]" }');
 
 		var node = dom;
 		assert(typeof node.attr.class, 'function');

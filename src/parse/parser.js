@@ -1,9 +1,11 @@
 var Parser = (function(Node, TextNode, Fragment, Component) {
 
-	var	interp_code_START = 35, // #
-		interp_code_OPEN = 123, // {
-		interp_code_CLOSE = 125, // }
-		interp_CLOSE = '}',
+	var interp_START = '#',
+		interp_CLOSE = ']',
+
+		interp_code_START = 35, // #
+		interp_code_OPEN = 91,  // [
+		interp_code_CLOSE = 93, // ]
 		_serialize;
 
 
@@ -15,7 +17,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
 		 * for better performance
 		 */
-		while((index = template.indexOf('#', index)) !== -1){
+		while((index = template.indexOf(interp_START, index)) !== -1){
 			if (template.charCodeAt(index + 1) === interp_code_OPEN){
 				break;
 			}
@@ -45,7 +47,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			lastIndex = index = end + 1;
 
-			while((index = template.indexOf('#', index)) !== -1){
+			while((index = template.indexOf(interp_START, index)) !== -1){
 				if (template.charCodeAt(index + 1) === interp_code_OPEN){
 					break;
 				}
@@ -419,6 +421,22 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			}
 
 			return obj;
+		},
+		setInterpolationQuotes: function(start, end){
+			if (!start || start.length !== 2){
+				console.error('Interpolation Start must contain 2 Characters');
+				return;
+			}
+			if (!end || end.length !== 1){
+				console.error('Interpolation End must be of 1 Character');
+				return;
+			}
+
+			interp_code_START = start.charCodeAt(0);
+			interp_code_OPEN = start.charCodeAt(1);
+			interp_code_CLOSE = end.charCodeAt(0);
+			interp_CLOSE = end;
+			interp_START = start.charAt(0);
 		}
 	};
 }(Node, TextNode, Fragment, Component));
