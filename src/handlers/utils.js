@@ -25,7 +25,7 @@
 
 
 	/**
-	 *	:template
+	 *	:html
 	 *
 	 *	Shoud contain literal, that will be added as innerHTML to parents node
 	 *
@@ -33,25 +33,26 @@
 	mask.registerHandler(':html', HTMLHandler);
 
 	function HTMLHandler() {}
-	HTMLHandler.prototype.render = function(model, container) {
+	HTMLHandler.prototype.render = function(model, cntx, container) {
 		var source = null;
-		if (this.attr.source != null) {
-			source = document.getElementById(this.attr.source).innerHTML;
+
+		if (this.attr.template != null) {
+			var c = this.attr.template[0];
+			if (c === '#'){
+				source = document.getElementById(this.attr.template.substring(1)).innerHTML;
+			}
+
 		}
-		if (this.firstChild) {
+		if (this.nodes) {
 			source = this.nodes[0].content;
 		}
 
 		if (source == null) {
 			console.warn('No HTML for node', this);
+			return;
 		}
 
-		var $div = document.createElement('div');
-		$div.innerHTML = source;
-		for (var key in this.attr) {
-			$div.setAttribute(key, this.attr[key]);
-		}
-		container.appendChild($div);
+		container.innerHTML = source;
 	};
 
 }(Mask));

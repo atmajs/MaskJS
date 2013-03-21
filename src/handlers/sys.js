@@ -9,6 +9,26 @@
 		renderStart: function(model, cntx, container) {
 			var attr = this.attr;
 
+			if (attr['use'] != null) {
+				this.model = util_getProperty(model, attr['use']);
+				return;
+			}
+
+			if (attr['debugger'] != null) {
+				debugger;
+				return;
+			}
+
+			if (attr['log'] != null) {
+				var key = attr.log,
+					value = util_getProperty(model, key);
+
+				console.log('Key: %s, Value: %s', key, value);
+				return;
+			}
+
+			this.model = model;
+
 			if (attr['if'] != null) {
 				var check = attr['if'];
 
@@ -35,61 +55,31 @@
 				return;
 			}
 
-			if (attr['use'] != null) {
-				this.model = util_getProperty(model, attr['use']);
-				return;
-			}
-
-			if (attr['debugger'] != null) {
-				debugger;
-				return;
-			}
-
-			if (attr['log'] != null) {
-				var key = attr.log,
-					value = util_getProperty(model, key);
-
-				console.log('Key: %s, Value: %s', key, value);
-				return;
-			}
-
-
-
+			// foreach is deprecated
 			if (attr['foreach'] != null || attr['each'] != null) {
-				var array = util_getProperty(model, attr.foreach || attr.each),
-					nodes = this.nodes,
-					item = null;
-
-				this.nodes = [];
-				for (var i = 0, x, length = array.length; i < length; i++) {
-					x = array[i];
-
-					item = new Component();
-					item.nodes = nodes;
-					item.model = x;
-					item.container = container;
-
-					this.nodes[i] = item;
-				}
+				each(this, model, cntx, container);
 			}
 		},
 		render: null
 	};
 
 
-	/** DEPRECATED
-	 *
-	 * use '% each="prop"' instead
-	 */
-	function List() {};
-	mask.registerHandler('list', List);
+	function each(compo, model, cntx, container){
+		if (compo.nodes == null && typeof Compo !== 'undefined'){
+			Compo.ensureTemplate(compo);
+		}
 
-	List.prototype.renderStart = function(model, container) {
-		var array = util_getProperty(model, this.attr.value),
-			nodes = this.nodes,
+		var array = util_getProperty(model, compo.attr.foreach || compo.attr.each),
+			nodes = compo.nodes,
 			item = null;
 
-		this.nodes = [];
+		compo.nodes = [];
+		compo.template = nodes;
+
+		if (array instanceof Array === false){
+			return;
+		}
+
 		for (var i = 0, x, length = array.length; i < length; i++) {
 			x = array[i];
 
@@ -98,7 +88,7 @@
 			item.model = x;
 			item.container = container;
 
-			this.nodes[i] = item;
+			compo.nodes[i] = item;
 		}
 	}
 
