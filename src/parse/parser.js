@@ -9,7 +9,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		interp_code_OPEN = 91,
 		// ]
 		interp_code_CLOSE = 93,
-		
+
 		_serialize;
 
 
@@ -349,6 +349,20 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 				if (state === go_attrVal) {
 					state = state_attr;
+				}
+
+				// inline comments
+				if (c === 47 && template.charCodeAt(index + 1) === 47) {
+					// /
+					index++;
+					while(c !== 10 && c !== 13 && index < length){
+						// goto whitespace
+						c = template.charCodeAt(++index);
+					}
+					while(c < 33 && index < length){
+						// skip whitespace
+						c = template.charCodeAt(++index);
+					}
 				}
 
 				/* TOKEN */
