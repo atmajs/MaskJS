@@ -31,17 +31,15 @@ var stringify = (function() {
 
 		var index = output.length;
 
-		do {
-			processNode(node, indent, output);
-		} while((node = node.nextNode));
 
-		//////if (ast instanceof Array) {
-		//////	for (i = 0; i < ast.length; i++) {
-		//////		stringify(ast[i], indent, output);
-		//////	}
-		//////} else {
-		//////	stringify(ast, indent, output);
-		//////}
+
+		if (node instanceof Array) {
+			for (i = 0; i < node.length; i++) {
+				processNode(node[i], indent, output);
+			}
+		} else {
+			processNode(node, indent, output);
+		}
 
 
 		var spaces = doindent(indent);
@@ -73,7 +71,7 @@ var stringify = (function() {
 		}
 
 		output.push(processNodeHead(node) + '{');
-		run(node.firstChild, _indent, output);
+		run(node.nodes, _indent, output);
 		output.push('}');
 		return;
 	}
@@ -120,22 +118,18 @@ var stringify = (function() {
 
 
 	function isEmpty(node) {
-		return node.firstChild == null;
-		// - return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
+		return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
 	}
 
 	function isSingle(node) {
-		return node.firstChild === node.lastChild;
-		// - return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
+		return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
 	}
 
 	function getSingle(node) {
-		return node.firstChild;
-
-		//if (node.nodes instanceof Array) {
-		//	return node.nodes[0];
-		//}
-		//return node.nodes;
+		if (node.nodes instanceof Array) {
+			return node.nodes[0];
+		}
+		return node.nodes;
 	}
 
 	function wrapString(str) {

@@ -17,6 +17,9 @@
 // import ../src/create/documentFragment.js
 
 
+// import ../src/formatter/stringify.js
+Mask.stringify = stringify;
+
 /* Handlers */
 
 // import ../src/handlers/sys.js
