@@ -1,10 +1,10 @@
-'use strict';
 
 var stringify = (function() {
 
 
 	var _minimizeAttributes,
-		_indent;
+		_indent,
+		Dom = mask.Dom;
 
 	function doindent(count) {
 		var output = '';
@@ -31,7 +31,9 @@ var stringify = (function() {
 
 		var index = output.length;
 
-
+		if (node.type === Dom.FRAGMENT){
+			node = node.nodes;
+		}
 
 		if (node instanceof Array) {
 			for (i = 0; i < node.length; i++) {

@@ -1,4 +1,3 @@
-
 // import ../src/umd-head.js
 
 
@@ -16,9 +15,10 @@
 
 // import ../src/create/documentFragment.js
 
-
-// import ../src/formatter/stringify.js
-Mask.stringify = stringify;
+(function(mask) {
+	// import ../src/formatter/stringify.js
+	Mask.stringify = stringify;
+}(Mask));
 
 /* Handlers */
 
@@ -27,6 +27,6 @@ Mask.stringify = stringify;
 // import ../src/handlers/mask.binding.js
 
 
-	return Mask;
+return Mask;
 
 }));
