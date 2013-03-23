@@ -94,7 +94,8 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 				if (typeof value === 'object' && array == null){
 					array = [string];
 				}
-				else if (array == null){
+
+				if (array == null){
 					string += value;
 				} else {
 					array.push(value);
@@ -108,4 +109,3 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 
 	return array == null ? string : array;
 }
-

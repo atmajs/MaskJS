@@ -3,28 +3,32 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 	var interp_START = '~',
 		interp_CLOSE = ']',
 
-		interp_code_START = 126, // ~
-		interp_code_OPEN = 91,  // [
-		interp_code_CLOSE = 93, // ]
+		// ~
+		interp_code_START = 126,
+		// [
+		interp_code_OPEN = 91,
+		// ]
+		interp_code_CLOSE = 93,
+		
 		_serialize;
 
 
 	function ensureTemplateFunction(template) {
 		var index = -1;
 
-		/*
+/*
 		 * - single char indexOf is much faster then '#{' search
 		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
 		 * for better performance
 		 */
-		while((index = template.indexOf(interp_START, index)) !== -1){
-			if (template.charCodeAt(index + 1) === interp_code_OPEN){
+		while ((index = template.indexOf(interp_START, index)) !== -1) {
+			if (template.charCodeAt(index + 1) === interp_code_OPEN) {
 				break;
 			}
 			index++;
 		}
 
-		if (index === -1){
+		if (index === -1) {
 			return template;
 		}
 
@@ -35,7 +39,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			end = 0;
 
 
-		while(true) {
+		while (true) {
 			var end = template.indexOf(interp_CLOSE, index + 2);
 			if (end === -1) {
 				break;
@@ -47,14 +51,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			lastIndex = index = end + 1;
 
-			while((index = template.indexOf(interp_START, index)) !== -1){
-				if (template.charCodeAt(index + 1) === interp_code_OPEN){
+			while ((index = template.indexOf(interp_START, index)) !== -1) {
+				if (template.charCodeAt(index + 1) === interp_code_OPEN) {
 					break;
 				}
 				index++;
 			}
 
-			if (index === -1){
+			if (index === -1) {
 				break;
 			}
 
@@ -77,8 +81,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			line = 0,
 			row = 0,
 			newLine = /[\r\n]+/g,
-			match,
-			parsing = {
+			match, parsing = {
 				2: 'tag',
 				3: 'tag',
 				5: 'attribute key',
@@ -101,7 +104,10 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		var message = ['Mask - Unexpected', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
 
-		console.error(message.join(' '));
+		console.error(message.join(' '), {
+			template: template,
+			stopped: template.substring(index)
+		});
 	}
 
 
@@ -119,13 +125,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				last = 3,
 				index = 0,
 				length = template.length,
-				classNames,
-				token,
-				key,
-				value,
-				next,
-				c,
-				start;
+				classNames, token, key, value, next, c, start;
 
 			var go_tag = 2,
 				state_tag = 3,
@@ -142,12 +142,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					continue;
 				}
 
-				if (last === state_attr){
+				if (last === state_attr) {
 					if (classNames != null) {
 						current.attr['class'] = ensureTemplateFunction(classNames);
 						classNames = null;
 					}
-					if (key != null){
+					if (key != null) {
 						current.attr[key] = key;
 						key = null;
 						token = null;
@@ -177,13 +177,11 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					} else if (last === state_tag) {
 
-						next = CustomTags[token] != null
-								? new Component(token, current, CustomTags[token])
-								: new Node(token, current);
+						next = CustomTags[token] != null ? new Component(token, current, CustomTags[token]) : new Node(token, current);
 
-						if (current.nodes == null){
+						if (current.nodes == null) {
 							current.nodes = [next];
-						}else{
+						} else {
 							current.nodes.push(next);
 						}
 
@@ -196,9 +194,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 						next = new TextNode(token, current);
 
-						if (current.nodes == null){
+						if (current.nodes == null) {
 							current.nodes = [next];
-						}else{
+						} else {
 							current.nodes.push(next);
 						}
 
@@ -215,11 +213,11 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				}
 
 				if (index >= length) {
-					if (state === state_attr){
+					if (state === state_attr) {
 						if (classNames != null) {
 							current.attr['class'] = ensureTemplateFunction(classNames)
 						}
-						if (key != null){
+						if (key != null) {
 							current.attr[key] = key;
 						}
 					}
@@ -278,9 +276,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (c === 39 || c === 34) {
 					// '"
 					// Literal - could be as textnode or attribute value
-					if (state === go_attrVal){
+					if (state === go_attrVal) {
 						state = state_attr;
-					}else {
+					} else {
 						last = state = state_literal;
 					}
 
@@ -330,30 +328,26 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						index++;
 						key = 'class';
 						state = go_attrVal;
-					}
-
-					else if (c === 35) {
+					} else if (c === 35) {
 						// #
 						index++;
 						key = 'id';
 						state = go_attrVal;
-					}
-
-					else if (c === 61) {
+					} else if (c === 61) {
 						// =;
 						index++;
 						state = go_attrVal;
 						continue;
 					} else {
 
-						if (key != null){
+						if (key != null) {
 							token = key;
 							continue;
 						}
 					}
 				}
 
-				if (state === go_attrVal){
+				if (state === go_attrVal) {
 					state = state_attr;
 				}
 
@@ -376,13 +370,13 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						while (c !== interp_code_CLOSE && index < length);
 					}
 
-					if (c === 46 || c === 35 || c === 62 || c === 123 || c < 33 || c === 59 || c === 61){
+					if (c === 46 || c === 35 || c === 62 || c === 123 || c < 33 || c === 59 || c === 61) {
 						// .#>{ ;=
 						break;
 					}
 
 					// if DEBUG
-					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C){
+					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C) {
 						// '"/<
 						_throw(template, index, state, String.fromCharCode(c));
 						break;
@@ -395,7 +389,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				token = template.substring(start, index);
 
 				// if DEBUG
-				if (!token){
+				if (!token) {
 					_throw(template, index, state, '*EMPTY*');
 					break;
 				}
@@ -408,7 +402,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			}
 
-			if (isNaN(c)){
+			if (isNaN(c)) {
 				console.log(c, _index, _length);
 				throw '';
 			}
@@ -438,12 +432,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			return obj;
 		},
-		setInterpolationQuotes: function(start, end){
-			if (!start || start.length !== 2){
+		setInterpolationQuotes: function(start, end) {
+			if (!start || start.length !== 2) {
 				console.error('Interpolation Start must contain 2 Characters');
 				return;
 			}
-			if (!end || end.length !== 1){
+			if (!end || end.length !== 1) {
 				console.error('Interpolation End must be of 1 Character');
 				return;
 			}
