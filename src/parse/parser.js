@@ -131,6 +131,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				state_tag = 3,
 				state_attr = 5,
 				go_attrVal = 6,
+				go_attrHeadVal = 7,
 				state_literal = 8,
 				go_up = 9;
 
@@ -327,12 +328,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						// .
 						index++;
 						key = 'class';
-						state = go_attrVal;
+						state = go_attrHeadVal;
 					} else if (c === 35) {
 						// #
 						index++;
 						key = 'id';
-						state = go_attrVal;
+						state = go_attrHeadVal;
 					} else if (c === 61) {
 						// =;
 						index++;
@@ -347,7 +348,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					}
 				}
 
-				if (state === go_attrVal) {
+				if (state === go_attrVal || state === go_attrHeadVal) {
+					last = state;
 					state = state_attr;
 				}
 
@@ -384,11 +386,6 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						while (c !== interp_code_CLOSE && index < length);
 					}
 
-					if (c === 46 || c === 35 || c === 62 || c === 123 || c < 33 || c === 59 || c === 61) {
-						// .#>{ ;=
-						break;
-					}
-
 					// if DEBUG
 					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C) {
 						// '"/<
@@ -396,6 +393,18 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						break;
 					}
 					// endif
+
+
+					if (last !== go_attrVal && (c === 46 || c === 35 || c === 61)){
+						// .#=
+						break;
+					}
+
+					if (c === 62 || c === 123 || c < 33 || c === 59) {
+						// >{ ;
+						break;
+					}
+
 
 					index++;
 				}
