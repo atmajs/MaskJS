@@ -16,6 +16,10 @@
 
 // import ../src/create/htmlStream.js
 
+(function(mask) {
+	// import ../src/formatter/stringify.js
+	Mask.stringify = stringify;
+}(Mask));
 
 /* Handlers */
 
