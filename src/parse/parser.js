@@ -70,6 +70,21 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		template = null;
 		return function(model, type, cntx, element, name) {
+			if (type == null) {
+				// http://jsperf.com/arguments-length-vs-null-check
+				// this should be used to stringify parsed MaskDOM
+				var string = '';
+				for (var i = 0, x, length = array.length; i < length; i++) {
+					x = array[i];
+					if (i % 2 === 1) {
+						string += '~[' + x + ']';
+					} else {
+						string += x;
+					}
+				}
+				return string;
+			}
+
 			return util_interpolate(array, model, type, cntx, element, name);
 		};
 
@@ -357,11 +372,11 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (c === 47 && template.charCodeAt(index + 1) === 47) {
 					// /
 					index++;
-					while(c !== 10 && c !== 13 && index < length){
+					while (c !== 10 && c !== 13 && index < length) {
 						// goto whitespace
 						c = template.charCodeAt(++index);
 					}
-					while(c < 33 && index < length){
+					while (c < 33 && index < length) {
 						// skip whitespace
 						c = template.charCodeAt(++index);
 					}
@@ -395,7 +410,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					// endif
 
 
-					if (last !== go_attrVal && (c === 46 || c === 35 || c === 61)){
+					if (last !== go_attrVal && (c === 46 || c === 35 || c === 61)) {
 						// .#=
 						break;
 					}

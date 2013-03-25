@@ -15,17 +15,17 @@ include.exports = {
 
 		docleaf.process([{
 	        name: 'Mask',
-	        path: 'src/8.Mask.js',
+	        path: 'src/mask.js',
 	        lib: 'mask.js'
 	    }, {
 	        name: 'ConditionUtil',
-	        path: 'src/5.ConditionUtil.js'
+	        path: 'src/util/condition.js'
 	    },{
 	        name: 'MaskDOM',
 	        path: 'src/info.MaskDOM.js'
 	    },{
 	        name: 'Formatter',
-	        path: 'src/formatter/exports.js',
+	        path: 'builds/formatter.js',
 	        lib: 'formatter/formatter.js'
 	    },{
 	        name: 'Builds',

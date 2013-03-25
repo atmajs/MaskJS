@@ -61,6 +61,11 @@ var stringify = (function() {
 			return;
 		}
 
+		if (typeof node.content === 'function'){
+			output.push(wrapString(node.content()));
+			return;
+		}
+
 		if (isEmpty(node)) {
 			output.push(processNodeHead(node) + ';');
 			return;
@@ -83,15 +88,23 @@ var stringify = (function() {
 			_id = node.attr.id || '',
 			_class = node.attr['class'] || '';
 
-		if (_id) {
-			if (_id.indexOf(' ') > -1) {
+
+		if (typeof _id === 'function'){
+			_id = _id();
+		}
+		if (typeof _class === 'function'){
+			_class = _class();
+		}
+
+		if (typeof _id === 'string') {
+			if (_id.indexOf(' ') !== -1) {
 				_id = '';
 			} else {
 				_id = '#' + _id;
 			}
 		}
 
-		if (_class) {
+		if (typeof _class === 'string') {
 			_class = '.' + _class.split(' ').join('.');
 		}
 
@@ -103,6 +116,10 @@ var stringify = (function() {
 				continue;
 			}
 			var value = node.attr[key];
+
+			if (typeof value === 'function'){
+				value = value();
+			}
 
 			if (_minimizeAttributes === false || /\s/.test(value)){
 				value = wrapString(value);

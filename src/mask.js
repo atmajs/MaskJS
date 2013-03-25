@@ -13,7 +13,7 @@ var cache = {},
 		 * - model (Object): template values
 		 * - cntx (Object): can store any additional information, that custom handler may need,
 		 * this object stays untouched and is passed to all custom handlers
-		 * - container: container where template is render into
+		 * - container (IAppendChild): container where template is rendered into
 		 * - controller (Object): instance of an controller that own this template
 		 *
 		 *	Create new Document Fragment from template or append rendered template to container
@@ -50,7 +50,7 @@ var cache = {},
 		 **/
 		parse: Parser.parse,
 		/**
-		 * 	mask.registerHandler(tagName, tagHandler) -> Void
+		 * 	mask.registerHandler(tagName, tagHandler) -> void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
 		 * - tagHandler (Function|Object):
 		 *
@@ -200,9 +200,9 @@ var cache = {},
 		 * -start (String): Must contain 2 Characters
 		 * -end (String): Must contain 1 Character
 		 *
-		 * Starting from 0.6.9 mask uses #[] for string interpolation.
-		 * #{} was changed to #[], while template is already overloaded with {} usage.
-		 * 
+		 * Starting from 0.6.9 mask uses ~[] for string interpolation.
+		 * Old '#{}' was changed to '~[]', while template is already overloaded with #, { and } usage.
+		 *
 		 **/
 		setInterpolationQuotes: Parser.setInterpolationQuotes
 	};
