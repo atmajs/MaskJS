@@ -3,14 +3,15 @@
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup/mvc engine.
+	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup and MVC engine.
 
 <div><pre><code>
 .container {
 	h4 > 'Title'
 	section.content data-id='myID' {
-		span >'Hello #{name}!'
+		span >'Hello ~[name]!'
 	}
+	:custom > button > '~[bind: name]'
 }
 </code></pre></div>
 
