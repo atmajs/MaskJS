@@ -53,7 +53,7 @@
  **/
 
 /**
- *	MaskDOM.InterpolateFunction(model[, type=""node"", cntx, element, name]) -> Array
+ *	MaskDOM.InterpolateFunction(model[, type="node", cntx, element, name]) -> Array
  *	- model(Object): Data Model used to render template
  *	- type(String): node | attr
  *	- return (Array): When type is 'node', the array can also contain HTMLElements, otherwise only Strings

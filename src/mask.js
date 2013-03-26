@@ -89,7 +89,7 @@ var cache = {},
 		 * - utilName (String): name of the utility
 		 * - fn (Function): util handler
 		 *
-		 *	Register Utility Function. Template Example: '#{myUtil:key}'
+		 *	Register Utility Function. Template Example: '~[myUtil:key]'
 		 *		utility interface:
 		 *		<b>function(key, model, type, cntx, element, name){}</b>
 		 *
@@ -173,7 +173,7 @@ var cache = {},
 			 *		if path is '.' returns model itself
 			 *
 			 *	```javascript
-			 *	mask.render('span > #{.}', 'Some string') // -> <span>Some string</span>
+			 *	mask.render('span > ~[.]', 'Some string') // -> <span>Some string</span>
 			 *	```
 			 **/
 			getProperty: util_getProperty
