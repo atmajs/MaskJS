@@ -96,7 +96,7 @@ var stringify = (function() {
 			_class = _class();
 		}
 
-		if (typeof _id === 'string') {
+		if (_id) {
 			if (_id.indexOf(' ') !== -1) {
 				_id = '';
 			} else {
@@ -104,7 +104,7 @@ var stringify = (function() {
 			}
 		}
 
-		if (typeof _class === 'string') {
+		if (_class) {
 			_class = '.' + _class.split(' ').join('.');
 		}
 
@@ -168,7 +168,7 @@ var stringify = (function() {
 	 **/
 	return function(input, settings) {
 		if (typeof input === 'string') {
-			input = mask.compile(input);
+			input = mask.parse(input);
 		}
 
 

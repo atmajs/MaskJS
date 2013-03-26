@@ -237,7 +237,7 @@ var HTMLtoMask = (function() {
 		});
 
 
-		return stringify(results.replace(/"[\s]+"/g, ''), 4);
+		return stringify(results.replace(/"[\s]+"/g, ''));
 
 	};
 

@@ -40,12 +40,12 @@
 		stringify: (mask.stringify = stringify),
 
 		/**
-		 *	mask.HTMLtoMask(html) -> String
+		 *	mask.HtmlToMask(html) -> String
 		 * - html(String)
 		 * - return(String): Mask Markup
 		 *
 		 **/
-		HTMLtoMask: (mask.HTMLtoMask = HTMLtoMask)
+		HtmlToMask: (mask.HtmlToMask = HTMLtoMask)
 	};
 
 
