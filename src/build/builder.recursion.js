@@ -121,20 +121,20 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	}
 
 	var nodes = node.nodes;
-	if (nodes == null) {
-		return container;
-	}
+	if (nodes != null) {
 
-	if (childs != null && elements == null){
-		elements = childs;
-	}
+		if (childs != null && elements == null){
+			elements = childs;
+		}
 
-	var isarray = nodes instanceof Array,
-		length = isarray === true ? nodes.length : 1,
-		i = 0;
+		var isarray = nodes instanceof Array,
+			length = isarray === true ? nodes.length : 1,
+			i = 0;
 
-	for (; i < length; i++) {
-		builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, elements);
+		for (; i < length; i++) {
+			builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, elements);
+		}
+		
 	}
 
 	if (type === 4 && typeof node.renderEnd === 'function') {
