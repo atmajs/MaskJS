@@ -117,7 +117,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		row = index - i;
 
-		var message = ['Mask - Unexpected', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
+		var message = ['Mask - Unexpected:', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
 
 		console.error(message.join(' '), {
 			template: template,
@@ -428,6 +428,10 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				// if DEBUG
 				if (!token) {
 					_throw(template, index, state, '*EMPTY*');
+					break;
+				}
+				if (isInterpolated === true && state === state_tag){
+					_throw(template, index, state, 'Tag Names cannt be interpolated (in dev)');
 					break;
 				}
 				// endif
