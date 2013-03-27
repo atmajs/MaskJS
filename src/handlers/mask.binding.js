@@ -249,7 +249,7 @@ mask.registerUtility('bind', function(property, model, type, cntx, element, attr
 
 			addObjectObserver(model, property, function(value){
 				var attrValue = element.getAttribute(attrName);
-				element.setAttribute(attrName, attrValue.replace(current, value));
+				element.setAttribute(attrName, attrValue ? attrValue.replace(current, value) : value);
 				current = value;
 			});
 
