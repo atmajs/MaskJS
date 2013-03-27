@@ -446,7 +446,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			}
 
 			// if DEBUG
-			if (current.parent != null && current.parent !== fragment && current.nodes != null) {
+			if (current.parent != null && current.parent !== fragment && current.parent.__single !== true && current.nodes != null) {
 				console.warn('Mask - ', current.parent.tagName, JSON.stringify(current.parent.attr), 'was not proper closed.');
 			}
 			// endif

@@ -82,13 +82,18 @@ function addObjectObserver(obj, property, callback) {
 		});
 	}
 
-	var observers = obj.__observers[property] || (obj.__observers[property] = []),
+	if (obj.__observers[property]) {
+		obj.__observers[property].push(callback);
+		return;
+	}
+
+	var observers = obj.__observers[property] = [callback],
 		chain = property.split('.'),
 		parent = chain.length > 1 ? ensureObject(obj, chain) : obj,
 		key = chain[0],
 		currentValue = parent[key];
 
-	observers.push(callback);
+
 
 	Object.defineProperty(parent, key, {
 		get: function() {
