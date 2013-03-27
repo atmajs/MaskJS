@@ -56,7 +56,7 @@
 			}
 
 			// foreach is deprecated
-			if (attr['foreach'] != null || attr['each'] != null) {
+			if (attr['each'] != null || attr['foreach'] != null) {
 				each(this, model, cntx, container);
 			}
 		},
@@ -75,6 +75,7 @@
 
 		compo.nodes = [];
 		compo.template = nodes;
+		compo.container = container;
 
 		if (array instanceof Array === false){
 			return;
@@ -89,6 +90,21 @@
 			item.container = container;
 
 			compo.nodes[i] = item;
+		}
+
+		for(var method in ListProto){
+			compo[method] = ListProto[method];
+		}
+	}
+
+	var ListProto = {
+		append: function(model){
+			var item;
+			item = new Component();
+			item.nodes = this.template;
+			item.model = model;
+
+			mask.render(item, model, null, this.container, this);
 		}
 	}
 

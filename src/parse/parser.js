@@ -158,6 +158,17 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					continue;
 				}
 
+				// inline comments
+				if (c === 47 && template.charCodeAt(index + 1) === 47) {
+					// /
+					index++;
+					while (c !== 10 && c !== 13 && index < length) {
+						// goto newline
+						c = template.charCodeAt(++index);
+					}
+					continue;
+				}
+
 				if (last === state_attr) {
 					if (classNames != null) {
 						current.attr['class'] = ensureTemplateFunction(classNames);
@@ -368,19 +379,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					state = state_attr;
 				}
 
-				// inline comments
-				if (c === 47 && template.charCodeAt(index + 1) === 47) {
-					// /
-					index++;
-					while (c !== 10 && c !== 13 && index < length) {
-						// goto whitespace
-						c = template.charCodeAt(++index);
-					}
-					while (c < 33 && index < length) {
-						// skip whitespace
-						c = template.charCodeAt(++index);
-					}
-				}
+
 
 				/* TOKEN */
 
