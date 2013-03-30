@@ -166,6 +166,8 @@ var cache = {},
 			 **/
 			Condition: ConditionUtil,
 
+			Expression: ExpressionUtil,
+
 			/**
 			 *	mask.Util.getProperty(model, path) -> value
 			 *	- model (Object | value)

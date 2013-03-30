@@ -4,22 +4,25 @@ var buster = require('buster'),
 	condition = mask.Utils.Condition.condition,
 	template, node, attr;
 
+	isCondition = mask.Utils.Expression.eval;
+	condition = mask.Utils.Expression.eval;
+
 buster.testCase("Value Utils", {
 	'isCondition by strings': function() {
-		assert(isCondition("'Alex'=='Alex'?", {}));
+		assert(isCondition("'Alex'=='Alex'", {}));
 	},
 	'isCondition by string and model': function() {
-		assert(isCondition("name=='Alex'?", {
+		assert(isCondition("name=='Alex'", {
 			name: 'Alex'
 		}));
 	},
 	'isCondition by number and model': function() {
-		assert(isCondition("age>10?", {
+		assert(isCondition("age>10", {
 			age: 100
 		}));
 	},
 	'isCondition multiple': function() {
-		assert(isCondition("age > 10 && info.name == 'Alex' ?", {
+		assert(isCondition("age > 10 && info.name == 'Alex'", {
 			info: {
 				name: 'Alex'
 			},
@@ -27,7 +30,7 @@ buster.testCase("Value Utils", {
 		}));
 	},
 	'isCondition {booleans}': function() {
-		assert(isCondition("!falsy && truthy ?", {
+		assert(isCondition("!falsy && truthy", {
 			falsy: false,
 			truthy: true
 		}));
@@ -63,35 +66,35 @@ buster.testCase("Value Utils", {
 		}) == 'ID', 'Are equal, but returns not ID');
 
 
-		assert(condition('action-title || action', {
+		assert(condition('."action-title" || action', {
 			'action': 'action'
 		}) == 'action', 'OR shoud return "action"');
 
-		assert(!condition('action-title || action', {
+		assert(!condition('."action-title" || action', {
 			'nothing': 'action'
 		}), 'OR shoud be falsy');
 
-		assert(condition('name && (action-title || action)', {
+		assert(condition('name && (."action-title" || action)', {
 			'action-title': 'a',
 			name: 1
 		}) == 'a', 'x AND OR should return "a"');
 
-		assert(condition('name && (action-title || action) || "nothing"', {
+		assert(condition('name && (."action-title" || action) || "nothing"', {
 			'action-title': 'a',
 			name: 0
 		}) == 'nothing', 'x AND OR should return "nothing"');
 
-		assert(condition('name && (action-title || action) || "nothing"', {
+		assert(condition('name && (."action-title" || action) || "nothing"', {
 			'action-title': '',
 			name: 1
 		}) == 'nothing', '(0 && (0||0)) || 1 should return "nothing"');
 
-		assert(condition('name && (action-title || action) || "nothing"', {
+		assert(condition('name && (."action-title" || action) || "nothing"', {
 			'action': 'a',
 			name: 1
 		}) == 'a', '(1 && (0||1)) || 1 should return "a"');
 
-		assert(condition('!name && (action-title || action) || "nothing"', {
+		assert(condition('!name && (."action-title" || action) || "nothing"', {
 			'action-title': 'a',
 			name: 0
 		}) == 'a', '(!0 && (1||0)) || 1 should return "a"');

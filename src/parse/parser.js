@@ -17,7 +17,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		var index = -1;
 
 /*
-		 * - single char indexOf is much faster then '#{' search
+		 * - single char indexOf is much faster then '~[' search
 		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
 		 * for better performance
 		 */
@@ -151,7 +151,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				go_up = 9;
 
 
-			outer: while (1) {
+			outer: while (true) {
 
 				if (index < length && (c = template.charCodeAt(index)) < 33) {
 					index++;
