@@ -205,11 +205,23 @@ function expression_parse(expr) {
 				continue;
 			}
 
-			current = ast_append(current, new Ast_SymbolRef(current, ref));
+			if (c === 110 && ref === 'null'){
+				ref = null;
+			}
+
+			if (c === 102 && ref === 'false'){
+				ref = false;
+			}
+
+			if (c === 116 && ref === 'true'){
+				ref = true;
+			}
+
+			current = ast_append(current, typeof ref === 'string' ? new Ast_SymbolRef(current, ref) : new Ast_Value(ref));
 		}
 	}
 
-	if (current.body == null){
+	if (current.body == null && current.type === type_Statement){
 		_throw('Unexpected end of expression');
 	}
 
