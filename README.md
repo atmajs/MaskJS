@@ -44,6 +44,25 @@
 ------------
 <table>
 <tr>
+<td>v0.7.0</td>
+	<td>
+		<ul>
+			<li>
+				Expressions parser. Samples:
+				<div><code>~[:controllerFunction(userName.toUpperCase()) + ';']</code></div>
+				<div><code>~[:user && user.id || "Log in"]</code></div>
+				Variables/Functions look up:
+				<ol>
+				 <li> model </li>
+				 <li> cntx </li>
+				 <li> controller </li>
+				 <li> up in controllers tree </li>
+				</ol>
+			</li>
+		</ul>
+	</td>
+</tr>
+<tr>
 <td>v0.6.95</td>
 	<td>
 		<ul>

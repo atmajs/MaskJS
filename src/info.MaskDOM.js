@@ -58,7 +58,7 @@
  *	- model(Object): Data Model used to render template
  *	- cntx (Object): Context
  *	- element (HTMLNode): HTMLNode container/tag
- *	- controlller (Object): Current Controller
+ *	- controlller(Object): current controller instance
  *	- type(String): node | attr (as interpolations could be in text nodes and in attributes, this argument
  *	informs, where current interpolation takes place)
  *	- attrName (String): In case, when we are in attribute interpolation, this argument holds attributes name
@@ -83,5 +83,6 @@
  * - element (HTMLNode): Element that holds this attribute
  * - model (Object): Model that was used in mask.render
  * - cntx (Object): Context
- * - controller (Object): Current controller
+ * - controller (Object): current controller instance
+ *
  **/
