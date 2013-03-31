@@ -55,7 +55,7 @@ function util_getProperty(o, chain) {
  *
  */
 
-function util_interpolate(arr, model, type, cntx, element, name) {
+function util_interpolate(arr, type, model, cntx, element, controller, name) {
 	var length = arr.length,
 		i = 0,
 		array = null,
@@ -80,12 +80,12 @@ function util_interpolate(arr, model, type, cntx, element, name) {
 			} else {
 				utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
 				if (utility === '') {
-					utility = 'condition';
+					utility = 'expression';
 				}
 
 				key = key.substring(index + 1);
 				if (typeof ModelUtils[utility] === 'function'){
-					value = ModelUtils[utility](key, model, type, cntx, element, name);
+					value = ModelUtils[utility](key, model, cntx, element, controller, name, type);
 				}
 			}
 

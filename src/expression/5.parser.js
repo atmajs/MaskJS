@@ -162,6 +162,7 @@ function expression_parse(expr) {
 		//go_ref === directive
 		) {
 			if (current.body != null && current.join == null) {
+				debugger;
 				_throw('Directive Expected');
 				break;
 			}

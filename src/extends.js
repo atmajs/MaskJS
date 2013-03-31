@@ -1,5 +1,8 @@
 var ModelUtils = {
-	condition: ConditionUtil.condition
+	condition: ConditionUtil.condition,
+	expression: function(value, model, cntx, element, controller){
+		return ExpressionUtil.eval(value, model, cntx, controller);
+	},
 },
 	CustomAttributes = {
 		'class': null,

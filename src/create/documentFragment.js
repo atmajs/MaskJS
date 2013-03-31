@@ -19,7 +19,7 @@ function create_node(node, model, cntx, container, controller) {
 			return null;
 		}
 
-		var result = content(model, 'node', cntx, container),
+		var result = content('node', model, cntx, container, controller),
 			text = '';
 
 		if (typeof result === 'string'){
@@ -65,7 +65,7 @@ function create_node(node, model, cntx, container, controller) {
 		}
 
 		if (typeof attr[key] === 'function') {
-			value = attr[key](model, 'attr', cntx, tag, key);
+			value = attr[key]('attr', model, cntx, tag, controller, key);
 			if (value instanceof Array){
 				value = value.join('');
 			}
@@ -77,7 +77,7 @@ function create_node(node, model, cntx, container, controller) {
 		// null or empty string will not be handled
 		if (value) {
 			if (typeof CustomAttributes[key] === 'function') {
-				CustomAttributes[key](node, value, tag, model, cntx, controller);
+				CustomAttributes[key](node, value, model, cntx, tag, controller);
 			} else {
 				tag.setAttribute(key, value);
 			}

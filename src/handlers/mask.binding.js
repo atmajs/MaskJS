@@ -236,7 +236,7 @@ Bind.prototype.renderStart = function(model, cntx, container) {
  */
 
 
-mask.registerUtility('bind', function(property, model, type, cntx, element, attrName){
+mask.registerUtility('bind', function(property, model, cntx, element, controller, type, attrName){
 	var current = getProperty(model, property);
 	switch(type){
 		case 'node':
@@ -368,13 +368,31 @@ BindingProvider.prototype = {
 	domWay: {
 		get: function(provider) {
 			if (provider.getter) {
-				return provider.node.parent[provider.getter]();
+				var controller = provider.node.parent;
+
+				// if DEBUG
+				if (controller == null || typeof controller[provider.getter] !== 'function'){
+					console.error('Mask.bindings: Getter should be a function', provider.getter, provider);
+					return null;
+				}
+				// endif
+
+				return controller[provider.getter]();
 			}
 			return getProperty(provider, provider.property);
 		},
 		set: function(provider, value) {
 			if (provider.setter) {
-				provider.node.parent[provider.setter](value);
+				var controller = provider.node.parent;
+
+				// if DEBUG
+				if (controller == null || typeof controller[provider.setter] !== 'function'){
+					console.error('Mask.bindings: Getter should be a function', provider.getter, provider);
+					return;
+				}
+				// endif
+
+				controller[provider.setter](value);
 			} else {
 				setProperty(provider, provider.property, value);
 			}
@@ -597,7 +615,7 @@ function getValidations(component, out){
  *	Bind Closest Controllers Handler Function to dom event(s)
  */
 
-mask.registerAttrHandler('x-signal', function(node, attrValue, element, model, cntx, controller){
+mask.registerAttrHandler('x-signal', function(node, attrValue, model, cntx, element, controller){
 
 	var arr = attrValue.split(';');
 	for(var i = 0, x, length = arr.length; i < length; i++){
