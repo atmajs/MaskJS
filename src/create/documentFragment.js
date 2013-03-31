@@ -60,9 +60,11 @@ function create_node(node, model, cntx, container, controller) {
 
 	for (key in attr) {
 
+		/* if !SAFE
 		if (hasOwnProp.call(attr, key) === false) {
 			continue;
 		}
+		*/
 
 		if (typeof attr[key] === 'function') {
 			value = attr[key]('attr', model, cntx, tag, controller, key);

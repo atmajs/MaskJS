@@ -6,7 +6,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	var type = node.type, elements;
 
-	if (container == null && type !== 1) {
+	if (container == null && type !== 1 && type !== 2) {
 		container = create_container();
 	}
 
@@ -134,7 +134,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		for (; i < length; i++) {
 			builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, elements);
 		}
-		
+
 	}
 
 	if (type === 4 && typeof node.renderEnd === 'function') {
