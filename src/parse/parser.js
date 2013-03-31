@@ -69,7 +69,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		}
 
 		template = null;
-		return function(model, type, cntx, element, name) {
+		return function(type, model, cntx, element, controller, name) {
 			if (type == null) {
 				// http://jsperf.com/arguments-length-vs-null-check
 				// this should be used to stringify parsed MaskDOM
@@ -85,7 +85,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				return string;
 			}
 
-			return util_interpolate(array, model, type, cntx, element, name);
+			return util_interpolate(array, type, model, cntx, element, controller, name);
 		};
 
 	}
