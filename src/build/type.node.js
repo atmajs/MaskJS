@@ -7,7 +7,7 @@ var tagName = node.tagName,
 
 for (key in attr) {
 
-/* if !SAFE
+		/* if !SAFE
 		if (hasOwnProp.call(attr, key) === false) {
 			continue;
 		}

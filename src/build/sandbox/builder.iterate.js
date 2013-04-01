@@ -1,3 +1,6 @@
+/**
+ * Deprecated
+ **/
 function builder_build(node, model, container, cntx, component, childs) {
 
 	if (node == null) {

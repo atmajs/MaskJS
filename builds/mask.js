@@ -14,8 +14,6 @@
 // import ../src/mask.js
 
 
-// import ../src/create/documentFragment.js
-
 (function(mask) {
 	// import ../src/formatter/stringify.js
 	Mask.stringify = stringify;

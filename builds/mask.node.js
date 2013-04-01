@@ -11,11 +11,9 @@
 // import ../src/extends.js
 // import ../src/dom/dom.js
 // import ../src/parse/parser.js
-// import ../src/build/builder.recursion.js
+// import ../src/build/html/builder.js
 // import ../src/mask.js
 
-
-// import ../src/create/htmlStream.js
 
 (function(mask) {
 	// import ../src/formatter/stringify.js

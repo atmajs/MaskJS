@@ -1,3 +1,6 @@
+
+var _controllerID = 0;
+
 function builder_build(node, model, cntx, container, controller, childs) {
 
 	if (node == null) {
@@ -7,7 +10,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	var type = node.type, elements;
 
 	if (container == null && type !== 1) {
-		container = create_container();
+		container = document.createDocumentFragment();
 	}
 
 	if (controller == null) {
@@ -61,10 +64,17 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 		var isarray = nodes instanceof Array,
 			length = isarray === true ? nodes.length : 1,
-			i = 0;
+			i = 0,
+			childNode = null;
 
 		for (; i < length; i++) {
-			builder_build(isarray === true ? nodes[i] : nodes, model, cntx, container, controller, elements);
+			childNode = isarray === true ? nodes[i] : nodes;
+
+			if (type === 4 && childNode.type === 1){
+				childNode.attr['x-compo-id'] = node.ID;
+			}
+
+			builder_build(childNode, model, cntx, container, controller, elements);
 		}
 
 	}

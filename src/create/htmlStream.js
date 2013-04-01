@@ -24,7 +24,7 @@ var creat_node = (function() {
 			buffer = stream.buffer,
 			j, jmax, x, content;
 
-		if (node.parent != null && node.nextNode == null && singleTags[node.parent.tagName] != null) {
+		if (node.parent != null && node.nextNode == null && singleTags[node.parent.tagName] !== 1) {
 			buffer += '</' + node.parent.tagName + '>';
 		}
 

@@ -3,15 +3,16 @@
 
 	if (handler != null) {
 	/* if (!DEBUG)
-				try{
-				*/
+	try{
+	*/
 
 		handler.compoName = node.tagName;
 		handler.attr = util_extend(handler.attr, node.attr);
+		handler.ID = ++_controllerID;
 
 		for (var key in handler.attr) {
 			if (typeof handler.attr[key] === 'function') {
-				handler.attr[key] = handler.attr[key](model, 'attr', cntx);
+				handler.attr[key] = handler.attr[key]('attr', model, cntx, container, controller, key);
 			}
 		}
 
@@ -44,8 +45,8 @@
 		}
 
 	/* if (!DEBUG)
-				} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
-				*/
+	} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
+	*/
 
 
 		node = handler;
@@ -60,9 +61,10 @@
 	controller = node;
 	elements = [];
 
-	if (node.model != null) {
-		model = node.model;
+	if (controller.model != null) {
+		model = controller.model;
 	}
+
 
 	if (typeof controller.render === 'function') {
 		// with render implementation, handler overrides render behaviour of subnodes

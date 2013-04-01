@@ -14,6 +14,17 @@ config["mask.dom"] = {
 };
 
 
+config["mask.html"] = {
+    env: "browser",
+    rootPath: "../",
+    sources: [
+        "lib/mask.node.js"
+    ],
+    tests: [
+        "test/*-html.js"
+    ]
+};
+
 config["mask.lib"] = {
     env: "node",
     rootPath: "../",
@@ -24,4 +35,3 @@ config["mask.lib"] = {
         "test/*-node.js"
     ]
 };
-
