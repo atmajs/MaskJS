@@ -74,11 +74,14 @@ function parser_getRef() {
 		c = template.charCodeAt(index);
 		if (
 			c > 47 && // ()+-*,/
+
+			c !== 58 && // :
 			c !== 60 && // <
 			c !== 61 && // =
 			c !== 62 && // >
-			c !== 124 && // |
 			c !== 63 && // ?
+			
+			c !== 124 && // |
 
 			index < length) {
 
