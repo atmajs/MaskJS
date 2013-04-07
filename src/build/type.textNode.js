@@ -23,7 +23,6 @@ if (typeof content === 'function') {
 					text = '';
 				}
 				if (x.nodeType == null) {
-					console.warn('Not a HTMLElement', x, node, model);
 					text += x.toString();
 					continue;
 				}
