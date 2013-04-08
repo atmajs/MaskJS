@@ -48,6 +48,18 @@
 ------------
 <table>
 <tr>
+<td>v0.7.5</td>
+	<td>
+		<ul>
+			<li>
+				Binded Percent Handler, 'each' example:
+				<div><code> %% each="users" { //template </code></div>
+			</li>
+		</ul>
+	</td>
+</tr>
+<tr>
+<tr>
 <td>v0.7.0</td>
 	<td>
 		<ul>
