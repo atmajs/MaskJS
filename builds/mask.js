@@ -27,19 +27,23 @@
 	// import ../src/libs/mask.binding.js
 	// import ../src/libs/compo.js
 	// import ../src/libs/jmask.js
-	
 
-	(function(){
-		var Lib = Mask;
 
-		Mask = jMask;
-		for (var key in Lib) {
-			Mask[key] = Lib[key];
-		}
+	////// ?
+	//////(function(){
+	//////	var Lib = Mask;
+	//////
+	//////	Mask = jMask;
+	//////	for (var key in Lib) {
+	//////		Mask[key] = Lib[key];
+	//////	}
+	//////
+	//////	Mask.Compo = Compo;
+	//////	Mask.jmask = jMask;
+	//////}());
 
-		Lib.Compo = Compo;
-		Lib.jmask = jMask;
-	}());
+	Mask.Compo = Compo;
+	Mask.jmask = jMask;
 
 	return Mask;
 
