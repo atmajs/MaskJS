@@ -1,8 +1,8 @@
 (function(mask) {
 
-	mask.registerHandler('%', Sys);
-
 	function Sys() {}
+
+	mask.registerHandler('%', Sys);
 
 	Sys.prototype = {
 		constructor: Sys,
@@ -106,6 +106,6 @@
 
 			mask.render(item, model, null, this.container, this);
 		}
-	}
+	};
 
 }(Mask));

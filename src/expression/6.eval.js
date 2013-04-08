@@ -17,11 +17,12 @@ function expression_evaluate(mix, model, cntx, controller) {
 	}
 
 	var type = ast.type,
-		result = null;
+		i, x, length;
+
 	if (type_Body === type) {
 		var value, prev;
 
-		outer: for (var i = 0, x, length = ast.body.length; i < length; i++) {
+		outer: for (i = 0, length = ast.body.length; i < length; i++) {
 			x = ast.body[i];
 
 			value = expression_evaluate(x, model, cntx, controller);
@@ -101,25 +102,8 @@ function expression_evaluate(mix, model, cntx, controller) {
 
 	if (type_SymbolRef === type || type_FunctionRef === type) {
 		return util_resolveRef(ast, model, cntx, controller);
-
-		var object = util_getProperty(ast.body, model, cntx, controller);
-
-		while(value != null && ast.next != null)
-		if (ast.next != null){
-			return expression_evaluate(ast.next, value);
-		}
-		return value;
 	}
-
-	if (type_FunctionRef === type) {
-		var args = [];
-		for (var i = 0, x, length = ast.arguments.length; i < length; i++) {
-			x = ast.arguments[i];
-			args[i] = expression_evaluate(x, model, cntx, controller);
-		}
-		return util_callFunction(ast.body, args, model, cntx, controller);
-	}
-
+	
 	if (type_UnaryPrefix === type) {
 		result = expression_evaluate(ast.body, model, cntx, controller);
 		switch (ast.prefix) {

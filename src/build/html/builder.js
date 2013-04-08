@@ -14,10 +14,13 @@ var builder_build = (function() {
 			return container;
 		}
 
-		var type = node.type, elements, childs;
+		var type = node.type,
+			elements,
+			childs,
+			j, jmax, key, value;
 
 		if (type === 10 /*SET*/ || node instanceof Array) {
-			for (var j = 0, jmax = node.length; j < jmax; j++) {
+			for (j = 0, jmax = node.length; j < jmax; j++) {
 				builder_html(node[j], model, cntx, container, controller);
 			}
 			return container;

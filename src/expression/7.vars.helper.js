@@ -98,8 +98,8 @@ var refs_extractVars = (function() {
 		}
 
 		return refs;
-	}
+	};
 
 
 
-}())
+}());

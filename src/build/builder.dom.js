@@ -7,7 +7,9 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		return container;
 	}
 
-	var type = node.type, elements;
+	var type = node.type,
+		elements = null,
+		j, jmax, key, value;
 
 	if (container == null && type !== 1) {
 		container = document.createDocumentFragment();
@@ -18,7 +20,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	}
 
 	if (type === 10 /*SET*/ || node instanceof Array){
-		for(var j = 0, jmax = node.length; j < jmax; j++){
+		for(j = 0, jmax = node.length; j < jmax; j++){
 			builder_build(node[j], model, cntx, container, controller, childs);
 		}
 		return container;
@@ -92,8 +94,9 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	if (childs != null && childs !== elements){
 		var il = childs.length,
-			jl = elements.length,
-			j = -1;
+			jl = elements.length;
+
+		j = -1;
 		while(++j < jl){
 			childs[il + j] = elements[j];
 		}

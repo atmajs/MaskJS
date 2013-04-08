@@ -1,8 +1,8 @@
 
 var tagName = node.tagName,
 	attr = node.attr,
-	tag = document.createElement(tagName),
-	key, value;
+	tag = document.createElement(tagName);
+
 
 
 for (key in attr) {

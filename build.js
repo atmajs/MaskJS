@@ -77,7 +77,7 @@ global.config = {
 		config: '#[import]'
 	},
 
-	'defaults': ['import', 'jshint', 'uglify']
+	'defaults': ['import', 'jshint'/*, 'uglify'*/]
 };
 
 
@@ -89,13 +89,14 @@ function JSHint() {
 		options: {
 			curly: true,
 			eqeqeq: true,
-			forin: true,
+			forin: false,
 			immed: true,
 			latedef: true,
 			newcap: true,
 			noarg: true,
 			noempty: true,
 			nonew: true,
+			expr: true,
 			regexp: true,
 			undef: true,
 			unused: true,

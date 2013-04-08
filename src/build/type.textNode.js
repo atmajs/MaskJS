@@ -1,4 +1,4 @@
-var j, jmax, x, content, result, text;
+var x, content, result, text;
 
 content = node.content;
 

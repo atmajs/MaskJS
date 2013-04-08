@@ -80,7 +80,7 @@ function parser_getRef() {
 			c !== 61 && // =
 			c !== 62 && // >
 			c !== 63 && // ?
-			
+
 			c !== 124 && // |
 
 			index < length) {
@@ -96,7 +96,6 @@ function parser_getRef() {
 }
 
 function parser_getDirective(code) {
-
 	if (code == null && index === length) {
 		return null;
 	}
@@ -147,8 +146,7 @@ function parser_getDirective(code) {
 
 	if (code === 33) {
 		// !
-		var next = template.charCodeAt(index + 1);
-		if (next === 61) {
+		if (template.charCodeAt(index + 1) === 61) {
 			// =
 			index++;
 			return op_LogicalNotEqual;
@@ -158,8 +156,7 @@ function parser_getDirective(code) {
 
 	if (code === 62){
 		// >
-		var next = template.charCodeAt(index + 1);
-		if (next === 61){
+		if (template.charCodeAt(index + 1) === 61){
 			index++;
 			return op_LogicalGreaterEqual;
 		}
@@ -168,8 +165,7 @@ function parser_getDirective(code) {
 
 	if (code === 60){
 		// <
-		var next = template.charCodeAt(index + 1);
-		if (next === 61){
+		if (template.charCodeAt(index + 1) === 61){
 			index++;
 			return op_LogicalLessEqual;
 		}

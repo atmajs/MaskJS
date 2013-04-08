@@ -137,7 +137,7 @@ var ConditionUtil = (function() {
 				current[current.left == null ? 'left' : 'right'] = parseDirective(T, c);
 				continue;
 			}
-		};
+		}
 
 		if (current.left || current.assertions) {
 			output.push(current);
@@ -245,7 +245,7 @@ var ConditionUtil = (function() {
 
 				break; // we are in OR and current is truthy
 			}
-			
+
 			if (a.join === '||') {
 				continue;
 			}

@@ -36,11 +36,11 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		var array = [],
 			lastIndex = 0,
 			i = 0,
-			end = 0;
+			end;
 
 
 		while (true) {
-			var end = template.indexOf(interp_CLOSE, index + 2);
+			end = template.indexOf(interp_CLOSE, index + 2);
 			if (end === -1) {
 				break;
 			}
@@ -242,7 +242,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (index >= length) {
 					if (state === state_attr) {
 						if (classNames != null) {
-							current.attr['class'] = ensureTemplateFunction(classNames)
+							current.attr['class'] = ensureTemplateFunction(classNames);
 						}
 						if (key != null) {
 							current.attr[key] = key;
@@ -443,10 +443,10 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			}
 
-			if (isNaN(c)) {
-				console.log(c, _index, _length);
-				throw '';
-			}
+			////if (isNaN(c)) {
+			////	_throw(template, index, state, 'Parse IndexOverflow');
+			////
+			////}
 
 			// if DEBUG
 			if (current.parent != null && current.parent !== fragment && current.parent.__single !== true && current.nodes != null) {

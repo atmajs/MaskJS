@@ -35,8 +35,12 @@
 <p>
 
 <small>
-	Default build contains <a href='https://github.com/tenbits/mask-binding'>mask.bindings</a>,
-	<a href='https://github.com/tenbits/CompoJS'>CompoJS</a> libraries.
+	Default build contains:
+	<ul>
+		<li><a href='https://github.com/tenbits/mask-binding'>Bindings Lib</a></li>
+		<li><a href='https://github.com/tenbits/mask-j'>jmask DOM</a></li>
+		<li><a href='https://github.com/tenbits/mask-compo'>Compo MVC</a></li>
+	</ul>
 </small>
 </p>
 

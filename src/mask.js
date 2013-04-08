@@ -46,11 +46,13 @@ var cache = {},
 		 *	mask.parse(template) -> MaskDOM
 		 * - template (String): string to be parsed into MaskDOM
 		 *
-		 * 	Create MaskDOM from Mask markup
+		 * Create MaskDOM from Mask markup
 		 **/
 		parse: Parser.parse,
+
+		build: builder_build,
 		/**
-		 * 	mask.registerHandler(tagName, tagHandler) -> void
+		 * mask.registerHandler(tagName, tagHandler) -> void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
 		 * - tagHandler (Function|Object):
 		 *

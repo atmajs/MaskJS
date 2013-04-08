@@ -6,8 +6,9 @@ function expression_parse(expr) {
 
 	ast = new Ast_Body();
 
-	var c, current = ast,
-		next, directive, state = state_body;
+	var current = ast,
+		state = state_body,
+		c, next, directive;
 
 	while (true) {
 
@@ -162,7 +163,6 @@ function expression_parse(expr) {
 		//go_ref === directive
 		) {
 			if (current.body != null && current.join == null) {
-				debugger;
 				_throw('Directive Expected');
 				break;
 			}
