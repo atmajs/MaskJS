@@ -94,6 +94,7 @@
 	<td>v0.6.9</td>
 	<td>
 		<ul>
+			<li><code>//</code> for line comments in templates</li>
 			<li>++ parser: performance / preserve new lines</li>
 			<li>++ custom handlers: use .renderStart/.renderEnd for better performance</li>
 			<li>embed bindings / % handler [if,else,each]/ compo / jmask libraries</li>
