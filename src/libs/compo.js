@@ -844,12 +844,12 @@ var Compo = (function(mask){
 			}
 	
 			if (direction === -1 && controller.parent != null) {
-				_fire(controller.parent, event, slot, args, direction);
+				_fire(controller.parent, slot, event, args, direction);
 			}
 	
 			if (direction === 1 && controller.components != null) {
 				for (var i = 0, length = controller.components.length; i < length; i++) {
-					_fire(controller.components[i], event, slot, args, direction);
+					_fire(controller.components[i], slot, event, args, direction);
 				}
 			}
 		}
@@ -861,13 +861,19 @@ var Compo = (function(mask){
 	
 			var slots = controller.slots;
 	
-			if (slots != null && typeof slots[slot] === 'function') {
-				if (isActive === true) {
-					if (slots.__disabled == null || slots.__disabled[slot] !== true) {
+			if (slots != null && slots[slot] != null) {
+				if (typeof slots[slot] === 'string') {
+					slots[slot] = controller[slot];
+				}
+	
+				if (typeof slots[slot] === 'function') {
+					if (isActive === true) {
+						if (slots.__disabled == null || slots.__disabled[slot] !== true) {
+							return true;
+						}
+					} else {
 						return true;
 					}
-				} else {
-					return true;
 				}
 			}
 	
