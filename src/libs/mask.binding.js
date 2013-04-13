@@ -93,6 +93,9 @@
 				return currentValue;
 			},
 			set: function(x) {
+				if (x === currentValue) {
+					return;
+				}
 				currentValue = x;
 	
 				for (var i = 0, length = observers.length; i < length; i++) {
@@ -376,8 +379,8 @@
 		if (typeof controller.dispose === 'function') {
 			var previous = controller.dispose;
 			controller.dispose = function(){
-				disposer();
-				previous();
+				disposer.call(this);
+				previous.call(this);
 			};
 	
 			return;
@@ -388,24 +391,28 @@
 	
 	// source ../src/util/expression.js
 	var Expression = mask.Utils.Expression,
-		expression_eval = Expression.eval,
+		expression_eval_origin = Expression.eval,
+		expression_eval = function(expr, model, cntx, controller){
+			var value = expression_eval_origin(expr, model, cntx, controller);
+	
+			return value == null ? '' : value;
+		},
 		expression_parse = Expression.parse,
 		expression_varRefs = Expression.varRefs;
 	
 	
 	function expression_bind(expr, model, cntx, controller, callback) {
 		var ast = expression_parse(expr),
-			vars = expression_varRefs(ast),
-			current = expression_eval(ast, model);
+			vars = expression_varRefs(ast);
 	
 		if (vars == null) {
-			return current;
+			return;
 		}
 	
 	
 		if (typeof vars === 'string') {
 			obj_addObserver(model, vars, callback);
-			return current;
+			return;
 		}
 	
 	
@@ -414,7 +421,7 @@
 			obj_addObserver(model, x, callback);
 		}
 	
-		return current;
+		return;
 	}
 	
 	function expression_unbind(expr, model, callback) {
@@ -442,8 +449,14 @@
 	 * but doesnt supply new expression value
 	 **/
 	function expression_createBinder(expr, model, cntx, controller, callback) {
+		var lockes = 0;
 		return function binder() {
+			if (lockes++ > 10) {
+				console.warn('Concurent binder detected', expr);
+				return;
+			}
 			callback(expression_eval(expr, model, cntx, controller));
+			lockes--;
 		};
 	}
 	
@@ -455,8 +468,9 @@
 			Providers[type] = binding;
 		};
 	
-		var Providers = {},
-			Expression = mask.Utils.Expression;
+		mask.BindingProvider = BindingProvider;
+	
+		var Providers = {};
 	
 	
 		function BindingProvider(model, element, node, bindingType) {
@@ -474,6 +488,56 @@
 			this.getter = node.attr.getter;
 			this.dismiss = 0;
 			this.bindingType = bindingType;
+			this.log = false;
+			this.signal_domChanged = null;
+			this.signal_objectChanged = null;
+			this.locked = false;
+	
+			if (typeof node.attr.log === 'string') {
+				this.log = true;
+				if (node.attr.log !== 'log') {
+					this.logExpression = node.attr.log;
+				}
+			}
+	
+			if (node.attr['x-signal']) {
+				var signals = node.attr['x-signal'].split(';'),
+					type, signal;
+	
+				for (var i = 0, x, length = signals.length; i < length; i++) {
+					x = signals[i].split(':');
+					switch (x.length) {
+					case 1:
+						this.signal_domChanged = x[0];
+						break;
+					case 2:
+						type = x[0].trim();
+						signal = x[1].trim();
+						if ('dom' === type) {
+							this.signal_domChanged = signal;
+						}
+						if ('object' === type) {
+							this.signal_domChanged = signal;
+						}
+						break;
+					}
+				}
+			}
+	
+	
+			if (node.attr.expression) {
+				this.expression = node.attr.expression;
+				if (this.value == null && bindingType !== 'single') {
+					var refs = expression_varRefs(this.expression);
+					if (typeof refs === 'string') {
+						this.value = refs;
+					} else {
+						console.warn('Please set value attribute in DualBind Control.');
+					}
+				}
+			} else {
+				this.expression = this.value;
+			}
 	
 		}
 	
@@ -503,45 +567,75 @@
 	
 		BindingProvider.prototype = {
 			constructor: BindingProvider,
-			dispose: function(){
-				obj_removeObserver(this.model, this.value, this.objectChanged);
+			dispose: function() {
+				expression_unbind(this.expression, this.model, this.binder);
 			},
 			objectChanged: function(x) {
 				if (this.dismiss-- > 0) {
 					return;
 				}
+				if (this.locked === true) {
+					console.warn('Concurance change detected', this);
+					return;
+				}
+				this.locked = true;
 	
 				if (x == null) {
-					x = this.objectWay.get(this.model, this.node.attr.value);
+					x = this.objectWay.get(this, this.expression);
 				}
 	
 				this.domWay.set(this, x);
+	
+				if (this.log) {
+					console.log('[BindingProvider] objectChanged -', x);
+				}
+				if (this.signal_objectChanged) {
+					signal_emitOut(this.node, this.signal_objectChanged, [x]);
+				}
+	
+				this.locked = false;
 			},
 			domChanged: function() {
-				var x = this.domWay.get(this);
+	
+				if (this.locked === true) {
+					console.warn('Concurance change detected', this);
+					return;
+				}
+				this.locked = true;
+	
+				var x = this.domWay.get(this),
+					valid = true;
 	
 				if (this.node.validations) {
 	
 					for (var i = 0, validation, length = this.node.validations.length; i < length; i++) {
 						validation = this.node.validations[i];
 						if (validation.validate(x, this.element, this.objectChanged.bind(this)) === false) {
-							return;
+							valid = false;
+							break;
 						}
 					}
 				}
 	
-				this.dismiss = 1;
-				this.objectWay.set(this.model, this.node.attr.value, x);
-				this.dismiss = 0;
-			},
-			objectWay: {
-				get: function(obj, property) {
+				if (valid) {
+					this.dismiss = 1;
+					this.objectWay.set(this.model, this.value, x);
+					this.dismiss = 0;
 	
-					if (property[0] === ':') {
-						return Expression.eval(property.substring(1), obj);
+					if (this.log) {
+						console.log('[BindingProvider] domChanged -', x);
 					}
 	
-					return obj_getProperty(obj, property);
+					if (this.signal_domChanged) {
+						signal_emitOut(this.node, this.signal_domChanged, [x]);
+					}
+				}
+	
+				this.locked = false;
+			},
+			objectWay: {
+				get: function(provider, expression) {
+					return expression_eval(expression, provider.model, provider.cntx, provider);
 				},
 				set: function(obj, property, value) {
 					obj_setProperty(obj, property, value);
@@ -593,12 +687,13 @@
 	
 		function apply_bind(provider) {
 	
-			var value = provider.node.attr.value,
+			var expr = provider.expression,
 				model = provider.model,
-				onObjChange = provider.objectChanged = provider.objectChanged.bind(provider);
+				onObjChanged = provider.objectChanged = provider.objectChanged.bind(provider);
 	
-			obj_addObserver(model, value, onObjChange);
+			provider.binder = expression_createBinder(expr, model, provider.cntx, provider.node, onObjChanged);
 	
+			expression_bind(expr, model, provider.cntx, provider.node, provider.binder);
 	
 			if (provider.bindingType === 'dual') {
 				var element = provider.element,
@@ -613,6 +708,24 @@
 			return provider;
 		}
 	
+		function signal_emitOut(controller, signal, args) {
+			var slots = controller.slots;
+			if (slots != null && typeof slots[signal] === 'function') {
+				if (slots[signal].apply(controller, args) === false) {
+					return;
+				}
+			}
+	
+			if (controller.parent != null) {
+				signal_emitOut(controller.parent, signal, args);
+			}
+		}
+	
+	
+		obj_extend(BindingProvider, {
+			addObserver: obj_addObserver,
+			removeObserver: obj_removeObserver
+		});
 	
 		return BindingProvider;
 	
@@ -918,9 +1031,29 @@
 						element.textContent = value;
 						break;
 					case 'attr':
-						var currentAttr = element.getAttribute(attrName),
+						var currentAttr, attr;
+	
+	
+						if (element[attrName]  != null) {
+							currentAttr = element[attrName];
+							attr = typeof currentAttr === 'string' ? currentAttr.replace(currentValue, value) : value;
+	
+							switch (typeof currentAttr) {
+								case 'boolean':
+									element[attrName] = !!attr;
+									break;
+								case 'string':
+									element[attrName] = attr;
+									break;
+							}
+	
+						}else{
+							currentAttr = element.getAttribute(attrName);
 							attr = currentAttr ? currentAttr.replace(currentValue, value) : value;
-						element.setAttribute(attrName, attr);
+	
+							element.setAttribute(attrName, attr);
+						}
+	
 						currentValue = value;
 						break;
 				}
@@ -930,15 +1063,18 @@
 	
 	
 		mask.registerUtility('bind', function(expr, model, cntx, element, controller, attrName, type){
-			var current = expression_eval(expr, model, cntx, controller),
-				refresher =  create_refresher(type, expr, element, current, attrName),
-				binder = expression_createBinder(expr, model, cntx, controller, refresher);
 	
-			expression_bind(expr, model, cntx, controller, binder);
+			var current = expression_eval(expr, model, cntx, controller);
 	
 			if ('node' === type) {
 				element = document.createTextNode(current);
 			}
+	
+			var refresher =  create_refresher(type, expr, element, current, attrName),
+				binder = expression_createBinder(expr, model, cntx, controller, refresher);
+	
+			expression_bind(expr, model, cntx, controller, binder);
+	
 	
 			compo_attachDisposer(controller, function(){
 				expression_unbind(expr, model, binder);
@@ -978,20 +1114,21 @@
 					this.model = value;
 		
 					if (this.elements) {
-						for (var i = 0, x, length = this.elements.length; i < length; i++) {
-							x = this.elements[i];
-							x.parentNode.removeChild(x);
-						}
+						dom_removeAll(this.elements);
+		
+						this.elements = [];
 					}
 		
 					if (typeof Compo !== 'undefined') {
 						Compo.dispose(this);
 					}
 		
-					mask //
-					.render(this.nodes, this.model, this.cntx) //
-					.insertBefore(this.placeholder);
+					dom_insertBefore( //
+					compo_render(this, this.nodes, this.model, this.cntx), this.placeholder);
 		
+				},
+				dispose: function(){
+					expression_unbind(this.expr, this.originalModel, this.binder);
 				}
 			};
 		
@@ -999,8 +1136,19 @@
 		
 				var expr = self.attr['use'];
 		
-				self.placeholder = document.createComment('');
-				self.model = expression_bind(expr, model, cntx, self, UseProto.refresh.bind(self));
+				obj_extend(self, {
+					expr: expr,
+					placeholder: document.createComment(''),
+					binder: expression_createBinder(expr, model, cntx, self, UseProto.refresh.bind(self)),
+					
+					originalModel: model,
+					model: expression_eval(expr, model, cntx, self),
+		
+					dispose: UseProto.dispose
+				});
+		
+		
+				expression_bind(expr, model, cntx, self, self.binder);
 		
 				container.appendChild(self.placeholder);
 			};
@@ -1017,15 +1165,17 @@
 				}
 		
 				var expr = self.attr['log'],
-					value = expression_bind(expr, model, cntx, self, log);
+					binder = expression_createBinder(expr, model, cntx, self, log),
+					value = expression_eval(expr, model, cntx, self);
+		
+				expression_bind(expr, model, cntx, self, binder);
 		
 		
+				compo_attachDisposer(self, function(){
+					expression_unbind(expr, model, binder);
+				});
 		
 				log(value);
-		
-				self = null;
-				model = null;
-				cntx = null;
 			};
 		
 		}());
@@ -1044,9 +1194,8 @@
 					if (this.elements == null) {
 						// was not render - do it
 		
-						mask //
-						.render(this.template, this.model, this.cntx, null, this) //
-						.insertBefore(this.placeholder);
+						dom_insertBefore( //
+						compo_render(this, this.template, this.model, this.cntx), this.placeholder);
 		
 						this.$ = $(this.elements);
 					} else {
@@ -1060,7 +1209,12 @@
 					if (this.onchange) {
 						this.onchange(value);
 					}
-					
+		
+				},
+				dispose: function(){
+					expression_unbind(this.expr, this.model, this.binder);
+					this.onchange = null;
+					this.elements = null;
 				}
 			};
 		
@@ -1068,14 +1222,21 @@
 		
 				var expr = self.attr['if'];
 		
-				self.placeholder = document.createComment('');
-				self.template = self.nodes;
 		
-				self.state = !! expression_bind(expr, model, cntx, self, IfProto.refresh.bind(self));
+				obj_extend(self, {
+					expr: expr,
+					template: self.nodes,
+					placeholder: document.createComment(''),
+					binder: expression_createBinder(expr, model, cntx, self, IfProto.refresh.bind(self)),
+		
+					state: !! expression_eval(expr, model, cntx, self)
+				});
 		
 				if (!self.state) {
 					self.nodes = null;
 				}
+		
+				expression_bind(expr, model, cntx, self, self.binder);
 		
 				container.appendChild(self.placeholder);
 			};
@@ -1086,31 +1247,30 @@
 		var attr_else = (function() {
 		
 			var ElseProto = {
-				refresh: function(value){
+				refresh: function(value) {
 					if (this.elements == null && value) {
-					// was not render and still truthy
-					return;
-				}
+						// was not render and still truthy
+						return;
+					}
 		
-				if (this.elements == null) {
-					// was not render - do it
+					if (this.elements == null) {
+						// was not render - do it
 		
-					dom_insertBefore(compo_render(this, this.template, this.model, this.cntx));
-					this.$ = $(this.elements);
-					
-					return;
-				}
+						dom_insertBefore(compo_render(this, this.template, this.model, this.cntx));
+						this.$ = $(this.elements);
 		
-				if (this.$ == null) {
-					this.$ = $(this.elements);
-				}
+						return;
+					}
 		
-				this.$[value ? 'hide' : 'show']();
+					if (this.$ == null) {
+						this.$ = $(this.elements);
+					}
 		
+					this.$[value ? 'hide' : 'show']();
 				}
 			};
 		
-			return function (self, model, cntx, container) {
+			return function(self, model, cntx, container) {
 		
 		
 				var compos = self.parent.components,
@@ -1313,11 +1473,13 @@
 					if (method == null) {
 						// this was new array setter and not an immutable function call
 		
-						for(i = 0, imax = this.components.length; i < imax; i++){
-							x = this.components[i];
-							if (compo_dispose(x, this)) {
-								i--;
-								imax--;
+						if (this.components != null) {
+							for (i = 0, imax = this.components.length; i < imax; i++) {
+								x = this.components[i];
+								if (compo_dispose(x, this)) {
+									i--;
+									imax--;
+								}
 							}
 						}
 		
@@ -1334,12 +1496,12 @@
 					for (imax = array.length; i < imax; i++) {
 						//create references from values to distinguish the models
 						x = array[i];
-						switch (typeof x){
-							case 'string':
-							case 'number':
-							case 'boolean':
-								array[i] = Object(x);
-								break;
+						switch (typeof x) {
+						case 'string':
+						case 'number':
+						case 'boolean':
+							array[i] = Object(x);
+							break;
 						}
 					}
 		
@@ -1370,7 +1532,7 @@
 					}
 		
 				},
-				dispose: function(){
+				dispose: function() {
 					expression_unbind(this.expr, this.model, this.refresh);
 				}
 			};
@@ -1382,26 +1544,74 @@
 					Compo.ensureTemplate(self);
 				}
 		
-				self.refresh = EachProto.refresh.bind(self);
-				self.dispose = EachProto.dispose.bind(self);
-				self.expr = self.attr.each || self.attr.foreach;
+				var expr = self.attr.each || self.attr.foreach,
+					current = expression_eval(expr, model, cntx, self);
 		
-				var array = expression_bind(self.expr, model, cntx, self, self.refresh);
+				obj_extend(self, {
+					expr: expr,
+					binder: expression_createBinder(expr, model, cntx, self, EachProto.refresh.bind(self)),
+					template: self.nodes,
+					container: container,
+					placeholder: document.createComment(''),
 		
-		
-				self.template = self.nodes;
-				self.container = container;
-				self.placeholder = document.createComment('');
+					dispose: EachProto.dispose
+				});
 		
 				container.appendChild(self.placeholder);
+		
+				expression_bind(self.expr, model, cntx, self, self.binder);
 		
 				for (var method in ListProto) {
 					self[method] = ListProto[method];
 				}
 		
 		
+				self.nodes = list_prepairNodes(self, current);
+			};
 		
-				self.nodes = list_prepairNodes(self, array);
+		}());
+		
+		// source attr.visible.js
+		var attr_visible = (function() {
+		
+			var VisibleProto = {
+				refresh: function(){
+		
+					if (this.refreshing === true) {
+						return;
+					}
+					this.refreshing = true;
+		
+					var visible = expression_eval(this.attr.visible, this.model, this.cntx, this);
+		
+					for(var i = 0, x, length = this.elements.length; i < length; i++){
+						x = this.elements[i];
+						x.style.display = visible ? '' : 'none';
+					}
+		
+					this.refreshing = false;
+				},
+		
+				dispose: function(){
+					expression_unbind(this.expr, this.model, this.binder);
+				}
+			};
+		
+			return function (self, model, cntx) {
+		
+				var expr = self.attr.visible;
+		
+				obj_extend(self, {
+					expr: expr,
+					binder: expression_createBinder(expr, model, cntx, self, VisibleProto.refresh.bind(self)),
+		
+					dispose: VisibleProto.dispose
+				});
+		
+		
+				expression_bind(expr, model, cntx, self, self.binder);
+		
+				VisibleProto.refresh.call(self);
 			};
 		
 		}());
@@ -1452,6 +1662,11 @@
 			render: null,
 			renderEnd: function(elements) {
 				this.elements = elements;
+	
+	
+				if (this.attr['visible'] != null) {
+					attr_visible(this, this.model, this.cntx);
+				}
 			}
 		};
 	

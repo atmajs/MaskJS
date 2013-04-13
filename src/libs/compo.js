@@ -306,8 +306,9 @@ var Compo = (function(mask){
 	
 		}
 	
-		function controller_remove(controller) {
-			var pipes = controller.pipes;
+		function controller_remove() {
+			var	controller = this,
+				pipes = controller.pipes;
 			for (var key in pipes) {
 				pipe_detach(key, controller);
 			}
@@ -327,7 +328,7 @@ var Compo = (function(mask){
 				pipe_attach(key, controller);
 			}
 	
-			Compo.attachDisposer(controller, controller_remove);
+			Compo.attachDisposer(controller, controller_remove.bind(controller));
 		}
 	
 		function Pipe(pipeName) {
@@ -554,7 +555,7 @@ var Compo = (function(mask){
 			if (typeof controller.dispose === 'function') {
 				var previous = controller.dispose;
 				controller.dispose = function(){
-					disposer(this);
+					disposer();
 					previous();
 				};
 		
@@ -964,7 +965,11 @@ var Compo = (function(mask){
 			var arr = attrValue.split(';'),
 				signals = '';
 			for (var i = 0, x, length = arr.length; i < length; i++) {
-				x = arr[i];
+				x = arr[i].trim();
+				if (x === '') {
+					continue;
+				}
+				
 				var event = x.substring(0, x.indexOf(':')),
 					handler = x.substring(x.indexOf(':') + 1).trim(),
 					Handler = _createListener(controller, handler); //getHandler(controller, handler);
@@ -1042,7 +1047,7 @@ var Compo = (function(mask){
 	
 			if (slots != null && slots[slot] != null) {
 				if (typeof slots[slot] === 'string') {
-					slots[slot] = controller[slot];
+					slots[slot] = controller[slots[slot]];
 				}
 	
 				if (typeof slots[slot] === 'function') {
