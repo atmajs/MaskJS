@@ -4,14 +4,21 @@ var tagName = node.tagName,
 	tag = document.createElement(tagName);
 
 
+if (childs != null){
+	childs.push(tag);
+	childs = null;
+	attr['x-compo-id'] = controller.ID;
+}
+
+
 
 for (key in attr) {
 
-		/* if !SAFE
-		if (hasOwnProp.call(attr, key) === false) {
-			continue;
-		}
-		*/
+	/* if !SAFE
+	if (hasOwnProp.call(attr, key) === false) {
+		continue;
+	}
+	*/
 
 	if (typeof attr[key] === 'function') {
 		value = attr[key]('attr', model, cntx, tag, controller, key);
@@ -36,11 +43,6 @@ for (key in attr) {
 
 if (container != null) {
 	container.appendChild(tag);
-}
-
-if (childs != null){
-	childs.push(tag);
-	childs = null;
 }
 
 container = tag;

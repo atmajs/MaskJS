@@ -72,9 +72,10 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		for (; i < length; i++) {
 			childNode = isarray === true ? nodes[i] : nodes;
 
-			if (type === 4 && childNode.type === 1){
-				childNode.attr['x-compo-id'] = node.ID;
-			}
+			//// - moved to tag creation
+			////if (type === 4 && childNode.type === 1){
+			////	childNode.attr['x-compo-id'] = node.ID;
+			////}
 
 			builder_build(childNode, model, cntx, container, controller, elements);
 		}

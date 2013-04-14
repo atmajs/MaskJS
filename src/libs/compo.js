@@ -98,7 +98,8 @@ var Compo = (function(mask){
 				return true;
 			}
 		} else {
-			if (obj[selector.key] === selector.selector) {
+			// == - to match int and string
+			if (obj[selector.key] == selector.selector) {
 				return true;
 			}
 		}

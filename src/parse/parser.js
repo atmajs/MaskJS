@@ -401,8 +401,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					}
 
 					// if DEBUG
-					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C) {
-						// '"/<
+					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
+						// '"/<,
 						_throw(template, index, state, String.fromCharCode(c));
 						break;
 					}
