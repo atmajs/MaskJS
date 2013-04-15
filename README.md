@@ -17,7 +17,7 @@
 
 	Features:
 	<ul>
-		<li>Performance — (mobile CPUs in mind) — <a href='http://jsperf.com/dom-vs-innerhtml-based-templating/604'>jsperf</a></li>
+		<li>Performance — (mobile CPUs in mind) - doesnt require precompilation</li>
 		<li>Custom tags / Custom Value Processors</li>
 		<li>DOM Based — [Template &rarr; JSON AST &rarr; Document Fragment &rarr; Live DOM].
 		This allows custom tags to render themselfs much faster in compare to rendering into placeholder in dom</li>
@@ -42,6 +42,11 @@
 		<li><a href='https://github.com/tenbits/mask-compo'>Compo MVC</a></li>
 	</ul>
 </small>
+</p>
+
+<p>
+ Though MaskJS is fully featured MVC engine, its performance can be compared to generic simple template engines
+ <a href='http://jsperf.com/dom-vs-innerhtml-based-templating/695'>jsperf</a>
 </p>
 
 ###Changelog

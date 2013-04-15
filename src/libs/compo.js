@@ -126,6 +126,17 @@ var Compo = (function(mask){
 		return (node = node[matcher.nextKey]) && find_findSingle(node, matcher);
 	}
 	
+	// source ../src/util/dom.js
+	function dom_addEventListener(element, event, listener) {
+		if (element.addEventListener != null) {
+			element.addEventListener(event, listener, false);
+			return;
+		}
+		if (element.attachEvent) {
+			element.attachEvent("on" + event, listener);
+		}
+	}
+	
 
 
 	// source ../src/compo/children.js
@@ -279,6 +290,52 @@ var Compo = (function(mask){
 	// source ../src/compo/pipes.js
 	var Pipes = (function() {
 	
+	
+		mask.registerAttrHandler('x-pipe-signal', function(node, attrValue, model, cntx, element, controller) {
+	
+			var arr = attrValue.split(';');
+			for (var i = 0, x, length = arr.length; i < length; i++) {
+				x = arr[i].trim();
+				if (x === '') {
+					continue;
+				}
+	
+				var event = x.substring(0, x.indexOf(':')),
+					handler = x.substring(x.indexOf(':') + 1).trim(),
+					dot = handler.indexOf('.'),
+					pipe, signal;
+	
+				if (dot === -1) {
+					console.error('define pipeName "click: pipeName.pipeSignal"');
+					return;
+				}
+	
+				pipe = handler.substring(0, dot);
+				signal = handler.substring(++dot);
+	
+				var Handler = _handler(pipe, signal);
+	
+	
+				// if DEBUG
+				!event && console.error('Signal: event type is not set', attrValue);
+				// endif
+	
+	
+				if (EventDecorator != null) {
+					event = EventDecorator(event);
+				}
+	
+				dom_addEventListener(element, event, Handler);
+	
+			}
+		});
+	
+		function _handler(pipe, signal) {
+			return function(){
+				new Pipe(pipe).emit(signal);
+			};
+		}
+	
 		var Collection = {};
 	
 	
@@ -374,6 +431,9 @@ var Compo = (function(mask){
 			}
 		};
 	
+		Pipe.addController = controller_add;
+		Pipe.removeController = controller_remove;
+	
 		return {
 			addController: controller_add,
 			removeController: controller_remove,
@@ -386,7 +446,7 @@ var Compo = (function(mask){
 	
 	}());
 	
-	
+
 	// source ../src/compo/anchor.js
 	
 	/**
@@ -970,10 +1030,10 @@ var Compo = (function(mask){
 				if (x === '') {
 					continue;
 				}
-				
+	
 				var event = x.substring(0, x.indexOf(':')),
 					handler = x.substring(x.indexOf(':') + 1).trim(),
-					Handler = _createListener(controller, handler); //getHandler(controller, handler);
+					Handler = _createListener(controller, handler);
 	
 	
 				// if DEBUG
@@ -987,7 +1047,7 @@ var Compo = (function(mask){
 					}
 	
 					signals += ',' + handler + ',';
-					_addEventListener(element, event, Handler);
+					dom_addEventListener(element, event, Handler);
 				}
 	
 				// if DEBUG
@@ -1087,22 +1147,6 @@ var Compo = (function(mask){
 				_fire(controller, slot, event, null, -1);
 			};
 		}
-	
-		function _addEventListener(element, event, listener) {
-			if (typeof domLib === 'function') {
-				domLib(element).on(event, listener);
-				return;
-			}
-			if (element.addEventListener != null) {
-				element.addEventListener(event, listener, false);
-				return;
-			}
-			if (element.attachEvent) {
-				element.attachEvent("on" + event, listener);
-			}
-		}
-	
-	
 	
 		function __toggle_slotState(controller, slot, isActive) {
 			var slots = controller.slots;
