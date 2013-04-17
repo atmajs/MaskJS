@@ -1,7 +1,18 @@
 
 var tagName = node.tagName,
 	attr = node.attr,
+	tag;
+
+// if DEBUG
+try {
+// endif
 	tag = document.createElement(tagName);
+// if DEBUG
+} catch(error) {
+	console.error(tagName, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
+	return;
+}
+// endif
 
 
 if (childs != null){
