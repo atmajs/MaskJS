@@ -88,6 +88,7 @@
 			item.nodes = nodes;
 			item.model = x;
 			item.container = container;
+			item.parent = compo;
 
 			compo.nodes[i] = item;
 		}
