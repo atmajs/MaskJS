@@ -731,7 +731,7 @@ var Compo = (function(mask){
 				}
 		
 				if (parent == null){
-					parent = {};
+					parent = new Dom.Component();
 				}
 		
 				var dom = mask.render(node, model, cntx, null, parent),

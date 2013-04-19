@@ -15,12 +15,57 @@
 
 	function TemplateHandler() {}
 	TemplateHandler.prototype.render = function() {
-		if (this.attr.id != null) {
+		if (this.attr.id == null) {
 			console.warn('Template Should be defined with ID attribute for future lookup');
 			return;
 		}
 
-		TemplateCollection[this.attr.id] = this;
+		TemplateCollection[this.attr.id] = this.nodes;
+	};
+
+
+	mask.registerHandler(':import', ImportHandler);
+
+	function ImportHandler() {}
+	ImportHandler.prototype = {
+		constructor: ImportHandler,
+		attr: null,
+		template: null,
+
+		renderStart: function() {
+			if (this.attr.id) {
+
+				this.nodes = this.template;
+
+				if (this.nodes == null) {
+					this.nodes = TemplateCollection[this.attr.id];
+				}
+
+				// @TODO = optimize, not use jmask
+				if (this.nodes == null) {
+					var parent = this,
+						template,
+						selector = ':template[id='+this.attr.id+']';
+
+					while (template == null && (parent = parent.parent) != null) {
+						if (parent.nodes != null) {
+							template = jmask(parent.nodes).filter(selector).get(0);
+						}
+					}
+
+					if (template != null) {
+						this.nodes = template.nodes;
+					}
+
+
+				}
+
+				// @TODO = load template from remote
+				if (this.nodes == null) {
+					console.warn('Template could be not imported', this.attr.id);
+				}
+			}
+		}
 	};
 
 
@@ -38,7 +83,7 @@
 
 		if (this.attr.template != null) {
 			var c = this.attr.template[0];
-			if (c === '#'){
+			if (c === '#') {
 				source = document.getElementById(this.attr.template.substring(1)).innerHTML;
 			}
 

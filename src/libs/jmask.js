@@ -313,6 +313,10 @@ var jMask = (function(mask){
 	 * - mix (Node | Array[Node])
 	 */
 	function jmask_find(mix, matcher, output) {
+		if (mix == null) {
+			return output;
+		}
+		
 		if (output == null) {
 			output = [];
 		}
