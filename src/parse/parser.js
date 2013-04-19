@@ -92,36 +92,23 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 
 	function _throw(template, index, state, token) {
-		var i = 0,
-			line = 0,
-			row = 0,
-			newLine = /[\r\n]+/g,
-			match, parsing = {
+		var parsing = {
 				2: 'tag',
 				3: 'tag',
 				5: 'attribute key',
 				6: 'attribute value',
 				8: 'literal'
-			}[state];
-		while (true) {
-			match = newLine.exec(template);
-			if (match == null) {
-				break;
-			}
-			if (match.index > index) {
-				break;
-			}
-			line++;
-			i = match.index;
-		}
+			}[state],
 
-		row = index - i;
+			lines = template.substring(0, index).split('\n'),
+			line = lines.length,
+			row = lines[line - 1].length,
 
-		var message = ['Mask - Unexpected:', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
+			message = ['Mask - Unexpected:', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
 
 		console.error(message.join(' '), {
-			template: template,
-			stopped: template.substring(index)
+			stopped: template.substring(index),
+			template: template
 		});
 	}
 
