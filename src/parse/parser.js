@@ -396,13 +396,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					// endif
 
 
-					if (last !== go_attrVal && (c === 46 || c === 35 || c === 61)) {
-						// .#=
+					if (last !== go_attrVal && (c === 46 || c === 35)) {
+						// .#
+						// break on .# only if parsing attribute head values
 						break;
 					}
 
-					if (c === 62 || c === 123 || c < 33 || c === 59) {
-						// >{ ;
+					if (c===61 || c === 62 || c === 123 || c < 33 || c === 59) {
+						// =>{ ;
 						break;
 					}
 
