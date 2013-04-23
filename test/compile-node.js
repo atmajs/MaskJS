@@ -107,6 +107,20 @@ buster.testCase('Compile: ', {
 
 
 	},
+	'right attributes (quoteless)': function(){
+		var attr = compile("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
+
+		assert.equals(attr.width, '10');
+		assert.equals(attr.height, '20');
+		assert.equals(attr.id, '30');
+		assert.equals(attr.key, 'key');
+		assert.equals(attr.otherkey, 'otherkey');
+		assert.equals(attr.p, 'tryam');
+
+		attr = compile("div dr = drrrr sh = shrrrr").attr;
+		assert.equals(attr.dr, 'drrrr');
+		assert.equals(attr.sh, 'shrrrr');
+	},
 	'has literal': function() {
 		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
 		node = getProperty(node, 'nodes.4');

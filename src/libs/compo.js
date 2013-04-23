@@ -1,5 +1,5 @@
 
-var Compo = (function(mask){
+var Compo = exports.Compo = (function(mask){
 	'use strict';
 	// source ../src/scope-vars.js
 	var domLib = global.jQuery || global.Zepto || global.$,

@@ -1,5 +1,7 @@
 
-// import ../src/umd-head.js
+
+
+var Mask = exports.mask = (function(){
 
 
 
@@ -11,22 +13,14 @@
 	// import ../src/extends.js
 	// import ../src/dom/dom.js
 	// import ../src/parse/parser.js
-	// import ../src/build/html/builder.js
+	// import ../src/build/builder.dom.js
 	// import ../src/mask.js
 
 
 
-	// import ../src/formatter/stringify.lib.js
-
-	
-	/* Handlers */
-
-	// import ../src/handlers/sys.js
-	// import ../src/handlers/utils.js
-
-	// import ../src/libs/compo.js
+	/* _PLUGINS_ */
 
 
 	return Mask;
 
-}));
+}());

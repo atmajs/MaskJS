@@ -27,6 +27,10 @@
 				return;
 			}
 
+			if (attr['repeat'] != null) {
+				repeat(this, model, cntx, container);
+			}
+
 			this.model = model;
 
 			if (attr['if'] != null) {
@@ -81,22 +85,46 @@
 			return;
 		}
 
-		for (var i = 0, x, length = array.length; i < length; i++) {
-			x = array[i];
-
-			item = new Component();
-			item.nodes = nodes;
-			item.model = x;
-			item.container = container;
-			item.parent = compo;
-
-			compo.nodes[i] = item;
+		for (var i = 0, length = array.length; i < length; i++) {
+			compo.nodes[i] = compo_init(nodes, array[i], container, compo);
 		}
 
 		for(var method in ListProto){
 			compo[method] = ListProto[method];
 		}
 	}
+
+	function repeat(compo, model, cntx, container) {
+		var repeat = compo.attr.repeat.split('..'),
+			index = +repeat[0],
+			length = +repeat[1],
+			template = compo.nodes,
+			x;
+
+		// if DEBUG
+		(isNaN(index) || isNaN(length)) && console.error('Repeat attribute(from..to) invalid', compo.attr.repeat);
+		// endif
+
+		compo.nodes = [];
+
+		for (var i = 0; index < length; index++) {
+			x = compo_init(template, model, container, compo);
+			x._repeatIndex = index;
+
+			compo.nodes[i++] = x;
+		}
+	}
+
+	function compo_init(nodes, model, container, parent) {
+		var item = new Component();
+		item.nodes = nodes;
+		item.model = model;
+		item.container = container;
+		item.parent = parent;
+
+		return item;
+	}
+
 
 	var ListProto = {
 		append: function(model){

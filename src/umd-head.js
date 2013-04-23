@@ -6,8 +6,15 @@
     }
 
     var doc = typeof document === 'undefined' ? null : document,
-        construct = function(){
-            return factory(root, doc);
+        construct = function(plugins){
+            var plgns = plugins || {},
+                lib = factory(root, doc, plgns);
+
+            for (var key in plgns) {
+                lib[key] = plgns[key];
+            }
+
+            return lib;
         };
 
     if (typeof exports === 'object') {
@@ -16,12 +23,16 @@
         define(construct);
     } else {
 
-        var lib = construct();
+        var plugins = {},
+            lib = construct(plugins);
 
         root.mask = lib;
-        root.jmask = lib.jmask;
-        root.Compo = lib.Compo;
+
+        for (var key in plugins) {
+            root[key] = plugins[key];
+        }
 
     }
-}(this, function (global, document) {
+
+}(this, function (global, document, exports) {
     'use strict';

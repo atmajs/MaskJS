@@ -14,10 +14,8 @@
 	// import ../src/mask.js
 
 
-	(function(mask) {
-		// import ../src/formatter/stringify.js
-		Mask.stringify = stringify;
-	}(Mask));
+
+	// import ../src/formatter/stringify.lib.js
 
 	/* Handlers */
 
@@ -42,8 +40,6 @@
 	//////	Mask.jmask = jMask;
 	//////}());
 
-	Mask.Compo = Compo;
-	Mask.jmask = jMask;
 
 	return Mask;
 
