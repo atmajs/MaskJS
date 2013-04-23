@@ -498,13 +498,13 @@
 					case 'INPUT':
 						var type = element.getAttribute('type');
 						if ('checkbox' === type) {
-							this.prototype = 'element.checked';
+							this.property = 'element.checked';
 							break;
 						}
-						this.prototype = 'element.value';
+						this.property = 'element.value';
 						break;
 					case 'TEXTAREA':
-						this.prototype = 'element.value';
+						this.property = 'element.value';
 						break;
 					default:
 						this.property = 'element.innerHTML';
@@ -1067,7 +1067,8 @@
 						attr = currentAttr ? currentAttr.replace(currentValue, value) : value;
 	
 	
-						element.setAttribute(attrName, currentValue = attr);
+						element.setAttribute(attrName, attr);
+						currentValue = value;
 						break;
 				}
 			};
