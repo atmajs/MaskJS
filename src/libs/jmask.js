@@ -1,5 +1,5 @@
 
-var jMask = exports.jmask = (function(mask){
+var jmask = exports.jmask = (function(mask){
 	'use strict';
 	// source ../src/scope-vars.js
 	var Dom = mask.Dom,
@@ -316,7 +316,7 @@ var jMask = exports.jmask = (function(mask){
 		if (mix == null) {
 			return output;
 		}
-		
+	
 		if (output == null) {
 			output = [];
 		}
@@ -388,6 +388,25 @@ var jMask = exports.jmask = (function(mask){
 			current = current.nodes && current.nodes[0];
 		}
 		return prev;
+	}
+	
+	
+	function jmask_getText(node, model, cntx, controller) {
+		if (Dom.TEXTNODE === node.type) {
+			if (typeof node.content === 'function') {
+				return node.content('node', model, cntx, null, controller);
+			}
+			return node.content;
+		}
+	
+		var output = '';
+		if (node.nodes != null) {
+			for(var i = 0, x, imax = node.nodes.length; i < imax; i++){
+				x = node.nodes[i];
+				output += jmask_getText(x, model, cntx, controller);
+			}
+		}
+		return output;
 	}
 	
 	////////function jmask_initHandlers($$, parent){
@@ -478,7 +497,7 @@ var jMask = exports.jmask = (function(mask){
 			}
 	
 			if (type === Dom.CONTROLLER) {
-				
+	
 				if (mix.nodes != null && mix.nodes.length) {
 					for (i = mix.nodes.length; i !== 0;) {
 						// set controller as parent, as parent is mask dom node
@@ -563,6 +582,25 @@ var jMask = exports.jmask = (function(mask){
 			}
 	
 			return mask.stringify(node);
+		},
+	
+		text: function(mix, cntx, controller){
+			if (typeof mix === 'string') {
+				var node = [new Dom.TextNode(mix)];
+	
+				for(var i = 0, x, imax = this.length; i < imax; i++){
+					x = this[i];
+					x.nodes = node;
+				}
+				return this;
+			}
+	
+			var string = '';
+			for(var i = 0, x, imax = this.length; i < imax; i++){
+				x = this[i];
+				string += jmask_getText(x, mix, cntx, controller);
+			}
+			return string;
 		}
 	};
 	

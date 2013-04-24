@@ -79,25 +79,16 @@
 
 	function HTMLHandler() {}
 	HTMLHandler.prototype.render = function(model, cntx, container) {
-		var source = null;
 
-		if (this.attr.template != null) {
-			var c = this.attr.template[0];
-			if (c === '#') {
-				source = document.getElementById(this.attr.template.substring(1)).innerHTML;
-			}
+		var html = jmask(this.nodes).text(model, cntx, container);
 
-		}
-		if (this.nodes) {
-			source = this.nodes[0].content;
-		}
-
-		if (source == null) {
+		if (!html) {
 			console.warn('No HTML for node', this);
 			return;
 		}
 
-		container.innerHTML = source;
+		container.insertAdjacentHTML('beforeend', html);
+
 	};
 
 }(Mask));
