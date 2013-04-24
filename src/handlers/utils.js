@@ -80,7 +80,7 @@
 	function HTMLHandler() {}
 	HTMLHandler.prototype.render = function(model, cntx, container) {
 
-		var html = jmask(this.nodes).text(model, cntx, container);
+		var html = jmask(this.nodes).text(model, cntx, this);
 
 		if (!html) {
 			console.warn('No HTML for node', this);
