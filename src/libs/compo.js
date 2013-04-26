@@ -137,7 +137,26 @@ var Compo = exports.Compo = (function(mask){
 		}
 	}
 	
-
+	// source ../src/util/domLib.js
+	/**
+	 *	Combine .filter + .find
+	 */
+	
+	function domLib_find($set, selector) {
+		return $set.filter(selector).add($set.find(selector));
+	}
+	
+	function domLib_on($set, type, selector, fn) {
+	
+		if (selector == null) {
+			return $set.on(type, fn);
+		}
+	
+		$set.on(type, selector, fn);
+		$set.filter(selector).on(type, fn);
+		return $set;
+	}
+	
 
 	// source ../src/compo/children.js
 	var Children_ = {
@@ -202,43 +221,51 @@ var Compo = exports.Compo = (function(mask){
 	
 	// source ../src/compo/events.js
 	var Events_ = {
-			on: function(component, events, $element) {
-				if ($element == null) {
-					$element = component.$;
+		on: function(component, events, $element) {
+			if ($element == null) {
+				$element = component.$;
+			}
+	
+			var isarray = events instanceof Array,
+				length = isarray ? events.length : 1;
+	
+			for (var i = 0, x; isarray ? i < length : i < 1; i++) {
+				x = isarray ? events[i] : events;
+	
+				if (x instanceof Array) {
+					// generic jQuery .on Arguments
+	
+					if (EventDecorator != null) {
+						x[0] = EventDecorator(x[0]);
+					}
+	
+					$element.on.apply($element, x);
+					continue;
 				}
 	
-				var isarray = events instanceof Array,
-					length = isarray ? events.length : 1;
 	
-				for (var i = 0, x; isarray ? i < length : i < 1; i++) {
-					x = isarray ? events[i] : events;
+				for (var key in x) {
+					var fn = typeof x[key] === 'string' ? component[x[key]] : x[key],
+						semicolon = key.indexOf(':'),
+						type,
+						selector;
 	
-					if (x instanceof Array) {
-						// generic jQuery .on Arguments
-	
-						if (EventDecorator != null) {
-							x[0] = EventDecorator(x[0]);
-						}
-	
-						$element.on.apply($element, x);
-						continue;
+					if (semicolon !== -1) {
+						type = key.substring(0, semicolon);
+						selector = key.substring(semicolon + 1).trim();
+					} else {
+						type = key;
 					}
 	
-	
-					for (var key in x) {
-						var fn = typeof x[key] === 'string' ? component[x[key]] : x[key],
-							parts = key.split(':'),
-							type = parts[0] || 'click';
-	
-						if (EventDecorator != null) {
-							type = EventDecorator(type);
-						}
-	
-						$element.on(type, parts.splice(1).join(':').trim() || null, fn.bind(component));
+					if (EventDecorator != null) {
+						type = EventDecorator(type);
 					}
+	
+					domLib_on($element, type, selector, fn.bind(component));
 				}
 			}
-		},
+		}
+	},
 		EventDecorator = null;
 	
 	// source ../src/compo/events.deco.js
@@ -782,18 +809,10 @@ var Compo = exports.Compo = (function(mask){
 			config: {
 				selectors: {
 					'$': function(compo, selector) {
-						var r = compo.$.find(selector);
-						if (r.length > 0) {
-							return r;
-						}
-						r = compo.$.filter(selector);
-		
-						// if debug
-						if (r.length === 0) {
-							console.error('Compo Selector - element not found -', selector, compo);
-						}
+						var r = domLib_find(compo.$, selector)
+						// if DEBUG
+						r.length === 0 && console.error('Compo Selector - element not found -', selector, compo);
 						// endif
-		
 						return r;
 					},
 					'compo': function(compo, selector) {
