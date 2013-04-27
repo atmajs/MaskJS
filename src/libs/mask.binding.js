@@ -8,10 +8,6 @@
 	
 		__array_slice = Array.prototype.slice;
 	
-	if ($ == null){
-		console.warn('Without jQuery/Zepto etc. binder is limited (mouse dom event bindings)');
-	}
-	
 
 	// source ../src/util/object.js
 	/**
@@ -66,13 +62,17 @@
 	function obj_addObserver(obj, property, callback) {
 		if (obj.__observers == null) {
 			Object.defineProperty(obj, '__observers', {
-				value: {},
+				value: {
+					__dirty: null
+				},
 				enumerable: false
 			});
 		}
 	
-		if (obj.__observers[property]) {
-			obj.__observers[property].push(callback);
+		var observers = obj.__observers;
+	
+		if (observers[property] != null) {
+			observers[property].push(callback);
 	
 			var value = obj_getProperty(obj, property);
 			if (value instanceof Array) {
@@ -82,7 +82,7 @@
 			return;
 		}
 	
-		var observers = obj.__observers[property] = [callback],
+		var callbacks = observers[property] = [callback],
 			chain = property.split('.'),
 			length = chain.length,
 			parent = length > 1 ? obj_ensure(obj, chain) : obj,
@@ -106,12 +106,17 @@
 				}
 				currentValue = x;
 	
-				for (var i = 0, length = observers.length; i < length; i++) {
-					observers[i](x);
+				if (x instanceof Array) {
+					arr_addObserver(x, callback);
 				}
 	
-				if (currentValue instanceof Array) {
-					arr_addObserver(currentValue, callback);
+				if (observers.__dirties != null) {
+					observers.__dirties[property] = 1;
+					return;
+				}
+	
+				for (var i = 0, length = callbacks.length; i < length; i++) {
+					callbacks[i](x);
 				}
 			}
 		});
@@ -121,6 +126,42 @@
 		}
 	}
 	
+	
+	function obj_lockObservers(obj) {
+		if (obj instanceof Array) {
+			arr_lockObservers(obj);
+			return;
+		}
+	
+		var obs = obj.__observers;
+		if (obs != null) {
+			obs.__dirties = {};
+		}
+	}
+	
+	function obj_unlockObservers(obj) {
+		if (obj instanceof Array) {
+			arr_unlockObservers(obj);
+			return;
+		}
+	
+		var obs = obj.__observers,
+			dirties = obs == null ? null : obs.__dirties;
+	
+		if (dirties != null) {
+			for (var prop in dirties) {
+				var callbacks = obj.__observers[prop],
+					value = obj_getProperty(obj, prop);
+	
+				if (callbacks != null) {
+					for(var i = 0, imax = callbacks.length; i < imax; i++){
+						callbacks[i](value);
+					}
+				}
+			}
+			obs.__dirties = null;
+		}
+	}
 	
 	
 	function obj_removeObserver(obj, property, callback) {
@@ -139,7 +180,7 @@
 		arr_remove(obj.__observers[property], callback);
 	
 		if (currentValue instanceof Array) {
-			arr_remove(currentValue.__observers, callback);
+			arr_removeObserver(currentValue, callback);
 		}
 	
 	}
@@ -158,22 +199,21 @@
 	}
 	
 	// source ../src/util/array.js
-	function arr_remove(array /*, .. */){
+	function arr_remove(array /*, .. */ ) {
 		if (array == null) {
 			return false;
 		}
 	
 		var i = 0,
 			length = array.length,
-			x,
-			j = 1,
+			x, j = 1,
 			jmax = arguments.length,
 			removed = 0;
 	
-		for(; i < length; i++){
+		for (; i < length; i++) {
 			x = array[i];
 	
-			for (j = 1; j<jmax; j++) {
+			for (j = 1; j < jmax; j++) {
 				if (arguments[j] === x) {
 	
 					array.splice(i, 1);
@@ -192,7 +232,9 @@
 	
 		if (arr.__observers == null) {
 			Object.defineProperty(arr, '__observers', {
-				value: [],
+				value: {
+					length: 0
+				},
 				enumerable: false
 			});
 		}
@@ -204,28 +246,77 @@
 	
 		for (; i < length; i++) {
 			method = fns[i];
-			arr[method] = _array_methodWrapper.bind(arr, arr[method], method);
+			arr[method] = _array_createWrapper(arr, arr[method], method);
 		}
 	
-		arr.__observers.push(callback);
+		var observers = arr.__observers;
+		observers[observers.length++] = callback;
 	}
 	
-	function _array_methodWrapper(original, method) {
-		var callbacks = this.__observers,
-			args = __array_slice.call(arguments, 2),
-			result = original.apply(this, args);
+	function arr_removeObserver(arr, callback) {
+		var obs = arr.__observers;
+		if (obs != null) {
+			for (var i = 0, imax = arr.length; i < imax; i++) {
+				if (arr[i] === callback) {
+					imax--;
+					arr.length--;
+					arr[i] = null;
+	
+					for (var j = i; j < imax; j++) {
+						arr[j] = arr[j + 1];
+					}
+				}
+			}
+		}
+	}
+	
+	function arr_lockObservers(arr) {
+		if (arr.__observers != null) {
+			arr.__observers.__dirty = false;
+		}
+	}
+	
+	function arr_unlockObservers(arr) {
+		var obs = arr.__observers;
+		if (obs != null) {
+			if (obs.__dirty === true) {
+				for (var i = 0, x, imax = obs.length; i < imax; i++) {
+					x = obs[i];
+					if (typeof x === 'function') {
+						x(arr);
+					}
+				}
+				obs.__dirty = null;
+			}
+		}
+	}
+	
+	function _array_createWrapper(array, originalFn, overridenFn) {
+		return function() {
+			_array_methodWrapper(array, originalFn, overridenFn, __array_slice.call(arguments));
+		};
+	}
+	
+	
+	function _array_methodWrapper(array, original, method, args) {
+		var callbacks = array.__observers,
+			result = original.apply(array, args);
 	
 	
 		if (callbacks == null || callbacks.length === 0) {
 			return result;
 		}
 	
+		if (callbacks.__dirty != null) {
+			callbacks.__dirty = true;
+			return result;
+		}
 	
-		for(var i = 0, x, length = callbacks.length; i < length; i++){
+	
+		for (var i = 0, x, length = callbacks.length; i < length; i++) {
 			x = callbacks[i];
 			if (typeof x === 'function') {
-	
-				x(this, method, args);
+				x(array, method, args);
 			}
 		}
 	
@@ -234,10 +325,37 @@
 	
 	
 	function arr_each(array, fn) {
-		for(var i = 0, length = array.length; i < length; i++){
+		for (var i = 0, length = array.length; i < length; i++) {
 			fn(array[i]);
 		}
 	}
+	//////
+	//////function arr_invoke(functions) {
+	//////	for(var i = 0, x, imax = functions.length; i < imax; i++){
+	//////		x = functions[i];
+	//////
+	//////		switch (arguments.length) {
+	//////			case 1:
+	//////				x();
+	//////				break;
+	//////			case 2:
+	//////				x(arguments[1]);
+	//////				break;
+	//////			case 3:
+	//////				x(arguments[1], arguments[2]);
+	//////				break;
+	//////			case 4:
+	//////				x(arguments[1], arguments[2], arguments[3]);
+	//////				break;
+	//////			case 5:
+	//////				x(arguments[1], arguments[2], arguments[3], arguments[4]);
+	//////				break;
+	//////			default:
+	//////				x.apply(null, __array_slice.call(arguments, 1));
+	//////				break;
+	//////		}
+	//////	}
+	//////}
 	
 	// source ../src/util/dom.js
 	
@@ -981,6 +1099,11 @@
 			maxLength: {
 				validate: function(node, str) {
 					return str.length <= parseInt(node.attr.maxLength, 10);
+				}
+			},
+			check: {
+				validate: function(node, str){
+					return expression_eval(node.attr.check, node.model, {x: str}, node);
 				}
 			}
 	

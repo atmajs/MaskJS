@@ -27,20 +27,6 @@
 	// import ../src/libs/jmask.js
 
 
-	////// ?
-	//////(function(){
-	//////	var Lib = Mask;
-	//////
-	//////	Mask = jMask;
-	//////	for (var key in Lib) {
-	//////		Mask[key] = Lib[key];
-	//////	}
-	//////
-	//////	Mask.Compo = Compo;
-	//////	Mask.jmask = jMask;
-	//////}());
-
-
 	return Mask;
 
 }));

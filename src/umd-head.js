@@ -7,11 +7,15 @@
 
     var doc = typeof document === 'undefined' ? null : document,
         construct = function(plugins){
-            var plgns = plugins || {},
-                lib = factory(root, doc, plgns);
 
-            for (var key in plgns) {
-                lib[key] = plgns[key];
+            if (plugins == null) {
+                plugins = {};
+            }
+            var lib = factory(root, doc, plugins),
+                key;
+
+            for (key in plugins) {
+                lib[key] = plugins[key];
             }
 
             return lib;
