@@ -1,6 +1,16 @@
 (function(mask) {
 
-	function Sys() {}
+	function Sys() {
+		this.attr = {
+			'debugger': null,
+			'use': null,
+			'repeat': null,
+			'if': null,
+			'else': null,
+			'each': null,
+			'log': null
+		};
+	}
 
 	mask.registerHandler('%', Sys);
 
