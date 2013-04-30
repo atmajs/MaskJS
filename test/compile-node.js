@@ -139,7 +139,14 @@ buster.testCase('Compile: ', {
 			combined += x.content;
 		}
 
-		assert(combined == '12345', 'Combined Text Failed:' + combined);
+		assert.equals(combined, '12345', 'Combined Text Failed:' + combined);
+
+
+		dom = compile("''| I'm unescaped block '' ... |''");
+		assert.equals(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
+
+		dom = compile("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
+		assert.equals(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
 	},
 
 	'valid model templating': function() {

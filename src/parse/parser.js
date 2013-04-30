@@ -298,6 +298,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 
 					var isEscaped = false,
+						isUnescapedBlock = false,
 						nindex, _char = c === 39 ? "'" : '"';
 
 					start = index;
@@ -311,6 +312,20 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						index++;
 					}
 
+					if (start === index) {
+						if (template.charCodeAt(index+1) === 124) {
+							//|
+							isUnescapedBlock = true;
+							start = index + 2;
+							index = nindex = template.indexOf('|' + _char + _char, start);
+
+							if (index === -1) {
+								index = length;
+							}
+
+						}
+					}
+
 					token = template.substring(start, index);
 					if (isEscaped === true) {
 						token = token.replace(regexpEscapedChar[_char], _char);
@@ -318,7 +333,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					token = ensureTemplateFunction(token);
 
-					index++;
+
+					index += isUnescapedBlock ? 3 : 1;
 					continue;
 				}
 
