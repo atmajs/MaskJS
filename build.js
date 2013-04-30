@@ -52,6 +52,14 @@ global.config = {
 		files: 'builds/**',
 		output: 'lib/'
 	},
+	'build.prod': {
+		action: 'import',
+		files: 'builds/mask.js',
+		output: 'lib/mask.prod.js',
+		defines: {
+			DEBUG: false
+		}
+	},
 	'jshint': {
 		files: ['lib/mask.js', 'lib/formatter.js'],
 		jshint: JSHint()
