@@ -16,7 +16,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 	function ensureTemplateFunction(template) {
 		var index = -1;
 
-/*
+		/*
 		 * - single char indexOf is much faster then '~[' search
 		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
 		 * for better performance
@@ -247,9 +247,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					state = go_tag;
 				}
 
-				// IF statements should be faster then switch due to strict comparison
-
-				if (c === 123) {
+				switch (c) {
+				case 123:
 					// {
 
 					last = state;
@@ -257,18 +256,16 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					index++;
 
 					continue;
-				}
-
-				if (c === 62) {
+				case 62:
 					// >
 					last = state;
 					state = go_tag;
 					index++;
 					current.__single = true;
 					continue;
-				}
 
-				if (c === 59) {
+
+				case 59:
 					// ;
 
 					// skip ; , when node is not a single tag (else goto 125)
@@ -276,18 +273,18 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						index++;
 						continue;
 					}
-				}
 
-				if (c === 59 || c === 125) {
+					/* falls through */
+				case 125:
 					// ;}
 
 					index++;
 					last = state;
 					state = go_up;
 					continue;
-				}
 
-				if (c === 39 || c === 34) {
+				case 39:
+				case 34:
 					// '"
 					// Literal - could be as textnode or attribute value
 					if (state === go_attrVal) {
@@ -336,7 +333,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					}
 				}
 
-				if (state === state_attr) {
+				else if (state === state_attr) {
 					if (c === 46) {
 						// .
 						index++;
@@ -402,7 +399,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						break;
 					}
 
-					if (c===61 || c === 62 || c === 123 || c < 33 || c === 59) {
+					if (c === 61 || c === 62 || c === 123 || c < 33 || c === 59) {
 						// =>{ ;
 						break;
 					}
@@ -418,7 +415,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					_throw(template, index, state, '*EMPTY*');
 					break;
 				}
-				if (isInterpolated === true && state === state_tag){
+				if (isInterpolated === true && state === state_tag) {
 					_throw(template, index, state, 'Tag Names cannt be interpolated (in dev)');
 					break;
 				}
