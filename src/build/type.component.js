@@ -1,18 +1,19 @@
 var Handler = node.controller,
-	handler = typeof Handler === 'function' ? new Handler(model) : Handler;
+	handler = typeof Handler === 'function' ? new Handler(model) : Handler,
+	attr;
 
 if (handler != null) {
-/* if (!DEBUG)
+	/* if (!DEBUG)
 	try{
 	*/
 
 	handler.compoName = node.tagName;
-	handler.attr = util_extend(handler.attr, node.attr);
-	handler.ID = ++_controllerID;
+	handler.attr = attr = util_extend(handler.attr, node.attr);
 
-	for (key in handler.attr) {
-		if (typeof handler.attr[key] === 'function') {
-			handler.attr[key] = handler.attr[key]('attr', model, cntx, container, controller, key);
+
+	for (key in attr) {
+		if (typeof attr[key] === 'function') {
+			attr[key] = attr[key]('attr', model, cntx, container, controller, key);
 		}
 	}
 
@@ -42,7 +43,7 @@ if (handler != null) {
 		};
 	}
 
-/* if (!DEBUG)
+	/* if (!DEBUG)
 	} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
 	*/
 
@@ -57,6 +58,7 @@ if (controller.components == null) {
 }
 
 controller = node;
+controller.ID = ++_controllerID;
 elements = [];
 
 if (controller.model != null) {
