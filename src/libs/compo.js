@@ -3,7 +3,8 @@ var Compo = exports.Compo = (function(mask){
 	'use strict';
 	// source ../src/scope-vars.js
 	var domLib = global.jQuery || global.Zepto || global.$,
-		Dom = mask.Dom;
+		Dom = mask.Dom,
+		__array_slice = Array.prototype.slice;
 	
 	if (!domLib){
 		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
@@ -1022,12 +1023,12 @@ var Compo = exports.Compo = (function(mask){
 				Compo.signal.toggle(this, signalName, isActive);
 			},
 	
-			emitOut: function(signalName, event, args){
-				Compo.signal.emitOut(this, signalName, event, args);
+			emitOut: function(signalName /* args */){
+				Compo.signal.emitOut(this, signalName, this, arguments.length > 1 ? __array_slice.call(arguments, 1) : null);
 			},
 	
-			emitIn: function(signalName, event, args){
-				Compo.signal.emitIn(this, signalName, event, args);
+			emitIn: function(signalName /* args */){
+				Compo.signal.emitIn(this, signalName, this, arguments.length > 1 ? __array_slice.call(arguments, 1) : null);
 			}
 		};
 	
@@ -1085,19 +1086,11 @@ var Compo = exports.Compo = (function(mask){
 	
 		});
 	
-	
-		function _fire(controller, slot, event, args, direction) {
+		// @param sender - event if sent from DOM Event or CONTROLLER instance
+		function _fire(controller, slot, sender, args, direction) {
 	
 			if (controller == null) {
 				return;
-			}
-	
-			if (args != null) {
-				if (typeof args.unshift === 'function') {
-					args = [event, args];
-				} else {
-					args.unshift(event);
-				}
 			}
 	
 			if (controller.slots != null && typeof controller.slots[slot] === 'function') {
@@ -1105,7 +1098,9 @@ var Compo = exports.Compo = (function(mask){
 					isDisabled = controller.slots.__disabled != null && controller.slots.__disabled[slot];
 	
 				if (isDisabled !== true) {
-					var result = args == null ? fn.call(controller, event) : fn.apply(controller, args);
+	
+					var result = args == null ? fn.call(controller, sender) : fn.apply(controller, [sender].concat(args));
+	
 					if (result === false) {
 						return;
 					}
@@ -1113,12 +1108,12 @@ var Compo = exports.Compo = (function(mask){
 			}
 	
 			if (direction === -1 && controller.parent != null) {
-				_fire(controller.parent, slot, event, args, direction);
+				_fire(controller.parent, slot, sender, args, direction);
 			}
 	
 			if (direction === 1 && controller.components != null) {
 				for (var i = 0, length = controller.components.length; i < length; i++) {
-					_fire(controller.components[i], slot, event, args, direction);
+					_fire(controller.components[i], slot, sender, args, direction);
 				}
 			}
 		}
@@ -1250,12 +1245,12 @@ var Compo = exports.Compo = (function(mask){
 				toggle: _toggle_all,
 	
 				// to parent
-				emitOut: function(controller, slot, event, args) {
-					_fire(controller, slot, event, args, -1);
+				emitOut: function(controller, slot, sender, args) {
+					_fire(controller, slot, sender, args, -1);
 				},
 				// to children
-				emitIn: function(controller, slot, event, args) {
-					_fire(controller, slot, event, args, 1);
+				emitIn: function(controller, slot, sender, args) {
+					_fire(controller, slot, sender, args, 1);
 				},
 	
 				enable: function(controller, slot) {
