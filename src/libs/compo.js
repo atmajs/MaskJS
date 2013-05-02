@@ -498,32 +498,43 @@ var Compo = exports.Compo = (function(mask){
 				if (element == null){
 					return null;
 				}
+	
+				var findID, currentID, compo;
 				do {
 	
-					var id = element.getAttribute('x-compo-id');
-					if (id != null){
-						var compo = _cache[id];
-						if (compo == null){
-							compo = this.resolveCompo(element.parentNode);
-							if (compo != null){
-								compo = Compo.find(compo, {
-									key: 'ID',
-									selector: id,
-									nextKey: 'components'
-								});
-							}
-						}
-						if (compo == null){
-							console.warn('No controller for ID', id);
+					currentID = element.getAttribute('x-compo-id');
+	
+	
+					if (currentID) {
+	
+						if (findID == null) {
+							findID = currentID;
 						}
 	
-						return compo;
+						compo = _cache[currentID];
+	
+						if (compo != null) {
+							compo = Compo.find(compo, {
+								key: 'ID',
+								selector: findID,
+								nextKey: 'components'
+							});
+	
+							if (compo != null) {
+								return compo;
+							}
+						}
+	
 					}
 	
 					element = element.parentNode;
 	
 				}while(element && element.nodeType === 1);
 	
+	
+				// if DEBUG
+				findID && console.warn('No controller for ID', findID);
+				// endif
 				return null;
 			},
 			removeCompo: function(compo){
