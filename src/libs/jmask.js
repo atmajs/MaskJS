@@ -638,10 +638,14 @@ var jmask = exports.jmask = (function(mask){
 	
 		jMask.prototype[method] = function(mix, model, cntx, controller) {
 	
+			if (controller == null) {
+				controller = this;
+			}
+	
 			if (mix.nodeType != null && typeof mix.appendChild === 'function') {
 				mix.appendChild(this.render(model, cntx, null, controller));
 	
-				_signal_emitIn(this, 'domInsert');
+				_signal_emitIn(controller, 'domInsert');
 				return this;
 			}
 	
