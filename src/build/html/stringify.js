@@ -167,7 +167,7 @@ function html_maskSetup(meta, model) {
 	}
 
 	if (typeof Compo !== 'undefined') {
-		Compo.shots.emit(parent, 'DOMInsert');
+		Compo.signal.emitIn(parent, 'domInsert');
 	}
 
 
