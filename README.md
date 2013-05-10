@@ -11,7 +11,9 @@
 	section.content data-id='myID' {
 		span >'Hello ~[name]!'
 	}
-	:custom > button > '~[bind: name]'
+	:custom > button x-signal='click: changeName' {
+		'~[bind: name]'
+	}
 }
 </code></pre></div>
 
