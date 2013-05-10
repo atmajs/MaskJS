@@ -1,9 +1,9 @@
-<img src='http://libjs.it/images/mask.png' style='float:right' height="64"/>
+<img src='http://libjs.it/images/mask.png' style='float:right'/>
 <hr/>
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup and MVC engine.
+	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup and **HMVC** engine
 
 <div><pre><code>
 .container {
@@ -18,7 +18,7 @@
 	Features:
 	<ul>
 		<li>Performance — (mobile CPUs in mind) - doesnt require precompilation</li>
-		<li>Custom tags / Custom Value Processors</li>
+		<li>Custom tags / Custom Value Processors / Custom Attributes</li>
 		<li>DOM Based — [Template &rarr; JSON AST &rarr; Document Fragment &rarr; Live DOM].
 		This allows custom tags to render themselfs much faster in compare to rendering into placeholder in dom</li>
 		<li>For server and browsers</li>
