@@ -48,7 +48,7 @@
 
 <p>
  Though MaskJS is fully featured MVC engine, its performance can be compared to generic simple template engines
- <a href='http://jsperf.com/dom-vs-innerhtml-based-templating/695'>jsperf</a>
+ <a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>JSPerf</a>
 </p>
 
 ###Changelog
