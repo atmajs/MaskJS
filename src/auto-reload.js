@@ -40,7 +40,7 @@ if (typeof DEBUG === 'boolean' && DEBUG) {
 					tagName: compoName,
 					attr: x.attr,
 					nodes: x.nodes
-				}, cache[i].model, cntx, parent, x);
+				}, cache[i].model, null, parent, x);
 			}
 		}
 
