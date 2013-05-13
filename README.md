@@ -3,7 +3,7 @@
 <a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a template/markup and **HMVC** engine
+	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a markup | template | <b>HMVC</b> engine
 
 <div><pre><code>
 .container {
@@ -47,8 +47,22 @@
 </p>
 
 <p>
- Though MaskJS is fully featured MVC engine, its performance can be compared to generic simple template engines
- <a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>JSPerf</a>
+ Performance Tests
+ <ul>
+	<li> Mask vs HTML Template Engines
+		<a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>:link</a>
+		</li>
+	<li> Mask AST vs JSON parse
+		<a href='http://jsperf.com/maskjs-vs-json/10'>:link</a>
+		</li>
+	<li> Mask Markup vs HTML
+		<a href='http://jsperf.com/mask-vs-contextual-fragment/5'>:link</a>
+		</li>
+	<li> Mask vs Angular
+		<a href='http://jsperf.com/mask-vs-angular/4'>:link</a>
+		</li>
+ </ul>
+ 
 </p>
 
 ###Changelog
