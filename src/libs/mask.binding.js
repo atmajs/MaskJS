@@ -4,7 +4,7 @@
 
 
 	// source ../src/vars.js
-	var $ = window.jQuery || window.Zepto || window.$,
+	var domLib = window.jQuery || window.Zepto || window.$,
 	
 		__array_slice = Array.prototype.slice;
 	
@@ -384,10 +384,11 @@
 	
 	function dom_addEventListener(element, event, listener) {
 	
-		////if (typeof $ === 'function'){
-		////	$(element).on(event, listener);
-		////	return;
-		////}
+		// add event listener with jQuery for custom events
+		if (typeof domLib === 'function'){
+			domLib(element).on(event, listener);
+			return;
+		}
 	
 		if (element.addEventListener != null) {
 			element.addEventListener(event, listener, false);
@@ -579,23 +580,22 @@
 
 	// source ../src/bindingProvider.js
 	var BindingProvider = (function() {
-	
+		var Providers = {};
+		
 		mask.registerBinding = function(type, binding) {
 			Providers[type] = binding;
 		};
 	
 		mask.BindingProvider = BindingProvider;
-	
-		var Providers = {};
-	
-	
+		
 		function BindingProvider(model, element, controller, bindingType) {
 	
 			if (bindingType == null) {
 				bindingType = controller.compoName === ':bind' ? 'single' : 'dual';
 			}
 	
-			var attr = controller.attr;
+			var attr = controller.attr,
+				type;
 	
 			this.node = controller; // backwards compat.
 			this.controller = controller;
@@ -617,7 +617,7 @@
 	
 				switch (element.tagName) {
 					case 'INPUT':
-						var type = element.getAttribute('type');
+						type = element.getAttribute('type');
 						if ('checkbox' === type) {
 							this.property = 'element.checked';
 							break;
@@ -642,7 +642,7 @@
 	
 			if (attr['x-signal']) {
 				var signals = attr['x-signal'].split(';'),
-					type, signal;
+					signal;
 	
 				for (var i = 0, x, length = signals.length; i < length; i++) {
 					x = signals[i].split(':');
@@ -675,12 +675,12 @@
 						console.warn('Please set value attribute in DualBind Control.');
 					}
 				}
-			} else {
-				this.expression = this.value;
+				return;
 			}
-	
+			
+			this.expression = this.value;
 		}
-	
+		
 		BindingProvider.create = function(model, element, controller, bindingType) {
 	
 			/* Initialize custom provider */
@@ -888,7 +888,7 @@
 		constructor: VisibleHandler,
 	
 		refresh: function(model, container) {
-			container.style.display = mask.Utils.Condition.isCondition(this.attr.check, model) ? '' : 'none';
+			container.style.display = expression_eval(this.attr.check, model) ? '' : 'none';
 		},
 		renderStart: function(model, cntx, container) {
 			this.refresh(model, container);
@@ -981,6 +981,8 @@
 	
 	// source ../src/mask-handler/validate.js
 	(function() {
+		
+		var class_INVALID = '-validate-invalid';
 	
 		mask.registerValidator = function(type, validator) {
 			Validators[type] = validator;
@@ -1030,7 +1032,7 @@
 					}
 				}
 	
-				isValid(element);
+				makeValid(element);
 				return true;
 			},
 			initValidators: function() {
@@ -1056,28 +1058,30 @@
 		function notifyInvalid(element, message, oncancel) {
 			console.warn('Validate Notification:', element, message);
 	
-	
-			var next = $(element).next('.-validate-invalid');
+			var next = domLib(element).next('.' + class_INVALID);
 			if (next.length === 0) {
-				next = $('<div>').addClass('-validate-invalid').html('<span></span><button>cancel</button>').insertAfter(element);
+				next = domLib('<div>')
+					.addClass(class_INVALID)
+					.html('<span></span><button>cancel</button>')
+					.insertAfter(element);
 			}
 	
-			next //
-			.children('button').off().on('click', function() {
-				next.hide();
-				if (oncancel) {
-					oncancel();
-				}
-	
-			}) //
-			.end() //
-			.children('span').text(message) //
-			.end() //
-			.show(); //
+			next
+				.children('button')
+				.off()
+				.on('click', function() {
+					next.hide();
+					oncancel && oncancel();
+		
+				})
+				.end()
+				.children('span').text(message)
+				.end()
+				.show();
 		}
 	
-		function isValid(element) {
-			$(element).next('.-validate-invalid').hide();
+		function makeValid(element) {
+			domLib(element).next('.' + class_INVALID).hide();
 		}
 	
 		var Validators = {
@@ -1220,17 +1224,7 @@
 				expression_unbind(expr, model, binder);
 			});
 	
-			if ('node' === type) {
-				return element;
-			}
-	
-			if ('attr' === type) {
-	
-				return current;
-			}
-	
-			console.error('Unknown binding type', arguments);
-			return 'Unknown';
+			return type === 'node' ? element : current;
 		});
 	
 	
@@ -1240,7 +1234,16 @@
 	// source ../src/sys/sys.js
 	(function(mask) {
 	
-		function Sys() {}
+		function Sys() {
+			this.attr = {
+				'debugger': null,
+				'use': null,
+				'log': null,
+				'if': null,
+				'each': null,
+				'visible': null
+			};
+		}
 	
 	
 		mask.registerHandler('%%', Sys);
@@ -1337,11 +1340,11 @@
 						dom_insertBefore( //
 						compo_render(this, this.template, this.model, this.cntx), this.placeholder);
 		
-						this.$ = $(this.elements);
+						this.$ = domLib(this.elements);
 					} else {
 		
 						if (this.$ == null) {
-							this.$ = $(this.elements);
+							this.$ = domLib(this.elements);
 						}
 						this.$[value ? 'show' : 'hide']();
 					}
@@ -1358,6 +1361,13 @@
 				}
 			};
 		
+		
+			function bind(fn, compo) {
+				return function(){
+					return fn.apply(compo, arguments);
+				};
+			}
+		
 			return function(self, model, cntx, container) {
 		
 				var expr = self.attr['if'];
@@ -1367,7 +1377,7 @@
 					expr: expr,
 					template: self.nodes,
 					placeholder: document.createComment(''),
-					binder: expression_createBinder(expr, model, cntx, self, IfProto.refresh.bind(self)),
+					binder: expression_createBinder(expr, model, cntx, self, bind(IfProto.refresh, self)),
 		
 					state: !! expression_eval(expr, model, cntx, self)
 				});
@@ -1397,13 +1407,13 @@
 						// was not render - do it
 		
 						dom_insertBefore(compo_render(this, this.template, this.model, this.cntx));
-						this.$ = $(this.elements);
+						this.$ = domLib(this.elements);
 		
 						return;
 					}
 		
 					if (this.$ == null) {
-						this.$ = $(this.elements);
+						this.$ = domLib(this.elements);
 					}
 		
 					this.$[value ? 'hide' : 'show']();
@@ -1763,7 +1773,6 @@
 		Sys.prototype = {
 			constructor: Sys,
 			elements: null,
-	
 			renderStart: function(model, cntx, container) {
 				var attr = this.attr;
 	
