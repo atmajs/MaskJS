@@ -1107,7 +1107,7 @@
 			},
 			check: {
 				validate: function(node, str){
-					return expression_eval(node.attr.check, node.model, {x: str}, node);
+					return expression_eval('x' + node.attr.check, node.model, {x: str}, node);
 				}
 			}
 	
