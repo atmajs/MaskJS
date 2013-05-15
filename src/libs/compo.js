@@ -660,8 +660,8 @@ var Compo = exports.Compo = (function(mask){
 			if (typeof controller.dispose === 'function') {
 				var previous = controller.dispose;
 				controller.dispose = function(){
-					disposer();
-					previous();
+					disposer.call(this);
+					previous.call(this);
 				};
 		
 				return;
@@ -1335,6 +1335,29 @@ var Compo = exports.Compo = (function(mask){
 		};
 	
 	}());
+	
+
+	// source ../src/handler/slot.js
+	
+	function SlotHandler() {}
+	
+	mask.registerHandler(':slot', SlotHandler);
+	
+	SlotHandler.prototype = {
+		constructor: SlotHandler,
+		renderEnd: function(element, model, cntx, container){
+			this.slots = {};
+	
+			this.expression = this.attr.on;
+	
+			this.slots[this.attr.signal] = this.handle;
+		},
+		handle: function(){
+			var expr = this.expression;
+	
+			mask.Utils.Expression.eval(expr, this.model, global, this);
+		}
+	};
 	
 
 

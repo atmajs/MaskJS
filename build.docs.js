@@ -18,8 +18,8 @@ include.exports = {
 	        path: 'src/mask.js',
 	        lib: 'mask.js'
 	    }, {
-	        name: 'ConditionUtil',
-	        path: 'src/util/condition.js'
+	        name: 'ExpressionUtil',
+	        path: 'src/expression/exports.js'
 	    },{
 	        name: 'MaskDOM',
 	        path: 'src/info.MaskDOM.js'

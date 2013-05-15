@@ -1,12 +1,13 @@
 
-(function(mask){
+(function(mask, Compo){
 	'use strict'
 
 
 	// source ../src/vars.js
 	var domLib = window.jQuery || window.Zepto || window.$,
-	
+		__Compo = typeof Compo !== 'undefined' ? Compo : (mask.Compo || window.Compo),
 		__array_slice = Array.prototype.slice;
+		
 	
 
 	// source ../src/util/object.js
@@ -474,8 +475,8 @@
 	
 		compo.elements = null;
 	
-		if (typeof Compo !== 'undefined') {
-			Compo.dispose(compo);
+		if (__Compo != null) {
+			__Compo.dispose(compo);
 		}
 	
 		var components = (parent && parent.components) || (compo.parent && compo.parent.components);
@@ -489,8 +490,8 @@
 	}
 	
 	function compo_inserted(compo) {
-		if (typeof Compo !== 'undefined') {
-			Compo.signal.emitIn(compo, 'domInsert');
+		if (__Compo != null) {
+			__Compo.signal.emitIn(compo, 'domInsert');
 		}
 	}
 	
@@ -577,6 +578,60 @@
 		};
 	}
 	
+	// source ../src/util/signal.js
+	function signal_parse(str, isPiped, defaultType) {
+		var signals = str.split(';'),
+			set = [],
+			i = 0,
+			imax = signals.length,
+			x,
+			signalName, type,
+			signal;
+			
+	
+		for (; i < imax; i++) {
+			x = signals[i].split(':');
+			
+			if (x.length !== 1 && x.length !== 2) {
+				console.error('Too much ":" in a signal def.', signals[i]);
+				continue;
+			}
+			
+			
+			type = x.length == 2 ? x[0] : defaultType;
+			signalName = x[x.length == 2 ? 1 : 0];
+			
+			signal = signal_create(signalName, type, isPiped);
+			
+			if (signal != null) {
+				set.push(signal);
+			}
+		}
+		
+		return set;
+	}
+	
+	
+	function signal_create(signal, type, isPiped) {
+		if (isPiped !== true) {
+			return {
+				signal: signal,
+				type: type
+			};
+		}
+		
+		var index = signal.indexOf('.');
+		if (index === -1) {
+			console.error('No pipe name in a signal', signal);
+			return null;
+		}
+		
+		return {
+			signal: signal.substring(index + 1),
+			pipe: signal.substring(0, index),
+			type: type
+		};
+	}
 
 	// source ../src/bindingProvider.js
 	var BindingProvider = (function() {
@@ -641,27 +696,55 @@
 			}
 	
 			if (attr['x-signal']) {
-				var signals = attr['x-signal'].split(';'),
-					signal;
-	
-				for (var i = 0, x, length = signals.length; i < length; i++) {
-					x = signals[i].split(':');
-					switch (x.length) {
-					case 1:
-						this.signal_domChanged = x[0];
-						break;
-					case 2:
-						type = x[0].trim();
-						signal = x[1].trim();
-						if ('dom' === type) {
-							this.signal_domChanged = signal;
-						}
-						if ('object' === type) {
-							this.signal_domChanged = signal;
-						}
-						break;
+				var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
+				
+				if (signal) {
+						
+					if (signal.type === 'dom') {
+						this.signal_domChanged = signal.signal;
+					}
+					
+					else if (signal.type === 'object') {
+						this.signal_objectChanged = signal.signal;
+					}
+					
+					else {
+						console.error('Type is not supported', signal);
 					}
 				}
+				
+			}
+			
+			if (attr['x-pipe-signal']) {
+				var signal = signal_parse(attr['x-pipe-signal'], true, 'dom')[0];
+				if (signal) {
+					if (signal.type === 'dom') {
+						this.pipe_domChanged = signal;
+					}
+					
+					else if (signal.type === 'object') {
+						this.pipe_objectChanged = signal;
+					}
+					
+					else {
+						console.error('Type is not supported', signal)
+					}
+				}
+			}
+			
+			if (attr['x-pipe-slot']) {
+				var str = attr['x-pipe-slot'],
+					index = str.indexOf('.'),
+					pipeName = str.substring(0, index),
+					signal = str.substring(index + 1);
+				
+				this.pipes = {};
+				this.pipes[pipeName] = {};
+				this.pipes[pipeName][signal] = function(){
+					this.objectChanged();
+				};
+				
+				__Compo.pipe.addController(this);
 			}
 	
 	
@@ -730,6 +813,11 @@
 				if (this.signal_objectChanged) {
 					signal_emitOut(this.node, this.signal_objectChanged, [x]);
 				}
+				
+				if (this.pipe_objectChanged) {
+					var pipe = this.pipe_objectChanged;
+					__Compo.pipe(pipe.pipe).emit(pipe.signal);
+				}
 	
 				this.locked = false;
 			},
@@ -767,13 +855,18 @@
 					if (this.signal_domChanged) {
 						signal_emitOut(this.node, this.signal_domChanged, [x]);
 					}
+					
+					if (this.pipe_domChanged) {
+						var pipe = this.pipe_domChanged;
+						__Compo.pipe(pipe.pipe).emit(pipe.signal);
+					}	
 				}
 	
 				this.locked = false;
 			},
 			objectWay: {
 				get: function(provider, expression) {
-					return expression_eval(expression, provider.model, provider.cntx, provider);
+					return expression_eval(expression, provider.model, provider.cntx, provider.controller);
 				},
 				set: function(obj, property, value) {
 					obj_setProperty(obj, property, value);
@@ -807,7 +900,7 @@
 	
 						// if DEBUG
 						if (controller == null || typeof controller[provider.setter] !== 'function') {
-							console.error('Mask.bindings: Getter should be a function', provider.getter, provider);
+							console.error('Mask.bindings: Setter should be a function', provider.setter, provider);
 							return;
 						}
 						// endif
@@ -1262,8 +1355,8 @@
 						this.elements = [];
 					}
 		
-					if (typeof Compo !== 'undefined') {
-						Compo.dispose(this);
+					if (__Compo != null) {
+						__Compo.dispose(this);
 					}
 		
 					dom_insertBefore( //
@@ -1822,4 +1915,4 @@
 	}(mask));
 	
 
-}(Mask));
+}(Mask, Compo));

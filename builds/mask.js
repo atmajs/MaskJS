@@ -22,9 +22,9 @@
 	// import ../src/handlers/sys.js
 	// import ../src/handlers/utils.js
 
-	// import ../src/libs/mask.binding.js
 	// import ../src/libs/compo.js
 	// import ../src/libs/jmask.js
+	// import ../src/libs/mask.binding.js
 
 
 	return Mask;

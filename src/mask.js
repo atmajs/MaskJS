@@ -83,6 +83,19 @@ var cache = {},
 		},
 
 
+		/**
+		 * mask.registerAttrHandler(attrName, Handler) -> void
+		 * - attrName (String): any attribute string name
+		 * - Handler (Function)
+		 *
+		 * Handler Interface, <i>(similar to Utility Interface)</i>
+		 * ``` customAttribute(maskNode, attributeValue, model, cntx, element, controller) ```
+		 *
+		 * You can change do any changes to maskNode's template, current element value,
+		 * controller, model.
+		 *
+		 * Note: Attribute wont be set to an element.
+		 **/
 		registerAttrHandler: function(attrName, Handler){
 			CustomAttributes[attrName] = Handler;
 		},
@@ -91,9 +104,18 @@ var cache = {},
 		 * - utilName (String): name of the utility
 		 * - fn (Function): util handler
 		 *
-		 *	Register Utility Function. Template Example: '~[myUtil:key]'
+		 *	Register Utility Function. Template Example: '~[myUtil: value]'
 		 *		utility interface:
-		 *		<b>function(key, model, type, cntx, element, name){}</b>
+		 *	```
+		 *	function(value, model, type, cntx, element, name);
+		 *	```
+		 *
+		 *	- value (String): string from interpolation part after util definition
+		 *	- model (Object): current Model
+		 *	- type (String): 'attr' or 'node' - tells if interpolation is in TEXTNODE value or Attribute
+		 *	- cntx (Object): Context Object
+		 *	- element (HTMLNode): current html node
+		 *	- name (String): If interpolation is in node attribute, then this will contain attribute name
 		 *
 		 **/
 		registerUtility: function (utilityName, fn) {
@@ -161,13 +183,13 @@ var cache = {},
 		},
 
 		Utils: {
-			/**
-			 * mask.Utils.Condition -> ConditionUtil
-			 *
-			 * [[ConditionUtil]]
-			 **/
 			Condition: ConditionUtil,
-
+			
+			/**
+			 * mask.Util.Expression -> ExpressionUtil
+			 *
+			 * [[ExpressionUtil]]
+			 **/
 			Expression: ExpressionUtil,
 
 			/**
