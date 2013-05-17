@@ -116,5 +116,13 @@ buster.testCase("Expressions", {
 		expression(['enabled?"enabled":"disabled"'], 'enabled', {
 			enabled: true
 		});
+	},
+	
+	'OR': function(){
+		expression(['a || b', '."some-key" || b'], '1', {
+			a: 1,
+			b: 2,
+			'some-key': 1
+		});
 	}
 });
