@@ -10,7 +10,7 @@ function expression_parse(expr) {
 		state = state_body,
 		c, next, directive;
 
-	while (true) {
+	outer: while (true) {
 
 		if (index < length && (c = template.charCodeAt(index)) < 33) {
 			index++;
@@ -23,85 +23,85 @@ function expression_parse(expr) {
 
 		directive = parser_getDirective(c);
 
-		if (directive == null && index < length){
+		if (directive == null && index < length) {
 			break;
 		}
 
-		if (punc_ParantheseOpen === directive) {
-			current = ast_append(current, new Ast_Statement(current));
-			current = ast_append(current, new Ast_Body(current));
+		switch (directive) {
+			case punc_ParantheseOpen:
+				current = ast_append(current, new Ast_Statement(current));
+				current = ast_append(current, new Ast_Body(current));
 
-			index++;
-			continue;
-		}
-
-		if (punc_ParantheseClose === directive) {
-			var closest = type_Body;
-			if (state === state_arguments) {
-				state = state_body;
-				closest = type_FunctionRef;
-			}
-
-			do {
-				current = current.parent;
-			} while (current != null && current.type !== closest);
-
-			if (closest === type_Body){
-				current = current.parent;
-			}
-
-			if (current == null) {
-				_throw('OutOfAst Exception - body closed');
-				break;
-			}
-
-			index++;
-			continue;
-		}
-
-		if (punc_Comma === directive) {
-			if (state !== state_arguments) {
-				_throw('Unexpected punctuation, comma');
-				break;
-			}
-			do {
-				current = current.parent;
-			} while (current != null && current.type !== type_FunctionRef);
-
-			if (current == null) {
-				_throw('OutOfAst Exception - next argument');
-				break;
-			}
-
-			current = current.newArgument();
-
-			index++;
-			continue;
-		}
-
-		if (punc_Question === directive){
-			ast = new Ast_TernaryStatement(ast);
-			current = ast.case1;
-
-			index++;
-			continue;
-		}
-
-		if (punc_Colon === directive){
-			current = ast.case2;
-
-			index++;
-			continue;
-		}
-
-		if (punc_Dot === directive){
-			c = template.charCodeAt(index+1);
-			if (c >= 48 && c <= 57){
-				directive = go_number;
-			}else{
-				directive = go_ref;
 				index++;
-			}
+				continue;
+
+
+			case punc_ParantheseClose:
+				var closest = type_Body;
+				if (state === state_arguments) {
+					state = state_body;
+					closest = type_FunctionRef;
+				}
+
+				do {
+					current = current.parent;
+				} while (current != null && current.type !== closest);
+
+				if (closest === type_Body) {
+					current = current.parent;
+				}
+
+				if (current == null) {
+					_throw('OutOfAst Exception - body closed');
+					break outer;
+				}
+
+				index++;
+				continue;
+
+
+			case punc_Comma:
+				if (state !== state_arguments) {
+					_throw('Unexpected punctuation, comma');
+					break outer;
+				}
+				do {
+					current = current.parent;
+				} while (current != null && current.type !== type_FunctionRef);
+
+				if (current == null) {
+					_throw('OutOfAst Exception - next argument');
+					break outer;
+				}
+
+				current = current.newArgument();
+
+				index++;
+				continue;
+
+			case punc_Question:
+				ast = new Ast_TernaryStatement(ast);
+				current = ast.case1;
+
+				index++;
+				continue;
+
+
+			case punc_Colon:
+				current = ast.case2;
+
+				index++;
+				continue;
+
+
+			case punc_Dot:
+				c = template.charCodeAt(index + 1);
+				if (c >= 48 && c <= 57) {
+					directive = go_number;
+				} else {
+					directive = go_ref;
+					index++;
+				}
 		}
 
 
@@ -115,114 +115,109 @@ function expression_parse(expr) {
 			continue;
 		}
 
-		// @TODO - replace operations with numbers and use > < compare
-		if ( //
-		op_Minus === directive || //
-		op_Plus === directive || //
-		op_Multip === directive || //
-		op_Divide === directive || //
-		op_LogicalAnd === directive || //
-		op_LogicalOr === directive || //
-		op_LogicalEqual === directive || //
-		op_LogicalNotEqual === directive || //
+		switch (directive) {
 
-		op_LogicalGreater === directive || //
-		op_LogicalGreaterEqual === directive || //
-		op_LogicalLess === directive || //
-		op_LogicalLessEqual === directive
+			case op_Minus:
+			case op_Plus:
+			case op_Multip:
+			case op_Divide:
+			case op_Modulo:
 
-		) {
+			case op_LogicalAnd:
+			case op_LogicalOr:
+			case op_LogicalEqual:
+			case op_LogicalNotEqual:
 
-			while(current && current.type !== type_Statement){
-				current = current.parent;
-			}
+			case op_LogicalGreater:
+			case op_LogicalGreaterEqual:
+			case op_LogicalLess:
+			case op_LogicalLessEqual:
 
-			if (current.body == null) {
-				_throw('Unexpected operator', current);
-				break;
-			}
+				while (current && current.type !== type_Statement) {
+					current = current.parent;
+				}
 
-			current.join = directive;
+				if (current.body == null) {
+					_throw('Unexpected operator', current);
+					break outer;
+				}
 
-			do {
-				current = current.parent;
-			} while (current != null && current.type !== type_Body);
+				current.join = directive;
 
-			if (current == null) {
-				console.error('Unexpected parent', current);
-			}
+				do {
+					current = current.parent;
+				} while (current != null && current.type !== type_Body);
+
+				if (current == null) {
+					console.error('Unexpected parent', current);
+				}
 
 
-			index++;
-			continue;
-		}
-
-		if ( //
-		go_string === directive || //
-		go_number === directive //|| //
-		//go_ref === directive
-		) {
-			if (current.body != null && current.join == null) {
-				_throw('Directive Expected');
-				break;
-			}
-		}
-
-		if (go_string === directive) {
-			index++;
-			ast_append(current, new Ast_Value(parser_getString(c)));
-			index++;
-			continue;
-		}
-
-		if (go_number === directive) {
-			ast_append(current, new Ast_Value(parser_getNumber(c)));
-			//index++;
-			continue;
-		}
-
-		if (go_ref === directive) {
-			var ref = parser_getRef();
-
-			while (index < length) {
-				c = template.charCodeAt(index);
-				if (c < 33){
+				index++;
+				continue;
+			case go_string:
+			case go_number:
+				if (current.body != null && current.join == null) {
+					_throw('Directive Expected');
+					break;
+				}
+				if (go_string === directive) {
 					index++;
+					ast_append(current, new Ast_Value(parser_getString(c)));
+					index++;
+
+				}
+
+				if (go_number === directive) {
+					ast_append(current, new Ast_Value(parser_getNumber(c)));
+				}
+
+				continue;
+
+			case go_ref:
+				var ref = parser_getRef();
+
+				while (index < length) {
+					c = template.charCodeAt(index);
+					if (c < 33) {
+						index++;
+						continue;
+					}
+					break;
+				}
+
+				if (c === 40) {
+
+					// (
+					// function ref
+					state = state_arguments;
+					index++;
+
+					var fn = ast_append(current, new Ast_FunctionRef(current, ref));
+
+					current = fn.newArgument();
 					continue;
 				}
+
+				if (c === 110 && ref === 'null') {
+					ref = null;
+				}
+
+				if (c === 102 && ref === 'false') {
+					ref = false;
+				}
+
+				if (c === 116 && ref === 'true') {
+					ref = true;
+				}
+
+				current = ast_append(current, typeof ref === 'string' ? new Ast_SymbolRef(current, ref) : new Ast_Value(ref));
+				
 				break;
-			}
-
-			if (c === 40) {
-
-				// (
-				// function ref
-				state = state_arguments;
-				index++;
-
-				var fn = ast_append(current, new Ast_FunctionRef(current, ref));
-
-				current = fn.newArgument();
-				continue;
-			}
-
-			if (c === 110 && ref === 'null'){
-				ref = null;
-			}
-
-			if (c === 102 && ref === 'false'){
-				ref = false;
-			}
-
-			if (c === 116 && ref === 'true'){
-				ref = true;
-			}
-
-			current = ast_append(current, typeof ref === 'string' ? new Ast_SymbolRef(current, ref) : new Ast_Value(ref));
 		}
 	}
 
-	if (current.body == null && current.type === type_Statement){
+	if (current.body == null && current.type === type_Statement) {
 		_throw('Unexpected end of expression');
 	}
 

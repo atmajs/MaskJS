@@ -62,7 +62,7 @@ function parser_getRef() {
 		c = template.charCodeAt(index),
 		ref;
 
-	if (c === 34 || c === 39){
+	if (c === 34 || c === 39) {
 		index++;
 		ref = parser_getString(c);
 		index++;
@@ -75,15 +75,15 @@ function parser_getRef() {
 		if (
 			c > 47 && // ()+-*,/
 
-			c !== 58 && // :
-			c !== 60 && // <
-			c !== 61 && // =
-			c !== 62 && // >
-			c !== 63 && // ?
+		c !== 58 && // :
+		c !== 60 && // <
+		c !== 61 && // =
+		c !== 62 && // >
+		c !== 63 && // ?
 
-			c !== 124 && // |
+		c !== 124 && // |
 
-			index < length) {
+		index < length) {
 
 			index++;
 			continue;
@@ -100,94 +100,92 @@ function parser_getDirective(code) {
 		return null;
 	}
 
-	if (code === 40) {
-		// )
-		return punc_ParantheseOpen;
-	}
-	if (code === 41) {
-		// )
-		return punc_ParantheseClose;
-	}
-	if (code === 44) {
-		// ,
-		return punc_Comma;
-	}
+	switch (code) {
+		case 40:
+			// )
+			return punc_ParantheseOpen;
+		case 41:
+			// )
+			return punc_ParantheseClose;
+		case 44:
+			// ,
+			return punc_Comma;
+		case 46:
+			// .
+			return punc_Dot;
+		case 43:
+			// +
+			return op_Plus;
+		case 45:
+			// -
+			return op_Minus;
+		case 42:
+			// *
+			return op_Multip;
+		case 47:
+			// /
+			return op_Divide;
+		case 37:
+			// %
+			return op_Modulo;
 
-	if (code === 46) {
-		// .
-		return punc_Dot;
-	}
-
-	if (code === 43) {
-		// +
-		return op_Plus;
-	}
-	if (code === 45) {
-		// -
-		return op_Minus;
-	}
-	if (code === 42) {
-		// *
-		return op_Multip;
-	}
-	if (code === 47) {
-		// /
-		return op_Divide;
-	}
-
-	if (code === 61) {
-		// =
-		if (template.charCodeAt(++index) !== code) {
-			_throw('Not supported (Apply directive)');
-			return null;
-		}
-		return op_LogicalEqual;
-	}
-
-	if (code === 33) {
-		// !
-		if (template.charCodeAt(index + 1) === 61) {
+		case 61:
 			// =
-			index++;
-			return op_LogicalNotEqual;
-		}
-		return op_LogicalNot;
-	}
+			if (template.charCodeAt(++index) !== code) {
+				_throw('Not supported (Apply directive) - view can only access model/controllers');
+				return null;
+			}
+			return op_LogicalEqual;
 
-	if (code === 62){
-		// >
-		if (template.charCodeAt(index + 1) === 61){
-			index++;
-			return op_LogicalGreaterEqual;
-		}
-		return op_LogicalGreater;
-	}
+		case 33:
+			// !
+			if (template.charCodeAt(index + 1) === 61) {
+				// =
+				index++;
+				return op_LogicalNotEqual;
+			}
+			return op_LogicalNot;
 
-	if (code === 60){
-		// <
-		if (template.charCodeAt(index + 1) === 61){
-			index++;
-			return op_LogicalLessEqual;
-		}
-		return op_LogicalLess;
-	}
+		case 62:
+			// >
+			if (template.charCodeAt(index + 1) === 61) {
+				index++;
+				return op_LogicalGreaterEqual;
+			}
+			return op_LogicalGreater;
 
-	if (code === 38){
-		// &
-		if (template.charCodeAt(++index) !== code){
-			_throw('Single Binary Operator AND');
-			return null;
-		}
-		return op_LogicalAnd;
-	}
+		case 60:
+			// <
+			if (template.charCodeAt(index + 1) === 61) {
+				index++;
+				return op_LogicalLessEqual;
+			}
+			return op_LogicalLess;
 
-	if (code === 124){
-		// |
-		if (template.charCodeAt(++index) !== code){
-			_throw('Single Binary Operator OR');
-			return null;
-		}
-		return op_LogicalOr;
+		case 38:
+			// &
+			if (template.charCodeAt(++index) !== code) {
+				_throw('Single Binary Operator AND');
+				return null;
+			}
+			return op_LogicalAnd;
+
+		case 124:
+			// |
+			if (template.charCodeAt(++index) !== code) {
+				_throw('Single Binary Operator OR');
+				return null;
+			}
+			return op_LogicalOr;
+		
+		case 63:
+			// ?
+			return punc_Question;
+
+		case 58:
+			// :
+			return punc_Colon;
+
 	}
 
 	if (code >= 65 && code <= 90 || code >= 97 && code <= 122 || code === 95 || code === 36) {
@@ -203,16 +201,6 @@ function parser_getDirective(code) {
 	if (code === 34 || code === 39) {
 		// " '
 		return go_string;
-	}
-
-	if (code === 63){
-		// "
-		return punc_Question;
-	}
-
-	if (code === 58){
-		// :
-		return punc_Colon;
 	}
 
 	_throw('Unexpected / Unsupported directive');

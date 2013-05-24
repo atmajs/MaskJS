@@ -68,6 +68,9 @@ function expression_evaluate(mix, model, cntx, controller) {
 			case op_Multip:
 				result *= value;
 				break;
+			case op_Modulo:
+				result %= value;
+				break;
 			case op_LogicalNotEqual:
 				result = result != value;
 				break;
