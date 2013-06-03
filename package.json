@@ -23,7 +23,7 @@
 	],
 	"dependencies": {},
 	"devDependencies": {
-		"includejs": "~0.9.26",
+		"includejs": "~0.9.26"
 	},
 	"scripts" : {
         "test" : "node_modules/.bin/includejs test"
