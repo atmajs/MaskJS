@@ -1,7 +1,25 @@
-var render = mask.render.bind(mask),
+var render = function(template, model){
+		var html = mask.render(template, model),
+			div = document.createElement('div'),
+			frag = document.createDocumentFragment();
+
+		div.innerHTML = html;
+
+		if (div.childNodes.length === 1){
+			return div.firstChild;
+		}
+		var element = div.firstChild;
+		while(element){
+			frag.appendChild(element);
+			element = element.nextSibling;
+		}
+
+		return frag;
+
+	},
 	template, node, attr;
 
-buster.testCase("Render", {
+UTest({
 	'className is "test"': function() {
 		var dom = render('div > div.test');
 
@@ -16,7 +34,7 @@ buster.testCase("Render", {
 		});
 
 		assert(div != null, 'DIV not rendered');
-		assert(div.tagName === 'DIV', 'right DIV not redered');
+		assert(div.tagName === 'DIV', 'right DIV not rendered');
 
 
 		assert(div.getAttribute('id') == 'ID', 'id is not ID');

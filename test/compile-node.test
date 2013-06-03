@@ -1,15 +1,15 @@
-var buster = require('buster'),
-	mask = require('../lib/mask.node.js'),
-	compile = mask.compile,
+
+	
+	
+var compile = mask.compile,
 	dom, node, attr;
 
-
-buster.testCase('Compile: ', {
+UTest({
 	'is a function': function() {
-		assert.equals(typeof compile, 'function');
+		assert.equal(typeof compile, 'function');
 	},
 	'tagName is div': function() {
-		assert.equals(compile('div;').tagName, 'div');
+		assert.equal(compile('div;').tagName, 'div');
 	},
 	'single variations': function() {
 		testSingle([ //
@@ -17,7 +17,7 @@ buster.testCase('Compile: ', {
 		'.myklass;', //
 		'\r.myklass;;;' //
 		], function(node) {
-			assert(node.attr.class === 'myklass', '!= myklass');
+			assert.equal(node.attr.class, 'myklass', '!= myklass');
 		});
 
 
@@ -110,16 +110,16 @@ buster.testCase('Compile: ', {
 	'right attributes (quoteless)': function(){
 		var attr = compile("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
 
-		assert.equals(attr.width, '10');
-		assert.equals(attr.height, '20');
-		assert.equals(attr.id, '30');
-		assert.equals(attr.key, 'key');
-		assert.equals(attr.otherkey, 'otherkey');
-		assert.equals(attr.p, 'tryam');
+		assert.equal(attr.width, '10');
+		assert.equal(attr.height, '20');
+		assert.equal(attr.id, '30');
+		assert.equal(attr.key, 'key');
+		assert.equal(attr.otherkey, 'otherkey');
+		assert.equal(attr.p, 'tryam');
 
 		attr = compile("div dr = drrrr sh = shrrrr").attr;
-		assert.equals(attr.dr, 'drrrr');
-		assert.equals(attr.sh, 'shrrrr');
+		assert.equal(attr.dr, 'drrrr');
+		assert.equal(attr.sh, 'shrrrr');
 	},
 	'has literal': function() {
 		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
@@ -139,14 +139,14 @@ buster.testCase('Compile: ', {
 			combined += x.content;
 		}
 
-		assert.equals(combined, '12345', 'Combined Text Failed:' + combined);
+		assert.equal(combined, '12345', 'Combined Text Failed:' + combined);
 
 
 		dom = compile("''| I'm unescaped block '' ... |''");
-		assert.equals(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
+		assert.equal(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
 
 		dom = compile("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
-		assert.equals(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
+		assert.equal(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
 	},
 
 	'valid model templating': function() {
@@ -185,6 +185,8 @@ function testSingle(template, fn) {
 
 function testMultiple(template, fn) {
 	for (var i = 0, length = template.length; i < length; i++) {
+		
 		fn(compile(template[i]).nodes, i);
 	}
 }
+

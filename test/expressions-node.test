@@ -1,6 +1,4 @@
-var buster = require('buster'),
-	mask = require('../lib/mask.node.js'),
-	Expression = mask.Utils.Expression,
+var Expression = mask.Utils.Expression,
 	$eval = mask.Utils.Expression.eval,
 	template, node, attr;
 
@@ -17,10 +15,11 @@ function expression(expr, result, model, cntx, controller) {
 	var ast = Expression.parse(expr),
 		value = Expression.eval(ast, model, cntx, controller);
 
-	assert.equals(value, result, 'Unexpected Result (' + expr + ')');
+	assert.equal(value, result, 'Unexpected Result (' + expr + ')');
 }
 
-buster.testCase("Expressions", {
+
+UTest({
 	'concat': function() {
 		expression([ //
 		'5+"hello"', //

@@ -1,13 +1,11 @@
-var buster = require('buster'),
-	mask = require('../lib/mask.node.js'),
-	isCondition = mask.Utils.Condition.isCondition,
+var isCondition = mask.Utils.Condition.isCondition,
 	condition = mask.Utils.Condition.condition,
 	template, node, attr;
 
 	isCondition = mask.Utils.Expression.eval;
 	condition = mask.Utils.Expression.eval;
 
-buster.testCase("Value Utils", {
+UTest({
 	'isCondition by strings': function() {
 		assert(isCondition("'Alex'=='Alex'", {}));
 	},
