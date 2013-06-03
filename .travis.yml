@@ -3,8 +3,9 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - sleep 5
   - node_modules/.bin/includejs &
+  - node_modules/.bin/includejs server &
   - sleep 5
-  - firefox http://localhost:1111/capture &
+  - firefox http://localhost:5777/utest/ &
   - sleep 5
  
 script:
