@@ -21,7 +21,7 @@
             return lib;
         };
 
-    if (typeof exports === 'object') {
+    if (typeof module !== 'undefined') {
         module.exports = construct();
     } else if (typeof define === 'function' && define.amd) {
         define(construct);
