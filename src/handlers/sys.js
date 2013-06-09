@@ -92,7 +92,7 @@
 		compo.template = nodes;
 		compo.container = container;
 
-		if (array instanceof Array === false){
+		if (array == null || typeof array !== 'object' || array.length == null){
 			return;
 		}
 
