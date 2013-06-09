@@ -6,7 +6,7 @@ var Compo = exports.Compo = (function(mask){
 		Dom = mask.Dom,
 		__array_slice = Array.prototype.slice;
 	
-	if (!domLib){
+	if (document != null && domLib == null){
 		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
 	}
 	

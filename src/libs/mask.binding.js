@@ -76,7 +76,7 @@
 			observers[property].push(callback);
 	
 			var value = obj_getProperty(obj, property);
-			if (value instanceof Array) {
+			if (arr_isArray(value)) {
 				arr_addObserver(value, callback);
 			}
 	
@@ -90,7 +90,7 @@
 			key = chain[length - 1],
 			currentValue = parent[key];
 	
-		if (parent instanceof Array) {
+		if (key === 'length' && arr_isArray(parent)) {
 			// we cannot redefine array properties like 'length'
 			arr_addObserver(parent, callback);
 			return;
@@ -107,7 +107,7 @@
 				}
 				currentValue = x;
 	
-				if (x instanceof Array) {
+				if (arr_isArray(x)) {
 					arr_addObserver(x, callback);
 				}
 	
@@ -122,14 +122,14 @@
 			}
 		});
 	
-		if (currentValue instanceof Array) {
+		if (arr_isArray(currentValue)) {
 			arr_addObserver(currentValue, callback);
 		}
 	}
 	
 	
 	function obj_lockObservers(obj) {
-		if (obj instanceof Array) {
+		if (arr_isArray(obj)) {
 			arr_lockObservers(obj);
 			return;
 		}
@@ -141,7 +141,7 @@
 	}
 	
 	function obj_unlockObservers(obj) {
-		if (obj instanceof Array) {
+		if (arr_isArray(obj)) {
 			arr_unlockObservers(obj);
 			return;
 		}
@@ -180,7 +180,7 @@
 	
 		arr_remove(obj.__observers[property], callback);
 	
-		if (currentValue instanceof Array) {
+		if (arr_isArray(currentValue)) {
 			arr_removeObserver(currentValue, callback);
 		}
 	
@@ -200,6 +200,11 @@
 	}
 	
 	// source ../src/util/array.js
+	
+	function arr_isArray(x) {
+		return x != null && typeof x === 'object' && x.length != null && typeof x.splice === 'function';
+	}
+	
 	function arr_remove(array /*, .. */ ) {
 		if (array == null) {
 			return false;
