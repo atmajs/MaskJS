@@ -1,5 +1,6 @@
 var Expression = mask.Utils.Expression,
-	$eval = mask.Utils.Expression.eval,
+	$eval = Expression.eval,
+	$refs = Expression.varRefs,
 	template, node, attr;
 
 
@@ -30,9 +31,9 @@ UTest({
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
 		"5 + fn2()", //
-		"5 + hello", //
-		"1 + 2*2 + hello"], '5hello', {
-			hello: "hello",
+		"5 + var_", //
+		"1 + 2*2 + var_"], '5hello', {
+			var_: "hello",
 			fn: function() {
 				return "hello";
 			}
@@ -113,8 +114,15 @@ UTest({
 		})
 	},
 	'ternary': function() {
-		expression(['enabled?"enabled":"disabled"'], 'enabled', {
-			enabled: true
+		expression([
+		'enabled?"enabled":"0"',
+		' enabled ? "ena" + "bled" : 0',
+		' 1 ? "enabled" : 0',
+		' !((0 + 1) * 2 - 2) ? "enabled" : 0',
+		' 2 ? var_ : 0',
+		], 'enabled', {
+			enabled: true,
+			var_: 'enabled'
 		});
 	},
 	
@@ -124,5 +132,36 @@ UTest({
 			b: 2,
 			'some-key': 1
 		});
+	},
+	
+	'extractVars': function(){
+		eq($refs('x'),'x');
+		deepEq($refs('x + fn(a.b.c)'),['x','a.b.c']);
+		deepEq($refs('(var * var2 / (1 - same)) + object.fn(a.b.c)'),['var','var2', 'same','a.b.c','object']);
+		
+		
+		var obj = {
+			fn: function(){
+				return {
+					model: 'yeap'
+				};
+			}
+		},
+		refs;
+		
+		obj.prop = obj;
+		
+		refs = $refs('fn().model');
+		eq(refs.ref, 'model');
+		deepEq($eval(refs.accessor, obj), {model: 'yeap'});
+		
+		refs = $refs('x + prop.fn().model');
+		
+		eq(refs[0], 'x');
+		eq(refs[1], 'prop');
+		eq(refs[2].ref, 'model');
+		deepEq($eval(refs[2].accessor, obj), {model: 'yeap'});
+		
+		
 	}
 });

@@ -529,7 +529,8 @@
 	
 	function expression_bind(expr, model, cntx, controller, callback) {
 		var ast = expression_parse(expr),
-			vars = expression_varRefs(ast);
+			vars = expression_varRefs(ast),
+			x, ref;
 	
 		if (vars == null) {
 			return;
@@ -540,8 +541,20 @@
 			return;
 		}
 	
+		
 		for (var i = 0, length = vars.length; i < length; i++) {
-			obj_addObserver(model, vars[i], callback);
+			x = model;
+			ref = vars[i];
+			if (typeof ref === 'object') {
+				
+				x = expression_eval_origin(ref.accessor, model, cntx, controller);
+				console.log('x>>', x);
+				ref = ref.ref;
+				
+				console.log(ref, x);
+			}
+			
+			obj_addObserver(x, ref, callback);
 		}
 	
 		return;
