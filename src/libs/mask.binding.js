@@ -530,7 +530,7 @@
 	function expression_bind(expr, model, cntx, controller, callback) {
 		var ast = expression_parse(expr),
 			vars = expression_varRefs(ast),
-			x, ref;
+			obj, ref;
 	
 		if (vars == null) {
 			return;
@@ -541,20 +541,32 @@
 			return;
 		}
 	
+		var isArray = vars.length != null && typeof vars.splice === 'function',
+			imax = isArray === true ? vars.length : 1,
+			i = 0,
+			x;
 		
-		for (var i = 0, length = vars.length; i < length; i++) {
-			x = model;
-			ref = vars[i];
-			if (typeof ref === 'object') {
-				
-				x = expression_eval_origin(ref.accessor, model, cntx, controller);
-				console.log('x>>', x);
-				ref = ref.ref;
-				
-				console.log(ref, x);
+		for (; i < imax; i++) {
+			x = isArray ? vars[i] : vars;
+			if (x == null) {
+				continue;
 			}
 			
-			obj_addObserver(x, ref, callback);
+			obj = model;
+			
+			if (typeof x === 'object') {
+				
+				obj = expression_eval_origin(x.accessor, model, cntx, controller);
+				
+				if (obj == null || typeof obj !== 'object') {
+					console.error('Binding failed to an object over accessor', x);
+					continue;
+				}
+				
+				x = x.ref;
+			}
+			
+			obj_addObserver(obj, x, callback);
 		}
 	
 		return;
@@ -562,7 +574,8 @@
 	
 	function expression_unbind(expr, model, callback) {
 		var ast = expression_parse(expr),
-			vars = expression_varRefs(ast);
+			vars = expression_varRefs(ast),
+			x, ref;
 	
 		if (vars == null) {
 			return;
@@ -573,7 +586,6 @@
 			obj_removeObserver(model, vars, callback);
 			return;
 		}
-	
 	
 		for (var i = 0, length = vars.length; i < length; i++) {
 			obj_removeObserver(model, vars[i], callback);

@@ -9,14 +9,22 @@ var refs_extractVars = (function() {
 	 */
 
 
-	return function _extractVars(expr) {
+	return function(expr){
+		if (typeof expr === 'string') {
+			expr = expression_parse(expr);
+		}
+		
+		return _extractVars(expr);
+		
+		
+	};
+	
+	
+	
+	function _extractVars(expr) {
 
 		if (expr == null) {
 			return null;
-		}
-
-		if (typeof expr === 'string') {
-			expr = expression_parse(expr);
 		}
 
 		var refs, x;
@@ -60,6 +68,7 @@ var refs_extractVars = (function() {
 				break;
 		}
 		
+		// get also from case1 and case2
 		if (type_Ternary === expr.type) {
 			x = _extractVars(ast.case1);
 			refs = _append(refs, x);
@@ -90,6 +99,7 @@ var refs_extractVars = (function() {
 						break outer;
 				}
 			}
+			
 			if (x != null) {
 				refs = _append(refs, x);
 			}
@@ -101,7 +111,7 @@ var refs_extractVars = (function() {
 		}
 
 		return refs;
-	};
+	}
 	
 	function _append(current, x) {
 		if (current == null) {
@@ -117,11 +127,21 @@ var refs_extractVars = (function() {
 		}
 
 		if (!(typeof x === 'object' && x.length != null)) {
-			current.push(x);
+			
+			if (current.indexOf(x) === -1) {
+				current.push(x);
+			}
+			
 			return current;
 		}
-
-		return current.concat(x);
+		
+		for (var i = 0, imax = x.length; i < imax; i++) {
+			if (current.indexOf(x[i]) === -1) {
+				current.push(x[i]);
+			}
+		}
+		
+		return current;
 
 	}
 	

@@ -1,6 +1,6 @@
 (function(){
 
-	if (typeof String.prototype.trim === 'undefined'){
+	if (String.prototype.trim == null){
 
 		String.prototype.trim = function(){
 			var start = -1,
@@ -29,7 +29,7 @@
 
 	}
 
-	if (typeof Function.prototype.bind === 'undefined') {
+	if (Function.prototype.bind == null) {
 		Function.prototype.bind = function(){
 			Function.prototype.bind = function() {
 				if (arguments.length < 2 && typeof arguments[0] === "undefined") {
@@ -42,6 +42,19 @@
 					return __method.apply(object, args.concat(Array.prototype.slice.call(arguments)));
 				};
 			};
+		};
+	}
+	
+	if (Array.prototype.indexOf == null) {
+		Array.prototype.indexOf = function(x){
+			for (var i = 0, imax = this.length; i < imax; i++){
+				
+				if (this[i] == x){
+					return i;
+				}
+				
+			}
+			return -1;
 		};
 	}
 
