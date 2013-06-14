@@ -60,7 +60,34 @@
 		obj[chain[i]] = value;
 	}
 	
+	/*
+	 * @TODO refactor - add observer to direct parent with path tracking
+	 *
+	 * "a.b.c.d" (add observer to "c" on "d" property change)
+	 * track if needed also "b" and "a"
+	 */ 
+	
 	function obj_addObserver(obj, property, callback) {
+		
+		// closest observer
+		var parts = property.split('.'),
+			imax  = parts.length,
+			i = 0, at = 0, x = obj;
+		while (imax--) {
+			x = x[parts[i++]];
+			if (x == null) {
+				break;
+			}
+			if (x.__observers != null) {
+				at = i;
+				obj = x;
+			}
+		}
+		if (at > 0) {
+			property = parts.slice(at).join('.');
+		}
+		
+		
 		if (obj.__observers == null) {
 			Object.defineProperty(obj, '__observers', {
 				value: {
@@ -116,7 +143,7 @@
 					return;
 				}
 	
-				for (var i = 0, length = callbacks.length; i < length; i++) {
+				for (var i = 0, imax = callbacks.length; i < imax; i++) {
 					callbacks[i](x);
 				}
 			}
@@ -166,7 +193,22 @@
 	
 	
 	function obj_removeObserver(obj, property, callback) {
-	
+		// nested observer
+		var parts = property.split('.'),
+			imax  = parts.length,
+			i = 0, x = obj;
+		while (imax--) {
+			x = x[parts[i++]];
+			if (x == null) {
+				break;
+			}
+			if (x.__observers != null) {
+				obj_removeObserver(obj, parts.slice(i).join('.'), callback);
+				break;
+			}
+		}
+		
+		
 		if (obj.__observers == null || obj.__observers[property] == null) {
 			return;
 		}
@@ -199,6 +241,21 @@
 		return obj;
 	}
 	
+	
+	function obj_isDefined(obj, path) {
+		var parts = path.split('.'),
+			imax = parts.length,
+			i = 0;
+		
+		while (imax--) {
+			
+			if ((obj = obj[parts[i++]]) == null) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 	// source ../src/util/array.js
 	
 	function arr_isArray(x) {
@@ -537,7 +594,20 @@
 		}
 	
 		if (typeof vars === 'string') {
-			obj_addObserver(model, vars, callback);
+			
+			if (obj_isDefined(model, vars)) {
+				obj = model;
+			}
+			
+			if (obj == null && obj_isDefined(controller, vars)) {
+				obj = controller;
+			}
+			
+			if (obj == null) {
+				obj = model;
+			}
+			
+			obj_addObserver(obj, vars, callback);
 			return;
 		}
 	
@@ -552,7 +622,6 @@
 				continue;
 			}
 			
-			obj = model;
 			
 			if (typeof x === 'object') {
 				
@@ -564,6 +633,15 @@
 				}
 				
 				x = x.ref;
+			} else if (obj_isDefined(model, x)) {
+				
+				obj = model;
+			} else if (obj_isDefined(controller, x)) {
+				
+				obj = controller;
+			} else {
+				
+				obj = model;
 			}
 			
 			obj_addObserver(obj, x, callback);
