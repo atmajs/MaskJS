@@ -50,16 +50,16 @@
  Performance Tests
  <ul>
 	<li> Mask vs HTML Template Engines
-		<a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>:link</a>
+		<a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>:jsperf</a>
 		</li>
 	<li> Mask AST vs JSON parse
-		<a href='http://jsperf.com/maskjs-vs-json/10'>:link</a>
+		<a href='http://jsperf.com/maskjs-vs-json/10'>:jsperf</a>
 		</li>
 	<li> Mask Markup vs HTML
-		<a href='http://jsperf.com/mask-vs-contextual-fragment/5'>:link</a>
+		<a href='http://jsperf.com/mask-vs-contextual-fragment/5'>:jsperf</a>
 		</li>
 	<li> Mask vs Angular
-		<a href='http://jsperf.com/mask-vs-angular/4'>:link</a>
+		<a href='http://jsperf.com/mask-vs-angular/6'>:jsperf</a>
 		</li>
  </ul>
  

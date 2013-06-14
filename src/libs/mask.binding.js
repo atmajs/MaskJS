@@ -712,6 +712,9 @@
 					case 'TEXTAREA':
 						this.property = 'element.value';
 						break;
+					case 'SELECT':
+						this.domWay = DomWaysProto.SELECT;
+						break;
 					default:
 						this.property = 'element.innerHTML';
 						break;
@@ -938,6 +941,33 @@
 						controller[provider.setter](value);
 					} else {
 						obj_setProperty(provider, provider.property, value);
+					}
+	
+				}
+			}
+		};
+		
+		var DomWaysProto = {
+			SELECT: {
+				get: function(provider) {
+					var element = provider.element;
+					
+					if (element.selectedIndex === -1) {
+						return '';
+					}
+					
+					return element.options[element.selectedIndex].getAttribute('name');
+				},
+				set: function(provider, value) {
+					var element = provider.element;
+					
+					for (var i = 0, x, imax = element.options.length; i < imax; i++){
+						x = element.options[i];
+						
+						if (x.getAttribute('name') === value) {
+							element.selectedIndex = i;
+							return;
+						}
 					}
 	
 				}
