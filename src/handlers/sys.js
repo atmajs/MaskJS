@@ -83,7 +83,8 @@
 			Compo.ensureTemplate(compo);
 		}
 
-		var array = util_getProperty(model, compo.attr.foreach || compo.attr.each),
+		var prop = compo.attr.foreach || compo.attr.each,
+			array = util_getProperty(model, prop),
 			nodes = compo.nodes,
 			item = null,
 			indexAttr = compo.attr.index || 'index';
@@ -91,8 +92,19 @@
 		compo.nodes = [];
 		compo.template = nodes;
 		compo.container = container;
+		
+		if (array == null) {
+			var parent = compo;
+			while (parent != null && array == null) {
+				array = util_getProperty(parent, prop);
+				parent = parent.parent;
+			}
+		}
 
 		if (array == null || typeof array !== 'object' || array.length == null){
+			// if DEBUG
+			console.warn('List Model not exists', prop);
+			// endif
 			return;
 		}
 

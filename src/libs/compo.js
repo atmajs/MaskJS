@@ -37,6 +37,14 @@ var Compo = exports.Compo = (function(mask){
 		return copy;
 	}
 	
+	// source ../src/util/function.js
+	function fn_proxy(fn, context) {
+		
+		return function(){
+			return fn.apply(context, arguments);
+		};
+		
+	}
 	// source ../src/util/selector.js
 	function selector_parse(selector, type, direction) {
 		if (selector == null){
@@ -263,7 +271,7 @@ var Compo = exports.Compo = (function(mask){
 						type = EventDecorator(type);
 					}
 	
-					domLib_on($element, type, selector, fn.bind(component));
+					domLib_on($element, type, selector, fn_proxy(fn, component));
 				}
 			}
 		}
@@ -1011,6 +1019,25 @@ var Compo = exports.Compo = (function(mask){
 			remove: function() {
 				if (this.$ != null){
 					this.$.remove();
+					
+					var parents = this.parent && this.parent.elements;
+					if (parents != null) {
+						for (var i = 0, x, imax = parents.length; i < imax; i++){
+							x = parents[i];
+							
+							for (var j = 0, jmax = this.$.length; j < jmax; j++){
+								if (x === this.$[j]){
+									parents.splice(i, 1);
+									
+									i--;
+									imax--;
+								}
+								
+							}
+							
+						}
+					}
+		
 					this.$ = null;
 				}
 	
@@ -1027,7 +1054,7 @@ var Compo = exports.Compo = (function(mask){
 	
 					components.splice(i, 1);
 				}
-	
+				
 				return this;
 			},
 	
@@ -1104,12 +1131,16 @@ var Compo = exports.Compo = (function(mask){
 	
 		// @param sender - event if sent from DOM Event or CONTROLLER instance
 		function _fire(controller, slot, sender, args, direction) {
-	
+			
 			if (controller == null) {
-				return;
+				return false;
 			}
+			
+			var found = false;
 	
 			if (controller.slots != null && typeof controller.slots[slot] === 'function') {
+				found = true;
+				
 				var fn = controller.slots[slot],
 					isDisabled = controller.slots.__disabled != null && controller.slots.__disabled[slot];
 	
@@ -1118,20 +1149,28 @@ var Compo = exports.Compo = (function(mask){
 					var result = args == null ? fn.call(controller, sender) : fn.apply(controller, [sender].concat(args));
 	
 					if (result === false) {
-						return;
+						return true;
 					}
 				}
 			}
 	
 			if (direction === -1 && controller.parent != null) {
-				_fire(controller.parent, slot, sender, args, direction);
+				return _fire(controller.parent, slot, sender, args, direction) || found;
 			}
 	
 			if (direction === 1 && controller.components != null) {
-				for (var i = 0, length = controller.components.length; i < length; i++) {
-					_fire(controller.components[i], slot, sender, args, direction);
+				var compos = controller.components,
+					imax = compos.length,
+					i = 0,
+					r;
+				for (; i < imax; i++) {
+					r = _fire(compos[i], slot, sender, args, direction);
+					
+					!found && (found = r);
 				}
 			}
+			
+			return found;
 		}
 	
 		function _hasSlot(controller, slot, direction, isActive) {
@@ -1262,7 +1301,12 @@ var Compo = exports.Compo = (function(mask){
 	
 				// to parent
 				emitOut: function(controller, slot, sender, args) {
-					_fire(controller, slot, sender, args, -1);
+					var captured = _fire(controller, slot, sender, args, -1);
+					
+					// if DEBUG
+					!captured && console.warn('Signal %c%s','font-weight:bold;', slot, 'was not captured');
+					// endif
+					
 				},
 				// to children
 				emitIn: function(controller, slot, sender, args) {

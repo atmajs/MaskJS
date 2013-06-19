@@ -215,7 +215,7 @@
 	
 		var currentValue = obj_getProperty(obj, property);
 		if (arguments.length === 2) {
-			obj_setProperty(obj, property, currentValue);
+			//-?-obj_setProperty(obj, property, currentValue);
 			delete obj.__observers[property];
 			return;
 		}
@@ -296,12 +296,17 @@
 		if (arr.__observers == null) {
 			Object.defineProperty(arr, '__observers', {
 				value: {
-					length: 0
+					__dirty: null
 				},
 				enumerable: false
 			});
 		}
-	
+		
+		var observers = arr.__observers.__array;
+		if (observers == null) {
+			observers = arr.__observers.__array = [];
+		}
+		
 		var i = 0,
 			fns = ['push', 'unshift', 'splice', 'pop', 'shift', 'reverse', 'sort'],
 			length = fns.length,
@@ -312,22 +317,22 @@
 			arr[method] = _array_createWrapper(arr, arr[method], method);
 		}
 	
-		var observers = arr.__observers;
 		observers[observers.length++] = callback;
 	}
 	
 	function arr_removeObserver(arr, callback) {
-		var obs = arr.__observers;
+		var obs = arr.__observers && arr.__observers.__array;
 		if (obs != null) {
-			for (var i = 0, imax = arr.length; i < imax; i++) {
-				if (arr[i] === callback) {
-					imax--;
-					arr.length--;
-					arr[i] = null;
+			for (var i = 0, imax = obs.length; i < imax; i++) {
+				if (obs[i] === callback) {
+					obs[i] = null;
 	
 					for (var j = i; j < imax; j++) {
-						arr[j] = arr[j + 1];
+						obs[j] = obs[j + 1];
 					}
+					
+					imax--;
+					obs.length--;
 				}
 			}
 		}
@@ -340,29 +345,31 @@
 	}
 	
 	function arr_unlockObservers(arr) {
-		var obs = arr.__observers;
+		var list = arr.__observers,
+			obs = list && list.__array;
+			
 		if (obs != null) {
-			if (obs.__dirty === true) {
+			if (list.__dirty === true) {
 				for (var i = 0, x, imax = obs.length; i < imax; i++) {
 					x = obs[i];
 					if (typeof x === 'function') {
 						x(arr);
 					}
 				}
-				obs.__dirty = null;
+				list.__dirty = null;
 			}
 		}
 	}
 	
 	function _array_createWrapper(array, originalFn, overridenFn) {
 		return function() {
-			_array_methodWrapper(array, originalFn, overridenFn, __array_slice.call(arguments));
+			return _array_methodWrapper(array, originalFn, overridenFn, __array_slice.call(arguments));
 		};
 	}
 	
 	
 	function _array_methodWrapper(array, original, method, args) {
-		var callbacks = array.__observers,
+		var callbacks = array.__observers && array.__observers.__array,
 			result = original.apply(array, args);
 	
 	
@@ -370,8 +377,8 @@
 			return result;
 		}
 	
-		if (callbacks.__dirty != null) {
-			callbacks.__dirty = true;
+		if (array.__observers.__dirty != null) {
+			array.__observers.__dirty = true;
 			return result;
 		}
 	
@@ -576,6 +583,11 @@
 	var Expression = mask.Utils.Expression,
 		expression_eval_origin = Expression.eval,
 		expression_eval = function(expr, model, cntx, controller){
+			
+			if (expr === '.') {
+				return model;
+			}
+			
 			var value = expression_eval_origin(expr, model, cntx, controller);
 	
 			return value == null ? '' : value;
@@ -585,6 +597,16 @@
 	
 	
 	function expression_bind(expr, model, cntx, controller, callback) {
+		
+		if (expr === '.') {
+			
+			if (arr_isArray(model)) {
+				arr_addObserver(model, callback);
+			}
+			
+			return;
+		}
+		
 		var ast = expression_parse(expr),
 			vars = expression_varRefs(ast),
 			obj, ref;
@@ -651,21 +673,19 @@
 	}
 	
 	function expression_unbind(expr, model, callback) {
-		var ast = expression_parse(expr),
-			vars = expression_varRefs(ast),
+		var vars = expression_varRefs(expr),
 			x, ref;
 	
 		if (vars == null) {
 			return;
 		}
-	
-	
+		
 		if (typeof vars === 'string') {
 			obj_removeObserver(model, vars, callback);
 			return;
 		}
 	
-		for (var i = 0, length = vars.length; i < length; i++) {
+		for (var i = 0, imax = vars.length; i < imax; i++) {
 			obj_removeObserver(model, vars[i], callback);
 		}
 	}
@@ -681,7 +701,19 @@
 				console.warn('Concurent binder detected', expr);
 				return;
 			}
-			callback(expression_eval(expr, model, cntx, controller));
+			
+			var value = expression_eval(expr, model, cntx, controller);
+			if (arguments.length > 1) {
+				var args = __array_slice.call(arguments);
+				
+				args[0] = value;
+				callback.apply(this, args);
+				
+			}else{
+				
+				callback(value);
+			}
+			
 			lockes--;
 		};
 	}
@@ -1869,7 +1901,8 @@
 						this.nodes = list_prepairNodes(this, array);
 		
 						dom_insertBefore(compo_render(this, this.nodes), this.placeholder);
-		
+						
+						arr_each(this.components, compo_inserted);
 						return;
 					}
 		

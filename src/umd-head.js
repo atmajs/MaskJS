@@ -1,42 +1,57 @@
 (function (root, factory) {
     'use strict';
+    
+    var _global, _exports, _document;
 
-    if (root == null && typeof global !== 'undefined'){
-        root = global;
+    
+	if (typeof exports !== 'undefined' && (root === exports || root == null)){
+		// raw nodejs module
+    	_global = global;
     }
+	
+	if (_global == null) {
+		_global = typeof window === 'undefined' || window.document == null ? global : window;
+	}
+    
+    _document = _global.document;
+	_exports = root || _global;
+    
 
-    var doc = typeof document === 'undefined' ? null : document,
-        construct = function(plugins){
+    function construct(plugins){
 
-            if (plugins == null) {
-                plugins = {};
-            }
-            var lib = factory(root, doc, plugins),
-                key;
+        if (plugins == null) {
+            plugins = {};
+        }
+        var lib = factory(_global, plugins, _document),
+            key;
 
-            for (key in plugins) {
-                lib[key] = plugins[key];
-            }
-
-            return lib;
-        };
-
-    if (typeof module !== 'undefined') {
-        module.exports = construct();
-    } else if (typeof define === 'function' && define.amd) {
-        define(construct);
-    } else {
-
-        var plugins = {},
-            lib = construct(plugins);
-
-        root.mask = lib;
-
-        for (var key in plugins) {
-            root[key] = plugins[key];
+        for (key in plugins) {
+            lib[key] = plugins[key];
         }
 
+        return lib;
+    };
+
+    
+    if (typeof module !== 'undefined') {
+        module.exports = construct();
+        return;
+    }
+    if (typeof define === 'function' && define.amd) {
+        define(construct);
+        return;
+    }
+    
+    var plugins = {},
+        lib = construct(plugins);
+
+    _exports.mask = lib;
+
+    for (var key in plugins) {
+        _exports[key] = plugins[key];
     }
 
-}(this, function (global, document, exports) {
+    
+
+}(this, function (global, exports, document) {
     'use strict';
