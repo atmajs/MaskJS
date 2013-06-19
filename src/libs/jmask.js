@@ -937,9 +937,9 @@ var jmask = exports.jmask = (function(mask){
 	
 	// source ../src/jmask/traverse.js
 	util_extend(jMask.prototype, {
-		each: function(fn) {
-			for (var i = 0, length = this.length; i < length; i++) {
-				fn(this[i], i);
+		each: function(fn, cntx) {
+			for (var i = 0; i < this.length; i++) {
+				fn.call(cntx || this, this[i], i)
 			}
 			return this;
 		},
@@ -960,13 +960,13 @@ var jmask = exports.jmask = (function(mask){
 		jMask.prototype[method] = function(selector) {
 			var result = [],
 				matcher = selector == null ? null : selector_parse(selector, this.type, method === 'closest' ? 'up' : 'down'),
-				i, x, length;
+				i, x;
 	
 			switch (method) {
 			case 'filter':
 				return jMask(jmask_filter(this, matcher));
 			case 'children':
-				for (i = 0, length = this.length; i < length; i++) {
+				for (i = 0; i < this.length; i++) {
 					x = this[i];
 					if (x.nodes == null) {
 						continue;
@@ -975,7 +975,7 @@ var jmask = exports.jmask = (function(mask){
 				}
 				break;
 			case 'parent':
-				for (i = 0, length = this.length; i < length; i++) {
+				for (i = 0; i < this.length; i++) {
 					x = this[i].parent;
 					if (!x || x.type === Dom.FRAGMENT || (matcher && selector_match(x, matcher))) {
 						continue;
@@ -989,16 +989,16 @@ var jmask = exports.jmask = (function(mask){
 				if (matcher == null) {
 					break;
 				}
-				for (i = 0, length = this.length; i < length; i++) {
+				for (i = 0; i < this.length; i++) {
 					jmask_find(this[i][matcher.nextKey], matcher, result);
 				}
 				break;
 			case 'first':
 			case 'last':
 				var index;
-				for (i = 0, length = this.length; i < length; i++) {
+				for (i = 0; i < this.length; i++) {
 	
-					index = method === 'first' ? i : length - i - 1;
+					index = method === 'first' ? i : this.length - i - 1;
 					x = this[index];
 					if (matcher == null || selector_match(x, matcher)) {
 						result[0] = x;
