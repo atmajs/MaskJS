@@ -489,6 +489,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			interp_code_CLOSE = end.charCodeAt(0);
 			interp_CLOSE = end;
 			interp_START = start.charAt(0);
-		}
+		},
+		
+		ensureTemplateFunction: ensureTemplateFunction
 	};
 }(Node, TextNode, Fragment, Component));

@@ -202,7 +202,9 @@ var cache = {},
 			 *	mask.render('span > ~[.]', 'Some string') // -> <span>Some string</span>
 			 *	```
 			 **/
-			getProperty: util_getProperty
+			getProperty: util_getProperty,
+			
+			ensureTemplateFunction: Parser.ensureTemplateFunction
 		},
 		Dom: Dom,
 		plugin: function(source){
