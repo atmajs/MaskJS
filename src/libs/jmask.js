@@ -5,6 +5,7 @@ var jmask = exports.jmask = (function(mask){
 	var Dom = mask.Dom,
 		_mask_render = mask.render,
 		_mask_parse = mask.parse,
+		_mask_ensureTmplFn =_mask.Utils.ensureTmplFn,
 		_signal_emitIn = (global.Compo || mask.Compo || Compo).signal.emitIn;
 	
 	
@@ -754,11 +755,11 @@ var jmask = exports.jmask = (function(mask){
 							}
 	
 							for (var x in key) {
-								node.attr[x] = key[x];
+								node.attr[x] = _mask_ensureTmplFn(key[x]);
 							}
 	
 						} else if (args === 2) {
-							node.attr[key] = value;
+							node.attr[key] = _mask_ensureTmplFn(value);
 						}
 						break;
 					case 'removeAttr':

@@ -204,7 +204,7 @@ var cache = {},
 			 **/
 			getProperty: util_getProperty,
 			
-			ensureTemplateFunction: Parser.ensureTemplateFunction
+			ensureTmplFn: Parser.ensureTemplateFunction
 		},
 		Dom: Dom,
 		plugin: function(source){
