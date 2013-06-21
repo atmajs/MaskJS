@@ -137,6 +137,12 @@ var Compo = exports.Compo = (function(mask){
 	
 	// source ../src/util/dom.js
 	function dom_addEventListener(element, event, listener) {
+		
+		if (domLib != null) {
+			domLib(element).on(event, listener);
+			return;
+		}
+		
 		if (element.addEventListener != null) {
 			element.addEventListener(event, listener, false);
 			return;
@@ -1136,13 +1142,17 @@ var Compo = exports.Compo = (function(mask){
 				return false;
 			}
 			
-			var found = false;
+			var found = false,
+				fn = controller.slots != null && controller.slots[slot];
+				
+			if (typeof fn === 'string') {
+				fn = controller[fn];
+			}
 	
-			if (controller.slots != null && typeof controller.slots[slot] === 'function') {
+			if (typeof fn === 'function') {
 				found = true;
 				
-				var fn = controller.slots[slot],
-					isDisabled = controller.slots.__disabled != null && controller.slots.__disabled[slot];
+				var isDisabled = controller.slots.__disabled != null && controller.slots.__disabled[slot];
 	
 				if (isDisabled !== true) {
 	

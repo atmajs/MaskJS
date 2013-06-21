@@ -82,15 +82,39 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	}
 
-	if (type === 4 && typeof node.renderEnd === 'function') {
-		/* if (!DEBUG)
-		try{
-		*/
-		node.renderEnd(elements, model, cntx, container);
-		/* if (!DEBUG)
-		} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
-		*/
-
+	if (type === 4) {
+		
+		// use or override custom attr handlers
+		// in Compo.handlers.attr object
+		
+		var attrHandlers = node.handlers && node.handlers.attr,
+			attrFn;
+		for (key in node.attr) {
+			
+			attrFn = null;
+			
+			if (attrHandlers && fn_isFunction(attrHandlers[key])) {
+				attrFn = attrHandlers[key];
+			}
+			
+			if (attrFn == null && fn_isFunction(CustomAttributes[key])) {
+				attrFn = CustomAttributes[key];
+			}
+			
+			if (attrFn != null) {
+				attrFn(node, node.attr[key], model, cntx, elements[0], controller);
+			}
+		}
+		
+		if (fn_isFunction(node.renderEnd)) {
+			/* if !DEBUG
+			try{
+			*/
+			node.renderEnd(elements, model, cntx, container);
+			/* if !DEBUG
+			} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
+			*/
+		}
 	}
 
 	if (childs != null && childs !== elements){

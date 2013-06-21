@@ -741,7 +741,7 @@
 			type = x.length == 2 ? x[0] : defaultType;
 			signalName = x[x.length == 2 ? 1 : 0];
 			
-			signal = signal_create(signalName, type, isPiped);
+			signal = signal_create(signalName.trim(), type, isPiped);
 			
 			if (signal != null) {
 				set.push(signal);
@@ -838,25 +838,28 @@
 				}
 			}
 	
-			if (attr['x-signal']) {
-				var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
-				
-				if (signal) {
-						
-					if (signal.type === 'dom') {
-						this.signal_domChanged = signal.signal;
-					}
-					
-					else if (signal.type === 'object') {
-						this.signal_objectChanged = signal.signal;
-					}
-					
-					else {
-						console.error('Type is not supported', signal);
-					}
-				}
-				
-			}
+			/**
+			 *	Send signal on OBJECT or DOM change
+			 */
+			//if (attr['x-signal']) {
+			//	var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
+			//	
+			//	if (signal) {
+			//			
+			//		if (signal.type === 'dom') {
+			//			this.signal_domChanged = signal.signal;
+			//		}
+			//		
+			//		else if (signal.type === 'object') {
+			//			this.signal_objectChanged = signal.signal;
+			//		}
+			//		
+			//		else {
+			//			console.error('Type is not supported', signal);
+			//		}
+			//	}
+			//	
+			//}
 			
 			if (attr['x-pipe-signal']) {
 				var signal = signal_parse(attr['x-pipe-signal'], true, 'dom')[0];
@@ -875,8 +878,28 @@
 				}
 			}
 			
-			if (attr['x-pipe-slot']) {
-				var str = attr['x-pipe-slot'],
+			
+			if (attr['dom-slot']) {
+				this.slots = {};
+				// @hack - place dualb. provider on the way of a signal
+				// 
+				var parent = controller.parent,
+					newparent = parent.parent;
+					
+				parent.parent = this;
+				this.parent = newparent;
+				
+				this.slots[attr['dom-slot']] = function(sender, value){
+					this.domChanged(sender, value);
+				}
+			}
+			
+			/*
+			 *  @obsolete: attr name : 'x-pipe-slot'
+			 */
+			var pipeSlot = attr['object-pipe-slot'] || attr['x-pipe-slot'];
+			if (pipeSlot) {
+				var str = pipeSlot,
 					index = str.indexOf('.'),
 					pipeName = str.substring(0, index),
 					signal = str.substring(index + 1);
@@ -931,6 +954,30 @@
 	
 		BindingProvider.prototype = {
 			constructor: BindingProvider,
+			
+			handlers: {
+				attr: {
+					'x-signal': function(provider, value){
+						var signal = signal_parse(value, null, 'dom')[0];
+				
+						if (signal) {
+								
+							if (signal.type === 'dom') {
+								provider.signal_domChanged = signal.signal;
+							}
+							
+							else if (signal.type === 'object') {
+								provider.signal_objectChanged = signal.signal;
+							}
+							
+							else {
+								console.error('Type is not supported', signal);
+							}
+						}
+					}
+				}
+			},
+			
 			dispose: function() {
 				expression_unbind(this.expression, this.model, this.binder);
 			},
@@ -964,7 +1011,7 @@
 	
 				this.locked = false;
 			},
-			domChanged: function() {
+			domChanged: function(event, value) {
 	
 				if (this.locked === true) {
 					console.warn('Concurance change detected', this);
@@ -972,7 +1019,7 @@
 				}
 				this.locked = true;
 	
-				var x = this.domWay.get(this),
+				var x = value || this.domWay.get(this),
 					valid = true;
 	
 				if (this.node.validations) {
@@ -1097,11 +1144,18 @@
 			expression_bind(expr, model, provider.cntx, provider.node, provider.binder);
 	
 			if (provider.bindingType === 'dual') {
-				var element = provider.element,
-					eventType = provider.node.attr.changeEvent || 'change',
-					onDomChange = provider.domChanged.bind(provider);
-	
-				dom_addEventListener(element, eventType, onDomChange);
+				var attr = provider.node.attr;
+				
+				if (!attr['change-slot'] && !attr['change-pipe-event']) {
+					var element = provider.element,
+						/*
+						 * @obsolete: attr name : 'changeEvent'
+						 */
+						eventType = attr['change-event'] || attr.changeEvent || 'change',
+						onDomChange = provider.domChanged.bind(provider);
+		
+					dom_addEventListener(element, eventType, onDomChange);
+				}
 			}
 	
 			// trigger update
@@ -1235,7 +1289,7 @@
 	
 			this.provider = BindingProvider.create(model, container, this);
 			
-			if (typeof model.Validate === 'object') {
+			if (typeof model.Validate === 'object' && !this.attr['no-validation']) {
 				
 				var validator = model.Validate[this.provider.value];
 				if (typeof validator === 'function') {
@@ -1254,6 +1308,12 @@
 		dispose: function(){
 			if (this.provider && typeof this.provider.dispose === 'function') {
 				this.provider.dispose();
+			}
+		},
+		
+		handlers: {
+			attr: {
+				'x-signal' : function(){}
 			}
 		}
 	};
