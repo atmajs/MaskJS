@@ -138,6 +138,7 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/util/dom.js
 	function dom_addEventListener(element, event, listener) {
 		
+		// allows custom events - in x-signal, for example
 		if (domLib != null) {
 			domLib(element).on(event, listener);
 			return;
@@ -1234,7 +1235,9 @@ var Compo = exports.Compo = (function(mask){
 			}
 	
 			return function(event) {
-				_fire(controller, slot, event, null, -1);
+				var args = arguments.length > 1 ? __array_slice.call(arguments, 1) : null;
+				
+				_fire(controller, slot, event, args, -1);
 			};
 		}
 	

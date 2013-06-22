@@ -86,23 +86,25 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		
 		// use or override custom attr handlers
 		// in Compo.handlers.attr object
-		
-		var attrHandlers = node.handlers && node.handlers.attr,
-			attrFn;
-		for (key in node.attr) {
-			
-			attrFn = null;
-			
-			if (attrHandlers && fn_isFunction(attrHandlers[key])) {
-				attrFn = attrHandlers[key];
-			}
-			
-			if (attrFn == null && fn_isFunction(CustomAttributes[key])) {
-				attrFn = CustomAttributes[key];
-			}
-			
-			if (attrFn != null) {
-				attrFn(node, node.attr[key], model, cntx, elements[0], controller);
+		// but only on a component, not a tag controller
+		if (node.tagName == null) {
+			var attrHandlers = node.handlers && node.handlers.attr,
+				attrFn;
+			for (key in node.attr) {
+				
+				attrFn = null;
+				
+				if (attrHandlers && fn_isFunction(attrHandlers[key])) {
+					attrFn = attrHandlers[key];
+				}
+				
+				if (attrFn == null && fn_isFunction(CustomAttributes[key])) {
+					attrFn = CustomAttributes[key];
+				}
+				
+				if (attrFn != null) {
+					attrFn(node, node.attr[key], model, cntx, elements[0], controller);
+				}
 			}
 		}
 		
