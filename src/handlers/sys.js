@@ -8,7 +8,8 @@
 			'if': null,
 			'else': null,
 			'each': null,
-			'log': null
+			'log': null,
+			'visible': null
 		};
 	}
 
@@ -26,6 +27,14 @@
 
 			if (attr['debugger'] != null) {
 				debugger;
+				return;
+			}
+			
+			if (attr['visible'] != null) {
+				var state = ExpressionUtil.eval(attr.visible, model, cntx, this.parent);
+				if (!state) {
+					this.nodes = null;
+				}
 				return;
 			}
 

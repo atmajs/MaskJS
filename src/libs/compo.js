@@ -4,7 +4,16 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/scope-vars.js
 	var domLib = global.jQuery || global.Zepto || global.$,
 		Dom = mask.Dom,
-		__array_slice = Array.prototype.slice;
+		__array_slice = Array.prototype.slice,
+		
+		_mask_ensureTmplFnOrig = mask.Utils.ensureTmplFn;
+	
+	function _mask_ensureTmplFn(value) {
+		if (typeof value !== 'string') {
+			return value;
+		}
+		return _mask_ensureTmplFnOrig(value);
+	}
 	
 	if (document != null && domLib == null){
 		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
@@ -578,20 +587,30 @@ var Compo = exports.Compo = (function(mask){
 				controller = {};
 			}
 	
+			if (controller.attr != null) {
+				
+				for (var key in controller.attr) {
+					controller.attr[key] = _mask_ensureTmplFn(controller.attr[key]);
+				}
+				
+			}
+			
+			var slots = controller.slots;
+			if (slots != null) {
+				for (var key in slots) {
+					if (typeof slots[key] === 'string'){
+						//if DEBUG
+						typeof controller[slots[key]] !== 'function' && console.error('Not a Function @Slot.',slots[key]);
+						// endif
+						slots[key] = controller[slots[key]];
+					}
+				}
+			}
+			
 			if (controller.hasOwnProperty('constructor')){
 				klass = controller.constructor;
 			}
 	
-			//if (controller.hasOwnProperty('compos') === true) {
-			//	var constructor = klass,
-			//		compos = controller.compos;
-			//	klass = function CompoBase(){
-			//		this.compos = obj_copy(compos);
-			//		if (typeof constructor === 'function') {
-			//			constructor.call(this);
-			//		}
-			//	};
-			//}
 	
 			klass = compo_createConstructor(klass, controller);
 	
@@ -691,25 +710,36 @@ var Compo = exports.Compo = (function(mask){
 		}
 		
 		
-		function compo_createConstructor(current, proto) {
+		function compo_createConstructor(ctor, proto) {
 			var compos = proto.compos,
-				pipes = proto.pipes;
-			if (compos == null && pipes == null) {
-				return current;
+				pipes = proto.pipes,
+				attr = proto.attr;
+				
+			if (compos == null && pipes == null && proto.attr == null) {
+				return ctor;
 			}
 		
+			/* extend compos / attr to keep
+			 * original prototyped values untouched
+			 */
 			return function CompoBase(){
 		
 				if (compos != null) {
-					this.compos = obj_copy(compos);
+					// use this.compos instead of compos from upper scope
+					// : in case compos from proto was extended after
+					this.compos = obj_copy(this.compos);
 				}
 		
 				if (pipes != null) {
 					Pipes.addController(this);
 				}
+				
+				if (attr != null) {
+					this.attr = obj_copy(this.attr);
+				}
 		
-				if (typeof current === 'function') {
-					current.call(this);
+				if (typeof ctor === 'function') {
+					ctor.call(this);
 				}
 			};
 		}
@@ -767,6 +797,8 @@ var Compo = exports.Compo = (function(mask){
 			},
 		
 			initialize: function(compo, model, cntx, container, parent) {
+				
+				var compoName;
 		
 				if (container == null){
 					if (cntx && cntx.nodeType != null){
@@ -779,7 +811,9 @@ var Compo = exports.Compo = (function(mask){
 				}
 		
 				if (typeof compo === 'string'){
-					compo = mask.getHandler(compo);
+					compoName = compo;
+					
+					compo = mask.getHandler(compoName);
 					if (!compo){
 						console.error('Compo not found:', compo);
 					}
@@ -787,7 +821,8 @@ var Compo = exports.Compo = (function(mask){
 		
 				var node = {
 					controller: compo,
-					type: Dom.COMPONENT
+					type: Dom.COMPONENT,
+					tagName: compoName
 				};
 		
 				if (parent == null && container != null){
@@ -804,7 +839,6 @@ var Compo = exports.Compo = (function(mask){
 				if (container != null){
 					container.appendChild(dom);
 		
-					//- Compo.shots.emit(instance, 'DOMInsert');
 					Compo.signal.emitIn(instance, 'domInsert');
 				}
 		
@@ -892,12 +926,18 @@ var Compo = exports.Compo = (function(mask){
 	
 		var Proto = {
 			type: Dom.CONTROLLER,
+			
 			tagName: null,
 			compoName: null,
 			nodes: null,
 			attr: null,
+			
 			slots: null,
 			pipes: null,
+			
+			compos: null,
+			events: null,
+			
 			onRenderStart: null,
 			onRenderEnd: null,
 			render: null,
@@ -948,13 +988,9 @@ var Compo = exports.Compo = (function(mask){
 				}
 			},
 			appendTo: function(x) {
-				var element;
-	
-				if (typeof x === 'string') {
-					element = document.querySelector(x);
-				} else {
-					element = x;
-				}
+				
+				var element = typeof x === 'string' ? document.querySelector(x) : x;
+				
 	
 				if (element == null) {
 					console.warn('Compo.appendTo: parent is undefined. Args:', arguments);
@@ -966,7 +1002,6 @@ var Compo = exports.Compo = (function(mask){
 				}
 	
 				this.emitIn('domInsert');
-				//- Shots.emit(this, 'DOMInsert');
 				return this;
 			},
 			append: function(template, model, selector) {

@@ -5,8 +5,16 @@ var jmask = exports.jmask = (function(mask){
 	var Dom = mask.Dom,
 		_mask_render = mask.render,
 		_mask_parse = mask.parse,
-		_mask_ensureTmplFn = mask.Utils.ensureTmplFn,
+		_mask_ensureTmplFnOrig = mask.Utils.ensureTmplFn,
 		_signal_emitIn = (global.Compo || mask.Compo || Compo).signal.emitIn;
+		
+	
+	function _mask_ensureTmplFn(value) {
+		if (typeof value !== 'string') {
+			return value;
+		}
+		return _mask_ensureTmplFnOrig(value);
+	}
 	
 	
 
@@ -49,6 +57,9 @@ var jmask = exports.jmask = (function(mask){
 		array.splice(index, 1);
 	}
 	
+	function arr_isArray(x) {
+		return x != null && typeof x === 'object' && x.length != null && typeof x.slice === 'function';
+	}
 	
 	var arr_unique = (function() {
 	
@@ -464,7 +475,7 @@ var jmask = exports.jmask = (function(mask){
 				mix = _mask_parse(mix);
 			}
 	
-			if (mix instanceof Array) {
+			if (arr_isArray(mix)) {
 				for (i = 0, length = mix.length; i < length; i++) {
 					this.add(mix[i]);
 				}

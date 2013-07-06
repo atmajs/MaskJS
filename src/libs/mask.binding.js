@@ -672,7 +672,13 @@
 		return;
 	}
 	
-	function expression_unbind(expr, model, callback) {
+	function expression_unbind(expr, model, controller, callback) {
+		
+		if (expr === '.') {
+			arr_removeObserver(model, callback);
+			return;
+		}
+		
 		var vars = expression_varRefs(expr),
 			x, ref;
 	
@@ -681,13 +687,53 @@
 		}
 		
 		if (typeof vars === 'string') {
-			obj_removeObserver(model, vars, callback);
+			if (obj_isDefined(model, vars) === true) {
+				obj_removeObserver(model, vars, callback);
+			}
+			
+			if (obj_isDefined(controller, vars)) {
+				obj_removeObserver(controller, vars, callback);
+			}
+			
 			return;
 		}
 	
-		for (var i = 0, imax = vars.length; i < imax; i++) {
-			obj_removeObserver(model, vars[i], callback);
+		//for (var i = 0, imax = vars.length; i < imax; i++) {
+		//	obj_removeObserver(model, vars[i], callback);
+		//}
+		
+		var isArray = vars.length != null && typeof vars.splice === 'function',
+			imax = isArray === true ? vars.length : 1,
+			i = 0,
+			x;
+		
+		for (; i < imax; i++) {
+			x = isArray ? vars[i] : vars;
+			if (x == null) {
+				continue;
+			}
+			
+			
+			if (typeof x === 'object') {
+				
+				var obj = expression_eval_origin(x.accessor, model, null, controller);
+				
+				if (obj) {
+					obj_removeObserver(obj, x.ref, callback);
+				}
+				
+				continue;
+			}
+			
+			if (obj_isDefined(model, x)) {
+				obj_removeObserver(model, x, callback);
+			}
+			
+			if (obj_isDefined(controller, x)) {
+				obj_removeObserver(controller, x, callback);
+			}
 		}
+	
 	}
 	
 	/**
@@ -717,6 +763,8 @@
 			lockes--;
 		};
 	}
+	
+	
 	
 	// source ../src/util/signal.js
 	function signal_parse(str, isPiped, defaultType) {
@@ -841,25 +889,25 @@
 			/**
 			 *	Send signal on OBJECT or DOM change
 			 */
-			//if (attr['x-signal']) {
-			//	var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
-			//	
-			//	if (signal) {
-			//			
-			//		if (signal.type === 'dom') {
-			//			this.signal_domChanged = signal.signal;
-			//		}
-			//		
-			//		else if (signal.type === 'object') {
-			//			this.signal_objectChanged = signal.signal;
-			//		}
-			//		
-			//		else {
-			//			console.error('Type is not supported', signal);
-			//		}
-			//	}
-			//	
-			//}
+			if (attr['x-signal']) {
+				var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
+				
+				if (signal) {
+						
+					if (signal.type === 'dom') {
+						this.signal_domChanged = signal.signal;
+					}
+					
+					else if (signal.type === 'object') {
+						this.signal_objectChanged = signal.signal;
+					}
+					
+					else {
+						console.error('Type is not supported', signal);
+					}
+				}
+				
+			}
 			
 			if (attr['x-pipe-signal']) {
 				var signal = signal_parse(attr['x-pipe-signal'], true, 'dom')[0];
@@ -955,31 +1003,31 @@
 		BindingProvider.prototype = {
 			constructor: BindingProvider,
 			
-			handlers: {
-				attr: {
-					'x-signal': function(provider, value){
-						var signal = signal_parse(value, null, 'dom')[0];
-				
-						if (signal) {
-								
-							if (signal.type === 'dom') {
-								provider.signal_domChanged = signal.signal;
-							}
-							
-							else if (signal.type === 'object') {
-								provider.signal_objectChanged = signal.signal;
-							}
-							
-							else {
-								console.error('Type is not supported', signal);
-							}
-						}
-					}
-				}
-			},
+			//////handlers: {
+			//////	attr: {
+			//////		'x-signal': function(provider, value){
+			//////			var signal = signal_parse(value, null, 'dom')[0];
+			//////	
+			//////			if (signal) {
+			//////					
+			//////				if (signal.type === 'dom') {
+			//////					provider.signal_domChanged = signal.signal;
+			//////				}
+			//////				
+			//////				else if (signal.type === 'object') {
+			//////					provider.signal_objectChanged = signal.signal;
+			//////				}
+			//////				
+			//////				else {
+			//////					console.error('Type is not supported', signal);
+			//////				}
+			//////			}
+			//////		}
+			//////	}
+			//////},
 			
 			dispose: function() {
-				expression_unbind(this.expression, this.model, this.binder);
+				expression_unbind(this.expression, this.model, this.controller, this.binder);
 			},
 			objectChanged: function(x) {
 				if (this.dismiss-- > 0) {
@@ -1338,6 +1386,14 @@
 			constructor: Validate,
 			renderStart: function(model, cntx, container) {
 				this.element = container;
+				
+				if (this.attr.value) {
+					var validatorFn = Validate.resolveFromModel(model, this.attr.value);
+						
+					if (validatorFn) {
+						this.validators = [new Validator(validatorFn)];
+					}
+				}
 			},
 			/**
 			 * @param input - {control specific} - value to validate
@@ -1351,12 +1407,21 @@
 					element = this.element;
 				}
 	
-				if (this.attr && this.attr.getter) {
-					input = obj_getProperty({
-						node: this,
-						element: element
-					}, this.attr.getter);
+				if (this.attr) {
+					
+					if (input == null && this.attr.getter) {
+						input = obj_getProperty({
+							node: this,
+							element: element
+						}, this.attr.getter);
+					}
+					
+					if (input == null && this.attr.value) {
+						input = obj_getProperty(this.model, this.attr.value);
+					}
 				}
+				
+				
 	
 				if (this.validators == null) {
 					this.initValidators();
@@ -1365,22 +1430,33 @@
 				for (var i = 0, x, imax = this.validators.length; i < imax; i++) {
 					x = this.validators[i].validate(input)
 					
-					if (x) {
-						notifyInvalid(element, x, oncancel);
+					if (x && !this.attr.silent) {
+						this.notifyInvalid(element, x, oncancel);
 						return false;
 					}
 				}
 	
-				makeValid(element);
+				this.makeValid(element);
 				return true;
+			},
+			notifyInvalid: function(element, message, oncancel){
+				return notifyInvalid(element, message, oncancel);
+			},
+			makeValid: function(element){
+				return makeValid(element);
 			},
 			initValidators: function() {
 				this.validators = [];
 				
 				for (var key in this.attr) {
 					
-					if (key === 'message') 
-						continue;
+					
+					switch (key) {
+						case 'message':
+						case 'value':
+						case 'getter':
+							continue;
+					}
 					
 					if (key in Validators === false) {
 						console.error('Unknown Validator:', key, this);
@@ -1394,6 +1470,11 @@
 			}
 		};
 	
+		
+		Validate.resolveFromModel = function(model, property){
+			return obj_getProperty(model.Validate, property);
+		};
+		
 		Validate.createCustom = function(element, validator){
 			var validate = new Validate();
 			
@@ -1429,7 +1510,7 @@
 					.insertAfter(element);
 			}
 	
-			next
+			return next
 				.children('button')
 				.off()
 				.on('click', function() {
@@ -1444,9 +1525,46 @@
 		}
 	
 		function makeValid(element) {
-			domLib(element).next('.' + class_INVALID).hide();
+			return domLib(element).next('.' + class_INVALID).hide();
 		}
 	
+		mask.registerHandler(':validate:message', Compo({
+			template: 'div.' + class_INVALID + ' { span > "~[bind:message]" button > "~[cancel]" }',
+			
+			onRenderStart: function(model){
+				if (typeof model === 'string') {
+					model = {
+						message: model
+					};
+				}
+				
+				if (!model.cancel) {
+					model.cancel = 'cancel';
+				}
+				
+				this.model = model;
+			},
+			compos: {
+				button: '$: button',
+			},
+			show: function(message, oncancel){
+				var that = this;
+				
+				this.model.message = message;
+				this.compos.button.off().on(function(){
+					that.hide();
+					oncancel && oncancel();
+					
+				});
+				
+				this.$.show();
+			},
+			hide: function(){
+				this.$.hide();
+			}
+		}));
+		
+		
 		var Validators = {
 			match: function(match) {
 				
@@ -1538,6 +1656,18 @@
 	 */
 	
 	(function(){
+		
+		function attr_strReplace(attrValue, currentValue, newValue) {
+			if (!attrValue) {
+				return newValue;
+			}
+			
+			if (!currentValue) {
+				return attrValue + ' ' + newValue;
+			}
+			
+			return attrValue.replace(currentValue, newValue);
+		}
 	
 		function create_refresher(type, expr, element, currentValue, attrName) {
 	
@@ -1558,12 +1688,12 @@
 						}
 	
 						if ('string' === _typeof) {
-							currentValue = element[attrName] = element[attrName].replace(currentValue, value);
+							currentValue = element[attrName] = attr_strReplace(element[attrName], currentValue, value);
 							return;
 						}
 	
 						currentAttr = element.getAttribute(attrName);
-						attr = currentAttr ? currentAttr.replace(currentValue, value) : value;
+						attr = attr_strReplace(currentAttr, currentValue, value);
 	
 	
 						element.setAttribute(attrName, attr);
@@ -1590,7 +1720,7 @@
 	
 	
 			compo_attachDisposer(controller, function(){
-				expression_unbind(expr, model, binder);
+				expression_unbind(expr, model, controller, binder);
 			});
 	
 			return type === 'node' ? element : current;
@@ -1599,6 +1729,29 @@
 	
 	}());
 	
+	
+	// source ../src/mask-attr/xxVisible.js
+	
+	
+	mask.registerAttrHandler('xx-visible', function(node, attrValue, model, cntx, element, controller) {
+		
+		var binder = expression_createBinder(attrValue, model, cntx, controller, function(value){
+			element.style.display = value ? '' : 'none';
+		});
+		
+		expression_bind(attrValue, model, cntx, controller, binder);
+		
+		compo_attachDisposer(controller, function(){
+			expression_unbind(attrValue, model,  controller, binder);
+		});
+		
+		
+		
+		if (!expression_eval(attrValue, model, cntx, controller)) {
+			
+			element.style.display = 'none';
+		}
+	});
 
 	// source ../src/sys/sys.js
 	(function(mask) {
@@ -1640,7 +1793,7 @@
 		
 				},
 				dispose: function(){
-					expression_unbind(this.expr, this.originalModel, this.binder);
+					expression_unbind(this.expr, this.originalModel, this, this.binder);
 				}
 			};
 		
@@ -1684,7 +1837,7 @@
 		
 		
 				compo_attachDisposer(self, function(){
-					expression_unbind(expr, model, binder);
+					expression_unbind(expr, model, self, binder);
 				});
 		
 				log(value);
@@ -1724,7 +1877,7 @@
 		
 				},
 				dispose: function(){
-					expression_unbind(this.expr, this.model, this.binder);
+					expression_unbind(this.expr, this.model, this, this.binder);
 					this.onchange = null;
 					this.elements = null;
 				}
@@ -2053,7 +2206,7 @@
 		
 				},
 				dispose: function() {
-					expression_unbind(this.expr, this.model, this.refresh);
+					expression_unbind(this.expr, this.model, this, this.refresh);
 				}
 			};
 		
@@ -2102,18 +2255,17 @@
 					}
 					this.refreshing = true;
 		
-					var visible = expression_eval(this.attr.visible, this.model, this.cntx, this);
+					var visible = expression_eval(this.expr, this.model, this.cntx, this);
 		
-					for(var i = 0, x, length = this.elements.length; i < length; i++){
-						x = this.elements[i];
-						x.style.display = visible ? '' : 'none';
+					for(var i = 0, imax = this.elements.length; i < imax; i++){
+						this.elements[i].style.display = visible ? '' : 'none';
 					}
 		
 					this.refreshing = false;
 				},
 		
 				dispose: function(){
-					expression_unbind(this.expr, this.model, this.binder);
+					expression_unbind(this.expr, this.model, this, this.binder);
 				}
 			};
 		
