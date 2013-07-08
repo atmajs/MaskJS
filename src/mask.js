@@ -36,6 +36,11 @@ var cache = {},
 					template = cache[template] = Parser.parse(template);
 				}
 			}
+			
+			if (cntx == null) {
+				cntx = {};
+			}
+			
 			return builder_build(template, model, cntx, container, controller);
 		},
 
