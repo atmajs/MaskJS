@@ -127,7 +127,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				last = 3,
 				index = 0,
 				length = template.length,
-				classNames, token, key, value, next, c, start;
+				classNames,
+				token,
+				key,
+				value,
+				next,
+				c, // charCode
+				start,
+				nextC;
 
 			var go_tag = 2,
 				state_tag = 3,
@@ -313,11 +320,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					}
 
 					if (start === index) {
-						if (template.charCodeAt(index+1) === 124) {
-							//|
+						nextC = template.charCodeAt(index + 1);
+						if (nextC === 124 || nextC === c) {
+							// | (obsolete) or triple quote
 							isUnescapedBlock = true;
 							start = index + 2;
-							index = nindex = template.indexOf('|' + _char + _char, start);
+							index = nindex = template.indexOf((nextC === 124 ? '|' : _char) + _char + _char, start);
 
 							if (index === -1) {
 								index = length;
