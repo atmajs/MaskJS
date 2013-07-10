@@ -198,7 +198,9 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					} else if (last === state_tag) {
 
-						next = CustomTags[token] != null ? new Component(token, current, CustomTags[token]) : new Node(token, current);
+						next = custom_Tags[token] != null
+							? new Component(token, current, custom_Tags[token])
+							: new Node(token, current);
 
 						if (current.nodes == null) {
 							current.nodes = [next];

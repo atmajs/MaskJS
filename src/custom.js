@@ -1,17 +1,17 @@
-var ModelUtils = {
+var custom_Utils = {
 	condition: ConditionUtil.condition,
 	expression: function(value, model, cntx, element, controller){
 		return ExpressionUtil.eval(value, model, cntx, controller);
 	},
 },
-	CustomAttributes = {
+	custom_Attributes = {
 		'class': null,
 		id: null,
 		style: null,
 		name: null,
 		type: null
 	},
-	CustomTags = {
+	custom_Tags = {
 		// Most common html tags
 		// http://jsperf.com/not-in-vs-null/3
 		div: null,

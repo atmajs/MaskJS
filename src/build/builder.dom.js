@@ -98,8 +98,8 @@ function builder_build(node, model, cntx, container, controller, childs) {
 					attrFn = attrHandlers[key];
 				}
 				
-				if (attrFn == null && fn_isFunction(CustomAttributes[key])) {
-					attrFn = CustomAttributes[key];
+				if (attrFn == null && fn_isFunction(custom_Attributes[key])) {
+					attrFn = custom_Attributes[key];
 				}
 				
 				if (attrFn != null) {

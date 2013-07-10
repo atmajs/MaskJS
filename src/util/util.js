@@ -84,8 +84,8 @@ function util_interpolate(arr, type, model, cntx, element, controller, name) {
 				}
 
 				key = key.substring(index + 1);
-				if (typeof ModelUtils[utility] === 'function'){
-					value = ModelUtils[utility](key, model, cntx, element, controller, name, type);
+				if (typeof custom_Utils[utility] === 'function'){
+					value = custom_Utils[utility](key, model, cntx, element, controller, name, type);
 				}
 			}
 

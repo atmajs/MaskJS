@@ -75,7 +75,7 @@ var cache = {},
 		 *	mask.render(this.nodes, model, container, cntx);
 		 **/
 		registerHandler: function (tagName, TagHandler) {
-			CustomTags[tagName] = TagHandler;
+			custom_Tags[tagName] = TagHandler;
 		},
 		/**
 		 *	mask.getHandler(tagName) -> Function | Object
@@ -84,7 +84,7 @@ var cache = {},
 		 *	Get Registered Handler
 		 **/
 		getHandler: function (tagName) {
-			return tagName != null ? CustomTags[tagName] : CustomTags;
+			return tagName != null ? custom_Tags[tagName] : custom_Tags;
 		},
 
 
@@ -102,7 +102,7 @@ var cache = {},
 		 * Note: Attribute wont be set to an element.
 		 **/
 		registerAttrHandler: function(attrName, Handler){
-			CustomAttributes[attrName] = Handler;
+			custom_Attributes[attrName] = Handler;
 		},
 		/**
 		 *	mask.registerUtility(utilName, fn) -> void
@@ -124,7 +124,7 @@ var cache = {},
 		 *
 		 **/
 		registerUtility: function (utilityName, fn) {
-			ModelUtils[utilityName] = fn;
+			custom_Utils[utilityName] = fn;
 		},
 		////// time for remove
 		//////serialize: function (template) {

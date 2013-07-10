@@ -9,7 +9,7 @@
 	// import ../src/util/function.js
 	// import ../src/util/condition.js
 	// import ../src/expression/exports.js
-	// import ../src/extends.js
+	// import ../src/custom.js
 	// import ../src/dom/dom.js
 	// import ../src/parse/parser.js
 
