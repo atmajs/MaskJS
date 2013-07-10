@@ -3,7 +3,7 @@
 
 	function Document() {}
 
-	CustomTags[':document'] = Document;
+	custom_Tags[':document'] = Document;
 
 	Document.prototype = {
 		render: function(model, cntx, fragment, controller) {
