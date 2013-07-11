@@ -44,7 +44,7 @@ for (key in attr) {
 	// null or empty string will not be handled
 	if (value) {
 		if (typeof custom_Attributes[key] === 'function') {
-			custom_Attributes[key](node, value, model, cntx, tag, controller);
+			custom_Attributes[key](node, value, model, cntx, tag, controller, container);
 		} else {
 			tag.setAttribute(key, value);
 		}

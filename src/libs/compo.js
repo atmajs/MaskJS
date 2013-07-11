@@ -1169,7 +1169,7 @@ var Compo = exports.Compo = (function(mask){
 				element.setAttribute('data-signals', signals);
 			}
 	
-		});
+		}, 'client');
 	
 		// @param sender - event if sent from DOM Event or CONTROLLER instance
 		function _fire(controller, slot, sender, args, direction) {
