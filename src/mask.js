@@ -84,7 +84,9 @@ var cache = {},
 		 *	Get Registered Handler
 		 **/
 		getHandler: function (tagName) {
-			return tagName != null ? custom_Tags[tagName] : custom_Tags;
+			return tagName != null
+				? custom_Tags[tagName]
+				: custom_Tags;
 		},
 
 
@@ -103,6 +105,12 @@ var cache = {},
 		 **/
 		registerAttrHandler: function(attrName, Handler){
 			custom_Attributes[attrName] = Handler;
+		},
+		
+		getAttrHandler: function(attrName){
+			return attrName != null
+				? custom_Attributes[attrName]
+				: custom_Attributes;
 		},
 		/**
 		 *	mask.registerUtility(utilName, fn) -> void
@@ -125,6 +133,12 @@ var cache = {},
 		 **/
 		registerUtility: function (utilityName, fn) {
 			custom_Utils[utilityName] = fn;
+		},
+		
+		getUtility: function(util){
+			return util != null
+				? custom_Utils[util]
+				: custom_Utils;
 		},
 		////// time for remove
 		//////serialize: function (template) {
