@@ -5,6 +5,7 @@
 
 	// import ../src/scope-vars.js
 	// import ../src/util/util.js
+	// import ../src/util/template.js
 	// import ../src/util/string.js
 	// import ../src/util/function.js
 	// import ../src/util/condition.js

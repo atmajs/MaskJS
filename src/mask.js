@@ -113,14 +113,15 @@ var cache = {},
 				: custom_Attributes;
 		},
 		/**
-		 *	mask.registerUtility(utilName, fn) -> void
+		 *	mask.registerUtil(utilName, mix) -> void
 		 * - utilName (String): name of the utility
-		 * - fn (Function): util handler
+		 * - mix (Function, Object): Util Handler
 		 *
-		 *	Register Utility Function. Template Example: '~[myUtil: value]'
-		 *		utility interface:
+		 *	Register Util Handler. Template Example: '~[myUtil: value]'
+		 *
+		 *	Function interface:
 		 *	```
-		 *	function(value, model, type, cntx, element, name);
+		 *	function(expr, model, cntx, element, controller, attrName, type);
 		 *	```
 		 *
 		 *	- value (String): string from interpolation part after util definition
@@ -130,9 +131,52 @@ var cache = {},
 		 *	- element (HTMLNode): current html node
 		 *	- name (String): If interpolation is in node attribute, then this will contain attribute name
 		 *
+		 *  Object interface:
+		 *  ```
+		 *  {
+		 *  	nodeRenderStart: function(expr, model, cntx, element, controller){}
+		 *  	node: function(expr, model, cntx, element, controller){}
+		 *
+		 *  	attrRenderStart: function(expr, model, cntx, element, controller, attrName){}
+		 *  	attr: function(expr, model, cntx, element, controller, attrName){}
+		 *  }
+		 *  ```
+		 *
+		 *	This diff nodeRenderStart/node is needed to seperate util logic.
+		 *	Mask in node.js will call only node-/attrRenderStart,
+		 *  
 		 **/
+		
+		registerUtil: function(utilName, mix){
+			if (typeof mix === 'function') {
+				custom_Utils[utilName] = mix;
+				return;
+			}
+			
+			if (typeof mix.process !== 'function') {
+				mix.process = function(expr, model, cntx, element, controller, attrName, type){
+					if ('node' === type) {
+						
+						this.nodeRenderStart(expr, model, cntx, element, controller);
+						return this.node(expr, model, cntx, element, controller);
+					}
+					
+					// asume 'attr'
+					
+					this.attrRenderStart(expr, model, cntx, element, controller, attrName);
+					return this.attr(expr, model, cntx, element, controller, attrName);
+				};
+			
+			}
+			
+			custom_Utils[utilName] = mix;
+		},
+		
 		registerUtility: function (utilityName, fn) {
-			custom_Utils[utilityName] = fn;
+			console.log('@registerUtility - obsolete - use registerUtil(utilName, mix)');
+			
+			this.registerUtility = this.registerUtil;
+			this.registerUtil(utilityName, fn);
 		},
 		
 		getUtility: function(util){

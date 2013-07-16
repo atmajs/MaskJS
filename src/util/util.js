@@ -61,7 +61,7 @@ function util_interpolate(arr, type, model, cntx, element, controller, name) {
 		array = null,
 		string = '',
 		even = true,
-		utility, value, index, key;
+		utility, value, index, key, handler;
 
 	for (; i < length; i++) {
 		if (even === true) {
@@ -78,15 +78,21 @@ function util_interpolate(arr, type, model, cntx, element, controller, name) {
 			if (index === -1) {
 				value = util_getProperty(model, key);
 			} else {
-				utility = index > 0 ? key.substring(0, index).replace(regexpWhitespace, '') : '';
+				utility = index > 0
+					? str_trim(key.substring(0, index))
+					: '';
+					
 				if (utility === '') {
 					utility = 'expression';
 				}
 
 				key = key.substring(index + 1);
-				if (typeof custom_Utils[utility] === 'function'){
-					value = custom_Utils[utility](key, model, cntx, element, controller, name, type);
-				}
+				handler = custom_Utils[utility];
+				
+				value = fn_isFunction(handler)
+					? handler(key, model, cntx, element, controller, name, type)
+					: handler.process(key, model, cntx, element, controller, name, type);
+					
 			}
 
 			if (value != null){
