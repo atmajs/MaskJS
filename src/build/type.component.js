@@ -17,7 +17,10 @@ if (handler != null) {
 		}
 	}
 
-	handler.nodes = node.nodes;
+	if (node.nodes != null) {
+		handler.nodes = node.nodes;
+	}
+	
 	handler.parent = controller;
 
 	if (listeners != null && listeners['compoCreated'] != null) {
@@ -31,16 +34,6 @@ if (handler != null) {
 
 	if (typeof handler.renderStart === 'function') {
 		handler.renderStart(model, cntx, container);
-	}
-
-	// temporal workaround for backwards compo where we used this.tagName = 'div' in .render fn
-	if (handler.tagName != null && handler.tagName !== node.compoName) {
-		handler.nodes = {
-			tagName: handler.tagName,
-			attr: handler.attr,
-			nodes: handler.nodes,
-			type: 1
-		};
 	}
 
 	/* if (!DEBUG)
@@ -61,8 +54,22 @@ controller = node;
 controller.ID = ++_controllerID;
 elements = [];
 
+if (controller.async === true) {
+	controller.await(build_resumeDelegate(controller, model, cntx, container));
+	return container;
+}
+
 if (controller.model != null) {
 	model = controller.model;
+}
+
+if (handler.tagName != null && handler.tagName !== node.compoName) {
+	handler.nodes = {
+		tagName: handler.tagName,
+		attr: handler.attr,
+		nodes: handler.nodes,
+		type: 1
+	};
 }
 
 

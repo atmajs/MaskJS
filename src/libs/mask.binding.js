@@ -215,7 +215,7 @@
 	
 		var currentValue = obj_getProperty(obj, property);
 		if (arguments.length === 2) {
-			//-?-obj_setProperty(obj, property, currentValue);
+			
 			delete obj.__observers[property];
 			return;
 		}
@@ -243,6 +243,10 @@
 	
 	
 	function obj_isDefined(obj, path) {
+		if (obj == null) {
+			return false;
+		}
+		
 		var parts = path.split('.'),
 			imax = parts.length,
 			i = 0;
@@ -674,6 +678,10 @@
 	
 	function expression_unbind(expr, model, controller, callback) {
 		
+		if (typeof controller === 'function') {
+			console.warn('[mask.binding] - expression unbind(expr, model, controller, callback)');
+		}
+		
 		if (expr === '.') {
 			arr_removeObserver(model, callback);
 			return;
@@ -687,7 +695,7 @@
 		}
 		
 		if (typeof vars === 'string') {
-			if (obj_isDefined(model, vars) === true) {
+			if (obj_isDefined(model, vars)) {
 				obj_removeObserver(model, vars, callback);
 			}
 			
@@ -697,10 +705,6 @@
 			
 			return;
 		}
-	
-		//for (var i = 0, imax = vars.length; i < imax; i++) {
-		//	obj_removeObserver(model, vars[i], callback);
-		//}
 		
 		var isArray = vars.length != null && typeof vars.splice === 'function',
 			imax = isArray === true ? vars.length : 1,
@@ -1287,12 +1291,9 @@
 	
 		Bind.prototype = {
 			constructor: Bind,
-			renderStart: function(model, cntx, container) {
-	
+			renderEnd: function(els, model, cntx, container){
+				
 				this.provider = BindingProvider.create(model, container, this, 'single');
-			},
-			
-			renderEnd: function(){
 				
 				BindingProvider.bind(this.provider);
 			},
@@ -1332,11 +1333,10 @@
 	
 	DualbindHandler.prototype = {
 		constructor: DualbindHandler,
-		renderStart: function(model, cntx, container){
-			
-			this.provider = BindingProvider.create(model, container, this);
-		},
+		
 		renderEnd: function(elements, model, cntx, container) {
+			this.provider = BindingProvider.create(model, container, this);
+			
 			if (this.components) {
 				for (var i = 0, x, length = this.components.length; i < length; i++) {
 					x = this.components[i];
@@ -1362,6 +1362,9 @@
 					
 				}
 			}
+			
+			
+			BindingProvider.bind(this.provider);
 		},
 		dispose: function(){
 			if (this.provider && typeof this.provider.dispose === 'function') {
@@ -1748,7 +1751,7 @@
 			});
 		}
 	
-		mask.registerUtil('bind',{
+		mask.registerUtil('bind', {
 			current: null,
 			element: null,
 			nodeRenderStart: function(expr, model, cntx, element, controller){

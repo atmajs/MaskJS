@@ -1,4 +1,6 @@
 
+// import util.js
+
 var _controllerID = 0;
 
 function builder_build(node, model, cntx, container, controller, childs) {

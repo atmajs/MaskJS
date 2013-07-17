@@ -1,0 +1,36 @@
+
+UTest({
+	'async': function(done){
+		
+		mask.registerHandler(':test', mask.Compo({
+			
+			async: true,
+			await: function(callback){
+				this.callback = callback;
+			},
+			nodes: mask.parse('#defer > "foo"'),
+			renderStart: function(){
+				
+				
+				var that = this;
+				setTimeout(function(){
+					
+					that.callback();
+					
+				}, 500);
+			}
+		}));
+		
+		var fragment = mask.render(' h4 > "title" :test;');
+		
+		eq(fragment.querySelector('#defer'), null);
+		
+		
+		setTimeout(function(){
+			
+			eq(fragment.querySelectorAll('#defer').length, 1);
+			
+			done();
+		}, 600);
+	}
+})
