@@ -41,4 +41,7 @@ var custom_Utils = {
 		b: null,
 		strong: null,
 		form: null
-	};
+	},
+	
+	// use on server to define reserved tags and its meta info
+	custom_Tags_defs = {};
