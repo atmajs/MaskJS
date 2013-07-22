@@ -11,6 +11,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 
 	var type = node.type,
 		elements = null,
+		$container,
 		j, jmax, key, value;
 
 	if (container == null && type !== 1) {
@@ -42,7 +43,10 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	if (type === 1){
 
 		// import type.node.js
-
+		
+		$container = container;
+		
+		container = tag;
 	}
 
 	// Dom.TEXTNODE
@@ -56,7 +60,7 @@ function builder_build(node, model, cntx, container, controller, childs) {
 	if (type === 4) {
 
 		// import type.component.js
-
+	
 	}
 
 	var nodes = node.nodes;
@@ -129,6 +133,15 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		while(++j < jl){
 			childs[il + j] = elements[j];
 		}
+	}
+	
+	
+	if ($container == null) {
+		return container;
+	}
+	
+	if (tag != null) {
+		$container.appendChild(tag);
 	}
 
 	return container;

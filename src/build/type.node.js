@@ -21,12 +21,6 @@ if (childs != null){
 	attr['x-compo-id'] = controller.ID;
 }
 
-// ++ insert tag into container before setting attributes, so that in any
-// custom util parentNode is available. This is for mask.node important
-// http://jsperf.com/setattribute-before-after-dom-insertion/2
-if (container != null) {
-	container.appendChild(tag);
-}
 
 
 for (key in attr) {
@@ -58,5 +52,3 @@ for (key in attr) {
 
 }
 
-
-container = tag;
