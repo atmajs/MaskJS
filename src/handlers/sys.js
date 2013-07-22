@@ -1,21 +1,21 @@
 (function(mask) {
 
 	function Sys() {
-		this.attr = {
-			'debugger': null,
-			'use': null,
-			'repeat': null,
-			'if': null,
-			'else': null,
-			'each': null,
-			'log': null,
-			'visible': null
-		};
+		this.attr = {};
 	}
 
 	mask.registerHandler('%', Sys);
 
 	Sys.prototype = {
+		'debugger': null,
+		'use': null,
+		'repeat': null,
+		'if': null,
+		'else': null,
+		'each': null,
+		'log': null,
+		'visible': null,
+		
 		constructor: Sys,
 		renderStart: function(model, cntx, container) {
 			var attr = this.attr;
