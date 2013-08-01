@@ -295,7 +295,12 @@ var cache = {},
 		 * Old '#{}' was changed to '~[]', while template is already overloaded with #, { and } usage.
 		 *
 		 **/
-		setInterpolationQuotes: Parser.setInterpolationQuotes
+		setInterpolationQuotes: Parser.setInterpolationQuotes,
+		
+		
+		compoIndex: function(index){
+			_controllerID = index;
+		}
 	};
 
 
