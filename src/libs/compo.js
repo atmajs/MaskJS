@@ -919,7 +919,21 @@ var Compo = exports.Compo = (function(mask){
 			},
 		
 			//pipes: Pipes,
-			pipe: Pipes.pipe
+			pipe: Pipes.pipe,
+			
+			resource: function(compo){
+				var owner = compo;
+				
+				while (owner != null) {
+					
+					if (owner.resource) 
+						return owner.resource;
+					
+					owner = owner.parent;
+				}
+				
+				return include.instance();
+			}
 		});
 		
 		
@@ -1067,9 +1081,10 @@ var Compo = exports.Compo = (function(mask){
 					this.onRenderStart(model, cntx, container);
 				}
 	
-				if (this.model == null){
-					this.model = model;
-				}
+				// - do not override with same model
+				//if (this.model == null){
+				//	this.model = model;
+				//}
 	
 				if (this.nodes == null){
 					compo_ensureTemplate(this);

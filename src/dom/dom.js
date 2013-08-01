@@ -67,5 +67,7 @@ Component.prototype = {
 	attr: null,
 	controller: null,
 	nodes: null,
-	components: null
+	components: null,
+	model: null,
+	modelRef: null
 };

@@ -50,7 +50,8 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 	// but only on a component, not a tag controller
 	if (controller.tagName == null) {
 		var attrHandlers = controller.handlers && controller.handlers.attr,
-			attrFn;
+			attrFn,
+			key;
 		for (key in controller.attr) {
 			
 			attrFn = null;

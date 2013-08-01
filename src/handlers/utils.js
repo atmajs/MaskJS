@@ -78,17 +78,28 @@
 	mask.registerHandler(':html', HTMLHandler);
 
 	function HTMLHandler() {}
-	HTMLHandler.prototype.render = function(model, cntx, container) {
+	
+	HTMLHandler.prototype = {
+		mode: 'server:all',
+		render: function(model, cntx, container) {
 
-		var html = jmask(this.nodes).text(model, cntx, this);
-
-		if (!html) {
-			console.warn('No HTML for node', this);
-			return;
+			var html = jmask(this.nodes).text(model, cntx, this);
+	
+			if (!html) {
+				console.warn('No HTML for node', this);
+				return;
+			}
+			
+			if (container.insertAdjacentHTML) {
+				container.insertAdjacentHTML('beforeend', html);
+				return;
+			}
+		
+			this.toHtml = function(){
+				return html;
+			};
+			
 		}
-
-		container.insertAdjacentHTML('beforeend', html);
-
 	};
 
 }(Mask));

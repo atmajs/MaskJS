@@ -15,13 +15,16 @@
 		'each': null,
 		'log': null,
 		'visible': null,
+		'model': null,
 		
 		constructor: Sys,
 		renderStart: function(model, cntx, container) {
 			var attr = this.attr;
 
 			if (attr['use'] != null) {
-				this.model = util_getProperty(model, attr['use']);
+				var use = attr['use'];
+				this.model = util_getProperty(model, use);
+				this.modelRef = use;
 				return;
 			}
 
@@ -49,8 +52,6 @@
 			if (attr['repeat'] != null) {
 				repeat(this, model, cntx, container);
 			}
-
-			this.model = model;
 
 			if (attr['if'] != null) {
 				var check = attr['if'];
@@ -98,10 +99,6 @@
 			item = null,
 			indexAttr = compo.attr.index || 'index';
 
-		compo.nodes = [];
-		compo.template = nodes;
-		compo.container = container;
-		
 		if (array == null) {
 			var parent = compo;
 			while (parent != null && array == null) {
@@ -109,6 +106,14 @@
 				parent = parent.parent;
 			}
 		}
+		
+		compo.nodes = [];
+		compo.model = array;
+		compo.modelRef = prop;
+		
+		compo.template = nodes;
+		compo.container = container;
+		
 
 		if (array == null || typeof array !== 'object' || array.length == null){
 			// if DEBUG
@@ -118,7 +123,7 @@
 		}
 
 		for (var i = 0, x, length = array.length; i < length; i++) {
-			x = compo_init(nodes, array[i], container, compo);
+			x = compo_init(nodes, array[i], i, container, compo);
 			x[indexAttr] = i;
 			compo.nodes[i] = x;
 		}
@@ -142,19 +147,20 @@
 		compo.nodes = [];
 
 		for (var i = 0; index < length; index++) {
-			x = compo_init(template, model, container, compo);
+			x = compo_init(template, model, index, container, compo);
 			x._repeatIndex = index;
 
 			compo.nodes[i++] = x;
 		}
 	}
 
-	function compo_init(nodes, model, container, parent) {
+	function compo_init(nodes, model, modelRef, container, parent) {
 		var item = new Component();
 		item.nodes = nodes;
 		item.model = model;
 		item.container = container;
 		item.parent = parent;
+		item.modelRef = modelRef;
 
 		return item;
 	}

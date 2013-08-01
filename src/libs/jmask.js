@@ -106,6 +106,12 @@ var jmask = exports.jmask = (function(mask){
 	
 	
 	// source ../src/util/selector.js
+	
+	var sel_key_UP = 'parent',
+		sel_key_MASK = 'nodes',
+		sel_key_COMPOS = 'components',
+		sel_key_ATTR = 'attr';
+	
 	function selector_parse(selector, type, direction) {
 		if (selector == null) {
 			console.warn('selector is null for type', type);
@@ -115,7 +121,14 @@ var jmask = exports.jmask = (function(mask){
 			return selector;
 		}
 	
-		var key, prop, nextKey, filters, _key, _prop, _selector;
+		var key,
+			prop,
+			nextKey,
+			filters,
+	
+			_key,
+			_prop,
+			_selector;
 	
 		var index = 0,
 			length = selector.length,
@@ -126,9 +139,11 @@ var jmask = exports.jmask = (function(mask){
 			slicer;
 	
 		if (direction === 'up') {
-			nextKey = 'parent';
+			nextKey = sel_key_UP;
 		} else {
-			nextKey = type === Dom.SET ? 'nodes' : 'components';
+			nextKey = type === Dom.SET
+				? sel_key_MASK
+				: sel_key_COMPOS;
 		}
 	
 		while (index < length) {
@@ -144,13 +159,13 @@ var jmask = exports.jmask = (function(mask){
 	
 			if (c === 46 /*.*/ ) {
 				_key = 'class';
-				_prop = 'attr';
-				_selector = new RegExp('\\b' + selector.substring(index + 1, end) + '\\b');
+				_prop = sel_key_ATTR;
+				_selector = sel_hasClassDelegate(selector.substring(index + 1, end));
 			}
 	
 			else if (c === 35 /*#*/ ) {
 				_key = 'id';
-				_prop = 'attr';
+				_prop = sel_key_ATTR;
 				_selector = selector.substring(index + 1, end);
 			}
 	
@@ -160,7 +175,7 @@ var jmask = exports.jmask = (function(mask){
 				eq === -1 && console.error('Attribute Selector: should contain "="');
 				// endif
 	
-				_prop = 'attr';
+				_prop = sel_key_ATTR;
 				_key = selector.substring(index + 1, eq);
 	
 				//slice out quotes if any
@@ -209,39 +224,44 @@ var jmask = exports.jmask = (function(mask){
 		}
 	
 		return matcher;
-	
-	
-		////////
-		////////if (key == null) {
-		////////	switch (selector[0]) {
-		////////	case '#':
-		////////		key = 'id';
-		////////		selector = selector.substring(1);
-		////////		prop = 'attr';
-		////////		break;
-		////////	case '.':
-		////////		key = 'class';
-		////////		selector = new RegExp('\\b' + selector.substring(1) + '\\b');
-		////////		prop = 'attr';
-		////////		break;
-		////////	default:
-		////////		key = type === Dom.SET ? 'tagName' : 'compoName';
-		////////		break;
-		////////	}
-		////////}
-		////////
-		////////
-		////////
-		////////return {
-		////////	key: key,
-		////////	prop: prop,
-		////////	selector: selector,
-		////////	nextKey: nextKey
-		////////};
 	}
 	
+	
+	function sel_hasClassDelegate(matchClass) {
+		return function(className){
+			return sel_hasClass(className, matchClass);
+		};
+	}
+	
+	// [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
+	function sel_hasClass(className, matchClass, index) {
+		if (className == null) 
+			return false;
+		
+		if (index == null) 
+			index = 0;
+			
+		index = className.indexOf(matchClass, index);
+	
+		if (index === -1)
+			return false;
+	
+		if (index > 0 && className.charCodeAt(index - 1) > 32)
+			return sel_hasClass(className, matchClass, index + 1);
+	
+		var class_Length = className.length,
+			match_Length = matchClass.length;
+			
+		if (index < class_Length - match_Length && className.charCodeAt(index + match_Length) > 32)
+			return sel_hasClass(className, matchClass, index + 1);
+	
+		return true;
+	}
+	
+	
 	function selector_moveToBreak(selector, index, length) {
-		var c, isInQuote = false,
+		var c, 
+			isInQuote = false,
 			isEscaped = false;
 	
 		while (index < length) {
@@ -283,11 +303,17 @@ var jmask = exports.jmask = (function(mask){
 			return false;
 		}
 	
-		if (selector.selector.test != null) {
+		if (typeof selector.selector === 'function') {
+			matched = selector.selector(obj[selector.key]);
+		}
+		
+		else if (selector.selector.test != null) {
 			if (selector.selector.test(obj[selector.key])) {
 				matched = true;
 			}
-		} else  if (obj[selector.key] === selector.selector) {
+		}
+		
+		else  if (obj[selector.key] === selector.selector) {
 			matched = true;
 		}
 	
@@ -456,6 +482,7 @@ var jmask = exports.jmask = (function(mask){
 		if (mix == null) {
 			return this;
 		}
+		
 		if (mix.type === Dom.SET) {
 			return mix;
 		}
@@ -967,7 +994,15 @@ var jmask = exports.jmask = (function(mask){
 	});
 	
 	
-	arr_each(['filter', 'children', 'closest', 'parent', 'find', 'first', 'last'], function(method) {
+	arr_each([
+		'filter',
+		'children',
+		'closest',
+		'parent',
+		'find',
+		'first',
+		'last'
+	], function(method) {
 	
 		jMask.prototype[method] = function(selector) {
 			var result = [],

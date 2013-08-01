@@ -91,7 +91,9 @@ function builder_build(node, model, cntx, container, controller, childs) {
 		// but only on a component, not a tag controller
 		if (node.tagName == null) {
 			var attrHandlers = node.handlers && node.handlers.attr,
-				attrFn;
+				attrFn,
+				key;
+				
 			for (key in node.attr) {
 				
 				attrFn = null;
