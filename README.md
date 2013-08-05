@@ -69,6 +69,24 @@
 ------------
 <table>
 <tr>
+<td>v0.8.0</td>
+	<td>
+		<ul>
+			<li>
+				+ Asynchronous.
+				<div>
+					IF a components needs to accomplish any async task, it can be done in
+					<code>renderStart/onRenderEnd</code> function using
+					<code>Compo.pause(this, cntx) / Compo.resume(this, cntx)</code>
+					
+				</div>
+			</li>
+		</ul>
+	</td>
+</tr>
+<tr>
+
+<tr>
 <td>v0.7.5</td>
 	<td>
 		<ul>

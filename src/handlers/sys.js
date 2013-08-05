@@ -116,9 +116,6 @@
 		
 
 		if (array == null || typeof array !== 'object' || array.length == null){
-			// if DEBUG
-			console.warn('List Model not exists', prop);
-			// endif
 			return;
 		}
 

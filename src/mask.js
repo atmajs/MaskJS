@@ -91,8 +91,9 @@ var cache = {},
 
 
 		/**
-		 * mask.registerAttrHandler(attrName, Handler) -> void
+		 * mask.registerAttrHandler(attrName, mix, Handler) -> void
 		 * - attrName (String): any attribute string name
+		 * - mix (String | Function): Render Mode or Handler Function if 'both'
 		 * - Handler (Function)
 		 *
 		 * Handler Interface, <i>(similar to Utility Interface)</i>
@@ -103,7 +104,11 @@ var cache = {},
 		 *
 		 * Note: Attribute wont be set to an element.
 		 **/
-		registerAttrHandler: function(attrName, Handler){
+		registerAttrHandler: function(attrName, mix, Handler){
+			if (fn_isFunction(mix)) {
+				Handler = mix;
+			}
+			
 			custom_Attributes[attrName] = Handler;
 		},
 		
@@ -172,52 +177,25 @@ var cache = {},
 			custom_Utils[utilName] = mix;
 		},
 		
-		registerUtility: function (utilityName, fn) {
-			console.log('@registerUtility - obsolete - use registerUtil(utilName, mix)');
-			
-			this.registerUtility = this.registerUtil;
-			this.registerUtil(utilityName, fn);
-		},
-		
-		getUtility: function(util){
+		getUtil: function(util){
 			return util != null
 				? custom_Utils[util]
 				: custom_Utils;
 		},
-		////// time for remove
-		//////serialize: function (template) {
-		//////	return Parser.cleanObject(this.compile(template, true));
-		//////},
-		//////deserialize: function (serialized) {
-		//////	var i, key, attr;
-		//////	if (serialized instanceof Array) {
-		//////		for (i = 0; i < serialized.length; i++) {
-		//////			this.deserialize(serialized[i]);
-		//////		}
-		//////		return serialized;
-		//////	}
-		//////	if (serialized.content != null) {
-		//////		if (serialized.content.template != null) {
-		//////			serialized.content = Parser.toFunction(serialized.content.template);
-		//////		}
-		//////		return serialized;
-		//////	}
-		//////	if (serialized.attr != null) {
-		//////		attr = serialized.attr;
-		//////		for (key in attr) {
-		//////			if (hasOwnProp.call(attr, key) === true){
-		//////				if (attr[key].template == null) {
-		//////					continue;
-		//////				}
-		//////				attr[key] = Parser.toFunction(attr[key].template);
-		//////			}
-		//////		}
-		//////	}
-		//////	if (serialized.nodes != null) {
-		//////		this.deserialize(serialized.nodes);
-		//////	}
-		//////	return serialized;
-		//////},
+		
+		registerUtility: function (utilityName, fn) {
+			console.warn('@registerUtility - deprecated - use registerUtil(utilName, mix)', utilityName);
+			
+			this.registerUtility = this.registerUtil;
+			this.registerUtility(utilityName, fn);
+		},
+		
+		getUtility: function(util){
+			console.warn('@getUtility - deprecated - use getUtil(utilName)', util);
+			this.getUtility = this.getUtil;
+			
+			return this.getUtility();
+		},
 		/**
 		 * mask.clearCache([key]) -> void
 		 * - key (String): template to remove from cache
@@ -300,6 +278,30 @@ var cache = {},
 		
 		compoIndex: function(index){
 			_controllerID = index;
+		},
+		
+		cfg: function(){
+			var args = arguments;
+			if (args.length === 0) {
+				return __cfg;
+			}
+			
+			var key, value;
+			
+			if (args.length === 2) {
+				key = args[0];
+				
+				__cfg[key] = args[1];
+				return;
+			}
+			
+			var obj = args[0];
+			if (typeof obj === 'object') {
+				
+				for (key in obj) {
+					__cfg[key] = obj[key]
+				}
+			}
 		}
 	};
 

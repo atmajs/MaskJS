@@ -279,7 +279,7 @@ var jmask = exports.jmask = (function(mask){
 	
 			if (c === 46 || c === 35 || c === 91 || c === 93 || c < 33) {
 				// .#[]
-				if (!(isInQuote === true && isEscaped === true)) {
+				if (isInQuote !== true && isEscaped !== true) {
 					break;
 				}
 			}

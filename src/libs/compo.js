@@ -1003,7 +1003,6 @@ var Compo = exports.Compo = (function(mask){
 			Compo.pause = function(compo, cntx){
 				
 				if (cntx.async == null) {
-					cntx.async = true;
 					cntx.defers = [];
 					
 					cntx._cbs_done = null;
@@ -1014,6 +1013,8 @@ var Compo = exports.Compo = (function(mask){
 						cntx[key] = DeferProto[key];
 					}
 				}
+				
+				cntx.async = true;
 				
 				for (var key in CompoProto) {
 					compo[key] = CompoProto[key];
@@ -1259,7 +1260,7 @@ var Compo = exports.Compo = (function(mask){
 		 *	Bind Closest Controller Handler Function to dom event(s)
 		 */
 	
-		mask.registerAttrHandler('x-signal', function(node, attrValue, model, cntx, element, controller) {
+		mask.registerAttrHandler('x-signal', 'client', function(node, attrValue, model, cntx, element, controller) {
 	
 			var arr = attrValue.split(';'),
 				signals = '';

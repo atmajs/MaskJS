@@ -7,4 +7,12 @@ var regexpWhitespace = /\s/g,
 		';': /\\>/g
 	},
 	hasOwnProp = {}.hasOwnProperty,
-	listeners = null;
+	listeners = null,
+	
+	__cfg = {
+		
+		/*
+		 * Relevant to node.js only, to enable compo caching
+		 */
+		allowCache: true
+	};
