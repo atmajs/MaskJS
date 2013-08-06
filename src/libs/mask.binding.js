@@ -1718,18 +1718,18 @@
 		}
 	
 	
-		//mask.registerUtility('bind', function(expr, model, cntx, element, controller, attrName, type){
+		//mask.registerUtility('bind', function(expr, model, ctx, element, controller, attrName, type){
 		//
-		//	var current = expression_eval(expr, model, cntx, controller);
+		//	var current = expression_eval(expr, model, ctx, controller);
 		//
 		//	if ('node' === type) {
 		//		element = document.createTextNode(current);
 		//	}
 		//
 		//	var refresher =  create_refresher(type, expr, element, current, attrName),
-		//		binder = expression_createBinder(expr, model, cntx, controller, refresher);
+		//		binder = expression_createBinder(expr, model, ctx, controller, refresher);
 		//
-		//	expression_bind(expr, model, cntx, controller, binder);
+		//	expression_bind(expr, model, ctx, controller, binder);
 		//
 		//
 		//	compo_attachDisposer(controller, function(){
@@ -1739,11 +1739,11 @@
 		//	return type === 'node' ? element : current;
 		//});
 	
-		function bind (current, expr, model, cntx, element, controller, attrName, type){
+		function bind (current, expr, model, ctx, element, controller, attrName, type){
 			var	refresher =  create_refresher(type, expr, element, current, attrName),
-				binder = expression_createBinder(expr, model, cntx, controller, refresher);
+				binder = expression_createBinder(expr, model, ctx, controller, refresher);
 		
-			expression_bind(expr, model, cntx, controller, binder);
+			expression_bind(expr, model, ctx, controller, binder);
 		
 		
 			compo_attachDisposer(controller, function(){
@@ -1754,19 +1754,19 @@
 		mask.registerUtil('bind', {
 			current: null,
 			element: null,
-			nodeRenderStart: function(expr, model, cntx, element, controller){
+			nodeRenderStart: function(expr, model, ctx, element, controller){
 				
-				var current = expression_eval(expr, model, cntx, controller);
+				var current = expression_eval(expr, model, ctx, controller);
 				
 				this.current = current;
 				this.element = document.createTextNode(current);
 			},
-			node: function(expr, model, cntx, element, controller){
+			node: function(expr, model, ctx, element, controller){
 				bind(
 					this.current,
 					expr,
 					model,
-					cntx,
+					ctx,
 					this.element,
 					controller,
 					null,
@@ -1775,15 +1775,15 @@
 				return this.element;
 			},
 			
-			attrRenderStart: function(expr, model, cntx, controller){
-				this.current = expression_eval(expr, model, cntx, controller);
+			attrRenderStart: function(expr, model, ctx, element, controller){
+				this.current = expression_eval(expr, model, ctx, controller);
 			},
-			attr: function(expr, model, cntx, element, controller, attrName){
+			attr: function(expr, model, ctx, element, controller, attrName){
 				bind(
 					this.current,
 					expr,
 					model,
-					cntx,
+					ctx,
 					element,
 					controller,
 					attrName,

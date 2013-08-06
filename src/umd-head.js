@@ -33,7 +33,7 @@
     };
 
     
-    if (typeof module !== 'undefined') {
+    if (typeof exports !== 'undefined' && exports === root) {
         module.exports = construct();
         return;
     }
