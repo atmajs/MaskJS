@@ -8,7 +8,7 @@ if (handler != null) {
 	*/
 
 	handler.compoName = node.tagName;
-	handler.attr = attr = util_extend(handler.attr, node.attr);
+	handler.attr = attr = attr_extend(handler.attr, node.attr);
 
 
 	for (key in attr) {
