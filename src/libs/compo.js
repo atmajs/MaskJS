@@ -1137,9 +1137,14 @@ var Compo = exports.Compo = (function(mask){
 				var parent;
 	
 				if (this.$ == null) {
-					var dom = typeof template === 'string' ? mask.compile(template) : template;
+					var dom = typeof template === 'string'
+						? mask.compile(template)
+						: template;
 	
-					parent = selector ? find_findSingle(this, selector_parse(selector, Dom.CONTROLLER, 'down')) : this;
+					parent = selector
+						? find_findSingle(this, selector_parse(selector, Dom.CONTROLLER, 'down'))
+						: this;
+						
 					if (parent.nodes == null) {
 						this.nodes = dom;
 						return this;
@@ -1149,15 +1154,20 @@ var Compo = exports.Compo = (function(mask){
 	
 					return this;
 				}
-				var array = mask.render(template, model, null, compo_containerArray(), this);
+				
+				var fragment = mask.render(template, model, null, null, this);
 	
-				parent = selector ? this.$.find(selector) : this.$;
-				for (var i = 0; i < array.length; i++) {
-					parent.append(array[i]);
-				}
-	
+				parent = selector
+					? this.$.find(selector)
+					: this.$;
+					
+				
+				parent.append(fragment);
+				
+				
+				// @todo do not emit to created compos before
 				this.emitIn('domInsert');
-				//- Shots.emit(this, 'DOMInsert');
+				
 				return this;
 			},
 			find: function(selector){
