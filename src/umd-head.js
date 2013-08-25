@@ -4,8 +4,9 @@
     var _global, _exports, _document;
 
     
-	if (typeof exports !== 'undefined' && (root === exports || root == null)){
+	if (typeof exports !== 'undefined' && (root == null || root === exports || root === global)){
 		// raw nodejs module
+        root = exports;
     	_global = global;
     }
 	
