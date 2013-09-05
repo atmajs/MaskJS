@@ -19,6 +19,7 @@ var Compo = exports.Compo = (function(mask){
 		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
 	}
 	
+	// end:source ../src/scope-vars.js
 
 	// source ../src/util/object.js
 	function obj_extend(target, source){
@@ -46,6 +47,7 @@ var Compo = exports.Compo = (function(mask){
 		return copy;
 	}
 	
+	// end:source ../src/util/object.js
 	// source ../src/util/function.js
 	function fn_proxy(fn, context) {
 		
@@ -54,6 +56,7 @@ var Compo = exports.Compo = (function(mask){
 		};
 		
 	}
+	// end:source ../src/util/function.js
 	// source ../src/util/selector.js
 	function selector_parse(selector, type, direction) {
 		if (selector == null){
@@ -75,7 +78,7 @@ var Compo = exports.Compo = (function(mask){
 				break;
 			case '.':
 				key = 'class';
-				selector = new RegExp('\\b' + selector.substring(1) + '\\b');
+				selector = sel_hasClassDelegate(selector.substring(1));
 				prop = 'attr';
 				break;
 			default:
@@ -111,11 +114,17 @@ var Compo = exports.Compo = (function(mask){
 			return false;
 		}
 	
+		if (typeof selector.selector === 'function') {
+			return selector.selector(obj[selector.key]);
+		}
+		
 		if (selector.selector.test != null) {
 			if (selector.selector.test(obj[selector.key])) {
 				return true;
 			}
-		} else {
+		}
+		
+		else {
 			// == - to match int and string
 			if (obj[selector.key] == selector.selector) {
 				return true;
@@ -125,6 +134,40 @@ var Compo = exports.Compo = (function(mask){
 		return false;
 	}
 	
+	
+	
+	function sel_hasClassDelegate(matchClass) {
+		return function(className){
+			return sel_hasClass(className, matchClass);
+		};
+	}
+	
+	// [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
+	function sel_hasClass(className, matchClass, index) {
+		if (typeof className !== 'string')
+			return false;
+		
+		if (index == null) 
+			index = 0;
+			
+		index = className.indexOf(matchClass, index);
+	
+		if (index === -1)
+			return false;
+	
+		if (index > 0 && className.charCodeAt(index - 1) > 32)
+			return sel_hasClass(className, matchClass, index + 1);
+	
+		var class_Length = className.length,
+			match_Length = matchClass.length;
+			
+		if (index < class_Length - match_Length && className.charCodeAt(index + match_Length) > 32)
+			return sel_hasClass(className, matchClass, index + 1);
+	
+		return true;
+	}
+	
+	// end:source ../src/util/selector.js
 	// source ../src/util/traverse.js
 	function find_findSingle(node, matcher) {
 		if (node instanceof Array) {
@@ -144,6 +187,7 @@ var Compo = exports.Compo = (function(mask){
 		return (node = node[matcher.nextKey]) && find_findSingle(node, matcher);
 	}
 	
+	// end:source ../src/util/traverse.js
 	// source ../src/util/dom.js
 	function dom_addEventListener(element, event, listener) {
 		
@@ -162,6 +206,7 @@ var Compo = exports.Compo = (function(mask){
 		}
 	}
 	
+	// end:source ../src/util/dom.js
 	// source ../src/util/domLib.js
 	/**
 	 *	Combine .filter + .find
@@ -182,6 +227,7 @@ var Compo = exports.Compo = (function(mask){
 		return $set;
 	}
 	
+	// end:source ../src/util/domLib.js
 
 	// source ../src/compo/children.js
 	var Children_ = {
@@ -245,6 +291,7 @@ var Compo = exports.Compo = (function(mask){
 		}
 	};
 	
+	// end:source ../src/compo/children.js
 	// source ../src/compo/events.js
 	var Events_ = {
 		on: function(component, events, $element) {
@@ -294,6 +341,7 @@ var Compo = exports.Compo = (function(mask){
 	},
 		EventDecorator = null;
 	
+	// end:source ../src/compo/events.js
 	// source ../src/compo/events.deco.js
 	var EventDecos = (function() {
 	
@@ -340,6 +388,7 @@ var Compo = exports.Compo = (function(mask){
 	
 	}());
 	
+	// end:source ../src/compo/events.deco.js
 	// source ../src/compo/pipes.js
 	var Pipes = (function() {
 	
@@ -499,6 +548,7 @@ var Compo = exports.Compo = (function(mask){
 	
 	}());
 	
+	// end:source ../src/compo/pipes.js
 
 	// source ../src/compo/anchor.js
 	
@@ -572,6 +622,7 @@ var Compo = exports.Compo = (function(mask){
 	
 	}());
 	
+	// end:source ../src/compo/anchor.js
 	// source ../src/compo/Compo.js
 	var Compo = (function() {
 	
@@ -744,6 +795,7 @@ var Compo = exports.Compo = (function(mask){
 			};
 		}
 		
+		// end:source Compo.util.js
 		// source Compo.static.js
 		obj_extend(Compo, {
 			create: function(controller){
@@ -937,6 +989,7 @@ var Compo = exports.Compo = (function(mask){
 		});
 		
 		
+		// end:source Compo.static.js
 		// source async.js
 		(function(){
 			
@@ -1051,6 +1104,7 @@ var Compo = exports.Compo = (function(mask){
 			};
 			
 		}());
+		// end:source async.js
 	
 		var Proto = {
 			type: Dom.CONTROLLER,
@@ -1077,11 +1131,6 @@ var Compo = exports.Compo = (function(mask){
 					container = arguments[0][2];
 				}
 	
-	
-				if (typeof this.onRenderStart === 'function'){
-					this.onRenderStart(model, cntx, container);
-				}
-	
 				// - do not override with same model
 				//if (this.model == null){
 				//	this.model = model;
@@ -1089,6 +1138,10 @@ var Compo = exports.Compo = (function(mask){
 	
 				if (this.nodes == null){
 					compo_ensureTemplate(this);
+				}
+				
+				if (typeof this.onRenderStart === 'function'){
+					this.onRenderStart(model, cntx, container);
 				}
 	
 			},
@@ -1262,6 +1315,7 @@ var Compo = exports.Compo = (function(mask){
 		return Compo;
 	}());
 	
+	// end:source ../src/compo/Compo.js
 	// source ../src/compo/signals.js
 	(function() {
 	
@@ -1541,6 +1595,7 @@ var Compo = exports.Compo = (function(mask){
 	
 	}());
 	
+	// end:source ../src/compo/signals.js
 
 	// source ../src/jcompo/jCompo.js
 	(function(){
@@ -1578,6 +1633,7 @@ var Compo = exports.Compo = (function(mask){
 	
 	}());
 	
+	// end:source ../src/jcompo/jCompo.js
 
 	// source ../src/handler/slot.js
 	
@@ -1601,6 +1657,7 @@ var Compo = exports.Compo = (function(mask){
 		}
 	};
 	
+	// end:source ../src/handler/slot.js
 
 
 	return Compo;

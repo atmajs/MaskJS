@@ -1,9 +1,9 @@
-<img src='http://libjs.it/images/mask.png' style='float:right'/>
+<img src='http://atmajs.com/images/logos/mask.png' style='float:right'/>
 <hr/>
-<a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/tenbits/MaskJS.png'/></a>
+<a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/atmajs/MaskJS.png'/></a>
 
 <p>
-	<tt><a href='http://libjs.it/#/mask' target='_blank'>mask.js</a></tt> — is a markup | template | <b>HMVC</b> engine
+	<tt><a href='http://atmajs.com/mask' target='_blank'>mask.js</a></tt> — is a markup | template | <b>HMVC</b> engine
 
 <div><pre><code>
 .container {
@@ -28,20 +28,20 @@
 </p>
 
 <p>
-	<a href='http://libjs.it/mask-try'>maskFiddle</a>
+	<a href='http://atmajs.com/mask-try'>maskFiddle</a>
 </p>
 
 <p>
-	<small><a href='http://libjs.it/#/mask'>Documentation</a></small>
+	<small><a href='http://atmajs.com/mask'>Documentation</a></small>
 </p>
 <p>
 
 <small>
 	Default build contains:
 	<ul>
-		<li><a href='https://github.com/tenbits/mask-binding'>Bindings Lib</a></li>
-		<li><a href='https://github.com/tenbits/mask-j'>jmask DOM</a></li>
-		<li><a href='https://github.com/tenbits/mask-compo'>Compo MVC</a></li>
+		<li><a href='https://github.com/atmajs/mask-binding'>Bindings Lib</a></li>
+		<li><a href='https://github.com/atmajs/mask-j'>jmask DOM</a></li>
+		<li><a href='https://github.com/atmajs/mask-compo'>Compo MVC</a></li>
 	</ul>
 </small>
 </p>

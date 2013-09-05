@@ -17,6 +17,7 @@ var jmask = exports.jmask = (function(mask){
 	}
 	
 	
+	// end:source ../src/scope-vars.js
 
 	// source ../src/util/object.js
 	function util_extend(target, source){
@@ -34,6 +35,7 @@ var jmask = exports.jmask = (function(mask){
 		return target;
 	}
 	
+	// end:source ../src/util/object.js
 	// source ../src/util/array.js
 	function arr_each(array, fn) {
 		for (var i = 0, length = array.length; i < length; i++) {
@@ -105,6 +107,7 @@ var jmask = exports.jmask = (function(mask){
 	}());
 	
 	
+	// end:source ../src/util/array.js
 	// source ../src/util/selector.js
 	
 	var sel_key_UP = 'parent',
@@ -235,7 +238,7 @@ var jmask = exports.jmask = (function(mask){
 	
 	// [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
 	function sel_hasClass(className, matchClass, index) {
-		if (className == null) 
+		if (typeof className !== 'string')
 			return false;
 		
 		if (index == null) 
@@ -330,6 +333,7 @@ var jmask = exports.jmask = (function(mask){
 		return matched;
 	}
 	
+	// end:source ../src/util/selector.js
 	// source ../src/util/utils.js
 	
 	function jmask_filter(arr, matcher) {
@@ -470,6 +474,7 @@ var jmask = exports.jmask = (function(mask){
 	////////}
 	
 	
+	// end:source ../src/util/utils.js
 
 	// source ../src/jmask/jmask.js
 	function jMask(mix) {
@@ -694,6 +699,7 @@ var jmask = exports.jmask = (function(mask){
 	
 	});
 	
+	// end:source ../src/jmask/jmask.js
 	// source ../src/jmask/manip.attr.js
 	(function() {
 		arr_each(['add', 'remove', 'toggle', 'has'], function(method) {
@@ -897,6 +903,7 @@ var jmask = exports.jmask = (function(mask){
 	
 	}());
 	
+	// end:source ../src/jmask/manip.attr.js
 	// source ../src/jmask/manip.dom.js
 	
 	
@@ -974,6 +981,7 @@ var jmask = exports.jmask = (function(mask){
 		};
 	});
 	
+	// end:source ../src/jmask/manip.dom.js
 	// source ../src/jmask/traverse.js
 	util_extend(jMask.prototype, {
 		each: function(fn, cntx) {
@@ -1060,6 +1068,7 @@ var jmask = exports.jmask = (function(mask){
 	
 	});
 	
+	// end:source ../src/jmask/traverse.js
 
 
 
