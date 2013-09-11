@@ -9,6 +9,7 @@
 		__array_slice = Array.prototype.slice;
 		
 	
+	// end:source ../src/vars.js
 
 	// source ../src/util/object.js
 	/**
@@ -260,6 +261,7 @@
 		
 		return true;
 	}
+	// end:source ../src/util/object.js
 	// source ../src/util/array.js
 	
 	function arr_isArray(x) {
@@ -311,14 +313,17 @@
 			observers = arr.__observers.__array = [];
 		}
 		
-		var i = 0,
-			fns = ['push', 'unshift', 'splice', 'pop', 'shift', 'reverse', 'sort'],
-			length = fns.length,
-			method;
-	
-		for (; i < length; i++) {
-			method = fns[i];
-			arr[method] = _array_createWrapper(arr, arr[method], method);
+		if (observers.length === 0) {
+			// create wrappers for first time
+			var i = 0,
+				fns = ['push', 'unshift', 'splice', 'pop', 'shift', 'reverse', 'sort'],
+				length = fns.length,
+				method;
+		
+			for (; i < length; i++) {
+				method = fns[i];
+				arr[method] = _array_createWrapper(arr, arr[method], method);
+			}
 		}
 	
 		observers[observers.length++] = callback;
@@ -431,6 +436,7 @@
 	//////	}
 	//////}
 	
+	// end:source ../src/util/array.js
 	// source ../src/util/dom.js
 	
 	function dom_removeElement(node) {
@@ -473,6 +479,7 @@
 		}
 	}
 	
+	// end:source ../src/util/dom.js
 	// source ../src/util/compo.js
 	
 	////////function compo_lastChild(compo) {
@@ -583,6 +590,7 @@
 		controller.dispose = disposer;
 	}
 	
+	// end:source ../src/util/compo.js
 	// source ../src/util/expression.js
 	var Expression = mask.Utils.Expression,
 		expression_eval_origin = Expression.eval,
@@ -770,6 +778,7 @@
 	
 	
 	
+	// end:source ../src/util/expression.js
 	// source ../src/util/signal.js
 	function signal_parse(str, isPiped, defaultType) {
 		var signals = str.split(';'),
@@ -824,6 +833,7 @@
 			type: type
 		};
 	}
+	// end:source ../src/util/signal.js
 
 	// source ../src/bindingProvider.js
 	var BindingProvider = (function() {
@@ -1242,6 +1252,7 @@
 	
 	}());
 	
+	// end:source ../src/bindingProvider.js
 
 	// source ../src/mask-handler/visible.js
 	/**
@@ -1272,6 +1283,7 @@
 		}
 	};
 	
+	// end:source ../src/mask-handler/visible.js
 	// source ../src/mask-handler/bind.js
 	/**
 	 *  Mask Custom Tag Handler
@@ -1307,6 +1319,7 @@
 	
 	}());
 	
+	// end:source ../src/mask-handler/bind.js
 	// source ../src/mask-handler/dualbind.js
 	/**
 	 *	Mask Custom Handler
@@ -1379,6 +1392,7 @@
 		}
 	};
 	
+	// end:source ../src/mask-handler/dualbind.js
 	// source ../src/mask-handler/validate.js
 	(function() {
 		
@@ -1617,6 +1631,7 @@
 	
 	}());
 	
+	// end:source ../src/mask-handler/validate.js
 	// source ../src/mask-handler/validate.group.js
 	function ValidateGroup() {}
 	
@@ -1661,6 +1676,7 @@
 		return out;
 	}
 	
+	// end:source ../src/mask-handler/validate.group.js
 
 	// source ../src/mask-util/bind.js
 	
@@ -1795,6 +1811,7 @@
 	
 	}());
 	
+	// end:source ../src/mask-util/bind.js
 	
 	// source ../src/mask-attr/xxVisible.js
 	
@@ -1818,6 +1835,7 @@
 			element.style.display = 'none';
 		}
 	});
+	// end:source ../src/mask-attr/xxVisible.js
 
 	// source ../src/sys/sys.js
 	(function(mask) {
@@ -1886,6 +1904,7 @@
 		
 		}());
 		
+		// end:source attr.use.js
 		// source attr.log.js
 		var attr_log = (function() {
 		
@@ -1911,6 +1930,7 @@
 		
 		}());
 		
+		// end:source attr.log.js
 		// source attr.if.js
 		var attr_if = (function() {
 		
@@ -1981,6 +2001,7 @@
 		
 		}());
 		
+		// end:source attr.if.js
 		// source attr.if.else.js
 		var attr_else = (function() {
 		
@@ -2039,6 +2060,7 @@
 		
 		}());
 		
+		// end:source attr.if.else.js
 		// source attr.each.js
 		var attr_each = (function() {
 		
@@ -2167,6 +2189,7 @@
 				}
 			}
 			
+			// end:source attr.each.helper.js
 		
 			var Component = mask.Dom.Component,
 				ListItem = (function() {
@@ -2310,6 +2333,7 @@
 		
 		}());
 		
+		// end:source attr.each.js
 		// source attr.visible.js
 		var attr_visible = (function() {
 		
@@ -2354,6 +2378,7 @@
 		
 		}());
 		
+		// end:source attr.visible.js
 	
 	
 	
@@ -2409,5 +2434,6 @@
 	
 	}(mask));
 	
+	// end:source ../src/sys/sys.js
 
 }(Mask, Compo));

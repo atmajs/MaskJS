@@ -629,7 +629,7 @@ var jmask = exports.jmask = (function(mask){
 		},
 	
 		text: function(mix, cntx, controller){
-			if (typeof mix === 'string') {
+			if (typeof mix === 'string' && arguments.length === 1) {
 				var node = [new Dom.TextNode(mix)];
 	
 				for(var i = 0, x, imax = this.length; i < imax; i++){
@@ -933,9 +933,16 @@ var jmask = exports.jmask = (function(mask){
 	
 				result[i] = $wrapper[0];
 	
-				if (this[i].parent != null){
-					this[i].parent.nodes = result[i];
-				}
+				var parentNodes = this[i].parent && this[i].parent.nodes;
+	            if (parentNodes != null){
+	                for(var j = 0, jmax = parentNodes.length; j < jmax; j++){
+	                    if (parentNodes[j] === this[i]){
+	                        
+	                        parentNodes.splice(j, 1, result[i]);
+	                        break;
+	                    }
+	                }
+	            }
 			}
 	
 			return jMask(result);
