@@ -6,6 +6,11 @@
 	// source ../src/vars.js
 	var domLib = global.jQuery || global.Zepto || global.$,
 		__Compo = typeof Compo !== 'undefined' ? Compo : (mask.Compo || global.Compo),
+	    __dom_addEventListener = __Compo.Dom.addEventListener,
+	    __mask_registerHandler = mask.registerHandler,
+	    __mask_registerAttrHandler = mask.registerAttrHandler,
+	    __mask_registerUtil = mask.registerUtil,
+	    
 		__array_slice = Array.prototype.slice;
 		
 	
@@ -73,88 +78,163 @@
 		// closest observer
 		var parts = property.split('.'),
 			imax  = parts.length,
-			i = 0, at = 0, x = obj;
+			i = 0,
+	        x = obj;
 		while (imax--) {
 			x = x[parts[i++]];
-			if (x == null) {
+			if (x == null) 
 				break;
-			}
+			
 			if (x.__observers != null) {
-				at = i;
-				obj = x;
+				var prop = parts.slice(i).join('.');
+	            
+	            if (x.__observers[prop]) {
+	                
+	                x.__observers[prop].push(callback);
+	                
+	                listener_push(obj, property, callback);
+	                return;
+	            }
 			}
 		}
-		if (at > 0) {
-			property = parts.slice(at).join('.');
-		}
 		
-		
-		if (obj.__observers == null) {
-			Object.defineProperty(obj, '__observers', {
-				value: {
-					__dirty: null
-				},
-				enumerable: false
-			});
-		}
+	    var listeners = listener_push(obj, property, callback);
+	    
+	    
+	    if (listeners.length === 1) {
+	        obj_attachProxy(obj, property, listeners, parts, true);
+	    }
+	    
+	    var value = obj_getProperty(obj, property);
+	    if (arr_isArray(value)) {
+	        arr_addObserver(value, callback);
+	    }
+	}
 	
-		var observers = obj.__observers;
-	
-		if (observers[property] != null) {
-			observers[property].push(callback);
-	
-			var value = obj_getProperty(obj, property);
-			if (arr_isArray(value)) {
-				arr_addObserver(value, callback);
-			}
-	
-			return;
-		}
-	
-		var callbacks = observers[property] = [callback],
-			chain = property.split('.'),
-			length = chain.length,
-			parent = length > 1 ? obj_ensure(obj, chain) : obj,
+	function obj_attachProxy(obj, property, listeners, chain) {
+	    var length = chain.length,
+			parent = length > 1
+	            ? obj_ensure(obj, chain)
+	            : obj,
 			key = chain[length - 1],
 			currentValue = parent[key];
-	
-		if (key === 'length' && arr_isArray(parent)) {
+	        
+	    if (length > 1) {
+	        obj_defineCrumbs(obj, chain);
+	    }
+	        
+	    if (key === 'length' && arr_isArray(parent)) {
 			// we cannot redefine array properties like 'length'
 			arr_addObserver(parent, callback);
-			return;
+			return currentValue;
 		}
-	
-	
+	    
 		Object.defineProperty(parent, key, {
 			get: function() {
 				return currentValue;
 			},
 			set: function(x) {
-				if (x === currentValue) {
+	            var i = 0,
+	                imax = listeners.length;
+	                
+				if (x === currentValue) 
 					return;
-				}
+				
 				currentValue = x;
 	
 				if (arr_isArray(x)) {
-					arr_addObserver(x, callback);
+	                for (i = 0; i< imax; i++) {
+	                    arr_addObserver(x, listeners[i]);
+	                }
 				}
 	
-				if (observers.__dirties != null) {
-					observers.__dirties[property] = 1;
+				if (listeners.__dirties != null) {
+					listeners.__dirties[property] = 1;
 					return;
 				}
 	
-				for (var i = 0, imax = callbacks.length; i < imax; i++) {
-					callbacks[i](x);
+				for (i = 0; i < imax; i++) {
+					listeners[i](x);
 				}
-			}
+			},
+	        configurable: true
 		});
 	
-		if (arr_isArray(currentValue)) {
-			arr_addObserver(currentValue, callback);
-		}
+	    
+	    return currentValue;
 	}
 	
+	function obj_defineCrumbs(obj, chain) {
+	    var rebinder = obj_crumbRebindDelegate(obj),
+	        path = '',
+	        key;
+	        
+	    for (var i = 0, imax = chain.length - 1; i < imax; i++) {
+	        key = chain[i];
+	        path += key + '.';
+	        
+	        obj_defineCrumb(path, obj, key, rebinder);
+	        
+	        obj = obj[key];
+	    }
+	}
+	
+	function obj_defineCrumb(path, obj, key, rebinder) {
+	        
+	    var value = obj[key],
+	        old;
+	    
+	    Object.defineProperty(obj, key, {
+			get: function() {
+				return value;
+			},
+			set: function(x) {
+				if (x === value) 
+					return;
+				
+				old = value;
+	            value = x;
+	            rebinder(path, old);
+			}
+		});
+	}
+	
+	function obj_crumbRebindDelegate(obj) {
+	    return function(path, oldValue){
+	        
+	        var observers = obj.__observers;
+	        if (observers == null) 
+	            return;
+	        for (var property in observers) {
+	            if (property.indexOf(path) !== 0) 
+	                continue;
+	            
+	            var listeners = observers[property].slice(0),
+	                imax = listeners.length,
+	                i = 0;
+	            if (imax === 0) 
+	                continue;
+	            
+	            var val = obj_getProperty(obj, property),
+	                cb, oldProp;
+	            
+	            for (i = 0; i < imax; i++) {
+	                cb = listeners[i];
+	                obj_removeObserver(obj, property, cb);
+	                
+	                oldProp = property.substring(path.length);
+	                obj_removeObserver(oldValue, oldProp, cb);
+	            }
+	            for (i = 0; i < imax; i++){
+	                listeners[i](val);
+	            }
+	            for (i = 0; i < imax; i++){
+	                obj_addObserver(obj, property, listeners[i]);
+	            }
+	            
+	        }
+	    }
+	}
 	
 	function obj_lockObservers(obj) {
 		if (arr_isArray(obj)) {
@@ -204,7 +284,7 @@
 				break;
 			}
 			if (x.__observers != null) {
-				obj_removeObserver(obj, parts.slice(i).join('.'), callback);
+				obj_removeObserver(x, parts.slice(i).join('.'), callback);
 				break;
 			}
 		}
@@ -217,7 +297,7 @@
 		var currentValue = obj_getProperty(obj, property);
 		if (arguments.length === 2) {
 			
-			delete obj.__observers[property];
+			obj.__observers[property].length = 0;
 			return;
 		}
 	
@@ -260,6 +340,27 @@
 		}
 		
 		return true;
+	}
+	
+	
+	function listener_push(obj, property, callback) {
+	    if (obj.__observers == null) {
+	        Object.defineProperty(obj, '__observers', {
+	            value: {
+	                __dirty: null
+	            },
+	            enumerable: false
+	        });
+	    }
+	    var obs = obj.__observers;
+	    if (obs[property] != null) {
+	        obs[property].push(callback);
+	    }
+	    else{
+	        obs[property] = [callback];
+	    }
+	    
+	    return obs[property];
 	}
 	// end:source ../src/util/object.js
 	// source ../src/util/array.js
@@ -462,22 +563,6 @@
 	
 	
 	
-	function dom_addEventListener(element, event, listener) {
-	
-		// add event listener with jQuery for custom events
-		if (typeof domLib === 'function'){
-			domLib(element).on(event, listener);
-			return;
-		}
-	
-		if (element.addEventListener != null) {
-			element.addEventListener(event, listener, false);
-			return;
-		}
-		if (element.attachEvent) {
-			element.attachEvent("on" + event, listener);
-		}
-	}
 	
 	// end:source ../src/util/dom.js
 	// source ../src/util/compo.js
@@ -1187,7 +1272,8 @@
 					for (var i = 0, x, imax = element.options.length; i < imax; i++){
 						x = element.options[i];
 						
-						if (x.getAttribute('name') === value) {
+	                    // eqeq (not strict compare)
+						if (x.getAttribute('name') == value) {
 							element.selectedIndex = i;
 							return;
 						}
@@ -1220,7 +1306,7 @@
 						eventType = attr['change-event'] || attr.changeEvent || 'change',
 						onDomChange = provider.domChanged.bind(provider);
 		
-					dom_addEventListener(element, eventType, onDomChange);
+					__dom_addEventListener(element, eventType, onDomChange);
 				}
 			}
 	
@@ -1265,7 +1351,7 @@
 	
 	function VisibleHandler() {}
 	
-	mask.registerHandler(':visible', VisibleHandler);
+	__mask_registerHandler(':visible', VisibleHandler);
 	
 	
 	VisibleHandler.prototype = {
@@ -1299,7 +1385,7 @@
 	
 		function Bind() {}
 	
-		mask.registerHandler(':bind', Bind);
+		__mask_registerHandler(':bind', Bind);
 	
 		Bind.prototype = {
 			constructor: Bind,
@@ -1340,58 +1426,72 @@
 	
 	function DualbindHandler() {}
 	
-	mask.registerHandler(':dualbind', DualbindHandler);
+	__mask_registerHandler(':dualbind', DualbindHandler);
 	
 	
 	
 	DualbindHandler.prototype = {
 		constructor: DualbindHandler,
-		
+	
 		renderEnd: function(elements, model, cntx, container) {
 			this.provider = BindingProvider.create(model, container, this);
-			
+	
 			if (this.components) {
 				for (var i = 0, x, length = this.components.length; i < length; i++) {
 					x = this.components[i];
 	
 					if (x.compoName === ':validate') {
-						(this.validations || (this.validations = [])).push(x);
+						(this.validations || (this.validations = []))
+							.push(x);
 					}
 				}
 			}
 	
-			if (typeof model.Validate === 'object' && !this.attr['no-validation']) {
-				
-				var validator = model.Validate[this.provider.value];
+			if (!this.attr['no-validation'] && !this.validations) {
+				var Validate = model.Validate,
+					prop = this.provider.value;
+	
+				if (Validate == null && prop.indexOf('.') !== -1) {
+					var parts = prop.split('.'),
+						i = 0,
+						imax = parts.length,
+						obj = model[parts[0]];
+					while (Validate == null && ++i < imax && obj) {
+						Validate = obj.Validate;
+						obj = obj[parts[i]]
+					}
+					prop = parts.slice(i).join('.');
+				}
+	
+				var validator = Validate && Validate[prop];
 				if (typeof validator === 'function') {
-				
+	
 					validator = mask
 						.getHandler(':validate')
 						.createCustom(container, validator);
-					
-				
+	
+	
 					(this.validations || (this.validations = []))
 						.push(validator);
-					
+	
 				}
 			}
-			
-			
+	
+	
 			BindingProvider.bind(this.provider);
 		},
-		dispose: function(){
+		dispose: function() {
 			if (this.provider && typeof this.provider.dispose === 'function') {
 				this.provider.dispose();
 			}
 		},
-		
+	
 		handlers: {
 			attr: {
-				'x-signal' : function(){}
+				'x-signal': function() {}
 			}
 		}
 	};
-	
 	// end:source ../src/mask-handler/dualbind.js
 	// source ../src/mask-handler/validate.js
 	(function() {
@@ -1404,13 +1504,14 @@
 	
 		function Validate() {}
 	
-		mask.registerHandler(':validate', Validate);
+		__mask_registerHandler(':validate', Validate);
 	
 	
 	
 	
 		Validate.prototype = {
 			constructor: Validate,
+	        attr: {},
 			renderStart: function(model, cntx, container) {
 				this.element = container;
 				
@@ -1505,7 +1606,7 @@
 		Validate.createCustom = function(element, validator){
 			var validate = new Validate();
 			
-			validate.renderStart(null, element);
+			validate.element = element;
 			validate.validators = [new Validator(validator)];
 			
 			return validate;
@@ -1555,7 +1656,7 @@
 			return domLib(element).next('.' + class_INVALID).hide();
 		}
 	
-		mask.registerHandler(':validate:message', Compo({
+		__mask_registerHandler(':validate:message', Compo({
 			template: 'div.' + class_INVALID + ' { span > "~[bind:message]" button > "~[cancel]" }',
 			
 			onRenderStart: function(model){
@@ -1635,7 +1736,7 @@
 	// source ../src/mask-handler/validate.group.js
 	function ValidateGroup() {}
 	
-	mask.registerHandler(':validate:group', ValidateGroup);
+	__mask_registerHandler(':validate:group', ValidateGroup);
 	
 	
 	ValidateGroup.prototype = {
@@ -1691,7 +1792,7 @@
 				return newValue;
 			}
 			
-			if (!currentValue) {
+			if (currentValue == null || currentValue === '') {
 				return attrValue + ' ' + newValue;
 			}
 			
@@ -1734,27 +1835,6 @@
 		}
 	
 	
-		//mask.registerUtility('bind', function(expr, model, ctx, element, controller, attrName, type){
-		//
-		//	var current = expression_eval(expr, model, ctx, controller);
-		//
-		//	if ('node' === type) {
-		//		element = document.createTextNode(current);
-		//	}
-		//
-		//	var refresher =  create_refresher(type, expr, element, current, attrName),
-		//		binder = expression_createBinder(expr, model, ctx, controller, refresher);
-		//
-		//	expression_bind(expr, model, ctx, controller, binder);
-		//
-		//
-		//	compo_attachDisposer(controller, function(){
-		//		expression_unbind(expr, model, controller, binder);
-		//	});
-		//
-		//	return type === 'node' ? element : current;
-		//});
-	
 		function bind (current, expr, model, ctx, element, controller, attrName, type){
 			var	refresher =  create_refresher(type, expr, element, current, attrName),
 				binder = expression_createBinder(expr, model, ctx, controller, refresher);
@@ -1767,7 +1847,7 @@
 			});
 		}
 	
-		mask.registerUtil('bind', {
+		__mask_registerUtil('bind', {
 			current: null,
 			element: null,
 			nodeRenderStart: function(expr, model, ctx, element, controller){
@@ -1816,7 +1896,7 @@
 	// source ../src/mask-attr/xxVisible.js
 	
 	
-	mask.registerAttrHandler('xx-visible', function(node, attrValue, model, cntx, element, controller) {
+	__mask_registerAttrHandler('xx-visible', function(node, attrValue, model, cntx, element, controller) {
 		
 		var binder = expression_createBinder(attrValue, model, cntx, controller, function(value){
 			element.style.display = value ? '' : 'none';
@@ -1836,6 +1916,22 @@
 		}
 	});
 	// end:source ../src/mask-attr/xxVisible.js
+    // source ../src/mask-attr/xToggle.js
+    __mask_registerAttrHandler('x-toggle', 'client', function(node, attrValue, model, ctx, element, controller){
+        
+        
+        var event = attrValue.substring(0, attrValue.indexOf(':')),
+            expression = attrValue.substring(event.length + 1),
+            ref = expression_varRefs(expression);
+        
+        __dom_addEventListener(element, event, function(){
+            var value = expression_eval(expression, model, ctx, controller);
+            
+            obj_setProperty(model, ref, value);
+        });
+    });
+    
+    // end:source ../src/mask-attr/xToggle.js
 
 	// source ../src/sys/sys.js
 	(function(mask) {

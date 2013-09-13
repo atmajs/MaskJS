@@ -191,6 +191,10 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/util/dom.js
 	function dom_addEventListener(element, event, listener) {
 		
+		if (EventDecorator != null) {
+			event = EventDecorator(event);
+		}
+		
 		// allows custom events - in x-signal, for example
 		if (domLib != null) {
 			domLib(element).on(event, listener);
@@ -422,10 +426,6 @@ var Compo = exports.Compo = (function(mask){
 				!event && console.error('Signal: event type is not set', attrValue);
 				// endif
 	
-	
-				if (EventDecorator != null) {
-					event = EventDecorator(event);
-				}
 	
 				dom_addEventListener(element, event, Handler);
 	
@@ -985,6 +985,10 @@ var Compo = exports.Compo = (function(mask){
 				}
 				
 				return include.instance();
+			},
+			
+			Dom: {
+				addEventListener: dom_addEventListener
 			}
 		});
 		
@@ -1344,10 +1348,6 @@ var Compo = exports.Compo = (function(mask){
 				// endif
 	
 				if (Handler) {
-	
-					if (EventDecorator != null) {
-						event = EventDecorator(event);
-					}
 	
 					signals += ',' + handler + ',';
 					dom_addEventListener(element, event, Handler);
