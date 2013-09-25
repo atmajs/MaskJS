@@ -63,7 +63,7 @@ if (controller.model != null) {
 	model = controller.model;
 }
 
-if (handler != null && handler.tagName != null && handler.tagName !== node.compoName) {
+if (handler != null && handler.tagName != null) {
 	handler.nodes = {
 		tagName: handler.tagName,
 		attr: handler.attr,
