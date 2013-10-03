@@ -13,13 +13,6 @@
 
 
 /**
- *	mask.node
- *
- *	```/lib/mask.node.js```
- *	Mask with HTML Builder
- **/
-
-/**
  *	plugin.reload
  *
  *	```/lib/plugin.reload.js```
