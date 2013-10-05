@@ -1,42 +1,63 @@
-var x, content, result, text;
 
-content = node.content;
-
-if (typeof content === 'function') {
-
-	result = content('node', model, cntx, container, controller);
-
-	if (typeof result === 'string') {
-		container.appendChild(document.createTextNode(result));
-
-	} else {
-
-		text = '';
-		// result is array with some htmlelements
-		for (j = 0, jmax = result.length; j < jmax; j++) {
-			x = result[j];
-
-			if (typeof x === 'object') {
-				// In this casee result[j] should be any HTMLElement
-				if (text !== '') {
-					container.appendChild(document.createTextNode(text));
-					text = '';
-				}
-				if (x.nodeType == null) {
-					text += x.toString();
+var build_textNode = (function(){
+	
+	var append_textNode = (function(document){
+		
+		return function(element, text){
+			element.appendChild(document.createTextNode(text));
+		};
+		
+	}(document));
+	
+	return function build_textNode(node, model, ctx, container, controller) {
+		
+		var content = node.content;
+			
+		
+		if (fn_isFunction(content)) {
+		
+			var result = content('node', model, ctx, container, controller);
+		
+			if (typeof result === 'string') {
+				
+				append_textNode(container, result);
+				return;
+			} 
+		
+			
+			// result is array with some htmlelements
+			var text = '',
+				jmax = result.length,
+				j = 0,
+				x;
+				
+			for (; j < jmax; j++) {
+				x = result[j];
+	
+				if (typeof x === 'object') {
+					// In this casee result[j] should be any HTMLElement
+					if (text !== '') {
+						append_textNode(container, text);
+						text = '';
+					}
+					if (x.nodeType == null) {
+						text += x.toString();
+						continue;
+					}
+					container.appendChild(x);
 					continue;
 				}
-				container.appendChild(x);
-				continue;
+	
+				text += x;
 			}
-
-			text += x;
-		}
-		if (text !== '') {
-			container.appendChild(document.createTextNode(text));
-		}
+			
+			if (text !== '') {
+				append_textNode(container, text);
+			}
+			
+			return;
+		} 
+		
+		append_textNode(container, content);
 	}
-
-} else {
-	container.appendChild(document.createTextNode(content));
-}
+}());
