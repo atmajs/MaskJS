@@ -195,7 +195,8 @@
 				old = value;
 	            value = x;
 	            rebinder(path, old);
-			}
+			},
+	        configurable: true
 		});
 	}
 	
@@ -1917,6 +1918,12 @@
 	});
 	// end:source ../src/mask-attr/xxVisible.js
     // source ../src/mask-attr/xToggle.js
+    /**
+     *	Toggle value with ternary operator on an event.
+     *
+     *	button x-toggle='click: foo === "bar" ? "zet" : "bar" > 'Toggle'
+     */
+    
     __mask_registerAttrHandler('x-toggle', 'client', function(node, attrValue, model, ctx, element, controller){
         
         
@@ -1924,6 +1931,11 @@
             expression = attrValue.substring(event.length + 1),
             ref = expression_varRefs(expression);
         
+    	if (typeof ref !== 'string') {
+    		// assume is an array
+    		ref = ref[0];
+    	}
+    	
         __dom_addEventListener(element, event, function(){
             var value = expression_eval(expression, model, ctx, controller);
             
