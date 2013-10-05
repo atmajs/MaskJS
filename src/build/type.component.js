@@ -5,7 +5,8 @@ function build_compo(node, model, ctx, container, controller){
 		handler = fn_isFunction(Handler)
 			? new Handler(model)
 			: Handler,
-		attr;
+		attr,
+		key;
 	
 	if (handler != null) {
 		/* if (!DEBUG)
@@ -28,12 +29,12 @@ function build_compo(node, model, ctx, container, controller){
 		}
 		
 		if (listeners != null && listeners['compoCreated'] != null) {
-			var fns = listeners.compoCreated;
-	
-			for (j = 0, jmax = fns.length; j < jmax; j++) {
+			var fns = listeners.compoCreated,
+				jmax = fns.length,
+				j = 0;
+			for (; j < jmax; j++) {
 				fns[j](handler, model, ctx, container);
 			}
-	
 		}
 	
 		if (fn_isFunction(handler.renderStart)) {

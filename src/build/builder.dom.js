@@ -72,6 +72,7 @@ var builder_build = (function(custom_Attributes, Component){
 				return container;
 			}		
 			elements = [];
+			node = controller;
 		}
 	
 		var nodes = node.nodes;
