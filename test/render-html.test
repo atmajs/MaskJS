@@ -1,21 +1,5 @@
 var render = function(template, model){
-		var html = mask.render(template, model),
-			div = document.createElement('div'),
-			frag = document.createDocumentFragment();
-
-		div.innerHTML = html;
-
-		if (div.childNodes.length === 1){
-			return div.firstChild;
-		}
-		var element = div.firstChild;
-		while(element){
-			frag.appendChild(element);
-			element = element.nextSibling;
-		}
-
-		return frag;
-
+		return mask.render(template, model);
 	},
 	template, node, attr;
 
