@@ -1,7 +1,8 @@
+var _controllerID = 0;
 
 var builder_build = (function(custom_Attributes, Component){
 	
-	var _controllerID = 0;
+	
 		
 	// import util.js
 	// import type.textNode.js
@@ -73,6 +74,10 @@ var builder_build = (function(custom_Attributes, Component){
 			}		
 			elements = [];
 			node = controller;
+			
+			if (controller.model !== model) {
+				model = controller.model;
+			}
 		}
 	
 		var nodes = node.nodes;
