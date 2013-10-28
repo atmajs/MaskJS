@@ -1145,17 +1145,17 @@ var Compo = exports.Compo = (function(mask){
 		// source async.js
 		(function(){
 			
-			function _on(cntx, type, callback) {
-				if (cntx[type] == null)
-					cntx[type] = [];
+			function _on(ctx, type, callback) {
+				if (ctx[type] == null)
+					ctx[type] = [];
 				
-				cntx[type].push(callback);
+				ctx[type].push(callback);
 				
-				return cntx;
+				return ctx;
 			}
 			
-			function _call(cntx, type, _arguments) {
-				var cbs = cntx[type];
+			function _call(ctx, type, _arguments) {
+				var cbs = ctx[type];
 				if (cbs == null) 
 					return;
 				
@@ -1205,30 +1205,34 @@ var Compo = exports.Compo = (function(mask){
 				}
 			}
 			
-			Compo.pause = function(compo, cntx){
+			Compo.pause = function(compo, ctx){
 				
-				if (cntx.async == null) {
-					cntx.defers = [];
+				if (ctx.async == null) {
+					ctx.defers = [];
 					
-					cntx._cbs_done = null;
-					cntx._cbs_fail = null;
-					cntx._cbs_always = null;
+					ctx._cbs_done = null;
+					ctx._cbs_fail = null;
+					ctx._cbs_always = null;
 					
 					for (var key in DeferProto) {
-						cntx[key] = DeferProto[key];
+						ctx[key] = DeferProto[key];
 					}
 				}
 				
-				cntx.async = true;
+				ctx.async = true;
 				
 				for (var key in CompoProto) {
 					compo[key] = CompoProto[key];
 				}
 				
-				cntx.defers.push(compo);
+				ctx.defers.push(compo);
+				
+				return function(){
+					Compo.resume(compo, ctx);
+				};
 			}
 			
-			Compo.resume = function(compo, cntx){
+			Compo.resume = function(compo, ctx){
 				
 				// fn can be null when calling resume synced after pause
 				if (compo.resume) 
@@ -1237,11 +1241,11 @@ var Compo = exports.Compo = (function(mask){
 				compo.async = false;
 				
 				var busy = false;
-				for (var i = 0, x, imax = cntx.defers.length; i < imax; i++){
-					x = cntx.defers[i];
+				for (var i = 0, x, imax = ctx.defers.length; i < imax; i++){
+					x = ctx.defers[i];
 					
 					if (x === compo) {
-						cntx.defers[i] = null;
+						ctx.defers[i] = null;
 						continue;
 					}
 					
@@ -1251,7 +1255,7 @@ var Compo = exports.Compo = (function(mask){
 				}
 				
 				if (busy === false) {
-					cntx.resolve();
+					ctx.resolve();
 				}
 			};
 			
@@ -1816,6 +1820,19 @@ var Compo = exports.Compo = (function(mask){
 				
 				domLib.fn[method] = function(template, model, controller, ctx){
 					
+					if (this.length === 0) {
+						// if DEBUG
+						console.warn('<jcompo> $.', method, '- no element was selected(found)');
+						// endif
+						return this;
+					}
+					
+					if (this.length > 1) {
+						// if DEBUG
+						console.warn('<jcompo> $.', method, ' can insert only to one element. Fix is comming ...');
+						// endif
+					}
+					
 					if (controller == null) {
 						
 						controller = index < 2
@@ -1824,15 +1841,32 @@ var Compo = exports.Compo = (function(mask){
 							;
 					}
 					
-					// if DEBUG
-					controller == null && console.warn(
-						'$.***Mask - controller not found, this can lead to memory leaks if template contains compos'
-					);
-					// endif
+					if (controller == null) {
+						controller = {};
+						// if DEBUG
+						console.warn(
+							'$.***Mask - controller not found, this can lead to memory leaks if template contains compos'
+						);
+						// endif
+					}
 					
-					var fragment = mask.render(template, model, ctx, null, controller);
 					
-					return this[jQ_Methods[index]](fragment);
+					if (controller.components == null) {
+						controller.components = [];
+					}
+					
+					var components = controller.components,
+						i = components.length,
+						fragment = mask.render(template, model, ctx, null, controller);
+					
+					var self = this[jQ_Methods[index]](fragment),
+						imax = components.length;
+					
+					for (; i < imax; i++) {
+						Compo.signal.emitIn(components[i], 'domInsert');
+					}
+					
+					return self;
 				};
 				
 			});

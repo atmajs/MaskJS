@@ -947,15 +947,16 @@
 			this.element = element;
 			this.value = attr.value;
 			this.property = attr.property;
-			this.setter = controller.attr.setter;
-			this.getter = controller.attr.getter;
+			this.setter = attr.setter;
+			this.getter = attr.getter;
 			this.dismiss = 0;
 			this.bindingType = bindingType;
 			this.log = false;
 			this.signal_domChanged = null;
 			this.signal_objectChanged = null;
 			this.locked = false;
-	
+			
+			
 			if (this.property == null) {
 	
 				switch (element.tagName) {
@@ -990,39 +991,34 @@
 			 *	Send signal on OBJECT or DOM change
 			 */
 			if (attr['x-signal']) {
-				var signal = signal_parse(attr['x-signal'], null, 'dom')[0];
+				var signal = signal_parse(attr['x-signal'], null, 'dom')[0],
+					signalType = singal && signal.type;
 				
-				if (signal) {
-						
-					if (signal.type === 'dom') {
-						this.signal_domChanged = signal.signal;
-					}
-					
-					else if (signal.type === 'object') {
-						this.signal_objectChanged = signal.signal;
-					}
-					
-					else {
-						console.error('Type is not supported', signal);
-					}
+				switch(signalType){
+					case 'dom':
+					case 'object':
+						this['signal_' + signalType + 'Changed'] = signal.signal;
+						break;
+					default:
+						console.error('Signal typs is not supported', signal);
+						break;
 				}
+				
 				
 			}
 			
 			if (attr['x-pipe-signal']) {
-				var signal = signal_parse(attr['x-pipe-signal'], true, 'dom')[0];
-				if (signal) {
-					if (signal.type === 'dom') {
-						this.pipe_domChanged = signal;
-					}
+				var signal = signal_parse(attr['x-pipe-signal'], true, 'dom')[0],
+					signalType = signal && signal.type;
 					
-					else if (signal.type === 'object') {
-						this.pipe_objectChanged = signal;
-					}
-					
-					else {
-						console.error('Type is not supported', signal)
-					}
+				switch(signalType){
+					case 'dom':
+					case 'object':
+						this['pipe_' + signalType + 'Changed'] = signal;
+						break;
+					default:
+						console.error('Pipe type is not supported');
+						break;
 				}
 			}
 			
@@ -1106,29 +1102,6 @@
 	
 		BindingProvider.prototype = {
 			constructor: BindingProvider,
-			
-			//////handlers: {
-			//////	attr: {
-			//////		'x-signal': function(provider, value){
-			//////			var signal = signal_parse(value, null, 'dom')[0];
-			//////	
-			//////			if (signal) {
-			//////					
-			//////				if (signal.type === 'dom') {
-			//////					provider.signal_domChanged = signal.signal;
-			//////				}
-			//////				
-			//////				else if (signal.type === 'object') {
-			//////					provider.signal_objectChanged = signal.signal;
-			//////				}
-			//////				
-			//////				else {
-			//////					console.error('Type is not supported', signal);
-			//////				}
-			//////			}
-			//////		}
-			//////	}
-			//////},
 			
 			dispose: function() {
 				expression_unbind(this.expression, this.model, this.controller, this.binder);
@@ -1308,6 +1281,17 @@
 						onDomChange = provider.domChanged.bind(provider);
 		
 					__dom_addEventListener(element, eventType, onDomChange);
+				}
+				
+					
+				if (!provider.objectWay.get(provider, provider.expression)) {
+					
+					setTimeout(function(){
+						if (provider.domWay.get(provider))
+							provider.domChanged();	
+					})
+					
+					return provider;
 				}
 			}
 	
@@ -1944,6 +1928,26 @@
     });
     
     // end:source ../src/mask-attr/xToggle.js
+	// source ../src/mask-attr/xClassToggle.js
+	/**
+	 *	Toggle Class Name
+	 *
+	 *	button x-toggle='click: selected'
+	 */
+	
+	__mask_registerAttrHandler('x-class-toggle', 'client', function(node, attrValue, model, ctx, element, controller){
+	    
+	    
+	    var event = attrValue.substring(0, attrValue.indexOf(':')),
+	        $class = attrValue.substring(event.length + 1).trim();
+	    
+		
+	    __dom_addEventListener(element, event, function(){
+	         domLib(element).toggleClass($class);
+	    });
+	});
+	
+	// end:source ../src/mask-attr/xClassToggle.js
 
 	// source ../src/sys/sys.js
 	(function(mask) {
