@@ -30,6 +30,8 @@
 	// import ../src/libs/mask.binding.js
 
 
-	return Mask;
+	Mask.Compo = Compo;
+	Mask.jmask = jmask;
 
+	exports.mask = Mask;
 }));

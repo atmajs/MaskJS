@@ -18,41 +18,18 @@
 	_exports = root || _global;
     
 
-    function construct(plugins){
+    function construct(){
 
-        if (plugins == null) {
-            plugins = {};
-        }
-        var lib = factory(_global, plugins, _document),
-            key;
-
-        for (key in plugins) {
-            lib[key] = plugins[key];
-        }
-
-        return lib;
+        factory(_global, _exports, _document);
     };
 
     
-    if (typeof exports !== 'undefined' && exports === root) {
-        module.exports = construct();
-        return;
-    }
     if (typeof define === 'function' && define.amd) {
-        define(construct);
-        return;
+        return define(construct);
     }
     
-    var plugins = {},
-        lib = construct(plugins);
-
-    _exports.mask = lib;
-
-    for (var key in plugins) {
-        _exports[key] = plugins[key];
-    }
-
-    
+	// Browser OR Node
+    construct();
 
 }(this, function (global, exports, document) {
     'use strict';

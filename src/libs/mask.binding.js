@@ -992,7 +992,7 @@
 			 */
 			if (attr['x-signal']) {
 				var signal = signal_parse(attr['x-signal'], null, 'dom')[0],
-					signalType = singal && signal.type;
+					signalType = signal && signal.type;
 				
 				switch(signalType){
 					case 'dom':
