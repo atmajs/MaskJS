@@ -483,7 +483,7 @@ var Compo = exports.Compo = (function(mask){
 	var Pipes = (function() {
 	
 	
-		mask.registerAttrHandler('x-pipe-signal', function(node, attrValue, model, cntx, element, controller) {
+		mask.registerAttrHandler('x-pipe-signal', 'client', function(node, attrValue, model, cntx, element, controller) {
 	
 			var arr = attrValue.split(';');
 			for (var i = 0, x, length = arr.length; i < length; i++) {

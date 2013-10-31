@@ -152,15 +152,33 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 					continue;
 				}
 
-				// inline comments
-				if (c === 47 && template.charCodeAt(index + 1) === 47) {
+				// COMMENTS
+				if (c === 47) {
 					// /
-					index++;
-					while (c !== 10 && c !== 13 && index < length) {
-						// goto newline
-						c = template.charCodeAt(++index);
+					nextC = template.charCodeAt(index + 1);
+					if (nextC === 47){
+						// inline (/)
+						index++;
+						while (c !== 10 && c !== 13 && index < length) {
+							// goto newline
+							c = template.charCodeAt(++index);
+						}
+						continue;
 					}
-					continue;
+					if (nextC === 42) {
+						// block (*)
+						index = template.indexOf('*/', index + 2) + 2;
+						
+						if (index === 1) {
+							// if DEBUG
+							console.warn('<mask:parse> block comment has no end');
+							// endif
+							index = length;
+						}
+						
+						
+						continue;
+					}
 				}
 
 				if (last === state_attr) {
