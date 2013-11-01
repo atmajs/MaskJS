@@ -418,13 +418,30 @@
 		if (observers.length === 0) {
 			// create wrappers for first time
 			var i = 0,
-				fns = ['push', 'unshift', 'splice', 'pop', 'shift', 'reverse', 'sort'],
+				fns = [
+					// native mutators
+					'push',
+					'unshift',
+					'splice',
+					'pop',
+					'shift',
+					'reverse',
+					'sort',
+					
+					// collections mutator
+					'remove'],
 				length = fns.length,
+				fn,
 				method;
 		
 			for (; i < length; i++) {
 				method = fns[i];
-				arr[method] = _array_createWrapper(arr, arr[method], method);
+				fn = arr[method];
+				
+				if (fn != null) {
+					arr[method] = _array_createWrapper(arr, fn, method);
+				}
+	
 			}
 		}
 	
@@ -493,11 +510,13 @@
 			return result;
 		}
 	
-	
-		for (var i = 0, x, length = callbacks.length; i < length; i++) {
+		var i = 0,
+			imax = callbacks.length,
+			x;
+		for (; i < imax; i++) {
 			x = callbacks[i];
 			if (typeof x === 'function') {
-				x(array, method, args);
+				x(array, method, args, result);
 			}
 		}
 	
@@ -2301,6 +2320,20 @@
 				}
 			}
 			
+			function list_remove(self, removed){
+				var compos = self.components,
+					i = compos.length,
+					x;
+				while(--i > -1){
+					x = compos[i];
+					
+					if (removed.indexOf(x.model) === -1) 
+						continue;
+					
+					compo_dispose(x, self);
+				}
+			}
+			
 			// end:source attr.each.helper.js
 		
 			var Component = mask.Dom.Component,
@@ -2339,7 +2372,7 @@
 		
 		
 			var EachProto = {
-				refresh: function(array, method, args) {
+				refresh: function(array, method, args, result) {
 					var i = 0,
 						x, imax;
 		
@@ -2402,6 +2435,11 @@
 					case 'sort':
 					case 'reverse':
 						list_sort(this, array);
+						break;
+					case 'remove':
+						if (result != null && result.length) {
+							list_remove(this, result);
+						}
 						break;
 					}
 		
