@@ -519,8 +519,8 @@ var Compo = exports.Compo = (function(mask){
 		});
 	
 		function _handler(pipe, signal) {
-			return function(){
-				new Pipe(pipe).emit(signal);
+			return function(event){
+				new Pipe(pipe).emit(signal, event);
 			};
 		}
 	
