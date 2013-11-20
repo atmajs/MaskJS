@@ -1,26 +1,62 @@
 (function(mask) {
 
 	function Sys() {
-		this.attr = {};
+		this.attr = {
+			'debugger': null,
+			'use': null,
+			'repeat': null,
+			'if': null,
+			'else': null,
+			'each': null,
+			'log': null,
+			'visible': null,
+			'model': null
+		};
+		
+		this.model = null;
+		this.modelRef = null;
+		this.nodes = null;
+		this.parent = null;
+		this.container = null;
+		this.template = null;
 	}
 
 	mask.registerHandler('%', Sys);
 
 	Sys.prototype = {
-		'debugger': null,
-		'use': null,
-		'repeat': null,
-		'if': null,
-		'else': null,
-		'each': null,
-		'log': null,
-		'visible': null,
-		'model': null,
 		
-		constructor: Sys,
 		renderStart: function(model, ctx, container) {
 			var attr = this.attr;
 
+			// foreach is deprecated
+			if (attr['each'] != null || attr['foreach'] != null) {
+				each(this, model, ctx, container);
+				return;
+			}
+			
+			if (attr['if'] != null) {
+				this.state = ExpressionUtil.eval(attr['if'], model, ctx, this.parent);
+				if (!this.state) {
+					this.nodes = null;
+				}
+				return;
+			}
+
+			if (attr['else'] != null) {
+				var compos = this.parent.components,
+					prev = compos && compos[compos.length - 1];
+
+				if (prev != null && prev.compoName === '%' && prev.attr['if'] != null) {
+
+					if (prev.state) {
+						this.nodes = null;
+					}
+					return;
+				}
+				console.error('Previous Node should be "% if=\'condition\'"', prev, this.parent);
+				return;
+			}
+			
 			if (attr['use'] != null) {
 				var use = attr['use'];
 				this.model = util_getProperty(model, use);
@@ -53,35 +89,10 @@
 				repeat(this, model, ctx, container);
 			}
 
-			if (attr['if'] != null) {
-				this.state = ExpressionUtil.eval(attr['if'], model, ctx, this.parent);
-				if (!this.state) {
-					this.nodes = null;
-				}
-				return;
-			}
-
-			if (attr['else'] != null) {
-				var compos = this.parent.components,
-					prev = compos && compos[compos.length - 1];
-
-				if (prev != null && prev.compoName === '%' && prev.attr['if'] != null) {
-
-					if (prev.state) {
-						this.nodes = null;
-					}
-					return;
-				}
-				console.error('Previous Node should be "% if=\'condition\'"', prev, this.parent);
-				return;
-			}
-
-			// foreach is deprecated
-			if (attr['each'] != null || attr['foreach'] != null) {
-				each(this, model, ctx, container);
-			}
 		},
-		render: null
+		render: null,
+		renderEnd: null,
+		append: null
 	};
 
 
@@ -90,7 +101,7 @@
 			Compo.ensureTemplate(compo);
 		}
 
-		var prop = compo.attr.foreach || compo.attr.each,
+		var prop = compo.attr.each || compo.attr.foreach,
 			array = util_getProperty(model, prop),
 			nodes = compo.nodes,
 			item = null,
@@ -122,9 +133,8 @@
 			compo.nodes[i] = x;
 		}
 
-		for(var method in ListProto){
-			compo[method] = ListProto[method];
-		}
+		//= methods
+		compo.append = ListProto.append;
 	}
 
 	function repeat(compo, model, cntx, container) {
@@ -162,8 +172,7 @@
 
 	var ListProto = {
 		append: function(model){
-			var item;
-			item = new Component();
+			var item = new Component();
 			item.nodes = this.template;
 			item.model = model;
 

@@ -16,7 +16,7 @@ var Compo = exports.Compo = (function(mask){
 		return _mask_ensureTmplFnOrig(value);
 	}
 	
-	if (document != null && domLib == null){
+	if (document != null && domLib == null) {
 		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
 	}
 	
@@ -1277,6 +1277,8 @@ var Compo = exports.Compo = (function(mask){
 			compos: null,
 			events: null,
 			
+			async: false,
+			
 			onRenderStart: null,
 			onRenderEnd: null,
 			render: null,
@@ -1454,10 +1456,12 @@ var Compo = exports.Compo = (function(mask){
 	
 			slotState: function(slotName, isActive){
 				Compo.slot.toggle(this, slotName, isActive);
+				return this;
 			},
 	
 			signalState: function(signalName, isActive){
 				Compo.signal.toggle(this, signalName, isActive);
+				return this;
 			},
 	
 			emitOut: function(signalName /* args */){
@@ -1469,6 +1473,7 @@ var Compo = exports.Compo = (function(mask){
 						? __array_slice.call(arguments, 1)
 						: null
 				);
+				return this;
 			},
 	
 			emitIn: function(signalName /* args */){
@@ -1480,6 +1485,7 @@ var Compo = exports.Compo = (function(mask){
 						? __array_slice.call(arguments, 1)
 						: null
 				);
+				return this;
 			}
 		};
 	
