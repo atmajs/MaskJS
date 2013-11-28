@@ -21,9 +21,9 @@
 	<ul>
 		<li>Performance — (mobile CPUs in mind) - doesnt require precompilation</li>
 		<li>Custom tags / Custom Value Processors / Custom Attributes</li>
-		<li>DOM Based — [Template &rarr; JSON AST &rarr; Document Fragment &rarr; Live DOM].
-		This allows custom tags to render themselfs much faster in compare to rendering into placeholder in dom</li>
-		<li>For server and browsers</li>
+		<li>DOM Based — [Template &rarr; JSON AST &rarr; Document Fragment<Shadow DOM> &rarr; Live DOM].
+			This allows to render the components much faster.</li>
+		<li>For server and browsers (@see node.js implementation: <a href='https://github.com/atmajs/mask-node'>mask.node</a></li>
 	</ul>
 </p>
 
@@ -49,7 +49,7 @@
 <p>
  Performance Tests
  <ul>
-	<li> Mask vs HTML Template Engines
+	<li> Mask vs raw HTML Template Engines
 		<a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>:jsperf</a>
 		</li>
 	<li> Mask AST vs JSON parse
@@ -68,26 +68,38 @@
 ###Changelog
 ------------
 <table>
+
 <tr>
-<td>v0.8.0</td>
+	<td>v0.8.1</td>
+	<td>
+		
+		To get components/context property values use special symbols:
+		
+		<code>'~[$c.compoName]' // component's property sample</code><br/>
+		<code>'~[$a.id]' // component attribute's property sample</code><br/>
+		<code>'~[$ctx.page.id]' // context's property sample</code><br/>
+	</td>
+</tr>
+
+<tr>
+	<td>v0.8.0</td>
 	<td>
 		<ul>
 			<li>
 				+ Asynchronous.
 				<div>
 					IF a components needs to accomplish any async task, it can be done in
-					<code>renderStart/onRenderEnd</code> function using
-					<code>Compo.pause(this, cntx) / Compo.resume(this, cntx)</code>
+					<code>renderStart/onRenderStart</code> function using
+					<code> Compo.pause(this, ctx) / Compo.resume(this, ctx) </code>
 					
 				</div>
 			</li>
 		</ul>
 	</td>
 </tr>
-<tr>
 
 <tr>
-<td>v0.7.5</td>
+	<td>v0.7.5</td>
 	<td>
 		<ul>
 			<li>
@@ -97,19 +109,19 @@
 		</ul>
 	</td>
 </tr>
+
 <tr>
-<tr>
-<td>v0.7.0</td>
+	<td>v0.7.0</td>
 	<td>
 		<ul>
 			<li>
 				Expressions parser. Samples:
 				<div><code>~[:controllerFunction(userName.toUpperCase()) + ';']</code></div>
 				<div><code>~[:user && user.id || "Log in"]</code></div>
-				Variables/Functions look up:
+				Variables/Functions look up <b>(deprecated)</b>:
 				<ol>
 				 <li> model </li>
-				 <li> cntx </li>
+				 <li> ctx </li>
 				 <li> controller </li>
 				 <li> up in controllers tree </li>
 				</ol>
@@ -117,8 +129,9 @@
 		</ul>
 	</td>
 </tr>
+
 <tr>
-<td>v0.6.95</td>
+	<td>v0.6.95</td>
 	<td>
 		<ul>
 			<li>
@@ -129,6 +142,7 @@
 		</ul>
 	</td>
 </tr>
+
 <tr>
 	<td>v0.6.9</td>
 	<td>
@@ -141,4 +155,5 @@
 
 	</td>
 </tr>
+
 </table>

@@ -133,7 +133,14 @@
 			return;
 			
 		while (++i < imax) {
-			compo.nodes[i] = compo_init(nodes, array[i], i, container, compo);
+			compo.nodes[i] = compo_init(
+				'%.each.item',
+				nodes,
+				array[i],
+				i,
+				container,
+				compo
+			);
 		}
 
 		//= methods
@@ -155,14 +162,22 @@
 
 		var i = -1;
 		while (++i < length) {
-			compo.nodes[i] = compo_init(nodes, model, i, container, compo);
+			compo.nodes[i] = compo_init(
+				'%.repeat.item',
+				nodes,
+				model,
+				i,
+				container,
+				compo
+			);
 		}
 	}
 
-	function compo_init(nodes, model, index, container, parent) {
+	function compo_init(name, nodes, model, index, container, parent) {
 		
 		return {
 			type: Dom.COMPONENT,
+			compoName: name,
 			attr: {},
 			nodes: nodes,
 			model: model,

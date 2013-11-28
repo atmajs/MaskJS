@@ -33,10 +33,8 @@ var _throw,
 					args[i + 1] = expression_evaluate(next.arguments[i], model, ctx, controller);
 				
 				value = Compo[next.body].apply(null, args);
-				current = next.next;
-				
-				if (current == null) 
-					return value;
+				current = next;
+				current.type = '';
 			}
 		}
 		
