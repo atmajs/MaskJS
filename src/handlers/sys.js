@@ -96,16 +96,16 @@
 	};
 
 
-	function each(compo, model, cntx, container){
-		if (compo.nodes == null && typeof Compo !== 'undefined'){
+	function each(compo, model, ctx, container){
+		
+		if (compo.nodes == null)
 			Compo.ensureTemplate(compo);
-		}
+		
 
 		var prop = compo.attr.each || compo.attr.foreach,
-			array = util_getProperty(model, prop),
-			nodes = compo.nodes,
-			item = null,
-			indexAttr = compo.attr.index || 'index';
+			array = util_getPropertyEx(prop, model, ctx, compo),
+			nodes = compo.nodes
+			;
 
 		if (array == null) {
 			var parent = compo;
@@ -123,14 +123,17 @@
 		compo.container = container;
 		
 
-		if (array == null || typeof array !== 'object' || array.length == null){
+		if (array == null)
 			return;
-		}
-
-		for (var i = 0, x, length = array.length; i < length; i++) {
-			x = compo_init(nodes, array[i], i, container, compo);
-			x[indexAttr] = i;
-			compo.nodes[i] = x;
+		
+		var imax = array.length,
+			i = -1;
+			
+		if (imax == null) 
+			return;
+			
+		while (++i < imax) {
+			compo.nodes[i] = compo_init(nodes, array[i], i, container, compo);
 		}
 
 		//= methods
@@ -141,7 +144,7 @@
 		var repeat = compo.attr.repeat.split('..'),
 			index = +repeat[0],
 			length = +repeat[1],
-			template = compo.nodes,
+			nodes = compo.nodes,
 			x;
 
 		// if DEBUG
@@ -150,23 +153,32 @@
 
 		compo.nodes = [];
 
-		for (var i = 0; index < length; index++) {
-			x = compo_init(template, model, index, container, compo);
-			x._repeatIndex = index;
-
-			compo.nodes[i++] = x;
+		var i = -1;
+		while (++i < length) {
+			compo.nodes[i] = compo_init(nodes, model, i, container, compo);
 		}
 	}
 
-	function compo_init(nodes, model, modelRef, container, parent) {
-		var item = new Component();
-		item.nodes = nodes;
-		item.model = model;
-		item.container = container;
-		item.parent = parent;
-		item.modelRef = modelRef;
-
-		return item;
+	function compo_init(nodes, model, index, container, parent) {
+		
+		return {
+			type: Dom.COMPONENT,
+			attr: {},
+			nodes: nodes,
+			model: model,
+			container: container,
+			parent: parent,
+			index: index
+		};
+		
+		//var item = new Component();
+		//item.nodes = nodes;
+		//item.model = model;
+		//item.container = container;
+		//item.parent = parent;
+		//item.modelRef = modelRef;
+		//
+		//return item;
 	}
 
 

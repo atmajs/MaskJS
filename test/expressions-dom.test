@@ -4,17 +4,17 @@ var Expression = mask.Utils.Expression,
 	template, node, attr;
 
 
-function expression(expr, result, model, cntx, controller) {
+function expression(expr, result, model, ctx, controller) {
 	if (expr instanceof Array) {
 		for (var i = 0, x, length = expr.length; i < length; i++) {
 			x = expr[i];
-			expression(x, result, model, cntx, controller);
+			expression(x, result, model, ctx, controller);
 		}
 		return;
 	}
 
 	var ast = Expression.parse(expr),
-		value = Expression.eval(ast, model, cntx, controller);
+		value = Expression.eval(ast, model, ctx, controller);
 
 	assert.equal(value, result, 'Unexpected Result (' + expr + ')');
 }
@@ -161,7 +161,25 @@ UTest({
 		eq(refs[1], 'prop');
 		eq(refs[2].ref, 'model');
 		deepEq($eval(refs[2].accessor, obj), {model: 'yeap'});
-		
+	},
+	
+	'predefined accessors': function(){
+		expression([ //
+		'$c.three * 3 - 5',
+		'$ctx.number.two - two + 4',
+		'0 + $a.four - 0'
+		], 4, {
+			two: 2
+		}, {
+			number: {
+				two: 2
+			}
+		}, {
+			three: 3,
+			attr: {
+				four: 4
+			}
+		});
 		
 	}
 });

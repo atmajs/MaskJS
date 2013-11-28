@@ -63,6 +63,7 @@ function parser_getRef() {
 		ref;
 
 	if (c === 34 || c === 39) {
+		// ' | "
 		index++;
 		ref = parser_getString(c);
 		index++;
@@ -70,20 +71,27 @@ function parser_getRef() {
 	}
 
 	while (true) {
-
+		
+		if (index === length) 
+			break;
+		
 		c = template.charCodeAt(index);
+		
+		if (c === 36) {
+			// $
+			index++;
+			continue;
+		}
+		
 		if (
 			c > 47 && // ()+-*,/
-
-		c !== 58 && // :
-		c !== 60 && // <
-		c !== 61 && // =
-		c !== 62 && // >
-		c !== 63 && // ?
-
-		c !== 124 && // |
-
-		index < length) {
+			c !== 58 && // :
+			c !== 60 && // <
+			c !== 61 && // =
+			c !== 62 && // >
+			c !== 63 && // ?
+			c !== 124 // |
+			) {
 
 			index++;
 			continue;
@@ -188,7 +196,7 @@ function parser_getDirective(code) {
 
 	}
 
-	if (code >= 65 && code <= 90 || code >= 97 && code <= 122 || code === 95 || code === 36) {
+	if ((code >= 65 && code <= 90) || code >= 97 && code <= 122 || code === 95 || code === 36) {
 		// A-Z a-z _ $
 		return go_ref;
 	}

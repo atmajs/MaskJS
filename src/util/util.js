@@ -22,12 +22,44 @@ function util_getProperty(o, chain) {
 	var value = o,
 		props = chain.split('.'),
 		i = -1,
-		length = props.length;
+		imax = props.length;
 
-	while (value != null && ++i < length) {
+	while (value != null && ++i < imax) {
 		value = value[props[i]];
 	}
 
+	return value;
+}
+
+function util_getPropertyEx(path, model, ctx, controller){
+	if (path === '.') 
+		return model;
+
+	var props = path.split('.'),
+		value = model,
+		i = -1,
+		imax = props.length,
+		key = props[0]
+		;
+	
+	if ('$c' === key) {
+		value = controller;
+		i++;
+	}
+	
+	else if ('$a' === key) {
+		value = controller && controller.attr;
+		i++;
+	}
+	
+	else if ('$ctx' === key) {
+		value = ctx;
+		i++;
+	}
+	
+	while (value != null && ++i < imax) 
+		value = value[props[i]];
+	
 	return value;
 }
 
@@ -55,15 +87,20 @@ function util_getProperty(o, chain) {
  *
  */
 
-function util_interpolate(arr, type, model, cntx, element, controller, name) {
-	var length = arr.length,
-		i = 0,
+function util_interpolate(arr, type, model, ctx, element, controller, name) {
+	var imax = arr.length,
+		i = -1,
 		array = null,
 		string = '',
 		even = true,
-		utility, value, index, key, handler;
+		
+		utility,
+		value,
+		index,
+		key,
+		handler;
 
-	for (; i < length; i++) {
+	while ( ++i < imax ) {
 		if (even === true) {
 			if (array == null){
 				string += arr[i];
@@ -76,7 +113,8 @@ function util_interpolate(arr, type, model, cntx, element, controller, name) {
 			index = key.indexOf(':');
 
 			if (index === -1) {
-				value = util_getProperty(model, key);
+				value = util_getPropertyEx(key,  model, ctx, controller);
+				
 			} else {
 				utility = index > 0
 					? str_trim(key.substring(0, index))
@@ -90,9 +128,9 @@ function util_interpolate(arr, type, model, cntx, element, controller, name) {
 				handler = custom_Utils[utility];
 				
 				value = fn_isFunction(handler)
-					? handler(key, model, cntx, element, controller, name, type)
-					: handler.process(key, model, cntx, element, controller, name, type);
-					
+					? handler(key, model, ctx, element, controller, name, type)
+					: handler.process(key, model, ctx, element, controller, name, type)
+					;
 			}
 
 			if (value != null){
