@@ -31,6 +31,17 @@ function util_getProperty(o, chain) {
 	return value;
 }
 
+function obj_toDictionary(obj){
+	var array = [], i = 0;
+	for(var key in obj){
+		array[i++] = {
+			key: key,
+			value: obj[key]
+		};
+	}
+	return array;
+}
+
 function util_getPropertyEx(path, model, ctx, controller){
 	if (path === '.') 
 		return model;

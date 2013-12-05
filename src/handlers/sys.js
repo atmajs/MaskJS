@@ -106,14 +106,24 @@
 			array = util_getPropertyEx(prop, model, ctx, compo),
 			nodes = compo.nodes
 			;
-
-		if (array == null) {
-			var parent = compo;
-			while (parent != null && array == null) {
-				array = util_getProperty(parent, prop);
-				parent = parent.parent;
-			}
-		}
+		
+		compo.nodes = null;
+		// - deprecate - use special accessors to reach compos
+		//if (array == null) {
+		//	var parent = compo;
+		//	while (parent != null && array == null) {
+		//		array = util_getProperty(parent, prop);
+		//		parent = parent.parent;
+		//	}
+		//}
+		
+		if (array == null)
+			return;
+		
+		// enumerate over an object as array of {key, value}s
+		if (typeof array.length !== 'number') 
+			array = obj_toDictionary(array);
+		
 		
 		compo.nodes = [];
 		compo.model = array;
@@ -123,8 +133,6 @@
 		compo.container = container;
 		
 
-		if (array == null)
-			return;
 		
 		var imax = array.length,
 			i = -1;

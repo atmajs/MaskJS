@@ -107,26 +107,29 @@ var builder_build = (function(custom_Attributes, Component){
 			// use or override custom attr handlers
 			// in Compo.handlers.attr object
 			// but only on a component, not a tag controller
-			if (node.tagName == null) {
+			if (node.tagName == null && node.compoName !== '%') {
 				var attrHandlers = node.handlers && node.handlers.attr,
 					attrFn,
+					val,
 					key;
 					
 				for (key in node.attr) {
 					
+					val = node.attr[key];
+					
+					if (val == null) 
+						continue;
+					
 					attrFn = null;
 					
-					if (attrHandlers != null && fn_isFunction(attrHandlers[key])) {
+					if (attrHandlers != null && fn_isFunction(attrHandlers[key])) 
 						attrFn = attrHandlers[key];
-					}
 					
-					if (attrFn == null && fn_isFunction(custom_Attributes[key])) {
+					if (attrFn == null && custom_Attributes[key] != null) 
 						attrFn = custom_Attributes[key];
-					}
 					
-					if (attrFn != null) {
-						attrFn(node, node.attr[key], model, ctx, elements[0], controller);
-					}
+					if (attrFn != null) 
+						attrFn(node, val, model, ctx, elements[0], controller);
 				}
 			}
 			
