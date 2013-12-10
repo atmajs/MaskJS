@@ -732,6 +732,8 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/compo/Compo.js
 	var Compo = (function() {
 	
+		var include = global.include || (global.atma && global.atma.include);
+	
 		function Compo(controller) {
 			if (this instanceof Compo){
 				// used in Class({Base: Compo})
@@ -743,6 +745,10 @@ var Compo = exports.Compo = (function(mask){
 			if (controller == null){
 				controller = {};
 			}
+			
+			if (include != null) 
+				controller.__resource = include.url;
+			
 	
 			if (controller.attr != null) {
 				
