@@ -4,34 +4,69 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/scope-vars.js
 	var domLib = global.jQuery || global.Zepto || global.$,
 		Dom = mask.Dom,
-		__array_slice = Array.prototype.slice,
+		_array_slice = Array.prototype.slice,
 		
 		_mask_ensureTmplFnOrig = mask.Utils.ensureTmplFn,
-		__Class;
+		_Class
+		
+		;
 	
 	function _mask_ensureTmplFn(value) {
-		if (typeof value !== 'string') {
-			return value;
-		}
-		return _mask_ensureTmplFnOrig(value);
+		return typeof value !== 'string'
+			? value
+			: _mask_ensureTmplFnOrig(value)
+			;
 	}
 	
 	if (document != null && domLib == null) {
-		console.warn('jQuery / Zepto etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
+		console.warn('jQuery-Zepto-Kimbo etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
 	}
 	
-	__Class = global.Class;
+	_Class = global.Class;
 	
-	if (__Class == null) {
-		
-		if (typeof exports !== 'undefined') {
-			__Class = exports.Class;
-		}
-		
-	}
+	if (_Class == null && typeof exports !== 'undefined') 
+		_Class = exports.Class;
 	
 	// end:source ../src/scope-vars.js
 
+	// source ../src/util/is.js
+	function is_Function(x) {
+		return typeof x === 'function';
+	}
+	
+	function is_Object(x) {
+		return x != null
+			&& typeof x === 'object';
+	}
+	
+	function is_Array(arr) {
+		return arr != null
+			&& typeof arr === 'object'
+			&& typeof arr.length === 'number'
+			&& typeof arr.splice === 'function'
+			;
+	}
+	
+	function is_String(x) {
+		return typeof x === 'string';
+	}
+	
+	function is_notEmptyString(x) {
+		return typeof x === 'string'
+			&& x !== '';
+	}
+	
+	function is_rawObject(obj) {
+		if (obj == null) 
+			return false;
+		
+		if (typeof obj !== 'object')
+			return false;
+		
+		return obj.constructor === Object;
+	}
+	
+	// end:source ../src/util/is.js
 	// source ../src/util/polyfill.js
 	if (!Array.prototype.indexOf) {
 		Array.prototype.indexOf = function(x){
@@ -45,256 +80,329 @@ var Compo = exports.Compo = (function(mask){
 	}
 	// end:source ../src/util/polyfill.js
 	// source ../src/util/object.js
-	function obj_extend(target, source){
-		if (target == null){
-			target = {};
-		}
-		if (source == null){
+	var obj_extend,
+		obj_copy
+		;
+	(function(){
+		
+		
+		obj_extend = function(target, source){
+			if (target == null)
+				target = {};
+			
+			if (source == null)
+				return target;
+			
+			for(var key in source){
+				target[key] = source[key];
+			}
+		
 			return target;
-		}
-	
-		for(var key in source){
-			target[key] = source[key];
-		}
-	
-		return target;
-	}
-	
-	function obj_copy(object) {
-		var copy = {};
-	
-		for (var key in object) {
-			copy[key] = object[key];
-		}
-	
-		return copy;
-	}
+		};
+		
+		obj_copy = function(object) {
+			var copy = {},
+				key;
+		
+			for (key in object) {
+				copy[key] = object[key];
+			}
+		
+			return copy;
+		};
+		
+		
+	}());
 	
 	// end:source ../src/util/object.js
 	// source ../src/util/array.js
+	
+	var arr_each,
+		arr_remove
+		;
+	
+	(function(){
+	
+		arr_each = function(array, fn){
+			var imax = array.length,
+				i = -1;
+			while ( ++i < imax ){
+				fn(array[i], i);
+			}
+		};
 		
-	function arr_each(array, fn){
-		for(var i = 0, length = array.length; i < length; i++){
-			fn(array[i], i);
-		}
-	}
+		arr_remove = function(array, child){
+			if (array == null){
+				console.error('Can not remove myself from parent', child);
+				return;
+			}
+		
+			var index = array.indexOf(child);
+		
+			if (index === -1){
+				console.error('Can not remove myself from parent', child, index);
+				return;
+			}
+		
+			array.splice(index, 1);
+		};
+		
+		
+	}());
 	
-	function arr_remove(array, child){
-		if (array == null){
-			console.error('Can not remove myself from parent', child);
-			return;
-		}
-	
-		var index = array.indexOf(child);
-	
-		if (index === -1){
-			console.error('Can not remove myself from parent', child, index);
-			return;
-		}
-	
-		array.splice(index, 1);
-	}
-	
-	function arr_isArray(arr){
-		return arr != null
-			&& typeof arr === 'object'
-			&& typeof arr.length === 'number'
-			&& typeof arr.splice === 'function'
-			;
-	}
 	// end:source ../src/util/array.js
 	// source ../src/util/function.js
-	function fn_proxy(fn, context) {
+	var fn_proxy,
+		fn_apply
+		;
+	
+	(function(){
+	
+		fn_proxy = function(fn, ctx) {
 		
-		return function(){
-			return fn.apply(context, arguments);
+			return function() {
+				return fn_apply(fn, ctx, arguments);
+			};
 		};
 		
-	}
+		fn_apply = function(fn, ctx, arguments_){
+			
+			switch (arguments_.length) {
+				case 0:
+					return fn.call(ctx);
+				case 1:
+					return fn.call(ctx, arguments_[0]);
+				case 2:
+					return fn.call(ctx,
+						arguments_[0],
+						arguments_[1]);
+				case 3:
+					return fn.call(ctx,
+						arguments_[0],
+						arguments_[1],
+						arguments_[2]);
+				case 4:
+					return fn.call(ctx,
+						arguments_[0],
+						arguments_[1],
+						arguments_[2],
+						arguments_[3]);
+			};
+			
+			return fn.apply(ctx, arguments_);
+		};
+		
+	}());
 	
-	function fn_isFunction(fn){
-		return typeof fn === 'function';
-	}
 	// end:source ../src/util/function.js
 	// source ../src/util/selector.js
-	function selector_parse(selector, type, direction) {
-		if (selector == null){
-			console.warn('selector is null for type', type);
-		}
+	var selector_parse,
+		selector_match
+		;
 	
-		if (typeof selector === 'object'){
-			return selector;
-		}
-	
-		var key, prop, nextKey;
-	
-		if (key == null) {
-			switch (selector[0]) {
-			case '#':
-				key = 'id';
-				selector = selector.substring(1);
-				prop = 'attr';
-				break;
-			case '.':
-				key = 'class';
-				selector = sel_hasClassDelegate(selector.substring(1));
-				prop = 'attr';
-				break;
-			default:
-				key = type === Dom.SET ? 'tagName' : 'compoName';
-				break;
-			}
-		}
-	
-		if (direction === 'up') {
-			nextKey = 'parent';
-		} else {
-			nextKey = type === Dom.SET ? 'nodes' : 'components';
-		}
-	
-		return {
-			key: key,
-			prop: prop,
-			selector: selector,
-			nextKey: nextKey
-		};
-	}
-	
-	function selector_match(node, selector, type) {
-		if (typeof selector === 'string') {
-			if (type == null) {
-				type = Dom[node.compoName ? 'CONTROLLER' : 'SET'];
-			}
-			selector = selector_parse(selector, type);
-		}
-	
-		var obj = selector.prop ? node[selector.prop] : node;
-		if (obj == null) {
-			return false;
-		}
-	
-		if (typeof selector.selector === 'function') {
-			return selector.selector(obj[selector.key]);
-		}
+	(function(){
 		
-		if (selector.selector.test != null) {
-			if (selector.selector.test(obj[selector.key])) {
-				return true;
-			}
-		}
-		
-		else {
-			// == - to match int and string
-			if (obj[selector.key] == selector.selector) {
-				return true;
-			}
-		}
-	
-		return false;
-	}
-	
-	
-	
-	function sel_hasClassDelegate(matchClass) {
-		return function(className){
-			return sel_hasClass(className, matchClass);
-		};
-	}
-	
-	// [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
-	function sel_hasClass(className, matchClass, index) {
-		if (typeof className !== 'string')
-			return false;
-		
-		if (index == null) 
-			index = 0;
+		selector_parse = function(selector, type, direction) {
+			if (selector == null)
+				console.error('<compo>selector is undefined', type);
 			
-		index = className.indexOf(matchClass, index);
-	
-		if (index === -1)
-			return false;
-	
-		if (index > 0 && className.charCodeAt(index - 1) > 32)
-			return sel_hasClass(className, matchClass, index + 1);
-	
-		var class_Length = className.length,
-			match_Length = matchClass.length;
+			if (typeof selector === 'object')
+				return selector;
 			
-		if (index < class_Length - match_Length && className.charCodeAt(index + match_Length) > 32)
-			return sel_hasClass(className, matchClass, index + 1);
-	
-		return true;
-	}
+		
+			var key, prop, nextKey;
+		
+			if (key == null) {
+				switch (selector[0]) {
+				case '#':
+					key = 'id';
+					selector = selector.substring(1);
+					prop = 'attr';
+					break;
+				case '.':
+					key = 'class';
+					selector = sel_hasClassDelegate(selector.substring(1));
+					prop = 'attr';
+					break;
+				default:
+					key = type === Dom.SET ? 'tagName' : 'compoName';
+					break;
+				}
+			}
+		
+			if (direction === 'up') {
+				nextKey = 'parent';
+			} else {
+				nextKey = type === Dom.SET ? 'nodes' : 'components';
+			}
+		
+			return {
+				key: key,
+				prop: prop,
+				selector: selector,
+				nextKey: nextKey
+			};
+		};
+		
+		selector_match = function(node, selector, type) {
+			
+			if (is_String(selector)) {
+				
+				if (type == null) 
+					type = Dom[node.compoName ? 'CONTROLLER' : 'SET'];
+				
+				selector = selector_parse(selector, type);
+			}
+		
+			var obj = selector.prop ? node[selector.prop] : node;
+			if (obj == null) 
+				return false;
+			
+			if (is_Function(selector.selector)) 
+				return selector.selector(obj[selector.key]);
+			
+			// regexp
+			if (selector.selector.test != null) 
+				return selector.selector.test(obj[selector.key]);
+			
+			//! == - to match int and string
+			return obj[selector.key] == selector.selector;
+		}
+		
+		// PRIVATE
+		
+		function sel_hasClassDelegate(matchClass) {
+			return function(className){
+				return sel_hasClass(className, matchClass);
+			};
+		}
+		
+		// [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
+		function sel_hasClass(className, matchClass, index) {
+			if (typeof className !== 'string')
+				return false;
+			
+			if (index == null) 
+				index = 0;
+				
+			index = className.indexOf(matchClass, index);
+		
+			if (index === -1)
+				return false;
+		
+			if (index > 0 && className.charCodeAt(index - 1) > 32)
+				return sel_hasClass(className, matchClass, index + 1);
+		
+			var class_Length = className.length,
+				match_Length = matchClass.length;
+				
+			if (index < class_Length - match_Length && className.charCodeAt(index + match_Length) > 32)
+				return sel_hasClass(className, matchClass, index + 1);
+		
+			return true;
+		}
+		
+	}());
 	
 	// end:source ../src/util/selector.js
 	// source ../src/util/traverse.js
-	function find_findSingle(node, matcher) {
-		if (node instanceof Array) {
-			for (var i = 0, x, length = node.length; i < length; i++) {
-				x = node[i];
-				var r = find_findSingle(x, matcher);
-				if (r != null) {
-					return r;
-				}
-			}
-			return null;
-		}
+	var find_findSingle;
 	
-		if (selector_match(node, matcher) === true) {
-			return node;
+	(function(){
+	
+		
+		find_findSingle = function(node, matcher) {
+			
+			if (is_Array(node)) {
+				
+				var imax = node.length,
+					i = -1,
+					result;
+				
+				while( ++i < imax ){
+					
+					result = find_findSingle(node[i], matcher);
+					
+					if (result != null) 
+						return result;
+				}
+				
+				return null;
+			}
+		
+			if (selector_match(node, matcher))
+				return node;
+			
+			node = node[matcher.nextKey];
+			
+			return node == null
+				? null
+				: find_findSingle(node, matcher)
+				;
 		}
-		return (node = node[matcher.nextKey]) && find_findSingle(node, matcher);
-	}
+		
+		
+	}());
 	
 	// end:source ../src/util/traverse.js
-	// source ../src/util/manipulate.js
-	function node_tryDispose(node){
-		if (node.hasAttribute('x-compo-id')) {
-			
-			var id = node.getAttribute('x-compo-id'),
-				compo = Anchor.getByID(id)
-				;
-			
-			if (compo) 
-				compo_dispose(compo);
-			return;
-		}
+	// source ../src/util/dom.js
+	var dom_addEventListener,
 		
-		node_tryDisposeChildren(node);
-	}
+		node_tryDispose,
+		node_tryDisposeChildren
+		;
+		
+	(function(){
 	
-	function node_tryDisposeChildren(node){
-		var child = node.firstChild;
-		while(child != null) {
-			if (child.nodeType === 1) {
-				node_tryDispose(child);
+		dom_addEventListener = function(element, event, listener) {
+		
+			if (EventDecorator != null) 
+				event = EventDecorator(event);
+			
+			// allows custom events - in x-signal, for example
+			if (domLib != null) 
+				return domLib(element).on(event, listener);
+				
+			
+			if (element.addEventListener != null) 
+				return element.addEventListener(event, listener, false);
+			
+			if (element.attachEvent) 
+				element.attachEvent('on' + event, listener);
+			
+		};
+	
+		node_tryDispose = function(node){
+			if (node.hasAttribute('x-compo-id')) {
+				
+				var id = node.getAttribute('x-compo-id'),
+					compo = Anchor.getByID(id)
+					;
+				
+				if (compo) {
+					compo_dispose(compo);
+					compo_detachChild(compo);
+				}
+				return;
 			}
 			
-			child = child.nextSibling;
-		}
-	}
-	// end:source ../src/util/manipulate.js
-	// source ../src/util/dom.js
-	function dom_addEventListener(element, event, listener) {
+			node_tryDisposeChildren(node);
+		};
 		
-		if (EventDecorator != null) {
-			event = EventDecorator(event);
-		}
+		node_tryDisposeChildren = function(node){
+			
+			var child = node.firstChild;
+			while(child != null) {
+				
+				if (child.nodeType === 1) 
+					node_tryDispose(child);
+				
+				
+				child = child.nextSibling;
+			}
+		};
 		
-		// allows custom events - in x-signal, for example
-		if (domLib != null) {
-			domLib(element).on(event, listener);
-			return;
-		}
-		
-		if (element.addEventListener != null) {
-			element.addEventListener(event, listener, false);
-			return;
-		}
-		if (element.attachEvent) {
-			element.attachEvent("on" + event, listener);
-		}
-	}
+	}());
 	
 	// end:source ../src/util/dom.js
 	// source ../src/util/domLib.js
@@ -302,20 +410,31 @@ var Compo = exports.Compo = (function(mask){
 	 *	Combine .filter + .find
 	 */
 	
-	function domLib_find($set, selector) {
-		return $set.filter(selector).add($set.find(selector));
-	}
+	var domLib_find,
+		domLib_on
+		;
 	
-	function domLib_on($set, type, selector, fn) {
+	(function(){
+			
+		domLib_find = function($set, selector) {
+			return $set.filter(selector).add($set.find(selector));
+		};
+		
+		domLib_on = function($set, type, selector, fn) {
+		
+			if (selector == null) 
+				return $set.on(type, fn);
+			
+			$set
+				.on(type, selector, fn)
+				.filter(selector)
+				.on(type, fn);
+				
+			return $set;
+		};
+		
+	}());
 	
-		if (selector == null) {
-			return $set.on(type, fn);
-		}
-	
-		$set.on(type, selector, fn);
-		$set.filter(selector).on(type, fn);
-		return $set;
-	}
 	
 	// end:source ../src/util/domLib.js
 
@@ -481,20 +600,25 @@ var Compo = exports.Compo = (function(mask){
 	// end:source ../src/compo/events.deco.js
 	// source ../src/compo/pipes.js
 	var Pipes = (function() {
-	
+		
+		var _collection = {};
 	
 		mask.registerAttrHandler('x-pipe-signal', 'client', function(node, attrValue, model, cntx, element, controller) {
 	
-			var arr = attrValue.split(';');
-			for (var i = 0, x, length = arr.length; i < length; i++) {
+			var arr = attrValue.split(';'),
+				imax = arr.length,
+				i = -1,
+				x;
+			while ( ++i < imax ) {
 				x = arr[i].trim();
-				if (x === '') {
+				if (x === '') 
 					continue;
-				}
-	
-				var event = x.substring(0, x.indexOf(':')),
-					handler = x.substring(x.indexOf(':') + 1).trim(),
+				
+				var i_colon = x.indexOf(':'),
+					event = x.substring(0, i_colon),
+					handler = x.substring(i_colon + 1).trim(),
 					dot = handler.indexOf('.'),
+					
 					pipe, signal;
 	
 				if (dot === -1) {
@@ -524,8 +648,6 @@ var Compo = exports.Compo = (function(mask){
 			};
 		}
 	
-		var Collection = {};
-	
 	
 		function pipe_attach(pipeName, controller) {
 			if (controller.pipes[pipeName] == null) {
@@ -533,21 +655,19 @@ var Compo = exports.Compo = (function(mask){
 				return;
 			}
 	
-			if (Collection[pipeName] == null) {
-				Collection[pipeName] = [];
+			if (_collection[pipeName] == null) {
+				_collection[pipeName] = [];
 			}
-			Collection[pipeName].push(controller);
+			_collection[pipeName].push(controller);
 		}
 	
 		function pipe_detach(pipeName, controller) {
-			var pipe = Collection[pipeName],
+			var pipe = _collection[pipeName],
 				i = pipe.length;
 	
-			while (--i) {
-				if (pipe[i] === controller) {
+			while (--i > -1) {
+				if (pipe[i] === controller) 
 					pipe.splice(i, 1);
-					i++;
-				}
 			}
 	
 		}
@@ -588,7 +708,7 @@ var Compo = exports.Compo = (function(mask){
 		Pipe.prototype = {
 			constructor: Pipe,
 			emit: function(signal){
-				var controllers = Collection[this.pipeName],
+				var controllers = _collection[this.pipeName],
 					pipeName = this.pipeName,
 					args;
 				
@@ -606,11 +726,12 @@ var Compo = exports.Compo = (function(mask){
 				 * - switch to use plain arguments
 				 */
 				
-				if (arguments.length === 2 && arr_isArray(arguments[1])) {
+				if (arguments.length === 2 && is_Array(arguments[1])) 
 					args = arguments[1];
-				} else if (arguments.length > 1) {
-					args = __array_slice.call(arguments, 1);
-				}
+					
+				else if (arguments.length > 1) 
+					args = _array_slice.call(arguments, 1);
+				
 				
 				var i = controllers.length,
 					controller, slots, slot, called;
@@ -619,19 +740,19 @@ var Compo = exports.Compo = (function(mask){
 					controller = controllers[i];
 					slots = controller.pipes[pipeName];
 	
-					if (slots == null) {
+					if (slots == null) 
 						continue;
-					}
-	
+					
 					slot = slots[signal];
-					if (typeof slot === 'function') {
+					if (is_Function(slot)) {
 						slot.apply(controller, args);
 						called = true;
 					}
 				}
 	
 				// if DEBUG
-				called !== true && console.warn('No piped slot found for a signal', signal, pipeName);
+				if (!called)
+					console.warn('Pipe `%s` has not slots for `%s`', pipeName, signal);
 				// endif
 			}
 		};
@@ -643,9 +764,6 @@ var Compo = exports.Compo = (function(mask){
 			addController: controller_add,
 			removeController: controller_remove,
 	
-			////emit: function(pipeName, signal, args) {
-			////	Pipe(pipeName).emit(signal, args);
-			////},
 			pipe: Pipe
 		};
 	
@@ -732,7 +850,10 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/compo/Compo.js
 	var Compo = (function() {
 	
-		var include = global.include || (global.atma && global.atma.include);
+		var hasInclude = !!(global.include
+			|| (typeof global.atma !== 'undefined' && global.atma.include)
+			|| (typeof exports !== 'undefined' && exports.include))
+			;
 	
 		function Compo(controller) {
 			if (this instanceof Compo){
@@ -746,8 +867,8 @@ var Compo = exports.Compo = (function(mask){
 				controller = {};
 			}
 			
-			if (include != null) 
-				controller.__resource = include.url;
+			if (hasInclude && global.include) 
+				controller.__resource = global.include.url;
 			
 	
 			if (controller.attr != null) {
@@ -796,116 +917,163 @@ var Compo = exports.Compo = (function(mask){
 		}
 	
 		// source Compo.util.js
-		function compo_dispose(compo) {
-			if (compo.dispose != null) {
-				compo.dispose();
-			}
+		var compo_dispose,
+			compo_detachChild,
+			compo_ensureTemplate,
+			compo_attachDisposer,
+			compo_createConstructor
+			;
 		
-			Anchor.removeCompo(compo);
-		
-			var i = 0,
-				compos = compo.components,
-				length = compos && compos.length;
-		
-			if (length) {
-				for (; i < length; i++) {
+		(function(){
+			
+			compo_dispose = function(compo) {
+				
+				if (compo.dispose != null) 
+					compo.dispose();
+				
+				Anchor.removeCompo(compo);
+			
+				var compos = compo.components,
+					i = (compos && compos.length) || 0;
+			
+				while ( --i > -1 ) {
 					compo_dispose(compos[i]);
 				}
-			}
-		}
-		
-		function compo_ensureTemplate(compo) {
-			if (compo.nodes != null) {
-				return;
-			}
+			};
 			
-			if (compo.attr.template != null) {
-				compo.template = compo.attr.template;
+			compo_detachChild = function(childCompo){
 				
-				delete compo.attr.template;
-			}
-			
-			var template = compo.template;
-			
-			if (typeof template == null) {
-				return;
-			}
-			
-		
-			if (typeof template === 'string') {
-				if (template[0] === '#') {
-					var node = document.getElementById(template.substring(1));
-					if (node == null) {
-						console.error('Template holder not found by id:', template);
-						return;
+				var parent = childCompo.parent;
+				if (parent == null) 
+					return;
+				
+				var arr = childCompo.$,
+					elements = parent.$ || parent.elements,
+					i;
+					
+				if (elements && arr) {
+					var jmax = arr.length,
+						el, j;
+					
+					i = elements.length;
+					while( --i > -1){
+						el = elements[i];
+						j = jmax;
+						
+						while(--j > -1){
+							if (el === arr[j]) {
+								
+								elements.splice(i, 1);
+								break;
+							}
+						}
 					}
-					template = node.innerHTML;
 				}
-				template = mask.parse(template);
-			}
-		
-			if (typeof template === 'object') {
-				compo.nodes = template;
-			}
-		}
-		
-		function compo_containerArray() {
-			var arr = [];
-			arr.appendChild = function(child) {
-				this.push(child);
-			};
-			return arr;
-		}
-		
-		function compo_attachDisposer(controller, disposer) {
-		
-			if (typeof controller.dispose === 'function') {
-				var previous = controller.dispose;
-				controller.dispose = function(){
-					disposer.call(this);
-					previous.call(this);
-				};
-		
-				return;
-			}
-		
-			controller.dispose = disposer;
-		}
-		
-		
-		function compo_createConstructor(ctor, proto) {
-			var compos = proto.compos,
-				pipes = proto.pipes,
-				attr = proto.attr;
 				
-			if (compos == null && pipes == null && proto.attr == null) {
-				return ctor;
-			}
-		
-			/* extend compos / attr to keep
-			 * original prototyped values untouched
-			 */
-			return function CompoBase(){
-		
+				var compos = parent.components;
 				if (compos != null) {
-					// use this.compos instead of compos from upper scope
-					// : in case compos from proto was extended after
-					this.compos = obj_copy(this.compos);
-				}
-		
-				if (pipes != null) {
-					Pipes.addController(this);
-				}
-				
-				if (attr != null) {
-					this.attr = obj_copy(this.attr);
-				}
-		
-				if (typeof ctor === 'function') {
-					ctor.call(this);
+					
+					i = compos.length;
+					while(--i > -1){
+						if (compos[i] === childCompo) {
+							compos.splice(i, 1);
+							break;
+						}
+					}
+			
+					if (i === -1)
+						console.warn('<compo:remove> - i`m not in parents collection', childCompo);
 				}
 			};
-		}
+			
+			
+			
+			compo_ensureTemplate = function(compo) {
+				if (compo.nodes != null) 
+					return;
+				
+				// obsolete
+				if (compo.attr.template != null) {
+					compo.template = compo.attr.template;
+					
+					delete compo.attr.template;
+				}
+				
+				var template = compo.template;
+				if (template == null) 
+					return;
+				
+				if (is_String(template)) {
+					if (template.charCodeAt(0) === 35 && /^#[\w\d_-]+$/.test(template)) {
+						// #
+						var node = document.getElementById(template.substring(1));
+						if (node == null) {
+							console.error('<compo> Template holder not found by id:', template);
+							return;
+						}
+						template = node.innerHTML;
+					}
+					
+					template = mask.parse(template);
+				}
+			
+				if (typeof template === 'object') 
+					compo.nodes = template;
+			};
+			
+				
+			compo_attachDisposer = function(compo, disposer) {
+			
+				if (compo.dispose == null) {
+					compo.dispose = disposer;
+					return;
+				}
+				
+				var prev = compo.dispose;
+				compo.dispose = function(){
+					disposer.call(this);
+					prev.call(this);
+				};
+			};
+			
+				
+			
+			compo_createConstructor = function(Ctor, proto) {
+				var compos = proto.compos,
+					pipes = proto.pipes,
+					attr = proto.attr;
+					
+				if (compos == null
+						&& pipes == null
+						&& proto.attr == null) {
+					
+					return Ctor;
+				}
+			
+				/* extend compos / attr to keep
+				 * original prototyped values untouched
+				 */
+				return function CompoBase(){
+			
+					if (compos != null) {
+						// use this.compos instead of compos from upper scope
+						// : in case compos from proto was extended after
+						this.compos = obj_copy(this.compos);
+					}
+			
+					if (pipes != null) 
+						Pipes.addController(this);
+					
+					if (attr != null) 
+						this.attr = obj_copy(this.attr);
+					
+					if (is_Function(Ctor)) 
+						Ctor.call(this);
+				};
+			};
+		
+			
+		}());
 		
 		// end:source Compo.util.js
 		// source Compo.static.js
@@ -939,12 +1107,16 @@ var Compo = exports.Compo = (function(mask){
 			},
 			
 			createClass: function(classProto){
+				
 				if (classProto.attr != null) {
 					
 					for (var key in classProto.attr) {
 						classProto.attr[key] = _mask_ensureTmplFn(classProto.attr[key]);
 					}
 				}
+				
+				if (hasInclude && global.include) 
+					classProto.__resource = global.include.url;
 				
 				var slots = classProto.slots;
 				if (slots != null) {
@@ -972,44 +1144,50 @@ var Compo = exports.Compo = (function(mask){
 				var Ext = classProto.Extends;
 				if (Ext == null) {
 					classProto.Extends = Proto
-				} else if (arr_isArray(Ext)) {
+				} else if (is_Array(Ext)) {
 					Ext.unshift(Proto)
 				} else {
 					classProto.Extends = [Proto, Ext];
 				}
 				
-				return __Class(classProto);
+				return _Class(classProto);
 			},
 		
 			/* obsolete */
-			render: function(compo, model, cntx, container) {
+			render: function(compo, model, ctx, container) {
 		
 				compo_ensureTemplate(compo);
 		
 				var elements = [];
 		
-				mask.render(compo.tagName == null ? compo.nodes : compo, model, cntx, container, compo, elements);
+				mask.render(
+					compo.tagName == null ? compo.nodes : compo,
+					model,
+					ctx,
+					container,
+					compo,
+					elements
+				);
 		
 				compo.$ = domLib(elements);
 		
-				if (compo.events != null) {
+				if (compo.events != null) 
 					Events_.on(compo, compo.events);
-				}
-				if (compo.compos != null) {
+				
+				if (compo.compos != null) 
 					Children_.select(compo, compo.compos);
-				}
-		
+				
 				return compo;
 			},
 		
-			initialize: function(compo, model, cntx, container, parent) {
+			initialize: function(compo, model, ctx, container, parent) {
 				
 				var compoName;
 		
 				if (container == null){
-					if (cntx && cntx.nodeType != null){
-						container = cntx;
-						cntx = null;
+					if (ctx && ctx.nodeType != null){
+						container = ctx;
+						ctx = null;
 					}else if (model && model.nodeType != null){
 						container = model;
 						model = null;
@@ -1031,15 +1209,14 @@ var Compo = exports.Compo = (function(mask){
 					tagName: compoName
 				};
 		
-				if (parent == null && container != null){
+				if (parent == null && container != null)
 					parent = Anchor.resolveCompo(container);
-				}
-		
-				if (parent == null){
+				
+				if (parent == null)
 					parent = new Dom.Component();
-				}
+				
 		
-				var dom = mask.render(node, model, cntx, null, parent),
+				var dom = mask.render(node, model, ctx, null, parent),
 					instance = parent.components[parent.components.length - 1];
 		
 				if (container != null){
@@ -1051,23 +1228,7 @@ var Compo = exports.Compo = (function(mask){
 				return instance;
 			},
 		
-			dispose: function(compo) {
-				if (typeof compo.dispose === 'function') {
-					compo.dispose();
-				}
-		
-		
-				var i = 0,
-					compos = compo.components,
-					length = compos && compos.length;
-		
-				if (length) {
-					for (; i < length; i++) {
-						Compo.dispose(compos[i]);
-					}
-				}
-			},
-		
+			
 			find: function(compo, selector){
 				return find_findSingle(compo, selector_parse(selector, Dom.CONTROLLER, 'down'));
 			},
@@ -1075,7 +1236,10 @@ var Compo = exports.Compo = (function(mask){
 				return find_findSingle(compo, selector_parse(selector, Dom.CONTROLLER, 'up'));
 			},
 		
+			dispose: compo_dispose,
+			
 			ensureTemplate: compo_ensureTemplate,
+			
 			attachDisposer: compo_attachDisposer,
 		
 			config: {
@@ -1083,15 +1247,17 @@ var Compo = exports.Compo = (function(mask){
 					'$': function(compo, selector) {
 						var r = domLib_find(compo.$, selector)
 						// if DEBUG
-						r.length === 0 && console.error('Compo Selector - element not found -', selector, compo);
+						if (r.length === 0) 
+							console.error('<compo-selector> - element not found -', selector, compo);
 						// endif
 						return r;
 					},
 					'compo': function(compo, selector) {
 						var r = Compo.find(compo, selector);
-						if (r == null) {
-							console.error('Compo Selector - component not found -', selector, compo);
-						}
+						// if DEBUG
+						if (r == null) 
+							console.error('<compo-selector> - component not found -', selector, compo);
+						// endif
 						return r;
 					}
 				},
@@ -1139,6 +1305,10 @@ var Compo = exports.Compo = (function(mask){
 				}
 				
 				return include.instance();
+			},
+			
+			plugin: function(source){
+				eval(source);
 			},
 			
 			Dom: {
@@ -1301,7 +1471,7 @@ var Compo = exports.Compo = (function(mask){
 					compo_ensureTemplate(this);
 				}
 				
-				if (fn_isFunction(this.onRenderStart)){
+				if (is_Function(this.onRenderStart)){
 					this.onRenderStart(model, ctx, container);
 				}
 	
@@ -1327,7 +1497,7 @@ var Compo = exports.Compo = (function(mask){
 					Children_.select(this, this.compos);
 				}
 	
-				if (fn_isFunction(this.onRenderEnd)){
+				if (is_Function(this.onRenderEnd)){
 					this.onRenderEnd(elements, model, ctx, container);
 				}
 			},
@@ -1398,7 +1568,7 @@ var Compo = exports.Compo = (function(mask){
 				return find_findSingle(this, selector_parse(selector, Dom.CONTROLLER, 'up'));
 			},
 			on: function() {
-				var x = __array_slice.call(arguments);
+				var x = _array_slice.call(arguments);
 				if (arguments.length < 3) {
 					console.error('Invalid Arguments Exception @use .on(type,selector,fn)');
 					return this;
@@ -1411,7 +1581,7 @@ var Compo = exports.Compo = (function(mask){
 	
 				if (this.events == null) {
 					this.events = [x];
-				} else if (arr_isArray(this.events)) {
+				} else if (is_Array(this.events)) {
 					this.events.push(x);
 				} else {
 					this.events = [x, this.events];
@@ -1419,44 +1589,13 @@ var Compo = exports.Compo = (function(mask){
 				return this;
 			},
 			remove: function() {
-				if (this.$ != null){
+				if (this.$ != null)
 					this.$.remove();
-					
-					var parents = this.parent && this.parent.elements;
-					if (parents != null) {
-						for (var i = 0, x, imax = parents.length; i < imax; i++){
-							x = parents[i];
-							
-							for (var j = 0, jmax = this.$.length; j < jmax; j++){
-								if (x === this.$[j]){
-									parents.splice(i, 1);
-									
-									i--;
-									imax--;
-								}
-								
-							}
-							
-						}
-					}
-		
-					this.$ = null;
-				}
-	
+				
+				compo_detachChild(this);
 				compo_dispose(this);
 	
-				var components = this.parent && this.parent.components;
-				if (components != null) {
-					var i = components.indexOf(this);
-	
-					if (i === -1){
-						console.warn('Compo::remove - parent doesnt contains me', this);
-						return this;
-					}
-	
-					components.splice(i, 1);
-				}
-				
+				this.$ = null;
 				return this;
 			},
 	
@@ -1476,7 +1615,7 @@ var Compo = exports.Compo = (function(mask){
 					signalName,
 					this,
 					arguments.length > 1
-						? __array_slice.call(arguments, 1)
+						? _array_slice.call(arguments, 1)
 						: null
 				);
 				return this;
@@ -1488,7 +1627,7 @@ var Compo = exports.Compo = (function(mask){
 					signalName,
 					this,
 					arguments.length > 1
-						? __array_slice.call(arguments, 1)
+						? _array_slice.call(arguments, 1)
 						: null
 				);
 				return this;
@@ -1513,17 +1652,22 @@ var Compo = exports.Compo = (function(mask){
 		mask.registerAttrHandler('x-signal', 'client', function(node, attrValue, model, cntx, element, controller) {
 	
 			var arr = attrValue.split(';'),
-				signals = '';
-			for (var i = 0, x, length = arr.length; i < length; i++) {
+				signals = '',
+				imax = arr.length,
+				i = -1,
+				x;
+			
+			while ( ++i < imax ) {
 				x = arr[i].trim();
-				if (x === '') {
+				if (x === '') 
 					continue;
-				}
+				
 	
-				var event = x.substring(0, x.indexOf(':')),
-					handler = x.substring(x.indexOf(':') + 1).trim(),
-					Handler = _createListener(controller, handler);
-	
+				var i_colon = x.indexOf(':'),
+					event = x.substring(0, i_colon),
+					handler = x.substring(i_colon + 1).trim(),
+					Handler = _createListener(controller, handler)
+					;
 	
 				// if DEBUG
 				!event && console.error('Signal: event type is not set', attrValue);
@@ -1540,26 +1684,23 @@ var Compo = exports.Compo = (function(mask){
 				// endif
 			}
 	
-			if (signals !== '') {
+			if (signals !== '') 
 				element.setAttribute('data-signals', signals);
-			}
 	
 		});
 	
 		// @param sender - event if sent from DOM Event or CONTROLLER instance
 		function _fire(controller, slot, sender, args, direction) {
 			
-			if (controller == null) {
+			if (controller == null) 
 				return false;
-			}
 			
 			var found = false,
 				fn = controller.slots != null && controller.slots[slot];
 				
-			if (typeof fn === 'string') {
+			if (typeof fn === 'string') 
 				fn = controller[fn];
-			}
-	
+			
 			if (typeof fn === 'function') {
 				found = true;
 				
@@ -1645,7 +1786,7 @@ var Compo = exports.Compo = (function(mask){
 			}
 	
 			return function(event) {
-				var args = arguments.length > 1 ? __array_slice.call(arguments, 1) : null;
+				var args = arguments.length > 1 ? _array_slice.call(arguments, 1) : null;
 				
 				_fire(controller, slot, event, args, -1);
 			};
@@ -1680,16 +1821,16 @@ var Compo = exports.Compo = (function(mask){
 				return;
 			}
 	
-			domLib() //
-			.add(controller.$.filter('[data-signals]')) //
-			.add(controller.$.find('[data-signals]')) //
-			.each(function(index, node) {
-				var signals = node.getAttribute('data-signals');
-	
-				if (signals != null && signals.indexOf(slot) !== -1) {
-					node[isActive === true ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
-				}
-			});
+			domLib() 
+				.add(controller.$.filter('[data-signals]')) 
+				.add(controller.$.find('[data-signals]')) 
+				.each(function(index, node) {
+					var signals = node.getAttribute('data-signals');
+		
+					if (signals != null && signals.indexOf(slot) !== -1) {
+						node[isActive === true ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+					}
+				});
 		}
 	
 		function _toggle_all(controller, slot, isActive) {
@@ -1745,6 +1886,7 @@ var Compo = exports.Compo = (function(mask){
 				enable: function(controller, slot) {
 					_toggle_all(controller, slot, true);
 				},
+				
 				disable: function(controller, slot) {
 					_toggle_all(controller, slot, false);
 				}
@@ -1782,29 +1924,26 @@ var Compo = exports.Compo = (function(mask){
 	// source ../src/jcompo/jCompo.js
 	(function(){
 	
-		if (domLib == null || domLib.fn == null){
+		if (domLib == null || domLib.fn == null)
 			return;
-		}
-	
+		
 	
 		domLib.fn.compo = function(selector){
-			if (this.length === 0){
+			if (this.length === 0)
 				return null;
-			}
+			
 			var compo = Anchor.resolveCompo(this[0]);
 	
-			if (selector == null){
-				return compo;
-			}
-	
-			return find_findSingle(compo, selector_parse(selector, Dom.CONTROLLER, 'up'));
+			return selector == null
+				? compo
+				: find_findSingle(compo, selector_parse(selector, Dom.CONTROLLER, 'up'));
 		};
 	
 		domLib.fn.model = function(selector){
 			var compo = this.compo(selector);
-			if (compo == null){
+			if (compo == null)
 				return null;
-			}
+			
 			var model = compo.model;
 			while(model == null && compo.parent){
 				compo = compo.parent;
@@ -1819,15 +1958,15 @@ var Compo = exports.Compo = (function(mask){
 			var jQ_Methods = [
 				'append',
 				'prepend',
-				'insertAfter',
-				'insertBefore'
+				'before',
+				'after'
 			];
 			
 			arr_each([
 				'appendMask',
 				'prependMask',
-				'insertMaskBefore',
-				'insertMaskAfter'
+				'beforeMask',
+				'afterMask'
 			], function(method, index){
 				
 				domLib.fn[method] = function(template, model, controller, ctx){

@@ -2368,6 +2368,7 @@
 					}
 		
 					ListItem.prototype = {
+						compoName: '%%.each.item',
 						constructor: ListProto,
 						renderEnd: function(elements) {
 							this.elements = elements;
