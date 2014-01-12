@@ -157,3 +157,7 @@
 </tr>
 
 </table>
+
+----
+The MIT License (MIT)
+(c) 2014 Atma.js Project
