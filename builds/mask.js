@@ -33,5 +33,5 @@
 	Mask.Compo = Compo;
 	Mask.jmask = jmask;
 
-	exports.mask = Mask;
+	return (exports.mask = Mask);
 }));
