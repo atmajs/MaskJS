@@ -1,0 +1,10 @@
+/*!
+ * MaskJS v%VERSION%
+ * Part of the Atma.js Project
+ * http://atmajs.com/
+ *
+ * MIT license
+ * http://opensource.org/licenses/MIT
+ *
+ * (c) 2012, %YEAR% Atma.js and other contributors
+ */

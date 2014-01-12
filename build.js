@@ -1,7 +1,7 @@
 /**
- *	IncludeJSBuild
- *
- *	``` $ includejs build.js ```
+ *	Build: Run Atma.js Toolkit
+ *  ``` > npm install atma ```
+ *	``` > atma```
  **/
 
 /**
@@ -33,13 +33,17 @@
 
 
 
-global.config = {
+module.exports = {
 	'settings': {
 		io: {
 			extensions: {
 				js: ['condcomments:read', 'importer:read']
 			}
 		}
+	},
+	'add-handlers': {
+		action: 'custom',
+		script: 'tools/license-handler.js'
 	},
 	'import': {
 		files: 'builds/**',
@@ -77,8 +81,14 @@ global.config = {
 		files: 'src/**',
 		config: '#[import]'
 	},
+	
+	// `> atma bump`
+	'bump': {
+		action: 'custom',
+		script: 'tools/bump.js'
+	},
 
-	'defaults': ['import', 'jshint', 'uglify']
+	'defaults': ['add-handlers', 'import', 'jshint', 'uglify']
 };
 
 

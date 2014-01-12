@@ -1,34 +1,34 @@
 {
-	"name": "maskjs",
-	"description": "Template / Markup / HMVC Engine",
-	"version": "0.5.3",
-	"homepage": "http://atmajs.com/mask",
-	"contributors":[
-		{
-			"name": "Kiryl Yermakou",
-			"email": "rma4ok@gmail.com"
-		}
-	],
-	"author": "Alexander Kit <alex.kit@atmajs.com>",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/atmajs/MaskJS.git"
-	},
-	"bugs": {
-		"url": "https://github.com/atmajs/MaskJS/issues"
-	},
-	"licenses": [
-		"MIT"
-	],
-	"dependencies": {},
-	"devDependencies": {
-		"atma": ">0.9.26"
-	},
-	"scripts" : {
-        "test" : "node_modules/.bin/atma test"
+    "name": "maskjs",
+    "description": "Template / Markup / HMVC Engine",
+    "version": "0.8.11",
+    "homepage": "http://atmajs.com/mask",
+    "contributors": [
+        {
+            "name": "Kiryl Yermakou",
+            "email": "rma4ok@gmail.com"
+        }
+    ],
+    "author": "Alexander Kit <alex.kit@atmajs.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/atmajs/MaskJS.git"
     },
-	"keywords": [],
-	"engines" : {
-        "node" : "~0.8.9"
+    "bugs": {
+        "url": "https://github.com/atmajs/MaskJS/issues"
+    },
+    "licenses": [
+        "MIT"
+    ],
+    "dependencies": {},
+    "devDependencies": {
+        "atma": ">0.9.26"
+    },
+    "scripts": {
+        "test": "node_modules/.bin/atma test"
+    },
+    "keywords": [],
+    "engines": {
+        "node": "~0.8.9"
     }
 }
