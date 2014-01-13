@@ -108,14 +108,14 @@
 			;
 		
 		compo.nodes = null;
-		// - deprecate - use special accessors to reach compos
-		//if (array == null) {
-		//	var parent = compo;
-		//	while (parent != null && array == null) {
-		//		array = util_getProperty(parent, prop);
-		//		parent = parent.parent;
-		//	}
-		//}
+		//// - deprecate - use special accessors to reach compos
+		////if (array == null) {
+		////	var parent = compo;
+		////	while (parent != null && array == null) {
+		////		array = util_getProperty(parent, prop);
+		////		parent = parent.parent;
+		////	}
+		////}
 		
 		if (array == null)
 			return;

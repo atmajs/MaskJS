@@ -2,14 +2,50 @@
 var Compo = exports.Compo = (function(mask){
 	'use strict';
 	// source ../src/scope-vars.js
-	var domLib = global.jQuery || global.Zepto || global.$,
-		Dom = mask.Dom,
+	var Dom = mask.Dom,
+	
 		_array_slice = Array.prototype.slice,
-		
 		_mask_ensureTmplFnOrig = mask.Utils.ensureTmplFn,
-		_Class
 		
+		domLib,
+		Class	
 		;
+	
+	(function(){
+		
+		var scope = [global.atma, exports, global];
+		
+		function resolve() {
+			
+			var args = arguments,
+				j = scope.length,
+				i = args.length,
+				obj,
+				r;
+			
+			while (--j > -1) {
+				obj = scope[j];
+				if (obj == null) 
+					continue;
+				
+				while (--i > -1){
+					r = obj[args[i]];
+					if (r != null) 
+						return r;
+				}
+			}
+		}
+		
+		domLib = resolve('jQuery', 'Zepto', '$');
+		Class = resolve('Class');
+	}());
+	
+	// if DEBUG
+	if (document != null && domLib == null) {
+		
+		console.warn('jQuery-Zepto-Kimbo etc. was not loaded before MaskJS:Compo, please use Compo.config.setDOMLibrary to define dom engine');
+	}
+	// endif
 	
 	function _mask_ensureTmplFn(value) {
 		return typeof value !== 'string'
@@ -17,16 +53,6 @@ var Compo = exports.Compo = (function(mask){
 			: _mask_ensureTmplFnOrig(value)
 			;
 	}
-	
-	if (document != null && domLib == null) {
-		console.warn('jQuery-Zepto-Kimbo etc. was not loaded before compo.js, please use Compo.config.setDOMLibrary to define dom engine');
-	}
-	
-	_Class = global.Class;
-	
-	if (_Class == null && typeof exports !== 'undefined') 
-		_Class = exports.Class;
-	
 	// end:source ../src/scope-vars.js
 
 	// source ../src/util/is.js
@@ -1150,7 +1176,7 @@ var Compo = exports.Compo = (function(mask){
 					classProto.Extends = [Proto, Ext];
 				}
 				
-				return _Class(classProto);
+				return Class(classProto);
 			},
 		
 			/* obsolete */

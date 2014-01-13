@@ -184,14 +184,17 @@ var cache = {},
 		},
 		
 		registerUtility: function (utilityName, fn) {
+			// if DEBUG
 			console.warn('@registerUtility - deprecated - use registerUtil(utilName, mix)', utilityName);
-			
+			// endif
 			this.registerUtility = this.registerUtil;
 			this.registerUtility(utilityName, fn);
 		},
 		
 		getUtility: function(util){
+			// if DEBUG
 			console.warn('@getUtility - deprecated - use getUtil(utilName)', util);
+			// endif
 			this.getUtility = this.getUtil;
 			
 			return this.getUtility();

@@ -29,7 +29,7 @@
     }
     
 	// Browser OR Node
-    construct();
+    return construct();
 
 }(this, function (global, exports, document) {
     'use strict';

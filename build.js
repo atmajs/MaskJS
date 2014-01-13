@@ -47,7 +47,11 @@ module.exports = {
 	},
 	'import': {
 		files: 'builds/**',
-		output: 'lib/'
+		output: 'lib/',
+		defines: {
+			DEBUG: true,
+			SAFE: true
+		}
 	},
 	'build.prod': {
 		action: 'import',
@@ -62,7 +66,11 @@ module.exports = {
 		jshint: JSHint()
 	},
 	'uglify': {
-		files: 'lib/mask.js'
+		files: 'lib/mask.js',
+		defines: {
+			DEBUG: false,
+			SAFE: true
+		}
 	},
 
 	'docs': {
