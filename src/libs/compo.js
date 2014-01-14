@@ -19,15 +19,15 @@ var Compo = exports.Compo = (function(mask){
 			
 			var args = arguments,
 				j = scope.length,
-				i = args.length,
-				obj,
-				r;
+				
+				obj, r, i;
 			
 			while (--j > -1) {
 				obj = scope[j];
 				if (obj == null) 
 					continue;
 				
+				i = args.length;
 				while (--i > -1){
 					r = obj[args[i]];
 					if (r != null) 
