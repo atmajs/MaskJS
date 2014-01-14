@@ -26,7 +26,7 @@ function increaseVersion(version) {
     
     var parts = version
         .split('.')
-        .map(function(x){ return x << 0});
+        .map(function(x){ return x << 0; });
         
     if (parts.length !== 3) {
         logger.log('Invalid ver. pattern', version);
