@@ -1296,6 +1296,8 @@ var Compo = exports.Compo = (function(mask){
 				 */
 				setDOMLibrary: function(lib) {
 					domLib = lib;
+					
+					domLib_initialize();
 				},
 		
 		
@@ -1675,7 +1677,7 @@ var Compo = exports.Compo = (function(mask){
 		 *	Bind Closest Controller Handler Function to dom event(s)
 		 */
 	
-		mask.registerAttrHandler('x-signal', 'client', function(node, attrValue, model, cntx, element, controller) {
+		mask.registerAttrHandler('x-signal', 'client', function(node, attrValue, model, ctx, element, controller) {
 	
 			var arr = attrValue.split(';'),
 				signals = '',
@@ -1948,7 +1950,10 @@ var Compo = exports.Compo = (function(mask){
 	// end:source ../src/compo/signals.js
 
 	// source ../src/jcompo/jCompo.js
-	(function(){
+	// try to initialize the dom lib, or is then called from setDOMLibrary
+	domLib_initialize();
+	
+	function domLib_initialize(){
 	
 		if (domLib == null || domLib.fn == null)
 			return;
@@ -2079,7 +2084,7 @@ var Compo = exports.Compo = (function(mask){
 			
 		}());
 	
-	}());
+	};
 	
 	// end:source ../src/jcompo/jCompo.js
 
