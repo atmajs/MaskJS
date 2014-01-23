@@ -205,7 +205,7 @@ var ConditionUtil = (function() {
 			if (a.assertions) {
 				current = isCondition(a.assertions, model);
 			} else {
-				value1 = typeof a.left === 'object' ? util_getProperty(model, a.left.value) : a.left;
+				value1 = typeof a.left === 'object' ? obj_getProperty(model, a.left.value) : a.left;
 
 				if (a.right == null) {
 					current = value1;
@@ -214,7 +214,7 @@ var ConditionUtil = (function() {
 					}
 
 				} else {
-					value2 = typeof a.right === 'object' ? util_getProperty(model, a.right.value) : a.right;
+					value2 = typeof a.right === 'object' ? obj_getProperty(model, a.right.value) : a.right;
 					switch (a.sign) {
 					case '<':
 						current = value1 < value2;
@@ -288,7 +288,7 @@ var ConditionUtil = (function() {
 				return '';
 			}
 			if (typeof result === 'object' && result.value) {
-				return util_getProperty(model, result.value);
+				return obj_getProperty(model, result.value);
 			}
 
 			return result;

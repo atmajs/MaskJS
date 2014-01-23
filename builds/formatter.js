@@ -18,8 +18,8 @@
 }(this, function (mask) {
 
 
-// import ../src/formatter/stringify.js
-// import ../src/formatter/HTMLtoMask.js
+	// import /src/formatter/stringify.js
+	// import /src/formatter/HTMLtoMask.js
 
 
 	/**

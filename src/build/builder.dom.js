@@ -122,7 +122,7 @@ var builder_build = (function(custom_Attributes, Component){
 					
 					attrFn = null;
 					
-					if (attrHandlers != null && fn_isFunction(attrHandlers[key])) 
+					if (attrHandlers != null && is_Function(attrHandlers[key])) 
 						attrFn = attrHandlers[key];
 					
 					if (attrFn == null && custom_Attributes[key] != null) 
@@ -133,7 +133,7 @@ var builder_build = (function(custom_Attributes, Component){
 				}
 			}
 			
-			if (fn_isFunction(node.renderEnd)) {
+			if (is_Function(node.renderEnd)) {
 				/* if !DEBUG
 				try{
 				*/

@@ -48,7 +48,7 @@ var build_node = (function(){
 			}
 			*/
 		
-			if (fn_isFunction(attr[key])) {
+			if (is_Function(attr[key])) {
 				value = attr[key]('attr', model, ctx, tag, controller, key);
 				if (value instanceof Array) {
 					value = value.join('');
@@ -60,7 +60,7 @@ var build_node = (function(){
 		
 			// null or empty string will not be handled
 			if (value) {
-				if (fn_isFunction(custom_Attributes[key])) {
+				if (is_Function(custom_Attributes[key])) {
 					custom_Attributes[key](node, value, model, ctx, tag, controller, container);
 				} else {
 					tag.setAttribute(key, value);

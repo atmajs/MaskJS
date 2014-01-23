@@ -56,11 +56,11 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 			
 			attrFn = null;
 			
-			if (attrHandlers && fn_isFunction(attrHandlers[key])) {
+			if (attrHandlers && is_Function(attrHandlers[key])) {
 				attrFn = attrHandlers[key];
 			}
 			
-			if (attrFn == null && fn_isFunction(custom_Attributes[key])) {
+			if (attrFn == null && is_Function(custom_Attributes[key])) {
 				attrFn = custom_Attributes[key];
 			}
 			
@@ -70,7 +70,7 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 		}
 	}
 	
-	if (fn_isFunction(controller.renderEnd)) {
+	if (is_Function(controller.renderEnd)) {
 		/* if !DEBUG
 		try{
 		*/

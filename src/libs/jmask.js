@@ -20,7 +20,7 @@ var jmask = exports.jmask = (function(mask){
 	// end:source ../src/scope-vars.js
 
 	// source ../src/util/object.js
-	function util_extend(target, source){
+	function obj_extend(target, source){
 		if (target == null){
 			target = {};
 		}
@@ -403,7 +403,7 @@ var jmask = exports.jmask = (function(mask){
 		}
 	
 		if (node.attr){
-			clone.attr = util_extend({}, node.attr);
+			clone.attr = obj_extend({}, node.attr);
 		}
 	
 		var nodes = node.nodes;
@@ -460,7 +460,7 @@ var jmask = exports.jmask = (function(mask){
 	////////			if (typeof x.controller === 'function'){
 	////////				instance = new x.controller();
 	////////				instance.nodes = x.nodes;
-	////////				instance.attr = util_extend(instance.attr, x.attr);
+	////////				instance.attr = obj_extend(instance.attr, x.attr);
 	////////				instance.compoName = x.compoName;
 	////////				instance.parent = parent;
 	////////
@@ -817,7 +817,7 @@ var jmask = exports.jmask = (function(mask){
 			};
 		});
 	
-		util_extend(jMask.prototype, {
+		obj_extend(jMask.prototype, {
 			tag: function(arg) {
 				if (typeof arg === 'string') {
 					for (var i = 0, length = this.length; i < length; i++) {
@@ -907,7 +907,7 @@ var jmask = exports.jmask = (function(mask){
 	// source ../src/jmask/manip.dom.js
 	
 	
-	util_extend(jMask.prototype, {
+	obj_extend(jMask.prototype, {
 		clone: function(){
 			var result = [];
 			for(var i = 0, length = this.length; i < length; i++){
@@ -990,7 +990,7 @@ var jmask = exports.jmask = (function(mask){
 	
 	// end:source ../src/jmask/manip.dom.js
 	// source ../src/jmask/traverse.js
-	util_extend(jMask.prototype, {
+	obj_extend(jMask.prototype, {
 		each: function(fn, cntx) {
 			for (var i = 0; i < this.length; i++) {
 				fn.call(cntx || this, this[i], i)

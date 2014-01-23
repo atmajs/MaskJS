@@ -8,7 +8,7 @@ var customUtil_register ,
     
     customUtil_register = function(name, mix){
         
-        if (fn_isFunction(mix)) {
+        if (is_Function(mix)) {
             custom_Utils[name] = mix;
             return;
         }

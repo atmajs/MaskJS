@@ -1,2 +1,2 @@
 
-// import ../src/auto-reload.js
+// import /src/auto-reload.js

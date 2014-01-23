@@ -14,7 +14,7 @@ var build_textNode = (function(){
 		var content = node.content;
 			
 		
-		if (fn_isFunction(content)) {
+		if (is_Function(content)) {
 		
 			var result = content('node', model, ctx, container, controller);
 		

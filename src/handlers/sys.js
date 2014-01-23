@@ -59,7 +59,7 @@
 			
 			if (attr['use'] != null) {
 				var use = attr['use'];
-				this.model = util_getProperty(model, use);
+				this.model = obj_getProperty(model, use);
 				this.modelRef = use;
 				return;
 			}
@@ -79,7 +79,7 @@
 
 			if (attr['log'] != null) {
 				var key = attr.log,
-					value = util_getProperty(model, key);
+					value = obj_getProperty(model, key);
 
 				console.log('Key: %s, Value: %s', key, value);
 				return;
@@ -103,7 +103,7 @@
 		
 
 		var prop = compo.attr.each || compo.attr.foreach,
-			array = util_getPropertyEx(prop, model, ctx, compo),
+			array = obj_getPropertyEx(prop, model, ctx, compo),
 			nodes = compo.nodes
 			;
 		
@@ -112,7 +112,7 @@
 		////if (array == null) {
 		////	var parent = compo;
 		////	while (parent != null && array == null) {
-		////		array = util_getProperty(parent, prop);
+		////		array = obj_getProperty(parent, prop);
 		////		parent = parent.parent;
 		////	}
 		////}

@@ -34,7 +34,7 @@ function builder_build(node, model, container, cntx, component, childs) {
 			var Handler = node.controller,
 			controller = typeof Handler === 'function' ? new Handler(model) : Handler;
 
-			controller.attr = util_extend(controller.attr, node.attr);
+			controller.attr = obj_extend(controller.attr, node.attr);
 
 			controller.first = node.first;
 			controller.parent = component;

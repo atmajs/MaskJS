@@ -59,7 +59,7 @@ function Component(compoName, parent, controller){
 }
 
 Component.defineCompo = function(compoName, handler){
-	//util_extend(handler.prototype, ComponentProto);
+	//obj_extend(handler.prototype, ComponentProto);
 	handler.prototype.__proto__ = ComponentProto;
 }
 

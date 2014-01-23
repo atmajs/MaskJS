@@ -2,7 +2,7 @@
 function build_compo(node, model, ctx, container, controller){
 	
 	var Handler = node.controller,
-		handler = fn_isFunction(Handler)
+		handler = is_Function(Handler)
 			? new Handler(model)
 			: Handler,
 		attr,
@@ -19,7 +19,7 @@ function build_compo(node, model, ctx, container, controller){
 		handler.model = model;
 	
 		for (key in attr) {
-			if (fn_isFunction(attr[key])) {
+			if (is_Function(attr[key])) {
 				attr[key] = attr[key]('attr', model, ctx, container, controller, key);
 			}
 		}
@@ -37,7 +37,7 @@ function build_compo(node, model, ctx, container, controller){
 			}
 		}
 	
-		if (fn_isFunction(handler.renderStart)) {
+		if (is_Function(handler.renderStart)) {
 			handler.renderStart(model, ctx, container);
 		}
 	

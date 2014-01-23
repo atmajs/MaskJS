@@ -105,7 +105,7 @@ var cache = {},
 		 * Note: Attribute wont be set to an element.
 		 **/
 		registerAttrHandler: function(attrName, mix, Handler){
-			if (fn_isFunction(mix)) {
+			if (is_Function(mix)) {
 				Handler = mix;
 			}
 			
@@ -217,21 +217,8 @@ var cache = {},
 				cache = {};
 			}
 		},
-		//- removed as needed interface can be implemented without this
-		//- ICustomTag: ICustomTag,
-
-		/** deprecated
-		 *	mask.ValueUtils -> Object
-		 *
-		 *	see Utils.Condition Object instead
-		 **/
-		ValueUtils: {
-			condition: ConditionUtil.condition,
-			out: ConditionUtil
-		},
 
 		Utils: {
-			Condition: ConditionUtil,
 			
 			/**
 			 * mask.Util.Expression -> ExpressionUtil
@@ -250,7 +237,7 @@ var cache = {},
 			 *	mask.render('span > ~[.]', 'Some string') // -> <span>Some string</span>
 			 *	```
 			 **/
-			getProperty: util_getProperty,
+			getProperty: obj_getProperty,
 			
 			ensureTmplFn: Parser.ensureTemplateFunction
 		},
@@ -282,8 +269,7 @@ var cache = {},
 		 **/
 		setInterpolationQuotes: Parser.setInterpolationQuotes,
 		
-		
-		compoIndex: function(index){
+		setCompoIndex: function(index){
 			_controllerID = index;
 		},
 		
