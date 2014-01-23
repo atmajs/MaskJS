@@ -1,7 +1,6 @@
 // import custom.utils.js
 
 var custom_Utils = {
-	condition: ConditionUtil.condition,
 	expression: function(value, model, cntx, element, controller){
 		return ExpressionUtil.eval(value, model, cntx, controller);
 	},
