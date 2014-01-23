@@ -137,11 +137,7 @@ function util_interpolate(arr, type, model, ctx, element, controller, name) {
 
 				key = key.substring(index + 1);
 				handler = custom_Utils[utility];
-				
-				value = fn_isFunction(handler)
-					? handler(key, model, ctx, element, controller, name, type)
-					: handler.process(key, model, ctx, element, controller, name, type)
-					;
+				value = handler(key, model, ctx, element, controller, name, type);
 			}
 
 			if (value != null){

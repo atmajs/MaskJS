@@ -1,3 +1,5 @@
+// import custom.utils.js
+
 var custom_Utils = {
 	condition: ConditionUtil.condition,
 	expression: function(value, model, cntx, element, controller){
@@ -12,8 +14,10 @@ var custom_Utils = {
 		type: null
 	},
 	custom_Tags = {
-		// Most common html tags
-		// http://jsperf.com/not-in-vs-null/3
+		/*
+		 * Most common html tags
+		 * http://jsperf.com/not-in-vs-null/3
+		 */
 		div: null,
 		span: null,
 		input: null,

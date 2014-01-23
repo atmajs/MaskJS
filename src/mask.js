@@ -152,36 +152,40 @@ var cache = {},
 		 *  
 		 **/
 		
-		registerUtil: function(utilName, mix){
-			if (typeof mix === 'function') {
-				custom_Utils[utilName] = mix;
-				return;
-			}
-			
-			if (typeof mix.process !== 'function') {
-				mix.process = function(expr, model, ctx, element, controller, attrName, type){
-					if ('node' === type) {
-						
-						this.nodeRenderStart(expr, model, ctx, element, controller);
-						return this.node(expr, model, ctx, element, controller);
-					}
-					
-					// asume 'attr'
-					
-					this.attrRenderStart(expr, model, ctx, element, controller, attrName);
-					return this.attr(expr, model, ctx, element, controller, attrName);
-				};
-			
-			}
-			
-			custom_Utils[utilName] = mix;
-		},
+		registerUtil: customUtil_register,
+		//////function(utilName, mix){
+		//////	if (typeof mix === 'function') {
+		//////		custom_Utils[utilName] = mix;
+		//////		return;
+		//////	}
+		//////	
+		//////	if (typeof mix.process !== 'function') {
+		//////		mix.process = function(expr, model, ctx, element, controller, attrName, type){
+		//////			if ('node' === type) {
+		//////				
+		//////				this.nodeRenderStart(expr, model, ctx, element, controller);
+		//////				return this.node(expr, model, ctx, element, controller);
+		//////			}
+		//////			
+		//////			// asume 'attr'
+		//////			
+		//////			this.attrRenderStart(expr, model, ctx, element, controller, attrName);
+		//////			return this.attr(expr, model, ctx, element, controller, attrName);
+		//////		};
+		//////	
+		//////	}
+		//////	
+		//////	custom_Utils[utilName] = mix;
+		//////},
 		
-		getUtil: function(util){
-			return util != null
-				? custom_Utils[util]
-				: custom_Utils;
-		},
+		getUtil: customUtil_get,
+		//////function(util){
+		//////	return util != null
+		//////		? custom_Utils[util]
+		//////		: custom_Utils;
+		//////},
+		
+		$utils: customUtil_$utils,
 		
 		registerUtility: function (utilityName, fn) {
 			// if DEBUG
