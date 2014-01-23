@@ -1,69 +1,56 @@
-<img src='http://atmajs.com/images/logos/mask.png' style='float:right'/>
-<hr/>
-<a href='http://travis-ci.org/tenbits/MaskJS'><img src='https://secure.travis-ci.org/atmajs/MaskJS.png'/></a>
+<div style='text-align: middle;'>
+    <img src='http://atmajs.com/images/logos/mask.png' />
+    </div>
 
-<p>
-	<tt><a href='http://atmajs.com/mask' target='_blank'>mask.js</a></tt> — is a markup | template | <b>HMVC</b> engine
+----
 
-<div><pre><code>
+[![Build Status](https://travis-ci.org/atmajs/MaskJS.png?branch=master)](https://travis-ci.org/atmajs/MaskJS)
+
+[mask.js](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine
+
+```css
 .container {
 	h4 > 'Title'
 	section.content data-id='myID' {
-		span >'Hello ~[name]!'
+		span > 'Hello ~[name]!'
 	}
-	:custom > button x-signal='click: changeName' {
-		'~[bind: name]'
-	}
+	:customComponent {
+        button x-signal='click: changeName' >
+            '~[bind: name]'
+    }
 }
-</code></pre></div>
+```
 
-	Features:
-	<ul>
-		<li>Performance — (mobile CPUs in mind) - doesnt require precompilation</li>
-		<li>Custom tags / Custom Value Processors / Custom Attributes</li>
-		<li>DOM Based — [Template &rarr; JSON AST &rarr; Document Fragment<Shadow DOM> &rarr; Live DOM].
-			This allows to render the components much faster.</li>
-		<li>For server and browsers (@see node.js implementation: <a href='https://github.com/atmajs/mask-node'>mask.node</a></li>
-	</ul>
-</p>
+Features:
 
-<p>
-	<a href='http://atmajs.com/mask-try'>maskFiddle</a>
-</p>
+- Performance — (mobile CPUs in mind) - doesnt require precompilation
+- Custom Tags / Custom Value Processors / Custom Attributes / Expressions
+- DOM Based — [Template &rarr; JSON AST &rarr; Shadow DOM &rarr; Live DOM]. (This allows to render the components much faster.)
+- For server and browsers (@see node.js implementation: [mask.node](https://github.com/atmajs/mask-node))
+- IE7+
 
-<p>
-	<small><a href='http://atmajs.com/mask'>Documentation</a></small>
-</p>
-<p>
+Resources:
 
-<small>
-	Default build contains:
-	<ul>
-		<li><a href='https://github.com/atmajs/mask-binding'>Bindings Lib</a></li>
-		<li><a href='https://github.com/atmajs/mask-j'>jmask DOM</a></li>
-		<li><a href='https://github.com/atmajs/mask-compo'>Compo MVC</a></li>
-	</ul>
-</small>
-</p>
+- [maskFiddle](http://atmajs.com/mask-try)
+- [Documentation](http://atmajs.com/mask)
 
-<p>
- Performance Tests
- <ul>
-	<li> Mask vs raw HTML Template Engines
-		<a href='http://jsperf.com/dom-vs-innerhtml-based-templating/711'>:jsperf</a>
-		</li>
-	<li> Mask AST vs JSON parse
-		<a href='http://jsperf.com/maskjs-vs-json/10'>:jsperf</a>
-		</li>
-	<li> Mask Markup vs HTML
-		<a href='http://jsperf.com/mask-vs-contextual-fragment/5'>:jsperf</a>
-		</li>
-	<li> Mask vs Angular
-		<a href='http://jsperf.com/mask-vs-angular/6'>:jsperf</a>
-		</li>
- </ul>
+Default build contains:
+
+- [Bindings Lib <b>(IE9+)](https://github.com/atmajs/mask-binding)
+- [jmask DOM](https://github.com/atmajs/mask-j)
+- [Compo HMVC](https://github.com/atmajs/mask-compo)
+    
+
+Performance Tests:
+
+- Mask vs raw HTML Template Engines - [:jsperf](http://jsperf.com/dom-vs-innerhtml-based-templating/711)
+- Mask vs Angular - [:jsperf](http://jsperf.com/mask-vs-angular/6)
+- Mask AST vs JSON parse - [:jsperf](http://jsperf.com/maskjs-vs-json/11)
+- Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/8)
+- Mask Expressions vs Eval - [:jsperf](http://jsperf.com/mask-expression-vs-function-vs-eval/2)
+	
  
-</p>
+
 
 ###Changelog
 ------------
