@@ -62,8 +62,19 @@ function expression_parse(expr) {
 
 			case punc_Comma:
 				if (state !== state_arguments) {
-					_throw('Unexpected punctuation, comma');
-					break outer;
+					
+					state = state_body;
+					do {
+						current = current.parent;
+					} while (current != null && current.type !== type_Body);
+					index++;
+					
+					if (current == null) {
+						_throw('Unexpected punctuation, comma');
+						break outer;	
+					}
+					
+					continue;
 				}
 				do {
 					current = current.parent;
@@ -159,7 +170,7 @@ function expression_parse(expr) {
 			case go_number:
 				if (current.body != null && current.join == null) {
 					_throw('Directive Expected');
-					break;
+					break outer;
 				}
 				if (go_string === directive) {
 					index++;

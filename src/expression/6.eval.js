@@ -1,17 +1,16 @@
-function expression_evaluate(mix, model, cntx, controller) {
+function expression_evaluate(mix, model, ctx, controller) {
 
 	var result, ast;
 
-	if (mix == null){
+	if (mix == null)
 		return null;
-	}
+	
 
 	if (typeof mix === 'string'){
-		if (cache.hasOwnProperty(mix) === true){
-			ast = cache[mix];
-		}else{
-			ast = (cache[mix] = expression_parse(mix));
-		}
+		ast = cache.hasOwnProperty(mix) === true
+			? (cache[mix])
+			: (cache[mix] = expression_parse(mix))
+			;
 	}else{
 		ast = mix;
 	}
@@ -25,14 +24,14 @@ function expression_evaluate(mix, model, cntx, controller) {
 		outer: for (i = 0, length = ast.body.length; i < length; i++) {
 			x = ast.body[i];
 
-			value = expression_evaluate(x, model, cntx, controller);
+			value = expression_evaluate(x, model, ctx, controller);
 
-			if (prev == null) {
+			if (prev == null || prev.join == null) {
 				prev = x;
 				result = value;
 				continue;
 			}
-
+			
 			if (prev.join === op_LogicalAnd) {
 				if (!result) {
 					for (; i < length; i++) {
@@ -96,7 +95,7 @@ function expression_evaluate(mix, model, cntx, controller) {
 	}
 
 	if (type_Statement === type) {
-		return expression_evaluate(ast.body, model, cntx, controller);
+		return expression_evaluate(ast.body, model, ctx, controller);
 	}
 
 	if (type_Value === type) {
@@ -104,11 +103,11 @@ function expression_evaluate(mix, model, cntx, controller) {
 	}
 
 	if (type_SymbolRef === type || type_FunctionRef === type) {
-		return util_resolveRef(ast, model, cntx, controller);
+		return util_resolveRef(ast, model, ctx, controller);
 	}
 	
 	if (type_UnaryPrefix === type) {
-		result = expression_evaluate(ast.body, model, cntx, controller);
+		result = expression_evaluate(ast.body, model, ctx, controller);
 		switch (ast.prefix) {
 		case op_Minus:
 			result = -result;
@@ -120,8 +119,8 @@ function expression_evaluate(mix, model, cntx, controller) {
 	}
 
 	if (type_Ternary === type){
-		result = expression_evaluate(ast.body, model, cntx, controller);
-		result = expression_evaluate(result ? ast.case1 : ast.case2, model, cntx, controller);
+		result = expression_evaluate(ast.body, model, ctx, controller);
+		result = expression_evaluate(result ? ast.case1 : ast.case2, model, ctx, controller);
 
 	}
 
