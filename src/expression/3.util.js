@@ -38,9 +38,12 @@ var _throw,
 			}
 		}
 		
-		
 		else if ('$a' === key) 
 			value = controller && controller.attr;
+		
+		else if ('$u' === key) 
+			value = customUtil_$utils;
+		
 		
 		else if ('$ctx' === key) 
 			value = ctx;

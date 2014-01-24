@@ -61,6 +61,11 @@ var obj_extend,
             i++;
         }
         
+        else if ('$u' === key) {
+            value = customUtil_$utils;
+            i++;
+        }
+        
         else if ('$ctx' === key) {
             value = ctx;
             i++;

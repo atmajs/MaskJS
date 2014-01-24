@@ -1,0 +1,25 @@
+
+
+UTest({
+    
+    'parsed-arguments': function(){
+                
+        mask.registerUtil('test', {
+            arguments: 'parsed',
+            process: function(foo, str, bar){
+                return foo + str + bar;
+            }
+        });
+        
+        var div = mask.render('div > "~[test: foo, \'test\', bar.bar]"', { foo: 2, bar: { bar: 3 } });
+        eq(div.textContent, '2test3');
+        
+        eq(typeof mask.$utils.test, 'function');
+        eq(mask.$utils.test(2, 'test', 8), '2test8');
+        
+        
+        var div = mask.render('div > "~[: \'foo\' + $u.test(a,2,3) ]"', {a : 10});
+        eq(div.textContent, 'foo15');
+    }
+    
+})

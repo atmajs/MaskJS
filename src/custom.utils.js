@@ -57,7 +57,7 @@ var customUtil_register ,
             
             var body = ExpressionUtil.parse(expr).body,
                 args = [],
-                imax = body.length;
+                imax = body.length,
                 i = -1
                 ;
             while( ++i < imax ){

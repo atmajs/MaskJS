@@ -1,9 +1,8 @@
-var isCondition = mask.Utils.Condition.isCondition,
-	condition = mask.Utils.Condition.condition,
-	template, node, attr;
+var template, node, attr,
 
-	isCondition = mask.Utils.Expression.eval;
-	condition = mask.Utils.Expression.eval;
+	isCondition = mask.Utils.Expression.eval,
+	condition = mask.Utils.Expression.eval
+	;
 
 UTest({
 	'isCondition by strings': function() {
