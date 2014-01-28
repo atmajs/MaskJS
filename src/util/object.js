@@ -25,9 +25,9 @@ var obj_extend,
         
     obj_getProperty = function(obj, path) {
         if (path === '.') 
-            return o;
+            return obj;
         
-        var value = o,
+        var value = obj,
             props = path.split('.'),
             i = -1,
             imax = props.length;
