@@ -4,27 +4,27 @@ var build_node = (function(){
 	var el_create = (function(doc){
 		return function(name){
 			
-			return doc.createElement(name);
+			// if DEBUG
+			try {
+			// endif
+				return doc.createElement(name);
+			// if DEBUG
+			} catch(error) {
+				console.error(tagName, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
+				return null;
+			}
+			// endif
 		};
 	}(document));
 	
 	return function build_node(node, model, ctx, container, controller, childs){
 		
 		var tagName = node.tagName,
-			attr = node.attr,
-			tag;
+			attr = node.attr;
 		
-		// if DEBUG
-		try {
-		// endif
-			tag = el_create(tagName);
-		// if DEBUG
-		} catch(error) {
-			console.error(tagName, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
+		var tag = el_create(tagName);
+		if (tag == null) 
 			return;
-		}
-		// endif
-		
 		
 		if (childs != null){
 			childs.push(tag);
@@ -66,10 +66,8 @@ var build_node = (function(){
 					tag.setAttribute(key, value);
 				}
 			}
-		
 		}
-	
-	
+
 		return tag;
 	}
 	
