@@ -48,7 +48,8 @@ var obj_extend,
             value = model,
             i = -1,
             imax = props.length,
-            key = props[0]
+            key = props[0],
+            start_i
             ;
         
         if ('$c' === key) {
@@ -71,8 +72,27 @@ var obj_extend,
             i++;
         }
         
+        start_i = i;
         while (value != null && ++i < imax) 
             value = value[props[i]];
+        
+        if (value == null && start_i === -1) {
+            var $scope;
+            while (true){
+                
+                if (controller == null) 
+                    break;
+                
+                $scope = controller.scope;
+                if ($scope != null) {
+                    value = getProperty($scope, props, 0, imax);
+                    if (value != null) 
+                        return value;
+                }
+                
+                controller = controller.parent;
+            }
+        }
         
         return value;
     };
@@ -92,4 +112,17 @@ var obj_extend,
         return array;
     };
     
+    
+    // = private
+    
+    function getProperty(obj, props, i, imax) {
+        var value = obj;
+        
+        while(i < imax && value != null){
+            value = value[props[i]];
+            i++;
+        }
+        
+        return value;
+    }
 }());

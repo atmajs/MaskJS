@@ -12,6 +12,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		_serialize;
 
+	// import cursor.js
 
 	function ensureTemplateFunction(template) {
 		var index = -1;
@@ -112,6 +113,14 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		});
 	}
 
+	var go_tag = 2,
+		state_tag = 3,
+		state_attr = 5,
+		go_attrVal = 6,
+		go_attrHeadVal = 7,
+		state_literal = 8,
+		go_up = 9
+		;
 
 
 	return {
@@ -123,8 +132,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 			var current = new Fragment(),
 				fragment = current,
-				state = 2,
-				last = 3,
+				state = go_tag,
+				last = state_tag,
 				index = 0,
 				length = template.length,
 				classNames,
@@ -132,17 +141,12 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				key,
 				value,
 				next,
+				next_Type,
 				c, // charCode
 				start,
 				nextC;
 
-			var go_tag = 2,
-				state_tag = 3,
-				state_attr = 5,
-				go_attrVal = 6,
-				go_attrHeadVal = 7,
-				state_literal = 8,
-				go_up = 9;
+			
 
 
 			outer: while (true) {
@@ -216,30 +220,32 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 					} else if (last === state_tag) {
 
-						next = custom_Tags[token] != null
-							? new Component(token, current, custom_Tags[token])
-							: new Node(token, current);
+						//next = custom_Tags[token] != null
+						//	? new Component(token, current, custom_Tags[token])
+						//	: new Node(token, current);
+						
+						next = new Node(token, current, next_Type);
 
-						if (current.nodes == null) {
-							current.nodes = [next];
-						} else {
-							current.nodes.push(next);
-						}
+						current.appendChild(next);
+						//////if (current.nodes == null) {
+						//////	current.nodes = [next];
+						//////} else {
+						//////	current.nodes.push(next);
+						//////}
 
 						current = next;
-
-
 						state = state_attr;
 
 					} else if (last === state_literal) {
 
 						next = new TextNode(token, current);
-
-						if (current.nodes == null) {
-							current.nodes = [next];
-						} else {
-							current.nodes.push(next);
-						}
+						
+						current.appendChild(next);
+						//if (current.nodes == null) {
+						//	current.nodes = [next];
+						//} else {
+						//	current.nodes.push(next);
+						//}
 
 						if (current.__single === true) {
 							do {
@@ -370,11 +376,18 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (state === go_tag) {
 					last = state_tag;
 					state = state_tag;
-
+					next_Type = Dom.NODE;
+					
 					if (c === 46 /* . */ || c === 35 /* # */ ) {
 						token = 'div';
 						continue;
 					}
+					
+					if (c === 58 || c === 36 || c === 64 || c === 37) {
+						// : $ @ %
+						next_Type = Dom.COMPONENT;
+					}
+					
 				}
 
 				else if (state === state_attr) {
@@ -383,17 +396,32 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						index++;
 						key = 'class';
 						state = go_attrHeadVal;
-					} else if (c === 35) {
+					}
+					
+					else if (c === 35) {
 						// #
 						index++;
 						key = 'id';
 						state = go_attrHeadVal;
-					} else if (c === 61) {
+					}
+					
+					else if (c === 61) {
 						// =;
 						index++;
 						state = go_attrVal;
 						continue;
-					} else {
+					}
+					
+					else if (c === 40) {
+						// (
+						start = 1 + index;
+						index = 1 + cursor_bracketsEnd(template, start, length, c, 41 /* ) */);
+						current.expression = template.substring(start, index - 1);
+						current.type = Dom.STATEMENT;
+						continue;
+					}
+					
+					else {
 
 						if (key != null) {
 							token = key;
@@ -521,4 +549,4 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		
 		ensureTemplateFunction: ensureTemplateFunction
 	};
-}(Node, TextNode, Fragment, Component));
+}(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));

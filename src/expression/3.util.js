@@ -56,17 +56,34 @@ var _throw,
 				value = model[key];
 			}
 			
-			// @TODO - deprecate this for predefined accessors '$c' ...	
-			if (value == null && ctx != null) {
-				object = ctx;
-				value = ctx[key];
-			}
+			// @TODO - deprecate this for predefined accessors '$c' ...
+			
+			////// remove
+			//////if (value == null && ctx != null) {
+			//////	object = ctx;
+			//////	value = ctx[key];
+			//////}
 		
-			if (value == null && controller != null) {
-				do {
-					object = controller;
-					value = controller[key];
-				} while (value == null && (controller = controller.parent) != null);
+			//////if (value == null && controller != null) {
+			//////	do {
+			//////		object = controller;
+			//////		value = controller[key];
+			//////	} while (value == null && (controller = controller.parent) != null);
+			//////}
+			
+			if (value == null) {
+				
+				while (controller != null) {
+					object = controller.scope;
+					
+					if (object != null) 
+						value = object[key];
+					
+					if (value != null) 
+						break;
+					
+					controller = controller.parent;
+				} 
 			}
 		}
 		

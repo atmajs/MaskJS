@@ -56,6 +56,18 @@ Performance Tests:
 ------------
 <table>
 
+
+<tr>
+	<td>v0.9.0</td>
+	<td>
+		
+		<ul>
+			<li> Controller's scope model </li>
+		</ul>
+		
+	</td>
+</tr>
+
 <tr>
 	<td>v0.8.1</td>
 	<td>
@@ -105,7 +117,7 @@ Performance Tests:
 				Expressions parser. Samples:
 				<div><code>~[:controllerFunction(userName.toUpperCase()) + ';']</code></div>
 				<div><code>~[:user && user.id || "Log in"]</code></div>
-				Variables/Functions look up <b>(deprecated)</b>:
+				Variables/Functions look up <i>(deprecated)</i> <b>UPD: REMOVE</b>:
 				<ol>
 				 <li> model </li>
 				 <li> ctx </li>

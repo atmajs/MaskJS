@@ -52,5 +52,23 @@ UTest({
 
 		assert(dom.querySelectorAll('.item').length === 3, 'Div should have 3 childs with class .item');
 		assert(dom.querySelectorAll('.item')[2].textContent == 'Last', 'Last Div should have text "Last"');
+	},
+	
+	'scoped variables': function(){
+		
+		var dom = render('"~[a] ~[b.sub]"', {}, {}, null, {
+			scope: {
+				a: 'a'
+			},
+			parent: {
+				scope: {
+					b: {
+						sub: 'sub!'
+					}
+				}
+			}
+		});
+		
+		eq(dom.textContent, 'a sub!');
 	}
 })

@@ -13,9 +13,12 @@
     // import /src/util/object.js
 	// import /src/util/function.js
     
-	// import /src/expression/exports.js
 	// import /src/custom.js
-	// import /src/dom/dom.js
+	
+	// import /src/expression/exports.js
+	// import /src/statements/exports.js
+	// import /src/dom/exports.js
+	
 	// import /src/parse/parser.js
 	// import /src/build/builder.dom.js
 	// import /src/mask.js

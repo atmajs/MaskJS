@@ -30,7 +30,7 @@ UTest({
 		"'' + 5 + 'hello'", "'' + 5 + 'h' + 'e' + \"l\" + 'l' + 'o'", "'' + ('5' + 'h' + 'e') + (\"l\" + 'l' + 'o')", //
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
-		"5 + fn2()", //
+		"5 + $c.parent.fn2()", //
 		"5 + var_", //
 		"1 + 2*2 + var_"], '5hello', {
 			var_: "hello",
@@ -180,6 +180,29 @@ UTest({
 				four: 4
 			}
 		});
+	},
+	
+	'controller scope accessors': function(){
 		
+		expression(
+			[
+				'a + b.sub'
+			],
+			5,
+			null,
+			null,
+			{
+				scope: {
+					a: 2
+				},
+				parent: {
+					scope: {
+						b: {
+							sub: 3
+						}
+					}
+				}
+			}
+		);
 	}
 });

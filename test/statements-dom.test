@@ -1,0 +1,94 @@
+
+var $render = function(template, model, ctx, controller){
+	
+	return $(mask.render(template, model, ctx, controller));
+}
+
+
+UTest({
+	
+	'if': function(){
+		[
+			{
+				template: 'if (1) > "foo"',
+				result: 'foo'
+			},
+			{
+				template: 'if (0) > "foo" else > "bar"',
+				result: 'bar'
+			},
+			{
+				template: 'if (i/2 == 1) > "foo" else > "bar"',
+				model: { i: 2 },
+				result: 'foo'
+			},
+			{
+				template: 'div; span { if (i/2 * 2 == 1) { "foo" } else { "b" "a" "r" }}',
+				model: { i: 2 },
+				result: 'bar'
+			},
+		]
+		.forEach(function(test){
+			
+			var $frag = $render(test.template, test.model, null, test.controller);
+			eq($frag.text(), test.result);
+		})
+		
+	},
+	
+	'for': function(){
+		[
+			{
+				template: 'for (x of items) > "~[x]"',
+				model: {
+					items: ['1', '2', '3']
+				},
+				result: '123'
+			},
+			{
+				template: 'for (  x  of  items) > "~[name]~[x]"',
+				model: {
+					items: ['1', '2', '3'],
+					name: '-'
+				},
+				result: '-1-2-3'
+			},
+			{
+				template: 'for ( (item, index) of items ) > "~[name]~[item](~[index])"',
+				model: {
+					items: ['1', '2', '3'],
+					name: '-'
+				},
+				result: '-1(0)-2(1)-3(2)'
+			},
+			{
+				template: 'for ( key in items ) > "~[name]~[key]"',
+				model: {
+					items: {
+						a: 'A',
+						b: 'B'
+					},
+					name: '-'
+				},
+				result: '-a-b'
+			},
+			{
+				template: 'for ( (key, value) in items ) > "~[name]~[key](~[value])"',
+				model: {
+					items: {
+						a: 'A',
+						b: 'B'
+					},
+					name: '-'
+				},
+				result: '-a(A)-b(B)'
+			}, 
+		]
+		.forEach(function(test){
+			
+			var $frag = $render(test.template, test.model, null, test.controller);
+			eq($frag.text(), test.result);
+		})
+	}
+	
+})

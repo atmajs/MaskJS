@@ -1,7 +1,7 @@
 
 function build_compo(node, model, ctx, container, controller){
 	
-	var Handler = node.controller,
+	var Handler = custom_Tags[node.tagName] || node.controller,
 		handler = is_Function(Handler)
 			? new Handler(model)
 			: Handler,

@@ -1,10 +1,15 @@
 // import custom.utils.js
 
 var custom_Utils = {
-	expression: function(value, model, cntx, element, controller){
-		return ExpressionUtil.eval(value, model, cntx, controller);
+		expression: function(value, model, ctx, element, controller){
+			return ExpressionUtil.eval(value, model, ctx, controller);
+		},
 	},
-},
+	
+	custom_Statements = {
+		
+	},
+	
 	custom_Attributes = {
 		'class': null,
 		id: null,

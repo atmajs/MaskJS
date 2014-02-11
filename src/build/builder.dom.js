@@ -1,6 +1,6 @@
 var _controllerID = 0;
 
-var builder_build = (function(custom_Attributes, Component){
+var builder_build = (function(custom_Attributes, custom_Tags, Component){
 	
 	
 		
@@ -8,57 +8,83 @@ var builder_build = (function(custom_Attributes, Component){
 	// import type.textNode.js
 	// import type.node.js
 	// import type.component.js
+	
 
 	return function builder_build(node, model, ctx, container, controller, childs) {
 	
-		if (node == null) {
+		if (node == null) 
 			return container;
-		}
-	
+		
 		var type = node.type,
 			elements,
 			key,
 			value,
 			j, jmax;
-	
-		if (container == null && type !== 1) {
-			container = document.createDocumentFragment();
-		}
-	
-		if (controller == null) {
-			controller = new Component();
-		}
-	
-		if (type === 10 /*SET*/ || node instanceof Array){
-			
-			j = 0;
-			jmax = node.length;
-			
-			for(; j < jmax; j++){
-				builder_build(node[j], model, ctx, container, controller, childs);
-			}
-			return container;
-		}
-	
+		
 		if (type == null){
 			// in case if node was added manually, but type was not set
-			if (node.tagName != null){
+			
+			if (node instanceof Array) {
+				type = 10
+			}
+			else if (node.tagName != null){
 				type = 1;
 			}
 			else if (node.content != null){
 				type = 2;
 			}
 		}
+		
+		if (type == 1 && custom_Tags[node.tagName] != null) {
+			// check if the tag name was overriden
+			type = 4;
+		}
+	
+		if (container == null && type !== 1) 
+			container = document.createDocumentFragment();
+		
+		if (controller == null) 
+			controller = new Component();
+		
+		// Dom.SET
+		if (type === 10) {
+			
+			j = 0;
+			jmax = node.length;
+			
+			for(; j < jmax; j++) {
+				builder_build(node[j], model, ctx, container, controller, childs);
+			}
+			return container;
+		}
+	
+		// Dom.STATEMENT
+		if (type === 15) {
+			var Handler = custom_Statements[node.tagName];
+			if (is_Function(Handler)) {
+				
+				Handler(node, model, ctx, container, controller, childs);
+			}
+			
+			else {
+				console.error('<mask: statement is undefined', node.tagName);
+			}
+			
+			return container;
+		}
 	
 		// Dom.NODE
-		if (type === 1){
+		if (type === 1) {
+			
+			if (node.tagName === 'else') 
+				return container;
 	
 			container = build_node(node, model, ctx, container, controller, childs);
 			childs = null;
 		}
 	
 		// Dom.TEXTNODE
-		if (type === 2){
+		if (type === 2) {
 			
 			build_textNode(node, model, ctx, container, controller);
 			return container;
@@ -69,15 +95,15 @@ var builder_build = (function(custom_Attributes, Component){
 	
 			controller = build_compo(node, model, ctx, container, controller);
 			
-			if (controller == null) {
+			if (controller == null) 
 				return container;
-			}		
+			
 			elements = [];
 			node = controller;
 			
-			if (controller.model !== model) {
+			if (controller.model !== model) 
 				model = controller.model;
-			}
+			
 		}
 	
 		var nodes = node.nodes;
@@ -133,15 +159,9 @@ var builder_build = (function(custom_Attributes, Component){
 				}
 			}
 			
-			if (is_Function(node.renderEnd)) {
-				/* if !DEBUG
-				try{
-				*/
+			if (is_Function(node.renderEnd)) 
 				node.renderEnd(elements, model, ctx, container);
-				/* if !DEBUG
-				} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
-				*/
-			}
+			
 		}
 	
 		if (childs != null && childs !== elements){
@@ -159,4 +179,4 @@ var builder_build = (function(custom_Attributes, Component){
 	
 	
 	
-}(custom_Attributes, Component));
+}(custom_Attributes, custom_Tags, Dom.Component));
