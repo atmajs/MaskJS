@@ -471,8 +471,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						break;
 					}
 
-					if (c === 61 || c === 62 || c === 123 || c < 33 || c === 59) {
-						// =>{ ;
+					if (c === 61 || c === 62 || c === 123 || c < 33 || c === 59 || c === 40) {
+						// =>{ ;(
 						break;
 					}
 
@@ -484,7 +484,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 				// if DEBUG
 				if (!token) {
-					_throw(template, index, state, '*EMPTY*');
+					_throw(template, index, state, '<empty token>');
 					break;
 				}
 				if (isInterpolated === true && state === state_tag) {
