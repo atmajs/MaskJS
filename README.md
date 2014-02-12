@@ -13,19 +13,27 @@
 	h4 > 'Title'
 	section.content data-id='myID' {
 		span > 'Hello ~[name]!'
+		
+		if (admins.indexOf(name) > -1) {
+			em > 'Admin'
+		}
 	}
 	:customComponent {
         button x-signal='click: changeName' >
-            '~[bind: name]'
+		    '~[bind: name]'
+			
+		for (tag of tags) {
+			h4 > '~[tag.title]'
+		}
     }
 }
 ```
 
 Features:
 
-- Performance — (mobile CPUs in mind) - doesnt require precompilation
-- Custom Tags / Custom Value Processors / Custom Attributes / Expressions
-- DOM Based — [Template &rarr; JSON AST &rarr; Shadow DOM &rarr; Live DOM]. (This allows to render the components much faster.)
+- **Performance** — (mobile CPUs in mind) - doesnt require precompilation
+- Custom **Tags** / Custom Value Processors / Custom **Attributes** / **Expressions** _no javascript eval_
+- **DOM Based** — [Template &rarr; JSON AST &rarr; Shadow DOM &rarr; Live DOM]. (This allows to render the components much faster.)
 - For server and browsers (@see node.js implementation: [mask.node](https://github.com/atmajs/mask-node))
 - IE7+
 
@@ -62,6 +70,17 @@ Performance Tests:
 	<td>
 		
 		<ul>
+			<li> Syntax: (Support Statements)
+			 <div><code>if (expression) { /*template*/ } else if {} else {} </code></div>
+			 <div><code>for (el of array) { /*template*/ } </code></div>
+			 <div><code>for ((el,index) of array) { /*template*/ } </code></div>
+			 <div><code>for (key in object) { /*template*/ } </code></div>
+			 <div><code>for ((key, value) in object) { /*template*/ } </code></div>
+			 <div><code>each (array) { /*template*/ } </code></div>
+			 <div><code>with (obj.property.value) { /*template*/ } </code></div>
+			 <div><code>switch (value) { case (expression) { /*template*/ } /*...*/ } </code></div>
+			
+			</li>
 			<li> Controller's scope model </li>
 		</ul>
 		
@@ -117,7 +136,7 @@ Performance Tests:
 				Expressions parser. Samples:
 				<div><code>~[:controllerFunction(userName.toUpperCase()) + ';']</code></div>
 				<div><code>~[:user && user.id || "Log in"]</code></div>
-				Variables/Functions look up <i>(deprecated)</i> <b>UPD: REMOVE</b>:
+				Variables/Functions look up <i>(deprecated)</i> <b>upd: removed</b>:
 				<ol>
 				 <li> model </li>
 				 <li> ctx </li>
