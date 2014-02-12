@@ -177,7 +177,7 @@ UTest({
 	
 	'include': function(done){
 		
-		var template = 'include ("/test/tmpl/a.mask") { import ("a") ; }',
+		var template = 'include("/test/tmpl/a.mask"){ import("a"); }',
 			ctx = {};
 			
 		var frag = mask.render(template, null, ctx);

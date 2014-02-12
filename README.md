@@ -8,7 +8,7 @@
 
 [mask.js](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine
 
-```css
+```scss
 .container {
 	h4 > 'Title'
 	section.content data-id='myID' {
@@ -83,11 +83,11 @@ Performance Tests:
 			<li> Controller's scope model </li>
 			<li>
 				IncludeJS integration:
-				<div><pre><code>include ("./UserTemplate.mask") { 
-					for(user in users) {
-						import('UserTemplate');
-					}
-				} </code></pre></div>
+<div><pre><code>include ("./UserTemplate.mask") { 
+	for(user in users) {
+		import('UserTemplate');
+	}
+} </code></pre></div>
 				</li>
 			 
 		</ul>
