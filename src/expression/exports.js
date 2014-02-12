@@ -24,18 +24,37 @@ var ExpressionUtil = (function(){
 		 *
 		 * All symbol and function references will be looked for in 
 		 *
-		 * 1. model
-		 * 2. cntx
-		 * 3. controller
-		 * 4. controller.parent
-		 * 5. and so on
+		 * 1. model, or via special accessors:
+		 * 		- `$c` controller
+		 * 		- `$ctx`
+		 * 		- `$a' controllers attributes
+		 * 2. scope:
+		 * 		controller.scope
+		 * 		controller.parent.scope
+		 * 		...
 		 *
 		 * Sample:
 		 * '(user.age + 20) / 2'
 		 * 'fn(user.age + "!") + x'
 		 **/
 		eval: expression_evaluate,
-		varRefs: refs_extractVars
+		varRefs: refs_extractVars,
+		
+		// Return all values of a comma delimiter expressions
+		// like argumets: ' foo, bar, "4,50" ' => [ %fooValue, %barValue, "4,50" ]
+		evalStatements: function(expr, model, ctx, controller){
+			
+			var body = expression_parse(expr).body,
+                args = [],
+                imax = body.length,
+                i = -1
+                ;
+            while( ++i < imax ){
+                args[i] = expression_evaluate(body[i], model, ctx, controller);
+            }
+			
+			return args;
+		}
 	};
 
 }());

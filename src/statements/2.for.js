@@ -108,6 +108,7 @@
 		;
 		
 	function parse_For(expr) {
+		// /([\w_$]+)((\s*,\s*([\w_$]+)\s*\))|(\s*\))|(\s+))(of|in)\s+([\w_$\.]+)/
 		
 		template = expr;
 		length = expr.length;
@@ -120,8 +121,6 @@
 			c
 			;
 			
-			
-		
 		c = parser_skipWhitespace();
 		if (c === 40) {
 			// (
@@ -169,7 +168,7 @@
 		}
 		
 		if (loopType == null) {
-			return throw_('Invalid FOR statement. (in|of) expected')
+			return throw_('Invalid FOR statement. (in|of) expected');
 		}
 		
 		__ForDirective[0] = prop1;
@@ -204,10 +203,8 @@
 			
 			if (c > 48 && c < 57) {
 				// 0-9
-				
 				if (start === index)
 					return throw_('Variable name begins with a digit');
-					
 				
 				continue;
 			}

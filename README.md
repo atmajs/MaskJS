@@ -79,9 +79,17 @@ Performance Tests:
 			 <div><code>each (array) { ... } </code></div>
 			 <div><code>with (obj.property.value) { ... } </code></div>
 			 <div><code>switch (value) { case (expression) { ... } /*...*/ } </code></div>
-			
 			</li>
 			<li> Controller's scope model </li>
+			<li>
+				IncludeJS integration:
+				<div><pre><code>include ("./UserTemplate.mask") { 
+					for(user in users) {
+						import('UserTemplate');
+					}
+				} </code></pre></div>
+				</li>
+			 
 		</ul>
 		
 	</td>

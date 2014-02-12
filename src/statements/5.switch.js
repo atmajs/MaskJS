@@ -35,6 +35,7 @@ custom_Statements['switch'] = function(node, model, ctx, container, controller, 
 		}
 		
 		if (eval_(expr, model, ctx, controller) == value) {
+			//! `==` comparison
 			case_ = child;
 			break;
 		}

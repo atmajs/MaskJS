@@ -1,7 +1,6 @@
 
 (function(){
 
-		
 	custom_Statements['each'] = function(node, model, ctx, container, controller, childs){
 		
 		var array = ExpressionUtil.eval(node.expression, model, ctx, controller);
@@ -12,13 +11,13 @@
 		var imax = array.length,
 			i = -1,
 			nodes = node.nodes,
-			x;
+			itemCtrller;
 		
 		while ( ++i < imax ){
 			
-			x = compo_init('each::item', i, controller);
+			itemCtrller = compo_init('each::item', i, controller);
 			
-			builder_build(nodes, array[i], ctx, container, x, childs);
+			builder_build(nodes, array[i], ctx, container, itemCtrller, childs);
 		}
 		
 	};
@@ -35,7 +34,6 @@
 			parent: parent,
 			nodes: null
 		};
-		
 	}
 	
 }());
