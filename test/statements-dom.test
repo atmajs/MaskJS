@@ -143,6 +143,36 @@ UTest({
 			var $frag = $render(test.template, test.model, null, null, test.controller);
 			eq($frag.text(), test.result);
 		})
+	},
+	
+	'switch': function(){
+		[
+			{
+				template: 'switch (foo.bar) { case ("foo") > "foo"; case ("bar") > "bar" }',
+				model: {
+					foo: {
+						bar: 'bar'
+					}
+				},
+				result: 'bar'
+			},
+			{
+				template: 'switch (baz()) { case ("foo")  > "f"; default > "baz" }',
+				controller: {
+					scope: {
+						baz: function(){
+							return 'baz'
+						}
+					}
+				},
+				result: 'baz'
+			}
+		]
+		.forEach(function(test){
+			
+			var $frag = $render(test.template, test.model, null, null, test.controller);
+			eq($frag.text(), test.result);
+		})
 	}
 	
 })
