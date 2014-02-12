@@ -511,8 +511,10 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			}
 			// endif
 
-
-			return fragment.nodes.length === 1 ? fragment.nodes[0] : fragment;
+			
+			return fragment.nodes != null && fragment.nodes.length === 1
+				? fragment.nodes[0]
+				: fragment;
 		},
 		cleanObject: function(obj) {
 			if (obj instanceof Array) {

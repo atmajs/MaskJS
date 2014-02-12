@@ -1,4 +1,28 @@
+// workaround - @TODO atma loader import
+ io
+	.File
+	.getHookHandler()
+	.register({
+		regexp: /js$/,
+		method:'read',
+		handler: 'importer',
+		zIndex: 100
+	});
+
 include
+	.cfg({
+		loader: {
+			js: {
+				load: function(resource, callback){
+					
+					callback(resource, io.File.read(resource.url));
+				},
+				process: function(source){
+					return source;
+				}
+			}
+		}
+	})
 	.inject(
 		'/src/scope-vars.js',
 		'/src/util/util.js',
@@ -9,7 +33,8 @@ include
 		'/src/util/condition.js',
 		
 		'/src/custom.js',
-		'/src/dom/dom.js',
+		
+		'/src/dom/exports.js',
 		'/src/parse/parser.js'
 	)
 	.done(function(){
@@ -20,12 +45,12 @@ include
 				
 				var ast = Parser.parse(' //some');
 				
-				eq(ast instanceof Fragment, true);
-				eq(ast.nodes.length, 0);
+				eq(ast instanceof Dom.Fragment, true);
+				eq(ast.nodes, null);
 				
 				
 				ast = Parser.parse('div; // comment');
-				eq(ast instanceof Fragment, false);
+				eq(ast instanceof Dom.Fragment, false);
 				eq(ast.tagName, 'div');
 				eq(ast.nodes, null);
 				
@@ -53,11 +78,11 @@ include
 			'block-comment': function(){
 				
 				var ast = Parser.parse(' /* comment */');
-				eq(ast instanceof Fragment, true);
-				eq(ast.nodes.length, 0);
+				eq(ast instanceof Dom.Fragment, true);
+				eq(ast.nodes, null);
 				
 				ast = Parser.parse('div; /* comment */');
-				eq(ast instanceof Fragment, false);
+				eq(ast instanceof Dom.Fragment, false);
 				eq(ast.tagName, 'div');
 				eq(ast.nodes, null);
 				
