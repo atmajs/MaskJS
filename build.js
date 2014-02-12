@@ -66,10 +66,18 @@ module.exports = {
 		jshint: JSHint()
 	},
 	'uglify': {
-		files: 'lib/mask.js',
+		settings: {
+			io: {
+				extensions: {
+					js: ['condcomments:read', 'importer:read']
+				}
+			}
+		},
+		files: 'builds/mask.js',
+		output: 'lib/mask.min.js',
 		defines: {
 			DEBUG: false,
-			SAFE: true
+			SAFE: false
 		}
 	},
 

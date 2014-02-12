@@ -16,27 +16,26 @@
 		
 		while ( ++i < imax ){
 			
-			x = compo_init('each::item', nodes, i, controller);
+			x = compo_init('each::item', i, controller);
 			
-			builder_build(x, array[i], ctx, container, controller, childs);
+			builder_build(nodes, array[i], ctx, container, x, childs);
 		}
 		
 	}	
 	
-	function compo_init(name, nodes, index, parent) {
+	function compo_init(name, index, parent) {
 		
 		return {
-			type: Dom.COMPONENT,
-			nodes: nodes,
+			compoName: name,
 			attr: {},
-			controller: {
-				compoName: name,
-				scope: {
-					index: index
-				},
-				parent: parent
-			}
+			
+			scope: {
+				index: index
+			},
+			parent: parent,
+			nodes: null
 		};
+		
 	}
 	
 }());
