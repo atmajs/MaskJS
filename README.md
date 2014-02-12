@@ -71,14 +71,14 @@ Performance Tests:
 		
 		<ul>
 			<li> Syntax: (Support Statements)
-			 <div><code>if (expression) { /*template*/ } else if {} else {} </code></div>
-			 <div><code>for (el of array) { /*template*/ } </code></div>
-			 <div><code>for ((el,index) of array) { /*template*/ } </code></div>
-			 <div><code>for (key in object) { /*template*/ } </code></div>
-			 <div><code>for ((key, value) in object) { /*template*/ } </code></div>
-			 <div><code>each (array) { /*template*/ } </code></div>
-			 <div><code>with (obj.property.value) { /*template*/ } </code></div>
-			 <div><code>switch (value) { case (expression) { /*template*/ } /*...*/ } </code></div>
+			 <div><code>if (expression) { ... } else if (expr) {} else {} </code></div>
+			 <div><code>for (el of array) { ... } </code></div>
+			 <div><code>for ((el,index) of array) { ... } </code></div>
+			 <div><code>for (key in object) { ... } </code></div>
+			 <div><code>for ((key, value) in object) { ... } </code></div>
+			 <div><code>each (array) { ... } </code></div>
+			 <div><code>with (obj.property.value) { ... } </code></div>
+			 <div><code>switch (value) { case (expression) { ... } /*...*/ } </code></div>
 			
 			</li>
 			<li> Controller's scope model </li>
