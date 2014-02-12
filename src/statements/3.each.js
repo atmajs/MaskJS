@@ -21,7 +21,7 @@
 			builder_build(nodes, array[i], ctx, container, x, childs);
 		}
 		
-	}	
+	};
 	
 	function compo_init(name, index, parent) {
 		

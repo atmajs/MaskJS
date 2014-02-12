@@ -1,7 +1,7 @@
 
-var $render = function(template, model, ctx, controller){
+var $render = function(template, model, ctx, container, controller){
 	
-	return $(mask.render(template, model, ctx, controller));
+	return $(mask.render(template, model, ctx, container, controller));
 }
 
 
@@ -30,7 +30,7 @@ UTest({
 		]
 		.forEach(function(test){
 			
-			var $frag = $render(test.template, test.model, null, test.controller);
+			var $frag = $render(test.template, test.model, null, null, test.controller);
 			eq($frag.text(), test.result);
 		})
 		
@@ -86,7 +86,7 @@ UTest({
 		]
 		.forEach(function(test){
 			
-			var $frag = $render(test.template, test.model, null, test.controller);
+			var $frag = $render(test.template, test.model, null, null, test.controller);
 			eq($frag.text(), test.result);
 		})
 	},
@@ -110,7 +110,37 @@ UTest({
 		]
 		.forEach(function(test){
 			
-			var $frag = $render(test.template, test.model, null, test.controller);
+			var $frag = $render(test.template, test.model, null, null, test.controller);
+			eq($frag.text(), test.result);
+		})
+	},
+	
+	'with': function(){
+		[
+			{
+				template: 'with (foo.bar) > "~[.]"',
+				model: {
+					foo: {
+						bar: 'bar'
+					}
+				},
+				result: 'bar'
+			},
+			{
+				template: 'with (baz()) > "~[.]"',
+				controller: {
+					scope: {
+						baz: function(){
+							return 'baz'
+						}
+					}
+				},
+				result: 'baz'
+			}
+		]
+		.forEach(function(test){
+			
+			var $frag = $render(test.template, test.model, null, null, test.controller);
 			eq($frag.text(), test.result);
 		})
 	}
