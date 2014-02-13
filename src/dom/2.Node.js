@@ -1,13 +1,11 @@
 
-function Node(tagName, parent, type) {
+function Node(tagName, parent) {
 	this.type = Dom.NODE;
 
 	this.tagName = tagName;
 	this.parent = parent;
 	this.attr = {};
 	
-	if (type != null) 
-		this.type = type;
 }
 
 Node.prototype = {

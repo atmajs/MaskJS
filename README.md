@@ -32,7 +32,7 @@
 Features:
 
 - **Performance** — (mobile CPUs in mind) - doesnt require precompilation
-- Custom **Tags** / Custom Value Processors / Custom **Attributes** / **Expressions** _no javascript eval_
+- Custom **Tags** / Custom Value Processors / Custom **Attributes** / **Expressions** (_no javascripts `eval`_)
 - **DOM Based** — [Template &rarr; JSON AST &rarr; Shadow DOM &rarr; Live DOM]. (This allows to render the components much faster.)
 - For server and browsers (@see node.js implementation: [mask.node](https://github.com/atmajs/mask-node))
 - IE7+

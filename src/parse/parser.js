@@ -141,7 +141,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				key,
 				value,
 				next,
-				next_Type,
+				//-next_Type,
 				c, // charCode
 				start,
 				nextC;
@@ -224,8 +224,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 						//	? new Component(token, current, custom_Tags[token])
 						//	: new Node(token, current);
 						
-						next = new Node(token, current, next_Type);
-
+						next = new Node(token, current);
+						
 						current.appendChild(next);
 						//////if (current.nodes == null) {
 						//////	current.nodes = [next];
@@ -376,17 +376,17 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				if (state === go_tag) {
 					last = state_tag;
 					state = state_tag;
-					next_Type = Dom.NODE;
+					//next_Type = Dom.NODE;
 					
 					if (c === 46 /* . */ || c === 35 /* # */ ) {
 						token = 'div';
 						continue;
 					}
 					
-					if (c === 58 || c === 36 || c === 64 || c === 37) {
-						// : $ @ %
-						next_Type = Dom.COMPONENT;
-					}
+					//if (c === 58 || c === 36 || c === 64 || c === 37) {
+					//	// : /*$ @ %*/
+					//	next_Type = Dom.COMPONENT;
+					//}
 					
 				}
 
