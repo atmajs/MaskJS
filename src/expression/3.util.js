@@ -27,9 +27,9 @@ var _throw,
 				
 				object = controller;
 				value = Compo.prototype[next.body];
+				current = next;
 			}
 			
-			current = next;
 		}
 		
 		else if ('$a' === key) 

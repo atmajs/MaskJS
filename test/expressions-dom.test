@@ -30,7 +30,8 @@ UTest({
 		"'' + 5 + 'hello'", "'' + 5 + 'h' + 'e' + \"l\" + 'l' + 'o'", "'' + ('5' + 'h' + 'e') + (\"l\" + 'l' + 'o')", //
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
-		"5 + $c.parent.fn2()", //
+		"5 + $c.parent.fn2()", 
+		"5 + $c.closest(':test').value",
 		"5 + var_", //
 		"1 + 2*2 + var_"], '5hello', {
 			var_: "hello",
@@ -41,7 +42,10 @@ UTest({
 			parent: {
 				fn2: function() {
 					return "hello"
-				}
+				},
+				
+				compoName: ':test',
+				value: 'hello'
 			}
 		});
 	},
