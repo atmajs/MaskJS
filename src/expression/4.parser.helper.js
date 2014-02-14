@@ -110,7 +110,7 @@ function parser_getDirective(code) {
 
 	switch (code) {
 		case 40:
-			// )
+			// (
 			return punc_ParantheseOpen;
 		case 41:
 			// )
@@ -143,6 +143,12 @@ function parser_getDirective(code) {
 				_throw('Not supported (Apply directive) - view can only access model/controllers');
 				return null;
 			}
+			
+			if (template.charCodeAt(index + 1) === code) {
+				index++;
+				return op_LogicalEqual_Strict;
+			}
+			
 			return op_LogicalEqual;
 
 		case 33:
@@ -150,6 +156,13 @@ function parser_getDirective(code) {
 			if (template.charCodeAt(index + 1) === 61) {
 				// =
 				index++;
+				
+				if (template.charCodeAt(index + 1) === 61) {
+					// =
+					index++;
+					return op_LogicalNotEqual_Strict;
+				}
+				
 				return op_LogicalNotEqual;
 			}
 			return op_LogicalNot;

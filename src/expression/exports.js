@@ -8,6 +8,7 @@ var ExpressionUtil = (function(){
 
 	// import 1.scope-vars.js
 	// import 2.ast.js
+	// import 2.ast.utils.js
 	// import 3.util.js
 	// import 4.parser.helper.js
 	// import 5.parser.js

@@ -14,7 +14,9 @@ var op_Minus = '-', //1,
 	op_LogicalAnd = '&&', //7,
 	op_LogicalNot = '!', //8,
 	op_LogicalEqual = '==', //9,
+	op_LogicalEqual_Strict = '===', // 111
 	op_LogicalNotEqual = '!=', //11,
+	op_LogicalNotEqual_Strict = '!==', // 112
 	op_LogicalGreater = '>', //12,
 	op_LogicalGreaterEqual = '>=', //13,
 	op_LogicalLess = '<', //14,
@@ -65,7 +67,9 @@ precedence[op_LogicalLess] = 4;
 precedence[op_LogicalLessEqual] = 4;
 
 precedence[op_LogicalEqual] = 5;
+precedence[op_LogicalEqual_Strict] = 5;
 precedence[op_LogicalNotEqual] = 5;
+precedence[op_LogicalNotEqual_Strict] = 5;
 
 
 precedence[op_LogicalAnd] = 6;

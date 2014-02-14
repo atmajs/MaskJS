@@ -137,7 +137,9 @@ function expression_parse(expr) {
 			case op_LogicalAnd:
 			case op_LogicalOr:
 			case op_LogicalEqual:
+			case op_LogicalEqual_Strict:
 			case op_LogicalNotEqual:
+			case op_LogicalNotEqual_Strict:
 
 			case op_LogicalGreater:
 			case op_LogicalGreaterEqual:
@@ -187,6 +189,21 @@ function expression_parse(expr) {
 
 			case go_ref:
 				var ref = parser_getRef();
+				
+				if (ref === 'null') 
+					ref = null;
+				
+				if (ref === 'false') 
+					ref = false;
+				
+				if (ref === 'true') 
+					ref = true;
+					
+				
+				if (typeof ref !== 'string') {
+					ast_append(current, new Ast_Value(ref));
+					continue;
+				}
 
 				while (index < length) {
 					c = template.charCodeAt(index);
@@ -210,20 +227,7 @@ function expression_parse(expr) {
 					continue;
 				}
 
-				if (c === 110 && ref === 'null') {
-					ref = null;
-				}
-
-				if (c === 102 && ref === 'false') {
-					ref = false;
-				}
-
-				if (c === 116 && ref === 'true') {
-					ref = true;
-				}
-
-				current = ast_append(current, typeof ref === 'string' ? new Ast_SymbolRef(current, ref) : new Ast_Value(ref));
-				
+				current = ast_append(current, new Ast_SymbolRef(current, ref));
 				break;
 		}
 	}

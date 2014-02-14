@@ -73,8 +73,14 @@ function expression_evaluate(mix, model, ctx, controller) {
 			case op_LogicalNotEqual:
 				result = result != value;
 				break;
+			case op_LogicalNotEqual_Strict:
+				result = result !== value;
+				break;
 			case op_LogicalEqual:
 				result = result == value;
+				break;
+			case op_LogicalEqual_Strict:
+				result = result === value;
 				break;
 			case op_LogicalGreater:
 				result = result > value;
