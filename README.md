@@ -1,12 +1,15 @@
-<div style='text-align: middle;'>
+<p align="center">
     <img src='http://atmajs.com/images/logos/mask.png' />
-    </div>
+	</p>
+
 
 ----
 
-[![Build Status](https://travis-ci.org/atmajs/MaskJS.png?branch=master)](https://travis-ci.org/atmajs/MaskJS)
+<p align="center">
+	<img src='https://travis-ci.org/atmajs/MaskJS.png?branch=master' />
+	</p>
 
-[mask.js](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine.
+[MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine.
 
 Resources:
 
