@@ -101,7 +101,7 @@ var builder_build = (function(custom_Attributes, custom_Tags, Component){
 			elements = [];
 			node = controller;
 			
-			if (controller.model !== model) 
+			if (controller.model !== model && controller.model != null) 
 				model = controller.model;
 			
 		}

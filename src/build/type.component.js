@@ -17,25 +17,24 @@ function build_compo(node, model, ctx, container, controller){
 		key;
 	
 	if (handler != null) {
-		/* if (!DEBUG)
-		try{
-		*/
+		
 	
 		handler.compoName = node.tagName;
 		handler.attr = attr = attr_extend(handler.attr, node.attr);
 		handler.parent = controller;
-		handler.model = model;
-	
+		
+		if (handler.model == null) 
+			handler.model = model;
+		
+		if (handler.nodes == null) 
+			handler.nodes = node.nodes;
+		
 		for (key in attr) {
-			if (is_Function(attr[key])) {
+			if (typeof attr[key] === 'function') {
 				attr[key] = attr[key]('attr', model, ctx, container, controller, key);
 			}
 		}
 	
-		if (node.nodes != null) {
-			handler.nodes = node.nodes;
-		}
-		
 		if (listeners != null && listeners['compoCreated'] != null) {
 			var fns = listeners.compoCreated,
 				jmax = fns.length,
@@ -45,17 +44,12 @@ function build_compo(node, model, ctx, container, controller){
 			}
 		}
 	
-		if (is_Function(handler.renderStart)) {
+		if (typeof handler.renderStart === 'function') 
 			handler.renderStart(model, ctx, container);
-		}
-	
-		/* if (!DEBUG)
-		} catch(error){ console.error('Custom Tag Handler:', node.tagName, error); }
-		*/
-	
-	
+		
 		node = handler;
 	}
+	
 	
 	if (controller.components == null) {
 		controller.components = [node];
@@ -72,10 +66,6 @@ function build_compo(node, model, ctx, container, controller){
 		return null;
 	}
 	
-	if (controller.model != null) {
-		model = controller.model;
-	}
-	
 	if (handler != null && handler.tagName != null) {
 		handler.nodes = {
 			tagName: handler.tagName,
@@ -87,8 +77,9 @@ function build_compo(node, model, ctx, container, controller){
 	
 	
 	if (typeof controller.render === 'function') {
-		// with render implementation, handler overrides render behaviour of subnodes
-		controller.render(model, ctx, container);
+		
+		controller.render(controller.model || model, ctx, container);
+		// Overriden render behaviour - do not render subnodes
 		return null;
 	}
 
