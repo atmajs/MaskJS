@@ -32,6 +32,8 @@ Resources:
 - Component and element based markup
 - Statements
 - Interpolations
+- Perfomance _no precompilation is required_
+- Small size _~30% smaller than HTML_
 - DOM Builder
 	[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]
 - HTML Builder
@@ -60,12 +62,13 @@ Resources:
 
 > MaskJS has extremly extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**. 
 
+> MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
 ##### Components Library
 
 [Documentation](https://github.com/atmajs/mask-compo)
 
-Core of the HMVC engine and has a lot of features. Simple compo sample:
+Core of the HMVC engine. Simple compo sample:
 
 ```javascript
 mask.registerHandler(':customComponent', mask.Compo({
@@ -152,19 +155,6 @@ MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node)
 ###### Browser Support
 
 - IE7+
-
-
-Resources:
-
-- [maskFiddle](http://atmajs.com/mask-try)
-- [Documentation](http://atmajs.com/mask)
-
-Default build contains:
-
-- [Bindings Lib <b>(IE9+)](https://github.com/atmajs/mask-binding)
-- [jmask DOM](https://github.com/atmajs/mask-j)
-- [Compo HMVC](https://github.com/atmajs/mask-compo)
-    
 	
  
 
