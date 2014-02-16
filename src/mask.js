@@ -33,7 +33,7 @@ var cache = {},
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 					template = cache[template];
 				}else{
-					template = cache[template] = Parser.parse(template);
+					template = cache[template] = parser_parse(template);
 				}
 			}
 			
@@ -45,7 +45,7 @@ var cache = {},
 		},
 
 		/* deprecated, renamed to parse */
-		compile: Parser.parse,
+		compile: parser_parse,
 
 		/**
 		 *	mask.parse(template) -> MaskDOM
@@ -53,7 +53,7 @@ var cache = {},
 		 *
 		 * Create MaskDOM from Mask markup
 		 **/
-		parse: Parser.parse,
+		parse: parser_parse,
 
 		build: builder_build,
 		/**

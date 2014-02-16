@@ -1,8 +1,34 @@
 
-var stringify = (function() {
+var mask_stringify;
+
+(function() {
+	
+		
+	//settings (Number | Object) - Indention Number (0 - for minification)
+	mask_stringify = function(input, settings) {
+		if (input == null) 
+			return '';
+		
+		if (typeof input === 'string') 
+			input = mask.parse(input);
+		
+		if (settings == null) {
+			_indent = 0;
+			_minimize = true;
+		} else  if (typeof settings === 'number'){
+			_indent = settings;
+			_minimize = _indent === 0;
+		} else{
+			_indent = settings && settings.indent || 4;
+			_minimize = _indent === 0 || settings && settings.minimizeAttributes;
+		}
 
 
-	var _minimizeAttributes,
+		return run(input);
+	};
+
+
+	var _minimize,
 		_indent,
 		Dom = mask.Dom;
 
@@ -20,9 +46,9 @@ var stringify = (function() {
 
 		var outer, i;
 
-		if (indent == null) {
+		if (indent == null) 
 			indent = 0;
-		}
+		
 
 		if (output == null) {
 			outer = true;
@@ -72,7 +98,8 @@ var stringify = (function() {
 		}
 
 		if (isSingle(node)) {
-			output.push(processNodeHead(node) + ' > ');
+			var next = _minimize ? '>' : ' > ';
+			output.push(processNodeHead(node) + next);
 			run(getSingle(node), _indent, output);
 			return;
 		}
@@ -89,24 +116,24 @@ var stringify = (function() {
 			_class = node.attr['class'] || '';
 
 
-		if (typeof _id === 'function'){
+		if (typeof _id === 'function')
 			_id = _id();
-		}
-		if (typeof _class === 'function'){
+		
+		if (typeof _class === 'function')
 			_class = _class();
-		}
+		
 
 		if (_id) {
-			if (_id.indexOf(' ') !== -1) {
-				_id = '';
-			} else {
-				_id = '#' + _id;
-			}
+			
+			_id = _id.indexOf(' ') !== -1
+				? ''
+				: '#' + _id
+				;
 		}
 
-		if (_class) {
+		if (_class) 
 			_class = '.' + _class.split(' ').join('.');
-		}
+		
 
 		var attr = '';
 
@@ -117,22 +144,29 @@ var stringify = (function() {
 			}
 			var value = node.attr[key];
 
-			if (typeof value === 'function'){
+			if (typeof value === 'function')
 				value = value();
-			}
+			
 
-			if (_minimizeAttributes === false || /\s/.test(value)){
+			if (_minimize === false || /[^\w_$\-\.]/.test(value))
 				value = wrapString(value);
-			}
+			
 
 			attr += ' ' + key + '=' + value;
 		}
 
-		if (tagName === 'div' && (_id || _class)) {
+		if (tagName === 'div' && (_id || _class)) 
 			tagName = '';
-		}
-
-		return tagName + _id + _class + attr;
+		
+		var expr = '';
+		if (node.expression) 
+			expr = '(' + node.expression + ')';
+			
+		return tagName
+			+ _id
+			+ _class
+			+ attr
+			+ expr;
 	}
 
 
@@ -145,46 +179,23 @@ var stringify = (function() {
 	}
 
 	function getSingle(node) {
-		if (node.nodes instanceof Array) {
+		if (node.nodes instanceof Array) 
 			return node.nodes[0];
-		}
+		
 		return node.nodes;
 	}
 
 	function wrapString(str) {
-		if (str.indexOf('"') === -1) {
-			return '"' + str.trim() + '"';
-		}
-
-		if (str.indexOf("'") === -1) {
+		
+		if (str.indexOf("'") === -1) 
 			return "'" + str.trim() + "'";
-		}
+		
+		if (str.indexOf('"') === -1) 
+			return '"' + str.trim() + '"';
+		
 
 		return '"' + str.replace(/"/g, '\\"').trim() + '"';
 	}
 
-	/**
-	 *	- settings (Number | Object) - Indention Number (0 - for minification)
-	 **/
-	return function(input, settings) {
-		if (input == null) {
-			return '';
-		}
-		
-		if (typeof input === 'string') {
-			input = mask.parse(input);
-		}
 
-
-		if (typeof settings === 'number'){
-			_indent = settings;
-			_minimizeAttributes = _indent === 0;
-		}else{
-			_indent = settings && settings.indent || 4;
-			_minimizeAttributes = _indent === 0 || settings && settings.minimizeAttributes;
-		}
-
-
-		return run(input);
-	};
 }());

@@ -3,6 +3,6 @@
 
 	// import stringify.js
 
-	mask.stringify = stringify;
+	mask.stringify = mask_stringify;
 
 }(Mask));

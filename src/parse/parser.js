@@ -1,6 +1,17 @@
-var Parser = (function(Node, TextNode, Fragment, Component) {
+var parser_parse,
+	parser_ensureTemplateFunction,
+	parser_setInterpolationQuotes,
+	parser_cleanObject,
+	
+	
+	// deprecate
+	Parser
+	;
+
+(function(Node, TextNode, Fragment, Component) {
 
 	var interp_START = '~',
+		interp_OPEN = '[',
 		interp_CLOSE = ']',
 
 		// ~
@@ -23,17 +34,15 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		 * for better performance
 		 */
 		while ((index = template.indexOf(interp_START, index)) !== -1) {
-			if (template.charCodeAt(index + 1) === interp_code_OPEN) {
+			if (template.charCodeAt(index + 1) === interp_code_OPEN) 
 				break;
-			}
+			
 			index++;
 		}
 
-		if (index === -1) {
+		if (index === -1) 
 			return template;
-		}
-
-
+		
 		var array = [],
 			lastIndex = 0,
 			i = 0,
@@ -42,51 +51,57 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 
 		while (true) {
 			end = template.indexOf(interp_CLOSE, index + 2);
-			if (end === -1) {
+			if (end === -1) 
 				break;
-			}
+			
 
-			array[i++] = lastIndex === index ? '' : template.substring(lastIndex, index);
+			array[i++] = lastIndex === index
+				? ''
+				: template.substring(lastIndex, index);
 			array[i++] = template.substring(index + 2, end);
 
 
 			lastIndex = index = end + 1;
 
 			while ((index = template.indexOf(interp_START, index)) !== -1) {
-				if (template.charCodeAt(index + 1) === interp_code_OPEN) {
+				if (template.charCodeAt(index + 1) === interp_code_OPEN) 
 					break;
-				}
+				
 				index++;
 			}
 
-			if (index === -1) {
+			if (index === -1) 
 				break;
-			}
-
 		}
 
-		if (lastIndex < template.length) {
+		if (lastIndex < template.length) 
 			array[i] = template.substring(lastIndex);
-		}
+		
 
 		template = null;
-		return function(type, model, cntx, element, controller, name) {
+		return function(type, model, ctx, element, controller, name) {
 			if (type == null) {
 				// http://jsperf.com/arguments-length-vs-null-check
 				// this should be used to stringify parsed MaskDOM
-				var string = '';
-				for (var i = 0, x, length = array.length; i < length; i++) {
+				var string = '',
+					imax = array.length,
+					i = -1,
+					x;
+				while ( ++i < imax) {
 					x = array[i];
-					if (i % 2 === 1) {
-						string += '~[' + x + ']';
-					} else {
-						string += x;
-					}
+					
+					string += i % 2 === 1
+						? interp_START
+							+ interp_OPEN
+							+ x
+							+ interp_CLOSE
+						: x
+						;
 				}
 				return string;
 			}
 
-			return util_interpolate(array, type, model, cntx, element, controller, name);
+			return util_interpolate(array, type, model, ctx, element, controller, name);
 		};
 
 	}
@@ -123,7 +138,7 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 		;
 
 
-	return {
+	Parser = {
 
 		/** @out : nodes */
 		parse: function(template) {
@@ -516,6 +531,8 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 				? fragment.nodes[0]
 				: fragment;
 		},
+		
+		// obsolete
 		cleanObject: function(obj) {
 			if (obj instanceof Array) {
 				for (var i = 0; i < obj.length; i++) {
@@ -545,10 +562,20 @@ var Parser = (function(Node, TextNode, Fragment, Component) {
 			interp_code_START = start.charCodeAt(0);
 			interp_code_OPEN = start.charCodeAt(1);
 			interp_code_CLOSE = end.charCodeAt(0);
+			
+			interp_START = start[0];
+			interp_OPEN = start[1];
 			interp_CLOSE = end;
-			interp_START = start.charAt(0);
 		},
 		
 		ensureTemplateFunction: ensureTemplateFunction
 	};
+	
+	// = exports
+	
+	parser_parse = Parser.parse;
+	parser_ensureTemplateFunction = Parser.ensureTemplateFunction;
+	parser_cleanObject = Parser.cleanObject;
+	parser_setInterpolationQuotes = Parser.setInterpolationQuotes;
+	
 }(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));

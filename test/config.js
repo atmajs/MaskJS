@@ -9,6 +9,7 @@ module.exports = {
 		 
 		 'mask.node': {
 			exec: 'node',
+			env: ['lib/mask.js::Mask'],
 			tests: 'test/**-node.test'
 		 }
 	}
