@@ -917,59 +917,68 @@
 	
 	// end:source ../src/util/expression.js
 	// source ../src/util/signal.js
-	function signal_parse(str, isPiped, defaultType) {
-		var signals = str.split(';'),
-			set = [],
-			i = 0,
-			imax = signals.length,
-			x,
-			signalName, type,
-			signal;
-			
+	var signal_parse,
+		signal_create
+		;
 	
-		for (; i < imax; i++) {
-			x = signals[i].split(':');
-			
-			if (x.length !== 1 && x.length !== 2) {
-				console.error('Too much ":" in a signal def.', signals[i]);
-				continue;
-			}
-			
-			
-			type = x.length == 2 ? x[0] : defaultType;
-			signalName = x[x.length == 2 ? 1 : 0];
-			
-			signal = signal_create(signalName.trim(), type, isPiped);
-			
-			if (signal != null) {
-				set.push(signal);
-			}
-		}
+	(function(){
 		
-		return set;
-	}
-	
-	
-	function signal_create(signal, type, isPiped) {
-		if (isPiped !== true) {
+		
+		signal_parse = function(str, isPiped, defaultType) {
+			var signals = str.split(';'),
+				set = [],
+				i = 0,
+				imax = signals.length,
+				x,
+				signalName, type,
+				signal;
+				
+		
+			for (; i < imax; i++) {
+				x = signals[i].split(':');
+				
+				if (x.length !== 1 && x.length !== 2) {
+					console.error('Too much ":" in a signal def.', signals[i]);
+					continue;
+				}
+				
+				
+				type = x.length == 2 ? x[0] : defaultType;
+				signalName = x[x.length == 2 ? 1 : 0];
+				
+				signal = signal_create(signalName.trim(), type, isPiped);
+				
+				if (signal != null) {
+					set.push(signal);
+				}
+			}
+			
+			return set;
+		};
+		
+		
+		signal_create = function(signal, type, isPiped) {
+			if (isPiped !== true) {
+				return {
+					signal: signal,
+					type: type
+				};
+			}
+			
+			var index = signal.indexOf('.');
+			if (index === -1) {
+				console.error('No pipe name in a signal', signal);
+				return null;
+			}
+			
 			return {
-				signal: signal,
+				signal: signal.substring(index + 1),
+				pipe: signal.substring(0, index),
 				type: type
 			};
-		}
-		
-		var index = signal.indexOf('.');
-		if (index === -1) {
-			console.error('No pipe name in a signal', signal);
-			return null;
-		}
-		
-		return {
-			signal: signal.substring(index + 1),
-			pipe: signal.substring(0, index),
-			type: type
 		};
-	}
+	}());
+	
 	// end:source ../src/util/signal.js
 
 	// source ../src/bindingProvider.js
@@ -2022,6 +2031,32 @@
 	
 		mask.registerHandler('%%', Sys);
 	
+		// source sys.plus.js
+		(function(){
+			
+			//function SysPlus(){
+			//	
+			//	this.attr = {
+			//		'if': null,
+			//		'else': null,
+			//		
+			//		'for': null,
+			//		'each': null,
+			//		'with': null,
+			//		'switch': null
+			//	};
+			//};
+			
+			mask.registerStatement('+', SysPlus);
+			
+			
+			function SysPlus(node, model, ctx, container, controller, childs) {
+				
+			}
+			
+		}());
+		// end:source sys.plus.js
+		
 		// source attr.use.js
 		var attr_use = (function() {
 		

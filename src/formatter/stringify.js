@@ -152,7 +152,10 @@ var mask_stringify;
 				value = wrapString(value);
 			
 
-			attr += ' ' + key + '=' + value;
+			attr += ' ' + key;
+			
+			if (key !== value)
+				attr += '=' + value;
 		}
 
 		if (tagName === 'div' && (_id || _class)) 

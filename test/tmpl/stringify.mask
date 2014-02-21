@@ -23,3 +23,11 @@ if(username.indexOf('a') === 0)>'admin'
 div { span; 'Hello' }
 ---
 div{span;'Hello'}
+===
+
+	input checked disabled='disabled' {
+		:dualbind expression="user.name";
+	}
+
+---
+input checked disabled>:dualbind expression=user.name;

@@ -1,16 +1,20 @@
-var _controllerID = 0;
+var builder_componentID = 0,
+	
+	builder_build;
 
-var builder_build = (function(custom_Attributes, custom_Tags, Component){
+(function(custom_Attributes, custom_Tags, Component){
 	
 	
 		
 	// import util.js
+	// import util.controller.js
+	
 	// import type.textNode.js
 	// import type.node.js
 	// import type.component.js
 	
 
-	return function builder_build(node, model, ctx, container, controller, childs) {
+	builder_build = function(node, model, ctx, container, controller, childs) {
 	
 		if (node == null) 
 			return container;
@@ -21,6 +25,9 @@ var builder_build = (function(custom_Attributes, custom_Tags, Component){
 			value,
 			j, jmax;
 		
+		if (controller == null) 
+			controller = new Component();
+			
 		if (type == null){
 			// in case if node was added manually, but type was not set
 			
@@ -43,9 +50,6 @@ var builder_build = (function(custom_Attributes, custom_Tags, Component){
 		if (container == null && type !== 1) 
 			container = document.createDocumentFragment();
 		
-		if (controller == null) 
-			controller = new Component();
-		
 		// Dom.SET
 		if (type === 10) {
 			
@@ -61,16 +65,37 @@ var builder_build = (function(custom_Attributes, custom_Tags, Component){
 		// Dom.STATEMENT
 		if (type === 15) {
 			var Handler = custom_Statements[node.tagName];
-			if (is_Function(Handler)) {
+			if (Handler == null) {
 				
-				Handler(node, model, ctx, container, controller, childs);
+				if (custom_Tags[node.tagName] != null) {
+					// Dom.COMPONENT
+					type = 4;
+				} else {
+					console.error('<mask: statement is undefined', node.tagName);
+					return container;
+				}
+				
 			}
 			
-			else {
-				console.error('<mask: statement is undefined', node.tagName);
+			if (type === 15) {
+				
+				if (is_Function(Handler)) {
+					//@ obsolete for <Handler>.render
+					Handler(node, model, ctx, container, controller, childs);
+					
+				} else if (is_Function(Handler.render)) {
+					
+					Handler.render(node, model, ctx, container, controller, childs);
+				}
+				
+				else {
+					console.error('<mask:build> Invalid Statement Handler', Handler);
+				}
+				
+				
+				
+				return container;
 			}
-			
-			return container;
 		}
 	
 		// Dom.NODE
@@ -175,7 +200,7 @@ var builder_build = (function(custom_Attributes, custom_Tags, Component){
 		}
 	
 		return container;
-	}
+	};
 	
 	
 	

@@ -1,87 +1,151 @@
+var build_compo;
 
-function build_compo(node, model, ctx, container, controller){
-	
-	var Handler; 
-	
-	if (node.controller != null) 
-		Handler = node.controller;
-	
-	if (Handler == null) 
-		Handler = custom_Tags[node.tagName];
+(function(){
 	
 	
-	var handler = is_Function(Handler)
-			? new Handler(model)
-			: Handler,
-		attr,
-		key;
-	
-	if (handler != null) {
+	build_compo = function(node, model, ctx, container, controller, childs){
 		
+		var compoName = node.tagName,
+			Handler;
+		
+		if (node.controller != null) 
+			Handler = node.controller;
+		
+		if (Handler == null) 
+			Handler = custom_Tags[compoName];
+		
+		if (Handler == null) 
+			return build_NodeAsCompo(node, model, ctx, container, controller, childs);
+		
+		
+		var isStatic = false,
+			handler, attr, key;
+		
+		if (typeof Handler === 'function') {
+			handler = new Handler(model);
+		} else{
+			handler = Handler;
+			isStatic = true;
+		}
+		
+		var fn = isStatic
+			? build_Static
+			: build_Component
+			;
+		
+		return fn(handler, node, model, ctx, container, controller, childs);
+	}
 	
-		handler.compoName = node.tagName;
-		handler.attr = attr = attr_extend(handler.attr, node.attr);
-		handler.parent = controller;
+	
+	// PRIVATE
+	
+	function build_Component(compo, node, model, ctx, container, controller, childs){
 		
-		if (handler.model == null) 
-			handler.model = model;
+		var attr, key;
 		
-		if (handler.nodes == null) 
-			handler.nodes = node.nodes;
+		compo.compoName = node.tagName;
+		compo.attr = attr = attr_extend(compo.attr, node.attr);
+		compo.parent = controller;
+		compo.ID = ++builder_componentID;
+		
+		if (compo.model == null) 
+			compo.model = model;
+		
+		if (compo.nodes == null) 
+			compo.nodes = node.nodes;
 		
 		for (key in attr) {
-			if (typeof attr[key] === 'function') {
+			if (typeof attr[key] === 'function') 
 				attr[key] = attr[key]('attr', model, ctx, container, controller, key);
-			}
 		}
 	
-		if (listeners != null && listeners['compoCreated'] != null) {
-			var fns = listeners.compoCreated,
-				jmax = fns.length,
-				j = 0;
-			for (; j < jmax; j++) {
-				fns[j](handler, model, ctx, container);
-			}
-		}
+		if (listeners != null) 
+			listeners_emit('compoCreated', compo, model, ctx, container);
+			
 	
-		if (typeof handler.renderStart === 'function') 
-			handler.renderStart(model, ctx, container);
+		if (typeof compo.renderStart === 'function') 
+			compo.renderStart(model, ctx, container);
 		
-		node = handler;
+		
+		controller_pushCompo(controller, compo);
+		
+		if (compo.async === true) {
+			compo.await(build_resumeDelegate(compo, model, ctx, container, childs));
+			return null;
+		}
+		
+		if (compo.tagName != null) {
+			compo.nodes = {
+				tagName: compo.tagName,
+				attr: compo.attr,
+				nodes: compo.nodes,
+				type: 1
+			};
+		}
+		
+		
+		if (typeof compo.render === 'function') {
+			
+			compo.render(compo.model, ctx, container);
+			// Overriden render behaviour - do not render subnodes
+			return null;
+		}
+	
+		return compo;
 	}
 	
 	
-	if (controller.components == null) {
-		controller.components = [node];
-	} else {
-		controller.components.push(node);
+	function build_Static(static_, node, model, ctx, container, controller, childs) {
+		
+		var elements,
+			compo;
+			
+		var clone = static_;
+		
+		for (var key in node) 
+			clone[key] = node[key];
+		
+		var attr = clone.attr;
+		if (attr != null) {
+			for (var key in attr) {
+				if (typeof attr[key] === 'function') 
+					attr[key] = attr[key]('attr', model, ctx, container, controller, key);
+			}
+		}
+		
+		if (is_Function(clone.renderStart)) 
+			clone.renderStart(model, ctx, container, controller, childs);
+		
+		if (is_Function(clone.render) === false)
+			return clone;
+		
+		
+		
+		elements = clone.render(model, ctx, container, controller, childs);
+			
+			
+		if (is_Function(clone.renderEnd)) {
+			compo = clone.renderEnd(elements, model, ctx, container, controller);
+			
+			if (compo != null) 
+				controller_pushCompo(controller, compo);
+		}
+		
+		return null;
+	
 	}
 	
-	controller = node;
-	controller.ID = ++_controllerID;
 	
-	
-	if (controller.async === true) {
-		controller.await(build_resumeDelegate(controller, model, ctx, container));
+	function build_NodeAsCompo(node, model, ctx, container, controller, childs){
+		node.ID = ++builder_componentID;
+		
+		controller_pushCompo(controller, node);
+		
+		if (node.model == null) 
+			node.model = model;
+		
+		builder_build(node.nodes, node.model, ctx, container, node, childs);
 		return null;
 	}
 	
-	if (handler != null && handler.tagName != null) {
-		handler.nodes = {
-			tagName: handler.tagName,
-			attr: handler.attr,
-			nodes: handler.nodes,
-			type: 1
-		};
-	}
-	
-	
-	if (typeof controller.render === 'function') {
-		
-		controller.render(controller.model || model, ctx, container);
-		// Overriden render behaviour - do not render subnodes
-		return null;
-	}
-
-	return controller;
-}
+}());

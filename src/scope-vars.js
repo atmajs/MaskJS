@@ -16,3 +16,5 @@ var regexpWhitespace = /\s/g,
 		 */
 		allowCache: true
 	};
+	
+var _Array_slice = Array.prototype.slice;

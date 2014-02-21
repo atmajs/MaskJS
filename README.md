@@ -30,10 +30,9 @@ Resources:
 ##### Syntax
 
 - Component and element based markup
-- Statements
-- Interpolations
-- Perfomance _no precompilation is required_
-- Small size _~30% smaller than HTML_
+- Statements, Expressions, Interpolations
+- Performance. _No precompilation is required_
+- Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).
 - DOM Builder
 	[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]
 - HTML Builder
@@ -60,7 +59,7 @@ Resources:
 }
 ```
 
-> MaskJS has extremly extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**. 
+> MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**. 
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
@@ -102,7 +101,7 @@ mask.registerHandler(':customComponent', mask.Compo({
 
 [Documentation](https://github.com/atmajs/mask-binding) _(IE9+)_
 
-MaskJS itself supports simple interpolations. It means the models are only accessed while render, but with this library you can define single or dual bindings. As MaskJS is a dom based engine, the bindings are instant.
+MaskJS itself supports simple interpolations. It means the models are only accessed while render, but with this library you can define single or dual bindings. As MaskJS is a DOM based engine, the bindings are instant.
 
 Simple bindings sample:
 
@@ -129,11 +128,20 @@ jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations.
 
 ##### jQuery
 
-CompoJS is loosely coupled with some DOM Library, like jQuery-Zepto-Kimbo. It means, that MaskJS is not depended on any dom library, but it is highly recommended to use one of them. Additionaly there are some extensions, like ``` appendMask, prependMask, beforeMask, afterMask, emptyAndDispose, removeAndDispose ```. So you would never need to use raw HTML.
+MaskJS is loosely coupled with the DOM Library, like jQuery-Zepto-Kimbo. It means, that it does not depend on any DOM library, but it is highly recommended to use one. Additionally there are some extensions, like
+```javascript
+$.fn.appendMask
+$.fn.prependMask
+$.fn.beforeMask
+$.fn.afterMask
+$.fn.emptyAndDispose
+$.fn.removeAndDispose
+```
+So you would never need to use raw HTML.
 
 ##### Performance
 
-We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approuch is the fastest way to create hierarchical component structure._
+We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
 
 Some benchmarks:
 - Mask vs raw HTML Template Engines - [:jsperf](http://jsperf.com/dom-vs-innerhtml-based-templating/711)
@@ -147,7 +155,7 @@ Some benchmarks:
 MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node)
 
 - HMVC benefits
-- Models Serialization / Deserialization
+- Models serialization/de-serialization
 - Components render mode - Server, Client, Both
 - HTML rendered output with the Bootstrapping on the client, so that the components are initialized, all events and bindings are attached
 - SEO

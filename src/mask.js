@@ -86,10 +86,26 @@ var cache = {},
 		getHandler: function (tagName) {
 			return tagName != null
 				? custom_Tags[tagName]
-				: custom_Tags;
+				: custom_Tags
+				;
 		},
-
-
+		
+		registerStatement: function(name, handler){
+			//@TODO should it be not allowed to override system statements, if, switch?
+			
+			custom_Statements[name] = is_Function(handler)
+				? { render: handler }
+				: handler
+				;
+		},
+		
+		getStatement: function(name){
+			return name != null
+				? custom_Statements[name]
+				: custom_Statements
+				;
+		},
+		
 		/**
 		 * mask.registerAttrHandler(attrName, mix, Handler) -> void
 		 * - attrName (String): any attribute string name
@@ -270,7 +286,7 @@ var cache = {},
 		setInterpolationQuotes: Parser.setInterpolationQuotes,
 		
 		setCompoIndex: function(index){
-			_controllerID = index;
+			builder_componentID = index;
 		},
 		
 		cfg: function(){
