@@ -119,10 +119,7 @@ var build_compo;
 		if (is_Function(clone.render) === false)
 			return clone;
 		
-		
-		
 		elements = clone.render(model, ctx, container, controller, childs);
-			
 			
 		if (is_Function(clone.renderEnd)) {
 			compo = clone.renderEnd(elements, model, ctx, container, controller);
@@ -144,7 +141,12 @@ var build_compo;
 		if (node.model == null) 
 			node.model = model;
 		
-		builder_build(node.nodes, node.model, ctx, container, node, childs);
+		var els = node.elements = [];
+		builder_build(node.nodes, node.model, ctx, container, node, els);
+		
+		if (childs != null && els.length !== 0)
+			arr_pushMany(childs, els);
+
 		return null;
 	}
 	

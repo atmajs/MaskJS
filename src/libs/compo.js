@@ -5,6 +5,9 @@ var Compo = exports.Compo = (function(mask){
 	var Dom = mask.Dom,
 	
 		_array_slice = Array.prototype.slice,
+		_Array_splice = Array.prototype.splice,
+		_Array_indexOf = Array.prototype.indexOf,
+		
 		_mask_ensureTmplFnOrig = mask.Utils.ensureTmplFn,
 		
 		domLib,
@@ -406,10 +409,17 @@ var Compo = exports.Compo = (function(mask){
 					;
 				
 				if (compo) {
-					compo_dispose(compo);
-					compo_detachChild(compo);
+					
+					if (compo.$ == null || compo.$.length === 1) {
+						compo_dispose(compo);
+						compo_detachChild(compo);
+						return;
+					}
+					
+					var i = _Array_indexOf.call(compo.$, node);
+					if (i !== -1) 
+						_Array_splice.call(compo.$, i, 1);
 				}
-				return;
 			}
 			
 			node_tryDisposeChildren(node);

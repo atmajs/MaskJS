@@ -11,6 +11,7 @@ var Mask = exports.mask = (function(){
     // import /src/util/attr.js
 	// import /src/util/template.js
     
+	// import /src/util/array.js
 	// import /src/util/string.js
     // import /src/util/object.js
 	// import /src/util/function.js

@@ -118,7 +118,7 @@ var builder_componentID = 0,
 		// Dom.COMPONENT
 		if (type === 4) {
 	
-			controller = build_compo(node, model, ctx, container, controller);
+			controller = build_compo(node, model, ctx, container, controller, childs);
 			
 			if (controller == null) 
 				return container;
@@ -190,13 +190,14 @@ var builder_componentID = 0,
 		}
 	
 		if (childs != null && childs !== elements){
-			var il = childs.length,
-				jl = elements.length;
-	
-			j = -1;
-			while(++j < jl){
-				childs[il + j] = elements[j];
-			}
+			arr_pushMany(childs, elements);
+			//var il = childs.length,
+			//	jl = elements.length;
+			//
+			//j = -1;
+			//while(++j < jl){
+			//	childs[il + j] = elements[j];
+			//}
 		}
 	
 		return container;

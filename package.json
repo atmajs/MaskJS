@@ -20,7 +20,7 @@
     "licenses": [
         "MIT"
     ],
-    "dependencies": {},
+    
     "devDependencies": {
         "atma": ">0.9.26"
     },
