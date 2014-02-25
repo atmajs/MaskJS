@@ -19,15 +19,33 @@ var _throw,
 		if ('$c' === key) {
 			value = controller;
 			
-			var next = current.next;
-			if (next != null
-				&& next.type === type_FunctionRef
-				&& value[next.body] == null
-				&& typeof Compo.prototype[next.body] === 'function') {
+			var next = current.next,
+				nextBody = next != null && next.body;
 				
-				object = controller;
-				value = Compo.prototype[next.body];
-				current = next;
+			if (nextBody != null && value[nextBody] == null){
+					
+				if (next.type === type_FunctionRef
+						&& typeof Compo.prototype[nextBody] === 'function') {
+					// use fn from prototype if possible, like `closest`
+					object = controller;
+					value = Compo.prototype[nextBody];
+					current = next;
+				} else {
+					// find the closest controller, which has the property
+					while (true) {
+						value = value.parent;
+						if (value == null) 
+							break;
+						
+						if (value[nextBody] == null) 
+							continue;
+						
+						object = value;
+						value = value[nextBody];
+						current = next;
+						break;
+					}
+				}
 			}
 			
 		}

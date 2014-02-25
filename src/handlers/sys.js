@@ -103,7 +103,7 @@
 		
 
 		var prop = compo.attr.each || compo.attr.foreach,
-			array = obj_getPropertyEx(prop, model, ctx, compo),
+			array = ExpressionUtil.eval(prop, model, ctx, compo),
 			nodes = compo.nodes
 			;
 		

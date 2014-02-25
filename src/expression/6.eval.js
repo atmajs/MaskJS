@@ -2,10 +2,12 @@ function expression_evaluate(mix, model, ctx, controller) {
 
 	var result, ast;
 
-	if (mix == null)
+	if (null == mix)
 		return null;
 	
-
+	if ('.' === mix) 
+		return model;
+	
 	if (typeof mix === 'string'){
 		ast = cache.hasOwnProperty(mix) === true
 			? (cache[mix])
