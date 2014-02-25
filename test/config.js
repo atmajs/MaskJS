@@ -3,7 +3,10 @@ module.exports = {
 		
 		 'mask.dom': {
 		 	exec: 'dom',
-		 	env: ['lib/mask.js'],
+		 	env: [
+				  'lib/mask.js',
+				  'test/utils.js'
+			],
 		 	tests: 'test/**-dom.test'
 		 },
 		 

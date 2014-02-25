@@ -1,36 +1,52 @@
 
 UTest({
-	'async': function(done){
+	'async - core': function(done){
 		
-		mask.registerHandler(':test', mask.Compo({
+		mask.registerHandler(':test', Class({
 			
+			nodes: mask.parse('#defer > "foo"'),
 			async: true,
 			await: function(callback){
 				this.callback = callback;
 			},
-			nodes: mask.parse('#defer > "foo"'),
 			renderStart: function(){
-				
 				
 				var that = this;
 				setTimeout(function(){
 					
 					that.callback();
 					
-				}, 500);
+				}, 200);
 			}
 		}));
 		
-		var fragment = mask.render(' h4 > "title" :test;');
+		var $ = $render('h4 > :test;').hasNot_('#defer');
+		setTimeout(function(){
+			$.has_('#defer');
+			done();
+		}, 300);
+	},
+	'async - compo': function(done){
 		
-		eq(fragment.querySelector('#defer'), null);
+		mask.registerHandler(':test', Compo({
+			template: '.defer > "foo"',
+			onRenderStart: function(model, ctx){
+				
+				var resume = Compo.pause(this, ctx);
+				setTimeout(resume, 200);
+			}
+		}));
+		
+		var $ = $render('.c > :test;')
+			.has_('.c')
+			.hasNot_('.defer');
 		
 		
 		setTimeout(function(){
 			
-			eq(fragment.querySelectorAll('#defer').length, 1);
-			
+			$.has_('.defer');
 			done();
-		}, 600);
-	}
+		}, 300);
+	},
+	
 })

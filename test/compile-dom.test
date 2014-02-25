@@ -6,18 +6,19 @@ var compile = mask.compile,
 
 UTest({
 	'is a function': function() {
-		assert.equal(typeof compile, 'function');
+		eq(typeof compile, 'function');
 	},
 	'tagName is div': function() {
-		assert.equal(compile('div;').tagName, 'div');
+		eq(compile('div;').tagName, 'div');
 	},
 	'single variations': function() {
-		testSingle([ //
-		'.myklass', //
-		'.myklass;', //
-		'\r.myklass;;;' //
+		testSingle([ 
+			'.myklass', 
+			'.myklass;', 
+			'\r.myklass;;;',
+			'#baz class=myklass'
 		], function(node) {
-			assert.equal(node.attr.class, 'myklass', '!= myklass');
+			eq(node.attr.class, 'myklass', '!= myklass');
 		});
 
 
@@ -25,7 +26,7 @@ UTest({
 		'.myklass#myid data-attr="value"', //
 		'.myklass#myid \n\t data-attr="value";', //
 		'.myklass#myid data-attr=value', //
-		'.myklass#myid data-attr=value;' //
+		'.myklass 	#myid data-attr=value;' //
 		], function(node) {
 			var attr = node.attr;
 			assert(attr.class === 'myklass', '!= myklass');
@@ -42,8 +43,8 @@ UTest({
 		], function(node) {
 			var nodes = node.nodes;
 
-			assert(nodes.length == 1, 'shoud have 1 child');
-			assert(nodes[0].content === 'node', 'content shoud be "node"');
+			eq(nodes.length, 1, 'shoud have 1 child');
+			eq(nodes[0].content, 'node', 'content shoud be "node"');
 		});
 
 
@@ -56,30 +57,31 @@ UTest({
 		'span { #myid > .my_-class value = 10 { "node"};  }', //
 		], function(node) {
 
-			assert(node && node.tagName == 'span', 'container shoud be span');
+			has(node, { tagName: 'span' }, 'container shoud be span');
 
 			var nodes = node.nodes;
 
-			assert(nodes.length == 1, 'shoud have 1 sub-child');
-			assert(nodes[0].attr.id, 'sub-child shoud have id myid');
+			eq(nodes.length, 1, 'shoud have 1 sub-child');
+			eq(nodes[0].attr.id, 'myid', 'sub-child shoud have id myid');
 
 			nodes = nodes[0].nodes;
-			assert(nodes.length == 1, 'shoud have 1 sub-sub-child');
-			assert(nodes[0].attr.class === 'my_-class', 'klass shoud be my_-class');
+			eq(nodes.length, 1, 'shoud have 1 sub-sub-child');
+			eq(nodes[0].attr.class, 'my_-class', 'klass shoud be my_-class');
 
 			nodes = nodes[0].nodes;
-			assert(nodes.length == 1, 'shoud have 1 sub-sub-sub-child');
+			eq(nodes.length, 1, 'shoud have 1 sub-sub-sub-child');
 
-			assert(nodes[0].content === 'node', 'content shoud be "node"');
+			eq(nodes[0].content, 'node', 'content shoud be "node"');
 
 		});
 
-		testMultiple([ //
-		'div; div;', //
-		'div > span; div;', //
-		'div; div {};', //
-		'div > div > div > div; span > span > span;', ], function(nodes, index) {
-			assert(nodes.length == 2, 'should have 2 childs - template nuber:', index)
+		testMultiple([ 
+			'div; div;', 
+			'div > span; div;', 
+			'div; div {};', 
+			' div > div > div > div; span > span > span;'
+		], function(nodes, index) {
+			eq(nodes.length, 2, 'should have 2 childs - template nuber:', index)
 		});
 
 	},
@@ -110,16 +112,16 @@ UTest({
 	'right attributes (quoteless)': function(){
 		var attr = compile("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
 
-		assert.equal(attr.width, '10');
-		assert.equal(attr.height, '20');
-		assert.equal(attr.id, '30');
-		assert.equal(attr.key, 'key');
-		assert.equal(attr.otherkey, 'otherkey');
-		assert.equal(attr.p, 'tryam');
+		eq(attr.width, '10');
+		eq(attr.height, '20');
+		eq(attr.id, '30');
+		eq(attr.key, 'key');
+		eq(attr.otherkey, 'otherkey');
+		eq(attr.p, 'tryam');
 
 		attr = compile("div dr = drrrr sh = shrrrr").attr;
-		assert.equal(attr.dr, 'drrrr');
-		assert.equal(attr.sh, 'shrrrr');
+		eq(attr.dr, 'drrrr');
+		eq(attr.sh, 'shrrrr');
 	},
 	'has literal': function() {
 		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
@@ -139,14 +141,14 @@ UTest({
 			combined += x.content;
 		}
 
-		assert.equal(combined, '12345', 'Combined Text Failed:' + combined);
+		eq(combined, '12345', 'Combined Text Failed:' + combined);
 
 
 		dom = compile("''| I'm unescaped block '' ... |''");
-		assert.equal(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
+		eq(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
 
 		dom = compile("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
-		assert.equal(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
+		eq(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
 	},
 
 	'valid model templating': function() {
