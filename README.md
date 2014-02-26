@@ -6,7 +6,9 @@
 ----
 
 <p align="center">
-	<img src='https://travis-ci.org/atmajs/MaskJS.png?branch=master' />
+	<a href='https://travis-ci.org/atmajs/MaskJS' target='_blank'>
+		<img src='https://travis-ci.org/atmajs/MaskJS.png?branch=master' />
+		</a>
 	</p>
 
 [MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine.
