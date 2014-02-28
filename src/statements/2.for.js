@@ -1,22 +1,41 @@
 
 (function(){
 
-	custom_Statements['for'] = function(node, model, ctx, container, controller, childs){
+	custom_Statements['for'] = {
 		
-		parse_For(node.expression);
+		render: function(node, model, ctx, container, controller, childs){
+			
+			parse_For(node.expression);
+			
+			var value = ExpressionUtil.eval(__ForDirective[3], model, ctx, controller);
+			if (value == null) 
+				return;
+			
+			build(
+				value,
+				__ForDirective,
+				node.nodes,
+				model,
+				ctx,
+				container,
+				controller,
+				childs
+			);
+		},
 		
-		var prop1 = __ForDirective[0],
-			prop2 = __ForDirective[1],
-			loopType = __ForDirective[2],
-			expression = __ForDirective[3]
+		build: build,
+		parseFor: parse_For
+	};
+	
+	function build(value, ForDirective, template, model, ctx, container, controller, childs) {
+		var prop1 = ForDirective[0],
+			prop2 = ForDirective[1],
+			loopType = ForDirective[2],
+			expression = ForDirective[3],
+			
+			nodes
 			;
-		
-		var value = ExpressionUtil.eval(expression, model, ctx, controller);
-		if (value == null) 
-			return;
-		
-		var nodes;
-		
+			
 		if (loopType === 'of') {
 			if (is_Array(value) === false) {
 				console.warn('<ForStatement> Value is not enumerable', expression);
@@ -36,7 +55,7 @@
 		}
 		
 		builder_build(nodes, model, ctx, container, controller, childs);
-	};
+	}
 	
 	function loop_Array(template, arr, prop1, prop2){
 		
