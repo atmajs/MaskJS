@@ -16,7 +16,7 @@ var Mask = exports.mask = (function(){
     // import /src/util/object.js
 	// import /src/util/function.js
 	
-	// import /src/custom.js
+	// import /src/custom/exports.js
 	
 	// import /src/expression/exports.js
 	// import /src/statements/exports.js

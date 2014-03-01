@@ -1,18 +1,16 @@
-var customUtil_register,
-	customUtil_get,
 
+(function(repository) {
+	
 	customUtil_$utils = {};
-
-(function() {
 
 	customUtil_register = function(name, mix) {
 
 		if (is_Function(mix)) {
-			custom_Utils[name] = mix;
+			repository[name] = mix;
 			return;
 		}
 
-		custom_Utils[name] = createUtil(mix);
+		repository[name] = createUtil(mix);
 
 		if (mix.arguments === 'parsed')
 			customUtil_$utils[name] = mix.process;
@@ -20,9 +18,10 @@ var customUtil_register,
 	};
 
 	customUtil_get = function(name) {
-		return name != null ? custom_Utils[name] : custom_Utils;
+		return name != null ? repository[name] : repository;
 	};
 
+	// = private
 
 	function createUtil(obj) {
 
@@ -58,4 +57,4 @@ var customUtil_register,
 		};
 	}
 
-}());
+}(custom_Utils));

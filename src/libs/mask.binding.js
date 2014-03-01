@@ -11,7 +11,7 @@
 	    __mask_registerAttrHandler = mask.registerAttrHandler,
 	    __mask_registerUtil = mask.registerUtil,
 	    
-		__array_slice = Array.prototype.slice;
+		_Array_slice = Array.prototype.slice;
 		
 	
 	// end:source ../src/vars.js
@@ -93,8 +93,7 @@
 						var listeners = listener_push(obj, property, callback);
 						if (listeners.length === 1) {
 							var arr = parts.splice(0, i);
-							
-							if (arr.length) 
+							if (arr.length !== 0) 
 								obj_attachProxy(obj, property, listeners, arr, true);
 						}
 						
@@ -589,7 +588,7 @@
 		
 		function _array_createWrapper(array, originalFn, overridenFn) {
 			return function() {
-				return _array_methodWrapper(array, originalFn, overridenFn, __array_slice.call(arguments));
+				return _array_methodWrapper(array, originalFn, overridenFn, _Array_slice.call(arguments));
 			};
 		}
 		
@@ -672,11 +671,10 @@
 	////////	return elements != null ? elements[elements.length - 1] : compo.placeholder;
 	////////}
 	
-	function compo_fragmentInsert(compo, index, fragment) {
-		if (compo.components == null) {
-			return dom_insertAfter(fragment, compo.placeholder);
-		}
-	
+	function compo_fragmentInsert(compo, index, fragment, placeholder) {
+		if (compo.components == null) 
+			return dom_insertAfter(fragment, placeholder || compo.placeholder);
+		
 		var compos = compo.components,
 			anchor = null,
 			insertBefore = true,
@@ -722,17 +720,17 @@
 	}
 	
 	function compo_dispose(compo, parent) {
-		if (compo == null) {
+		if (compo == null) 
 			return false;
+		
+		if (compo.elements != null) {
+			dom_removeAll(compo.elements);
+			compo.elements = null;
 		}
+		
 	
-		dom_removeAll(compo.elements);
-	
-		compo.elements = null;
-	
-		if (__Compo != null) {
-			__Compo.dispose(compo);
-		}
+		__Compo.dispose(compo);
+		
 	
 		var components = (parent && parent.components) || (compo.parent && compo.parent.components);
 		if (components == null) {
@@ -741,13 +739,11 @@
 		}
 	
 		return arr_remove(components, compo);
-	
 	}
 	
 	function compo_inserted(compo) {
-		if (__Compo != null) {
-			__Compo.signal.emitIn(compo, 'domInsert');
-		}
+		
+		__Compo.signal.emitIn(compo, 'domInsert');
 	}
 	
 	function compo_attachDisposer(controller, disposer) {
@@ -953,7 +949,7 @@
 				
 				var value = expression_eval(expr, model, cntx, controller);
 				if (arguments.length > 1) {
-					var args = __array_slice.call(arguments);
+					var args = _Array_slice.call(arguments);
 					
 					args[0] = value;
 					callback.apply(this, args);
@@ -970,7 +966,7 @@
 		expression_createListener = function(callback){
 			var locks = 0;
 			return function(){
-				if (++locks > -1) {
+				if (++locks > 1) {
 					locks = 0;
 					console.warn('<mask:listener:expression> concurent binder');
 					return;
@@ -2708,7 +2704,9 @@
 		
 		// source 1.utils.js
 		var _getNodes,
-			_renderElements
+			_renderElements,
+			els_toggle
+			
 			;
 			
 		(function(){
@@ -2737,30 +2735,176 @@
 			};
 			
 			
+			
+			els_toggle = function(els, state){
+				if (els == null) 
+					return;
+				
+				var isArray = typeof els.splice === 'function',
+					imax = isArray ? els.length : 1,
+					i = -1,
+					x;
+				while ( ++i < imax ){
+					x = isArray ? els[i] : els;
+					x.style.display = state ? '' : 'none';
+				}
+			}
+			
 		}());
 		// end:source 1.utils.js
 		// source 2.if.js
-		var stat_IF;
-		
 		(function(){
 			
-			function initialize(compo, node, elements, model, ctx, container, controller) {
+			mask.registerHandler('+if', {
 				
-				console.log(node.expression);
+				render: function(model, ctx, container, controller, childs){
+					
+					var node = this,
+						nodes = _getNodes('if', node, model, ctx, controller),
+						index = 0;
+						
+					var next = node;
+					while(next != null){
+						
+						if (next.nodes === nodes) 
+							break;
+						
+						index++;
+						next = node.nextSibling;
+					}
+					
+					this.attr['switch-index'] = index;
+					return _renderElements(nodes, model, ctx, container, controller, childs);
+				},
+				
+				renderEnd: function(els, model, ctx, container, controller){
+					
+					var compo = new IFStatement(),
+						index = this.attr['switch-index'];
+					
+					compo.placeholder = document.createComment('');
+					container.appendChild(compo.placeholder);
+					
+					
+					
+					initialize(compo, this, index, els, model, ctx, container, controller);
+					
+					return compo;
+				}
+				
+			});
+			
+			
+			function IFStatement() {}
+			
+			IFStatement.prototype = {
+				
+				ctx : null,
+				model : null,
+				controller : null,
+				
+				index : null,
+				Switch : null,
+				binder : null,
+				
+				refresh: function() {
+					var compo = this,
+						switch_ = compo.Switch,
+						
+						imax = switch_.length,
+						i = -1,
+						expr,
+						item, index = 0;
+						
+					var currentIndex = compo.index,
+						model = compo.model,
+						ctx = compo.ctx,
+						ctr = compo.controller
+						;
+					
+					while ( ++i < imax ){
+						expr = switch_[i].node.expression;
+						if (expr == null) 
+							break;
+						
+						if (expression_eval(expr, model, ctx, ctr)) 
+							break;
+					}
+					
+					if (currentIndex === i) 
+						return;
+					
+					if (currentIndex != null) 
+						els_toggle(switch_[currentIndex].elements, false);
+					
+					if (i === imax) {
+						compo.index = null;
+						return;
+					}
+					
+					this.index = i;
+					
+					var current = switch_[i];
+					if (current.elements != null) {
+						els_toggle(current.elements, true);
+						return;
+					}
+					
+					var frag = mask.render(current.node.nodes, model, ctx, null, ctr);
+					var els = frag.nodeType === Node.DOCUMENT_FRAGMENT_NODE
+						? _Array_slice.call(frag.childNodes)
+						: frag
+						;
+					
+					
+					dom_insertBefore(frag, compo.placeholder);
+					
+					current.elements = els;
+					
+				},
+				dispose: function(){
+					var switch_ = this.Switch,
+						imax = switch_.length,
+						i = -1,
+						
+						x, expr;
+						
+					while( ++i < imax ){
+						x = switch_[i];
+						expr = x.node.expression;
+						
+						if (expr) {
+							expression_unbind(
+								expr,
+								this.model,
+								this.controller,
+								this.binder
+							);
+						}
+						
+						x.node = null;
+						x.elements = null;
+					}
+					
+					this.controller = null;
+					this.model = null;
+					this.ctx = null;
+				}
+			};
+			
+			function initialize(compo, node, index, elements, model, ctx, container, controller) {
 				
 				compo.model = model;
 				compo.ctx = ctx;
 				compo.controller = controller;
 				
-				compo.refresh = fn_proxy(compo.refresh, this);
+				compo.refresh = fn_proxy(compo.refresh, compo);
 				compo.binder = expression_createListener(compo.refresh);
-				
+				compo.index = index;
 				compo.Switch = [{
 					node: node,
 					elements: null
 				}];
-				
-				
 				
 				expression_bind(node.expression, model, ctx, controller, compo.binder);
 				
@@ -2777,68 +2921,300 @@
 					if (node.expression) 
 						expression_bind(node.expression, model, ctx, controller, compo.binder);
 				}
-			};
+				
+				compo.Switch[index].elements = elements;
+			}
+		
 			
+		}());
+		// end:source 2.if.js
+		// source 3.for.js
+		(function(){
 			
+			var For = custom_Statements['for'],
 			
-			var IFStatement_bind = {
+				attr_PROP_1 = 'for-prop-1',
+				attr_PROP_2 = 'for-prop-2',
+				attr_TYPE = 'for-type',
+				attr_EXPR = 'for-expr'
+				;
+				
+			
+			mask.registerHandler('+for', {
 				
 				render: function(model, ctx, container, controller, childs){
 					
-					var node = this,
-						compo = new IFStatement();
+					var directive = For.parseFor(this.expression),
+						attr = this.attr;
 					
-					//initialize(compo, node, model, ctx, container, controller, childs);
+					attr[attr_PROP_1] = directive[0];
+					attr[attr_PROP_2] = directive[1];
+					attr[attr_TYPE] = directive[2];
+					attr[attr_EXPR] = directive[3];
 					
-					var nodes = _getNodes('if', node, model, ctx, controller);
+					For.render(this, model, ctx, container, this, childs);
+				},
+				
+				renderEnd: function(els, model, ctx, container, controller){
 					
-					console.log(node, model);
+					var compo = new ForStatement(this, this.attr);
 					
-					return _renderElements(nodes, model, ctx, container, controller, childs);
+					compo.placeholder = document.createComment('');
+					container.appendChild(compo.placeholder);
+					
+					
+					
+					initialize(compo, this, els, model, ctx, container, controller);
+					
+					return compo;
 				}
+				
+			});
+			
+			function initialize(compo, node, els, model, ctx, container, controller) {
+				
+				compo.refresh = fn_proxy(compo.refresh, compo);
+				compo.binder = expression_createBinder(
+					compo.expr,
+					model,
+					ctx,
+					controller,
+					compo.refresh
+				);
+				
+				
+				expression_bind(compo.expr, model, ctx, controller, compo.binder);
 				
 			}
 			
-			function IFStatement() {}
+			function ForStatement(node, attr) {
+				this.prop1 = attr[attr_PROP_1];
+				this.prop2 = attr[attr_PROP_2];
+				this.type = attr[attr_TYPE];
+				this.expr = attr[attr_EXPR];
+				
+				this.node = node;
+			}
 			
-			IFStatement.prototype = {
-				refresh: function() {
+			ForStatement.prototype = {
+				
+				refresh: function(value, method, args, result){
+					var i = 0,
+						x, imax;
+						
+					var node = this.node,
+						prop1 = this.prop1,
+						prop2 = this.prop2,
+						type = this.type,
+						
+						model = this.model,
+						ctx = this.ctx,
+						ctr = this.node
+						;
 		
-					if (this.elements == null && !value) {
-						// was not render and still falsy
+					if (method == null) {
+						// this was new array/object setter and not an immutable function call
+						
+						var compos = node.components;
+						if (compo != null) {
+							var imax = compos.length,
+								i = -1;
+							while ( ++i < imax ){
+								if (compo_dispose(compos[i])){
+									i--;
+									imax--;
+								}
+							}
+							compos.length = 0;
+						}
+						
+						var frag = builder_build(
+							For.getNodes(node.nodes, value, prop1, prop2, type),
+							model,
+							ctx,
+							null,
+							ctr
+						);
+						
+						dom_insertBefore(frag, this.placeholder);
+						arr_each(node.components, compo_inserted);
 						return;
 					}
 		
-					if (this.elements == null) {
-						// was not render - do it
+					var array = value,
+						imax = array.length,
+						i = -1,
+						x;
 		
-						dom_insertBefore( //
-						compo_render(this, this.template, this.model, this.cntx), this.placeholder);
-		
-						this.$ = domLib(this.elements);
-					} else {
-		
-						if (this.$ == null) {
-							this.$ = domLib(this.elements);
+					while ( ++i < imax ){
+						//create references from values to distinguish the models
+						x = array[i];
+						switch (typeof x) {
+						case 'string':
+						case 'number':
+						case 'boolean':
+							array[i] = Object(x);
+							break;
 						}
-						this.$[value ? 'show' : 'hide']();
 					}
 		
-					if (this.onchange) {
-						this.onchange(value);
-					}
+					switch (method) {
+					case 'push':
+						list_update(this, null, null, array.length, array.slice(array.length - 1));
+						break;
+					case 'pop':
+						list_update(this, array.length, 1);
+						break;
+					case 'unshift':
+						list_update(this, null, null, 0, array.slice(0, 1));
+						break;
+					case 'shift':
+						list_update(this, 0, 1);
+						break;
+					case 'splice':
+						var sliceStart = args[0],
+							sliceRemove = args.length === 1 ? this.components.length : args[1],
+							sliceAdded = args.length > 2 ? array.slice(args[0], args.length - 2 + args[0]) : null;
 		
-				},
-				dispose: function(){
-					expression_unbind(this.expr, this.model, this, this.binder);
-					this.onchange = null;
-					this.elements = null;
+						list_update(this, sliceStart, sliceRemove, sliceStart, sliceAdded);
+						break;
+					case 'sort':
+					case 'reverse':
+						list_sort(this, array);
+						break;
+					case 'remove':
+						if (result != null && result.length) 
+							list_remove(this, result);
+						break;
+					}
 				}
 			};
 			
-			mask.registerHandler('+if', IFStatement_bind);
+			
+			// = List Utils
+				
+				
+			
+			function list_sort(self, array) {
+			
+				var compos = self.components,
+					i = 0,
+					imax = compos.length,
+					j = 0,
+					jmax = null,
+					element = null,
+					compo = null,
+					fragment = document.createDocumentFragment(),
+					sorted = [];
+			
+				for (; i < imax; i++) {
+					compo = compos[i];
+					if (compo.elements == null || compo.elements.length === 0) {
+						continue;
+					}
+			
+					for (j = 0, jmax = compo.elements.length; j < jmax; j++) {
+						element = compo.elements[j];
+						element.parentNode.removeChild(element);
+					}
+				}
+			
+				outer: for (j = 0, jmax = array.length; j < jmax; j++) {
+			
+					for (i = 0; i < imax; i++) {
+						if (array[j] === compos[i].model) {
+							sorted[j] = compos[i];
+							continue outer;
+						}
+					}
+			
+					console.warn('No Model Found for', array[j]);
+				}
+			
+			
+			
+				for (i = 0, imax = sorted.length; i < imax; i++) {
+					compo = sorted[i];
+			
+					if (compo.elements == null || compo.elements.length === 0) {
+						continue;
+					}
+			
+			
+					for (j = 0, jmax = compo.elements.length; j < jmax; j++) {
+						element = compo.elements[j];
+			
+						fragment.appendChild(element);
+					}
+				}
+			
+				self.components = sorted;
+			
+				dom_insertBefore(fragment, self.placeholder);
+			
+			}
+			
+			function list_update(self, deleteIndex, deleteCount, insertIndex, rangeModel) {
+				
+				var node = self.node,
+					compos = node.components
+					;
+				if (compos == null) 
+					compos = node.components = []
+				
+				
+				var prop1 = self.prop1,
+					prop2 = self.prop2,
+					type = self.type,
+					
+					ctx = self.ctx,
+					ctr = self.node;
+					;
+				
+				if (deleteIndex != null && deleteCount != null) {
+					var i = deleteIndex,
+						length = deleteIndex + deleteCount;
+			
+					if (length > compos.length) 
+						length = compos.length;
+					
+					for (; i < length; i++) {
+						if (compo_dispose(compos[i], node)){
+							i--;
+							length--;
+						}
+					}
+				}
+			
+				if (insertIndex != null && rangeModel && rangeModel.length) {
+			
+					var component = new mask.Dom.Component(),
+						nodes = For.getNodes(self, rangeModel, prop1, prop2, type),
+						fragment = builder_build(nodes, rangeModel, ctx, null, component);
+			
+					compo_fragmentInsert(node, insertIndex, fragment);
+					compo_inserted(component);
+					
+					compos.splice.apply(compos, [insertIndex, 0].concat(component.components));
+				}
+			}
+			
+			function list_remove(self, removed){
+				var compos = self.components,
+					i = compos.length,
+					x;
+				while(--i > -1){
+					x = compos[i];
+					
+					if (removed.indexOf(x.model) === -1) 
+						continue;
+					
+					compo_dispose(x, self);
+				}
+			}
+			
 		}());
-		// end:source 2.if.js
+		// end:source 3.for.js
 		
 	}());
 	// end:source ../src/statements/exports.js

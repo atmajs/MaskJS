@@ -24,37 +24,45 @@
 		},
 		
 		build: build,
-		parseFor: parse_For
+		parseFor: parse_For,
+		createForItem: createForItem,
+		getNodes: getNodes
 	};
 	
-	function build(value, ForDirective, template, model, ctx, container, controller, childs) {
-		var prop1 = ForDirective[0],
-			prop2 = ForDirective[1],
-			loopType = ForDirective[2],
-			expression = ForDirective[3],
+	function build(value, For, nodes, model, ctx, container, ctr, childs) {
+		
+		builder_build(
+			getNodes(nodes, value, For[0], For[1], For[2]),
+			model,
+			ctx,
+			container,
+			ctr,
+			childs
+		);
+	}
+	
+	function getNodes(nodes, value, prop1, prop2, type) {
 			
-			nodes
-			;
-			
-		if (loopType === 'of') {
+		if ('of' === type) {
 			if (is_Array(value) === false) {
-				console.warn('<ForStatement> Value is not enumerable', expression);
-				return;
+				console.warn('<ForStatement> Value is not enumerable', value);
+				return null;
 			}
 			
-			nodes = loop_Array(node.nodes, value, prop1, prop2);
+			return loop_Array(nodes, value, prop1, prop2);
 		}
 		
-		if (loopType === 'in') {
+		if ('in' === type) {
 			if (typeof value !== 'object') {
-				console.warn('<ForStatement> Value is not an object', expression);
-				return;
+				console.warn('<ForStatement> Value is not an object', value);
+				return null;
 			}
 			
-			nodes = loop_Object(node.nodes, value, prop1, prop2);
+			if (is_Array(value)) 
+				console.log('<mask:for> Consider to use `for..of` for Arrays')
+			
+			return loop_Object(nodes, value, prop1, prop2);
 		}
-		
-		builder_build(nodes, model, ctx, container, controller, childs);
 	}
 	
 	function loop_Array(template, arr, prop1, prop2){
@@ -73,7 +81,7 @@
 				scope[prop2] = i;
 			
 			
-			nodes[i] = compo_init('for..of/item', template, scope);
+			nodes[i] = createForItem('for..of/item', template, scope);
 		}
 		
 		return nodes;
@@ -94,14 +102,13 @@
 				scope[prop2] = value;
 			
 			
-			nodes[i++] = compo_init('for..in/item', template, scope);
+			nodes[i++] = createForItem('for..in/item', template, scope);
 		}
 		
 		return nodes;
 	}
 	
-	
-	function compo_init(name, nodes, scope) {
+	function createForItem(name, nodes, scope) {
 		
 		return {
 			type: Dom.COMPONENT,
@@ -109,7 +116,11 @@
 			nodes: nodes,
 			controller: {
 				compoName: name,
-				scope: scope
+				scope: scope,
+				
+				renderEnd: function(elements){
+					this.elements = elements
+				}
 			}
 		};
 	}

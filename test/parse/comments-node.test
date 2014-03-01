@@ -32,7 +32,7 @@ include
 		'/src/util/function.js',
 		'/src/util/condition.js',
 		
-		'/src/custom.js',
+		'/src/custom/exports.js',
 		
 		'/src/dom/exports.js',
 		'/src/parse/parser.js'

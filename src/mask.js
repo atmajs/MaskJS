@@ -74,9 +74,7 @@ var cache = {},
 		 *	The most simple example to continue rendering is:
 		 *	mask.render(this.nodes, model, container, ctx);
 		 **/
-		registerHandler: function (tagName, TagHandler) {
-			custom_Tags[tagName] = TagHandler;
-		},
+		registerHandler: customTag_register,
 		/**
 		 *	mask.getHandler(tagName) -> Function | Object
 		 * - tagName (String):

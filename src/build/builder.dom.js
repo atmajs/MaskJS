@@ -134,10 +134,9 @@ var builder_componentID = 0,
 		var nodes = node.nodes;
 		if (nodes != null) {
 	
-			if (childs != null && elements == null){
+			if (childs != null && elements == null)
 				elements = childs;
-			}
-	
+			
 			var isarray = nodes instanceof Array,
 				length = isarray === true ? nodes.length : 1,
 				i = 0,
@@ -189,16 +188,9 @@ var builder_componentID = 0,
 			
 		}
 	
-		if (childs != null && childs !== elements){
+		if (childs != null && elements != null && childs !== elements)
 			arr_pushMany(childs, elements);
-			//var il = childs.length,
-			//	jl = elements.length;
-			//
-			//j = -1;
-			//while(++j < jl){
-			//	childs[il + j] = elements[j];
-			//}
-		}
+		
 	
 		return container;
 	};

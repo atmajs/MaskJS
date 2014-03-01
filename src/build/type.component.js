@@ -97,10 +97,16 @@ var build_compo;
 	
 	function build_Static(static_, node, model, ctx, container, controller, childs) {
 		
-		var elements,
+		var Ctor = static_.__Ctor,
+			elements,
 			compo;
 			
-		var clone = static_;
+		var clone = Ctor != null
+				? new Ctor(static_)
+				: static_
+				,
+			wasRendered = false
+			;
 		
 		for (var key in node) 
 			clone[key] = node[key];
@@ -116,19 +122,20 @@ var build_compo;
 		if (is_Function(clone.renderStart)) 
 			clone.renderStart(model, ctx, container, controller, childs);
 		
-		if (is_Function(clone.render) === false)
-			return clone;
-		
-		elements = clone.render(model, ctx, container, controller, childs);
+		if (is_Function(clone.render)){
+			wasRendered = true;
+			elements = clone.render(model, ctx, container, controller, childs);
+			arr_pushMany(childs, elements);
 			
-		if (is_Function(clone.renderEnd)) {
-			compo = clone.renderEnd(elements, model, ctx, container, controller);
-			
-			if (compo != null) 
-				controller_pushCompo(controller, compo);
+			if (is_Function(clone.renderEnd))
+				compo = clone.renderEnd(elements, model, ctx, container, controller);
 		}
-		
-		return null;
+			
+		controller_pushCompo(controller, compo || clone);
+		return wasRendered
+			? null
+			: clone
+			;
 	
 	}
 	
