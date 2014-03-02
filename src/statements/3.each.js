@@ -3,7 +3,7 @@
 
 	custom_Statements['each'] = {
 		
-		render: function(node, model, ctx, container, controller, childs){
+		render: function(node, model, ctx, container, controller, children){
 			
 			var array = ExpressionUtil.eval(node.expression, model, ctx, controller);
 			
@@ -11,13 +11,13 @@
 				return;
 			
 			
-			build(node.nodes, array, ctx, container, controller, childs);
+			build(node.nodes, array, ctx, container, controller, children);
 		},
-		
+		createItem: createEachItem,
 		build: build
 	};
 	
-	function build(template, array, ctx, container, controller, childs){
+	function build(template, array, ctx, container, controller, children){
 		var imax = array.length,
 			i = -1,
 			nodes = template,
@@ -25,25 +25,30 @@
 		
 		while ( ++i < imax ){
 			
-			itemCtr = createEachItem('each::item', i, nodes, controller);
-			builder_build(itemCtr, array[i], ctx, container, controller, childs);
+			itemCtr = createEachItem(i, nodes, controller);
+			builder_build(nodes, array[i], ctx, container, itemCtr, children);
+			
+			if (itemCtr.components != null) 
+				arr_pushMany(controller.components, itemCtr.components);
 		}
 		
 	}
 	
-	function createEachItem(name, index, nodes, parent) {
+	function createEachItem(index, nodes, parent) {
 		
 		return {
 			type: Dom.COMPONENT,
-			compoName: name,
-			attr: {},
-			
+			compoName: 'each::item',
 			scope: {
 				index: index
 			},
 			parent: parent,
 			nodes: nodes,
-			components: null
+			model: null,
+			attr: null,
+			components: null,
+			elements: null,
+			ID: null
 		};
 	}
 	

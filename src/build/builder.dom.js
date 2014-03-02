@@ -79,21 +79,7 @@ var builder_componentID = 0,
 			
 			if (type === 15) {
 				
-				if (is_Function(Handler)) {
-					//@ obsolete for <Handler>.render
-					Handler(node, model, ctx, container, controller, childs);
-					
-				} else if (is_Function(Handler.render)) {
-					
-					Handler.render(node, model, ctx, container, controller, childs);
-				}
-				
-				else {
-					console.error('<mask:build> Invalid Statement Handler', Handler);
-				}
-				
-				
-				
+				Handler.render(node, model, ctx, container, controller, childs);
 				return container;
 			}
 		}
