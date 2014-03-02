@@ -2703,6 +2703,9 @@
 		// source 1.utils.js
 		var _getNodes,
 			_renderElements,
+			
+			_initializeCompo,
+			
 			els_toggle
 			
 			;
@@ -2732,6 +2735,23 @@
 				return elements;
 			};
 			
+			_compo_initAndBind = function(compo, node, model, ctx, container, controller) {
+				
+				compo.parent = controller;
+				compo.model = model;
+				
+				compo.refresh = fn_proxy(compo.refresh, compo);
+				compo.binder = expression_createBinder(
+					compo.expr,
+					model,
+					ctx,
+					controller,
+					compo.refresh
+				);
+				
+				
+				expression_bind(compo.expr, model, ctx, controller, compo.binder);
+			};
 			
 			
 			els_toggle = function(els, state){
@@ -3285,30 +3305,13 @@
 					
 					
 					
-					initialize(compo, this, els, model, ctx, container, controller);
+					_compo_initAndBind(compo, this, model, ctx, container, controller);
 					
 					return compo;
 				}
 				
 			});
 			
-			function initialize(compo, node, els, model, ctx, container, controller) {
-				
-				compo.parent = controller;
-				compo.model = model;
-				
-				compo.refresh = fn_proxy(compo.refresh, compo);
-				compo.binder = expression_createBinder(
-					compo.expr,
-					model,
-					ctx,
-					controller,
-					compo.refresh
-				);
-				
-				
-				expression_bind(compo.expr, model, ctx, controller, compo.binder);
-			}
 			
 			function EachStatement(node, attr) {
 				this.expr = node.expression;
@@ -3352,7 +3355,9 @@
 							compos.length = 0;
 						}
 						
-						var frag = Each.build(this.nodes, model, ctx, null, ctr);
+						var frag = document.createDocumentFragment();
+						
+						Each.build(this.nodes, value, ctx, frag, ctr);
 						
 						dom_insertBefore(frag, this.placeholder);
 						arr_each(node.components, compo_inserted);
@@ -3516,11 +3521,11 @@
 				if (insertIndex != null && rangeModel && rangeModel.length) {
 			
 					var component = new mask.Dom.Component(),
-						nodes = For.getNodes(node.nodes, rangeModel, prop1, prop2, type),
 						fragment = document.createDocumentFragment();
 					
-					Each.build(nodes, rangeModel, ctx, fragment, component);
-						
+					Each.build(node.nodes, rangeModel, ctx, fragment, component);
+					
+					
 					compo_fragmentInsert(node, insertIndex, fragment, self.placeholder);
 					compo_inserted(component);
 					

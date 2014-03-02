@@ -18,7 +18,7 @@
 			this.attr = node.attr;
 			this.expression = node.expression;
 			this.nodes = node.nodes;
-
+			this.nextSibling = node.nextSibling;
 			this.parent = parent;
 			this.components = null;
 		}

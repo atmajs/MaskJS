@@ -25,16 +25,16 @@
 		
 		while ( ++i < imax ){
 			
-			itemCtr = compo_init('each::item', i, controller);
-			
-			builder_build(nodes, array[i], ctx, container, itemCtr, childs);
+			itemCtr = createEachItem('each::item', i, nodes, controller);
+			builder_build(itemCtr, array[i], ctx, container, controller, childs);
 		}
 		
 	}
 	
-	function compo_init(name, index, parent) {
+	function createEachItem(name, index, nodes, parent) {
 		
 		return {
+			type: Dom.COMPONENT,
 			compoName: name,
 			attr: {},
 			
@@ -42,7 +42,8 @@
 				index: index
 			},
 			parent: parent,
-			nodes: null
+			nodes: nodes,
+			components: null
 		};
 	}
 	
