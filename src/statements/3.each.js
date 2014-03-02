@@ -1,26 +1,36 @@
 
 (function(){
 
-	custom_Statements['each'] = function(node, model, ctx, container, controller, childs){
+	custom_Statements['each'] = {
 		
-		var array = ExpressionUtil.eval(node.expression, model, ctx, controller);
+		render: function(node, model, ctx, container, controller, childs){
+			
+			var array = ExpressionUtil.eval(node.expression, model, ctx, controller);
+			
+			if (array == null) 
+				return;
+			
+			
+			build(node.nodes, array, ctx, container, controller, childs);
+		},
 		
-		if (array == null) 
-			return;
-		
+		build: build
+	};
+	
+	function build(template, array, ctx, container, controller, childs){
 		var imax = array.length,
 			i = -1,
-			nodes = node.nodes,
-			itemCtrller;
+			nodes = template,
+			itemCtr;
 		
 		while ( ++i < imax ){
 			
-			itemCtrller = compo_init('each::item', i, controller);
+			itemCtr = compo_init('each::item', i, controller);
 			
-			builder_build(nodes, array[i], ctx, container, itemCtrller, childs);
+			builder_build(nodes, array[i], ctx, container, itemCtr, childs);
 		}
 		
-	};
+	}
 	
 	function compo_init(name, index, parent) {
 		

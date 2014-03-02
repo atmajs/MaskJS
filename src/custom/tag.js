@@ -12,13 +12,14 @@
 	};
 	
 	
-	function wrapStatic(proto) {
+	function wrapStatic(proto, parent) {
 		function Ctor(node) {
 			this.tagName = node.tagName;
 			this.attr = node.attr;
 			this.expression = node.expression;
 			this.nodes = node.nodes;
-			
+
+			this.parent = parent;
 			this.components = null;
 		}
 		

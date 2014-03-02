@@ -96,20 +96,24 @@ var build_compo;
 	
 	
 	function build_Static(static_, node, model, ctx, container, controller, childs) {
-		
 		var Ctor = static_.__Ctor,
+			wasRendered = false,
 			elements,
-			compo;
+			compo,
 			
-		var clone = Ctor != null
-				? new Ctor(static_)
-				: static_
-				,
-			wasRendered = false
-			;
+			clone;
 		
-		for (var key in node) 
-			clone[key] = node[key];
+		if (Ctor) {
+			clone = new Ctor(node, controller);
+		}
+		else {
+			clone = static_;
+			
+			for (var key in node) 
+				clone[key] = node[key];
+			
+			clone.parent = controller;
+		}
 		
 		var attr = clone.attr;
 		if (attr != null) {
