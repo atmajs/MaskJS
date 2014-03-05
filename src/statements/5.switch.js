@@ -1,15 +1,25 @@
+(function(){
+	var eval_ = ExpressionUtil.eval;
 	
-custom_Statements['switch'] = {
-	render: function(node, model, ctx, container, controller, childs){
+	custom_Statements['switch'] = {
+		render: function(node, model, ctx, container, controller, childs){
+			
+			var value = eval_(node.expression, model, ctx, controller),
+				nodes = getNodes(value, node.nodes, model, ctx, controller);
+			if (nodes == null) 
+				return;
+			
+			
+			builder_build(nodes, model, ctx, container, controller, childs);
+		},
 		
-		var eval_ = ExpressionUtil.eval;
-		
-		var value = eval_(node.expression, model, ctx, controller),
-			nodes = node.nodes;
-		
-		
+		getNodes: getNodes
+	};	
+	
+	
+	function getNodes(value, nodes, model, ctx, controller) {
 		if (nodes == null) 
-			return;
+			return null;
 		
 		var imax = nodes.length,
 			i = -1,
@@ -45,9 +55,11 @@ custom_Statements['switch'] = {
 		if (case_ == null) 
 			case_ = default_;
 		
-		if (case_ == null) 
-			return;
-		
-		builder_build(case_.nodes, model, ctx, container, controller, childs);
+		return case_ != null
+			? case_.nodes
+			: null
+			;
 	}
-};
+	
+}());
+	

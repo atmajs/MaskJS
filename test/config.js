@@ -5,15 +5,15 @@ module.exports = {
 		 	exec: 'dom',
 		 	env: [
 				  'lib/mask.js',
-				  'test/utils.js'
+				  'test/dom/utils.js'
 			],
-		 	tests: 'test/**-dom.test'
+		 	tests: 'test/dom/**.test'
 		 },
 		 
 		 'mask.node': {
 			exec: 'node',
 			env: ['lib/mask.js::Mask'],
-			tests: 'test/**-node.test'
+			tests: 'test/node/**.test'
 		 }
 	}
 };

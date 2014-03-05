@@ -1,15 +1,15 @@
 
 	
 	
-var compile = mask.compile,
+var parse = mask.parse,
 	dom, node, attr;
 
 UTest({
 	'is a function': function() {
-		eq(typeof compile, 'function');
+		eq(typeof parse, 'function');
 	},
 	'tagName is div': function() {
-		eq(compile('div;').tagName, 'div');
+		eq(parse('div;').tagName, 'div');
 	},
 	'single variations': function() {
 		testSingle([ 
@@ -86,7 +86,7 @@ UTest({
 
 	},
 	'right attributes': function() {
-		var div = compile("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
+		var div = parse("div >div>div> div>	\n\t\t	div.class#id data-type = 'type'");
 		attr = getProperty(div, 'nodes.0.nodes.0.nodes.0.nodes.0.attr');
 
 		assert(attr['class'] == 'class', 'is not "class"');
@@ -110,7 +110,7 @@ UTest({
 
 	},
 	'right attributes (quoteless)': function(){
-		var attr = compile("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
+		var attr = parse("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
 
 		eq(attr.width, '10');
 		eq(attr.height, '20');
@@ -119,12 +119,12 @@ UTest({
 		eq(attr.otherkey, 'otherkey');
 		eq(attr.p, 'tryam');
 
-		attr = compile("div dr = drrrr sh = shrrrr").attr;
+		attr = parse("div dr = drrrr sh = shrrrr").attr;
 		eq(attr.dr, 'drrrr');
 		eq(attr.sh, 'shrrrr');
 	},
 	'has literal': function() {
-		node = compile("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
+		node = parse("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
 		node = getProperty(node, 'nodes.4');
 
 		assert(node.tagName == 'div', 'literals container is not "div"');
@@ -133,7 +133,7 @@ UTest({
 	},
 
 	'valid literals': function() {
-		dom = compile('"1"	"2"		"3"		"4"		"5"');
+		dom = parse('"1"	"2"		"3"		"4"		"5"');
 
 		var combined = '';
 		for (var i = 0, x, length = dom.nodes.length; i < length; i++) {
@@ -144,21 +144,28 @@ UTest({
 		eq(combined, '12345', 'Combined Text Failed:' + combined);
 
 
-		dom = compile("''| I'm unescaped block '' ... |''");
+		dom = parse("''| I'm unescaped block '' ... |''");
 		eq(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
 
-		dom = compile("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
+		dom = parse("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
 		eq(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
 	},
 
 	'valid model templating': function() {
-		dom = compile('div.~[class]#~[id   ] data-type="mytype: ~[  type ]" { "content" "other ~[ util:one]" }');
+		dom = parse('div.~[class]#~[id   ] data-type="mytype: ~[  type ]" { "content" "other ~[ util:one]" }');
 
 		var node = dom;
 		assert(typeof node.attr.class, 'function');
 		assert(typeof node.attr.id, 'function');
 		assert(typeof node.attr['data-type'], 'function');
 		assert(typeof node.nodes[0].content, 'function');
+	},
+	
+	'!valid nesting': function(){
+		dom = parse('div{span}');
+		eq_(dom.nodes.length, 1);
+		eq_(dom.nodes[0].tagName, 'span');
+		
 	}
 });
 
@@ -181,14 +188,14 @@ function testSingle(template, fn) {
 	var nodes;
 	for (var i = 0, x, length = template.length; i < length; i++) {
 
-		fn(compile(template[i]), i);
+		fn(parse(template[i]), i);
 	}
 }
 
 function testMultiple(template, fn) {
 	for (var i = 0, length = template.length; i < length; i++) {
 		
-		fn(compile(template[i]).nodes, i);
+		fn(parse(template[i]).nodes, i);
 	}
 }
 
