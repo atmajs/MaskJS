@@ -161,7 +161,7 @@ UTest({
 		assert(typeof node.nodes[0].content, 'function');
 	},
 	
-	'!valid nesting': function(){
+	'valid nesting': function(){
 		dom = parse('div{span}');
 		eq_(dom.nodes.length, 1);
 		eq_(dom.nodes[0].tagName, 'span');
