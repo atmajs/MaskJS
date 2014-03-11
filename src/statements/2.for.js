@@ -26,7 +26,11 @@
 		build: build,
 		parseFor: parse_For,
 		createForItem: createForItem,
-		getNodes: getNodes
+		getNodes: getNodes,
+		
+		getHandler: function(compoName, model){
+			return createHandler(compoName, model);
+		}
 	};
 	
 	function build(value, For, nodes, model, ctx, container, ctr, childs) {
@@ -117,12 +121,21 @@
 			controller: {
 				compoName: name,
 				scope: scope,
-				
-				renderEnd: function(elements){
-					this.elements = elements
-				}
+				renderEnd: handler_proto_renderEnd
 			}
 		};
+	}
+	
+	function createHandler(name, scope) {
+		return {
+			compoName: name,
+			scope: scope,
+			renderEnd: handler_proto_renderEnd
+		}
+	}
+	
+	function handler_proto_renderEnd(elements) {
+		this.elements = elements;
 	}
 
 	
