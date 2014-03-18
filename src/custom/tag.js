@@ -4,7 +4,6 @@
 		
 		if (Handler != null && typeof Handler === 'object') {
 			//> static
-			
 			Handler.__Ctor = wrapStatic(Handler);
 		}
 		
@@ -12,8 +11,8 @@
 	};
 	
 	
-	function wrapStatic(proto, parent) {
-		function Ctor(node) {
+	function wrapStatic(proto) {
+		function Ctor(node, parent) {
 			this.tagName = node.tagName;
 			this.attr = node.attr;
 			this.expression = node.expression;

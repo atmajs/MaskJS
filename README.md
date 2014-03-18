@@ -21,17 +21,17 @@ Resources:
 ----
 
 - [Syntax](#syntax)
-- [Components Lib](#componentslibrary)
-- [Bindings Lib](#bindingslibrary)
-- [jMask](#jmask)
+- [Components Lib](#components-library)
+- [Bindings Lib](#bindings-library)
+- [jMask](#jmask-library)
 - [jQuery](#jquery)
 - [Performance](#performance)
 - [Node.js](#nodejs)
-- [Browser Support](#browsersupport)
+- [Browser Support](#browser-support)
 
 ##### Syntax
 
-- Component and element based markup
+- Component- and element-based markup
 - Statements, Expressions, Interpolations
 - Performance. _No precompilation is required_
 - Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).

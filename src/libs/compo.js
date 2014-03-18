@@ -44,7 +44,7 @@ var Compo = exports.Compo = (function(mask){
 	}());
 	
 	// if DEBUG
-	if (document != null && domLib == null) {
+	if (global.document != null && domLib == null) {
 		
 		console.warn('jQuery-Zepto-Kimbo etc. was not loaded before MaskJS:Compo, please use Compo.config.setDOMLibrary to define dom engine');
 	}
@@ -957,7 +957,8 @@ var Compo = exports.Compo = (function(mask){
 			compo_detachChild,
 			compo_ensureTemplate,
 			compo_attachDisposer,
-			compo_createConstructor
+			compo_createConstructor,
+			compo_removeElements
 			;
 		
 		(function(){
@@ -1107,6 +1108,33 @@ var Compo = exports.Compo = (function(mask){
 						Ctor.call(this);
 				};
 			};
+			
+			compo_removeElements = function(compo) {
+				if (compo.$) {
+					compo.$.remove();
+					return;
+				}
+				
+				var els = compo.elements;
+				if (els) {
+					var i = -1,
+						imax = els.length;
+					while ( ++i < imax ) {
+						if (els[i].parentNode) 
+							els[i].parentNode.removeChild(els[i]);
+					}
+					return;
+				}
+				
+				var compos = compo.components;
+				if (compos) {
+					var i = -1,
+						imax = compos.length;
+					while ( ++i < imax ){
+						compo_removeElements(compos[i]);
+					}
+				}
+			}
 		
 			
 		}());
@@ -1629,9 +1657,7 @@ var Compo = exports.Compo = (function(mask){
 				return this;
 			},
 			remove: function() {
-				if (this.$ != null)
-					this.$.remove();
-				
+				compo_removeElements(this);
 				compo_detachChild(this);
 				compo_dispose(this);
 	
