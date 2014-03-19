@@ -110,6 +110,74 @@ UTest({
 					;
 				
 				done();
-			})
+			});
+	},
+	
+	'component': function(done) {
+		UTest
+			.server
+			.request('/examples/component.html')
+			.done(function(doc, win){
+				
+				var $dom = $(doc.body),
+					$status = $dom.find('.status')
+					;
+				
+				$dom
+					.find('input')
+					.eq_('val', 'Baz')
+					;
+				$dom
+					.find('textarea')
+					.eq_('val', 'Lorem')
+					;
+				$status
+					.eq_('length, 1')
+					.eq_('text', '')
+					;
+				
+				'> event'
+				$dom
+					.find('.test-event')
+					.click();
+				$status
+					.eq_('text', 'testEventHandled')
+					;
+					
+				'> signal'
+				$dom
+					.find('.test-signal')
+					.click();
+				$status
+					.eq_('text', 'testSlotHandled')
+					;
+				
+				'> app'
+				var profile = win.app.find(':user-profile');
+				notEq_(profile, null);
+				
+				'> dualbind:input'
+				'> dom change'
+				
+				// use jquery from iframe to locate events
+				win.$($dom[0])
+					.find('input')
+					.val('Qux')
+					.trigger('keyup')
+					;
+				$status
+					.eq_('text', 'usernameChanged Qux')
+					;
+				eq_(profile.model.username, 'Qux');
+				
+				'> model change'
+				profile.model.username = 'Bob';
+				$dom
+					.find('input')
+					.eq_('val', 'Bob')
+					;
+				
+				done();
+			});
 	}
 })

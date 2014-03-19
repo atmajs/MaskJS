@@ -37,9 +37,20 @@ var jmask = exports.jmask = (function(mask){
 	
 	// end:source ../src/util/object.js
 	// source ../src/util/array.js
-	function arr_each(array, fn) {
-		for (var i = 0, length = array.length; i < length; i++) {
-			fn(array[i], i);
+	function arr_each(any, fn) {
+		var isarray = any instanceof Array,
+			i = -1,
+			imax = isarray
+				? any.length
+				: 1
+			;
+		var x;
+		while ( ++i < imax ){
+			x = isarray
+				? any[i]
+				: any
+				;
+			fn(x, i);
 		}
 	}
 	
@@ -60,7 +71,11 @@ var jmask = exports.jmask = (function(mask){
 	}
 	
 	function arr_isArray(x) {
-		return x != null && typeof x === 'object' && x.length != null && typeof x.slice === 'function';
+		return x != null
+			&& typeof x === 'object'
+			&& x.length != null
+			&& typeof x.slice === 'function'
+			;
 	}
 	
 	var arr_unique = (function() {
@@ -335,144 +350,128 @@ var jmask = exports.jmask = (function(mask){
 	
 	// end:source ../src/util/selector.js
 	// source ../src/util/utils.js
+	var jmask_filter,
+		jmask_find,
+		jmask_clone,
+		jmask_deepest,
+		jmask_getText
+		;
 	
-	function jmask_filter(arr, matcher) {
-		if (matcher == null) {
-			return arr;
-		}
-	
-		var result = [];
-		for (var i = 0, x, length = arr.length; i < length; i++) {
-			x = arr[i];
-			if (selector_match(x, matcher)) {
-				result.push(x);
+	(function(){
+		
+		jmask_filter = function(mix, matcher) {
+			if (matcher == null) 
+				return mix;
+			
+			var result = [];
+			arr_each(mix, function(node) {
+				if (selector_match(node, matcher)) 
+					result.push(node);
+			});
+			return result;
+		};
+		
+		/**
+		 * - mix (Node | Array[Node])
+		 */
+		jmask_find = function(mix, matcher, output) {
+			if (mix == null) {
+				return output;
 			}
-		}
-		return result;
-	}
-	
-	/**
-	 * - mix (Node | Array[Node])
-	 */
-	function jmask_find(mix, matcher, output) {
-		if (mix == null) {
+		
+			if (output == null) {
+				output = [];
+			}
+		
+			if (mix instanceof Array){
+				for(var i = 0, length = mix.length; i < length; i++){
+					jmask_find(mix[i], matcher, output);
+				}
+				return output;
+			}
+		
+			if (selector_match(mix, matcher)){
+				output.push(mix);
+			}
+		
+			var next = mix[matcher.nextKey];
+		
+			if (next != null){
+				jmask_find(next, matcher, output);
+			}
+		
 			return output;
-		}
-	
-		if (output == null) {
-			output = [];
-		}
-	
-		if (mix instanceof Array){
-			for(var i = 0, length = mix.length; i < length; i++){
-				jmask_find(mix[i], matcher, output);
+		};
+		
+		jmask_clone = function(node, parent){
+		
+			var copy = {
+				'type': 1,
+				'tagName': 1,
+				'compoName': 1,
+				'controller': 1
+			};
+		
+			var clone = {
+				parent: parent
+			};
+		
+			for(var key in node){
+				if (copy[key] === 1){
+					clone[key] = node[key];
+				}
+			}
+		
+			if (node.attr){
+				clone.attr = util_extend({}, node.attr);
+			}
+		
+			var nodes = node.nodes;
+			if (nodes != null && nodes.length > 0){
+				clone.nodes = [];
+		
+				var isarray = nodes instanceof Array,
+					length = isarray === true ? nodes.length : 1,
+					i = 0;
+				for(; i< length; i++){
+					clone.nodes[i] = jmask_clone(isarray === true ? nodes[i] : nodes, clone);
+				}
+			}
+		
+			return clone;
+		};
+		
+		
+		jmask_deepest = function(node){
+			var current = node,
+				prev;
+			while(current != null){
+				prev = current;
+				current = current.nodes && current.nodes[0];
+			}
+			return prev;
+		};
+		
+		
+		jmask_getText = function(node, model, cntx, controller) {
+			if (Dom.TEXTNODE === node.type) {
+				if (typeof node.content === 'function') {
+					return node.content('node', model, cntx, null, controller);
+				}
+				return node.content;
+			}
+		
+			var output = '';
+			if (node.nodes != null) {
+				for(var i = 0, x, imax = node.nodes.length; i < imax; i++){
+					x = node.nodes[i];
+					output += jmask_getText(x, model, cntx, controller);
+				}
 			}
 			return output;
-		}
-	
-		if (selector_match(mix, matcher)){
-			output.push(mix);
-		}
-	
-		var next = mix[matcher.nextKey];
-	
-		if (next != null){
-			jmask_find(next, matcher, output);
-		}
-	
-		return output;
-	}
-	
-	function jmask_clone(node, parent){
-	
-		var copy = {
-			'type': 1,
-			'tagName': 1,
-			'compoName': 1,
-			'controller': 1
 		};
 	
-		var clone = {
-			parent: parent
-		};
-	
-		for(var key in node){
-			if (copy[key] === 1){
-				clone[key] = node[key];
-			}
-		}
-	
-		if (node.attr){
-			clone.attr = util_extend({}, node.attr);
-		}
-	
-		var nodes = node.nodes;
-		if (nodes != null && nodes.length > 0){
-			clone.nodes = [];
-	
-			var isarray = nodes instanceof Array,
-				length = isarray === true ? nodes.length : 1,
-				i = 0;
-			for(; i< length; i++){
-				clone.nodes[i] = jmask_clone(isarray === true ? nodes[i] : nodes, clone);
-			}
-		}
-	
-		return clone;
-	}
-	
-	
-	function jmask_deepest(node){
-		var current = node,
-			prev;
-		while(current != null){
-			prev = current;
-			current = current.nodes && current.nodes[0];
-		}
-		return prev;
-	}
-	
-	
-	function jmask_getText(node, model, cntx, controller) {
-		if (Dom.TEXTNODE === node.type) {
-			if (typeof node.content === 'function') {
-				return node.content('node', model, cntx, null, controller);
-			}
-			return node.content;
-		}
-	
-		var output = '';
-		if (node.nodes != null) {
-			for(var i = 0, x, imax = node.nodes.length; i < imax; i++){
-				x = node.nodes[i];
-				output += jmask_getText(x, model, cntx, controller);
-			}
-		}
-		return output;
-	}
-	
-	////////function jmask_initHandlers($$, parent){
-	////////	var instance;
-	////////
-	////////	for(var i = 0, x, length = $$.length; i < length; i++){
-	////////		x = $$[i];
-	////////		if (x.type === Dom.COMPONENT){
-	////////			if (typeof x.controller === 'function'){
-	////////				instance = new x.controller();
-	////////				instance.nodes = x.nodes;
-	////////				instance.attr = util_extend(instance.attr, x.attr);
-	////////				instance.compoName = x.compoName;
-	////////				instance.parent = parent;
-	////////
-	////////				x = $$[i] = instance;
-	////////			}
-	////////		}
-	////////		if (x.nodes != null){
-	////////			jmask_initHandlers(x.nodes, x);
-	////////		}
-	////////	}
-	////////}
-	
+	}());
 	
 	// end:source ../src/util/utils.js
 
