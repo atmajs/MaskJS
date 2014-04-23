@@ -28,6 +28,7 @@ Resources:
 - [Performance](#performance)
 - [Node.js](#nodejs)
 - [Browser Support](#browser-support)
+- [Plugins](#plugins)
 
 ##### Syntax
 
@@ -115,7 +116,7 @@ input type=number >
 		// e.g. send a signal when the value changes in the DOM
 		x-signal='dom: ageChanged'
 		;
-inpit type=number >
+input type=number >
 	:dualbind value='percent';
 
 // `:dualbind` component also supports some other properties
@@ -162,11 +163,17 @@ MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node)
 - HTML rendered output with the Bootstrapping on the client, so that the components are initialized, all events and bindings are attached
 - SEO
 
-###### Browser Support
+##### Browser Support
 
 - IE7+
 	
- 
+##### Plugins
+There are already many plugins, components and useful utilities. Some of them worth checking out:
+- [Formatter Util](https://github.com/atmajs/util-format)
+- [Localization](https://github.com/atmajs/i18n)
+- [Animations](https://github.com/atmajs/mask-animation)
+- [Components](https://github.com/atmajs/Compos)
+
 
 
 ###Changelog
