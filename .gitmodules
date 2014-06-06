@@ -4,3 +4,6 @@
 [submodule "mask-compo"]
 	path = mask-compo
 	url = https://github.com/atmajs/mask-compo.git
+[submodule "mask-j"]
+	path = mask-j
+	url = https://github.com/atmajs/mask-j.git
