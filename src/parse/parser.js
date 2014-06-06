@@ -242,26 +242,14 @@ var parser_parse,
 						next = new Node(token, current);
 						
 						current.appendChild(next);
-						//////if (current.nodes == null) {
-						//////	current.nodes = [next];
-						//////} else {
-						//////	current.nodes.push(next);
-						//////}
-
 						current = next;
 						state = state_attr;
 
 					} else if (last === state_literal) {
 
 						next = new TextNode(token, current);
-						
 						current.appendChild(next);
-						//if (current.nodes == null) {
-						//	current.nodes = [next];
-						//} else {
-						//	current.nodes.push(next);
-						//}
-
+						
 						if (current.__single === true) {
 							do {
 								current = current.parent;
@@ -283,7 +271,6 @@ var parser_parse,
 							current.attr[key] = key;
 						}
 					}
-
 					break;
 				}
 
@@ -398,7 +385,7 @@ var parser_parse,
 						continue;
 					}
 					
-					//if (c === 58 || c === 36 || c === 64 || c === 37) {
+					//-if (c === 58 || c === 36 || c === 64 || c === 37) {
 					//	// : /*$ @ %*/
 					//	next_Type = Dom.COMPONENT;
 					//}

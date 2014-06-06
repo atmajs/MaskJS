@@ -30,7 +30,7 @@ Template.prototype = {
 			c;
 		do {
 			c = template.charCodeAt(++index);
-			// if c == # && next() == { - continue */
+			/* if c == # && next() == { - continue */
 			if (c === 35 && template.charCodeAt(index + 1) === 123) {
 				// goto end of template declaration
 				this.index = index;
