@@ -1,0 +1,3 @@
+[submodule "mask-binding"]
+	path = mask-binding
+	url = https://github.com/atmajs/mask-binding.git

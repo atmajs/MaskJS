@@ -25,7 +25,7 @@
         "atma": ">0.9.26"
     },
     "scripts": {
-        "test": "node_modules/.bin/atma test"
+        "test": "atma test"
     },
     "keywords": [],
     "engines": {
