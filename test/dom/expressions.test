@@ -1,6 +1,7 @@
 var Expression = mask.Utils.Expression,
 	$eval = Expression.eval,
 	$refs = Expression.varRefs,
+	$parse = Expression.parse,
 	template, node, attr;
 
 
@@ -21,6 +22,9 @@ function expression(expr, result, model, ctx, controller) {
 
 
 UTest({
+	$config: {
+		breakOnError: true
+	},
 	'concat': function() {
 		expression([ //
 		'5+"hello"', //
@@ -159,7 +163,12 @@ UTest({
 	},
 	
 	'OR': function(){
-		expression(['a || b', '."some-key" || b'], '1', {
+		expression([
+			'a || b',
+			'."some-key" || b',
+			'false || (b && a)',
+			'true && 1'
+		], '1', {
 			a: 1,
 			b: 2,
 			'some-key': 1
@@ -167,9 +176,18 @@ UTest({
 	},
 	
 	'extractVars': function(){
-		eq($refs('x'),'x');
-		deepEq($refs('x + fn(a.b.c)'),['x','a.b.c']);
-		deepEq($refs('(var * var2 / (1 - same)) + object.fn(a.b.c)'),['var','var2', 'same','a.b.c','object']);
+		eq_($refs('x'),'x');
+		deepEq_($refs('x + fn(a.b.c)'),['x','a.b.c']);
+		
+		deepEq_($refs('(var * var2 / (1 - same)) + object.fn(a.b.c)'),
+			[
+				'var',
+				'var2',
+				'same',
+				'a.b.c',
+				'object'
+			]
+		);
 		
 		
 		var obj = {
@@ -184,7 +202,7 @@ UTest({
 		obj.prop = obj;
 		
 		refs = $refs('fn().model');
-		eq(refs.ref, 'model');
+		eq_(refs.ref, 'model');
 		deepEq($eval(refs.accessor, obj), {model: 'yeap'});
 		
 		refs = $refs('x + prop.fn().model');
@@ -195,11 +213,96 @@ UTest({
 		deepEq($eval(refs[2].accessor, obj), {model: 'yeap'});
 	},
 	
+	'accessors': function(){
+		expression([
+			'(a).foo.length',
+			'a.foo.length',
+			'a.foo["0"]',
+			'a.foo[0]',
+			'a["foo"].length',
+			'a[key].length',
+			'a["f" + "o" + \'o\'].length',
+			'a[key][0]',
+			"a['foo'][1][2]",
+		], 2, {
+			a: { foo: [2,'st2ring'] },
+			key: 'foo'
+		});
+	},
+	
+	'array': function(){
+		deepEq_($eval('[("b" + "a" + "z")]'), [
+			'baz'
+		]);
+		
+		deepEq_($eval('[1,2,"4", true, 5.5, [1]]'), [
+			1, 2, '4', true, 5.5, [1]
+		]);
+		
+		deepEq_($eval('[[foo[a], foo.prop[0]], ("ba" + "z")]', {
+			foo: { prop: 'x-foo' },
+			a: 'prop'
+		}), [
+			['x-foo', 'x'], ['baz']
+		]);
+	},
+	
+	'early exit': (function(){
+		function check(data){
+			var str = data.str,
+				model = data.model,
+				expect = data.expect,
+				rest = data.rest;
+			var tuple = $parse(str, true);
+			deepEq_($eval(tuple[0], model), expect);
+			eq_(str.substring(tuple[1]), rest);
+		}
+		return {
+			'array': function(){
+				check({
+					str: '[1] baz',
+					expect: [ 1 ],
+					rest: 'baz'
+				});
+			},
+			'object': function(){
+				check({
+					str: '{ some: prop }; Foo',
+					model: { prop: 10 },
+					expect: { some: 10 },
+					rest: '; Foo'
+				});
+			},
+			'statement': function(){
+				check({
+					str: 'a + 10 - 5 Hello',
+					model: {
+						a: 5
+					},
+					expect: 10,
+					rest: 'Hello'
+				});
+			}
+		}
+	}()),
+	
+	'object': function(){
+		deepEq_($eval("{}"), {});
+		deepEq_($eval("{ foo: 'baz'}"), { foo: 'baz' });
+		deepEq_($eval("{ foo: prop, 'val': 5.5, }", { prop: 'baz'}),
+			{
+				foo: 'baz',
+				val: 5.5
+			}
+		);
+	},
+	
 	'predefined accessors': function(){
-		expression([ //
+		expression([ 
 		'$c.three * 3 - 5',
 		'$ctx.number.two - two + 4',
-		'0 + $a.four - 0'
+		'0 + $a.four - 0',
+		'$c.attr.four + two - $c.three + 1'
 		], 4, {
 			two: 2
 		}, {

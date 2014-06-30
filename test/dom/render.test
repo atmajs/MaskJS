@@ -70,5 +70,10 @@ UTest({
 		});
 		
 		eq(dom.textContent, 'a sub!');
+	},
+	'expressions': function(){
+		var dom = render('"~[a] ~[: b[\'sub\'] ]"', {a: 'A', b: { sub: 'Sub!'}});
+		
+		eq_(dom.textContent, 'A Sub!');
 	}
 })

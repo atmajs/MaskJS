@@ -11,9 +11,14 @@ var cursor_bracketsEnd,
 		for( ; index < length; index++){
 			c = template.charCodeAt(index);
 			
-			if (c === 34) {
-				// "
-				index = cursor_quotesEnd(template, index + 1, length, '"');
+			if (c === 34 || c === 39) {
+				// "|'
+				index = cursor_quotesEnd(
+					template
+					, index + 1
+					, length
+					, c === 34 ? '"' : "'"
+				);
 				continue;
 			}
 			

@@ -10,19 +10,26 @@ var ast_handlePrecedence,
 		
 		var type = current.type;
 	
-		if (type_Body === type){
-			current.body.push(next);
-			return next;
+		switch(type) {
+			case type_Body:
+				current.body.push(next);
+				return next;
+			
+			case type_Statement:
+				if (next.type === type_Accessor || next.type === type_AccessorExpr) {
+					return (current.next = next)
+				}
+				/* fall through */
+			case type_UnaryPrefix:
+				return (current.body = next);
+			
+			case type_SymbolRef:
+			case type_FunctionRef:
+			case type_Accessor:
+			case type_AccessorExpr:
+				return (current.next = next);
 		}
-	
-		if (type_Statement === type || type_UnaryPrefix === type){
-			return current.body = next;
-		}
-	
-		if (type_SymbolRef === type || type_FunctionRef === type){
-			return current.next = next;
-		}
-	
+		
 		console.error('Unsupported - append:', current, next);
 		return next;
 	};

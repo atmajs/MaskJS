@@ -16,10 +16,9 @@ function expression_evaluate(mix, model, ctx, controller) {
 	}else{
 		ast = mix;
 	}
-
 	var type = ast.type,
 		i, x, length;
-
+	
 	if (type_Body === type) {
 		var value, prev;
 
@@ -103,14 +102,41 @@ function expression_evaluate(mix, model, ctx, controller) {
 	}
 
 	if (type_Statement === type) {
-		return expression_evaluate(ast.body, model, ctx, controller);
+		result = expression_evaluate(ast.body, model, ctx, controller);
+		if (ast.next == null) 
+			return result;
+		
+		//debugger;
+		return util_resolveRef(ast.next, result);
 	}
 
 	if (type_Value === type) {
 		return ast.body;
 	}
+	if (type_Array === type) {
+		var body = ast.body.body,
+			imax = body.length,
+			i = -1;
+		
+		result = new Array(imax);
+		while( ++i < imax ){
+			result[i] = expression_evaluate(body[i], model, ctx, controller);
+		}
+		return result;
+	}
+	if (type_Object === type) {
+		result = {};
+		var props = ast.props;
+		for(var key in props){
+			result[key] = expression_evaluate(props[key], model, ctx, controller);
+		}
+		return result;
+	}
 
-	if (type_SymbolRef === type || type_FunctionRef === type) {
+	if (type_SymbolRef 		=== type ||
+		type_FunctionRef 	=== type ||
+		type_AccessorExpr 	=== type ||
+		type_Accessor 		=== type) {
 		return util_resolveRef(ast, model, ctx, controller);
 	}
 	

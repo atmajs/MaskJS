@@ -1,5 +1,5 @@
 UTest({
-	'syntax': function(done){
+	'!syntax': function(done){
 		
 		UTest
 			.server

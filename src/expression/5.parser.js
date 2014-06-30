@@ -1,5 +1,10 @@
-function expression_parse(expr) {
-
+/*
+ * earlyExit - only first statement/expression is consumed
+ */
+function expression_parse(expr, earlyExit) {
+	if (earlyExit == null) 
+		earlyExit = false;
+	
 	template = expr;
 	index = 0;
 	length = expr.length;
@@ -17,16 +22,28 @@ function expression_parse(expr) {
 			continue;
 		}
 
-		if (index >= length) {
+		if (index >= length) 
 			break;
-		}
-
+		
 		directive = parser_getDirective(c);
 
 		if (directive == null && index < length) {
 			break;
 		}
-
+		if (earlyExit === true && current.parent != null) {
+			var p = current.parent;
+			if (p.type === type_Body && p.parent == null) {
+				if (directive === go_ref || directive === punc_Semicolon) {
+					return [ast, index];
+				}
+				
+			}
+		}
+		
+		if (directive === punc_Semicolon) {
+			break;
+		}
+		
 		switch (directive) {
 			case punc_ParantheseOpen:
 				current = ast_append(current, new Ast_Statement(current));
@@ -34,8 +51,6 @@ function expression_parse(expr) {
 
 				index++;
 				continue;
-
-
 			case punc_ParantheseClose:
 				var closest = type_Body;
 				if (state === state_arguments) {
@@ -55,23 +70,39 @@ function expression_parse(expr) {
 					_throw('OutOfAst Exception - body closed');
 					break outer;
 				}
-
 				index++;
 				continue;
-
-
+			
+			case punc_BraceOpen:
+				current = ast_append(current, new Ast_Object(current));
+				directive = go_objectKey;
+				index++;
+				break;
+			case punc_BraceClose:
+				while (current != null && current.type !== type_Object){
+					current = current.parent;
+				}
+				index++;
+				continue;
 			case punc_Comma:
 				if (state !== state_arguments) {
 					
 					state = state_body;
 					do {
 						current = current.parent;
-					} while (current != null && current.type !== type_Body);
+					} while (current != null &&
+						current.type !== type_Body &&
+						current.type !== type_Object
+					);
 					index++;
-					
 					if (current == null) {
 						_throw('Unexpected punctuation, comma');
 						break outer;	
+					}
+					
+					if (current.type === type_Object) {
+						directive = go_objectKey;
+						break;
 					}
 					
 					continue;
@@ -93,14 +124,11 @@ function expression_parse(expr) {
 			case punc_Question:
 				ast = new Ast_TernaryStatement(ast);
 				current = ast.case1;
-
 				index++;
 				continue;
-
-
+			
 			case punc_Colon:
 				current = ast.case2;
-
 				index++;
 				continue;
 
@@ -110,9 +138,39 @@ function expression_parse(expr) {
 				if (c >= 48 && c <= 57) {
 					directive = go_number;
 				} else {
-					directive = go_ref;
+					directive = current.type === type_Body
+						? go_ref
+						: go_acs
+						;
 					index++;
 				}
+				break;
+			case punc_BracketOpen:
+				if (current.type === type_SymbolRef ||
+					current.type === type_AccessorExpr ||
+					current.type === type_Accessor
+					) {
+					current = ast_append(current, new Ast_AccessorExpr(current))
+					current = current.getBody();
+					index++;
+					continue;
+				}
+				current = ast_append(current, new Ast_Array(current));
+				current = current.body;
+				index++;
+				continue;
+				
+				_throw('Unexpected `[`');
+				return null;
+			case punc_BracketClose:
+				do {
+					current = current.parent;
+				} while (current != null &&
+					current.type !== type_AccessorExpr &&
+					current.type !== type_Array
+				);
+				index++;
+				continue;
 		}
 
 
@@ -188,23 +246,25 @@ function expression_parse(expr) {
 				continue;
 
 			case go_ref:
+			case go_acs:
 				var ref = parser_getRef();
 				
-				if (ref === 'null') 
-					ref = null;
-				
-				if (ref === 'false') 
-					ref = false;
-				
-				if (ref === 'true') 
-					ref = true;
+				if (directive === go_ref) {
+						
+					if (ref === 'null') 
+						ref = null;
 					
-				
-				if (typeof ref !== 'string') {
-					ast_append(current, new Ast_Value(ref));
-					continue;
+					if (ref === 'false') 
+						ref = false;
+					
+					if (ref === 'true') 
+						ref = true;
+						
+					if (typeof ref !== 'string') {
+						ast_append(current, new Ast_Value(ref));
+						continue;
+					}
 				}
-
 				while (index < length) {
 					c = template.charCodeAt(index);
 					if (c < 33) {
@@ -226,9 +286,27 @@ function expression_parse(expr) {
 					current = fn.newArgument();
 					continue;
 				}
-
-				current = ast_append(current, new Ast_SymbolRef(current, ref));
+				
+				var Ctor = directive === go_ref
+					? Ast_SymbolRef
+					: Ast_Accessor
+				current = ast_append(current, new Ctor(current, ref));
 				break;
+			case go_objectKey:
+				if (parser_skipWhitespace() === 125)
+					continue;
+				
+				
+				var key = parser_getRef();
+				
+				if (parser_skipWhitespace() !== 58) {
+					//:
+					return _throw('Object parser, semicolon expeted')
+				}
+				index++;
+				current = current.nextProp(key);
+				directive = go_ref;
+				continue;
 		}
 	}
 

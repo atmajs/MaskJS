@@ -43,23 +43,28 @@ var parser_parse,
 		if (index === -1) 
 			return template;
 		
-		var array = [],
+		var length = template.length,
+			array = [],
 			lastIndex = 0,
 			i = 0,
 			end;
 
 
 		while (true) {
-			end = template.indexOf(interp_CLOSE, index + 2);
+			end = cursor_bracketsEnd(
+				template
+				, index + 2
+				, length
+				, interp_code_OPEN
+				, interp_code_CLOSE
+			);
 			if (end === -1) 
 				break;
 			
-
 			array[i++] = lastIndex === index
 				? ''
 				: template.substring(lastIndex, index);
 			array[i++] = template.substring(index + 2, end);
-
 
 			lastIndex = index = end + 1;
 
@@ -69,12 +74,11 @@ var parser_parse,
 				
 				index++;
 			}
-
 			if (index === -1) 
 				break;
 		}
 
-		if (lastIndex < template.length) 
+		if (lastIndex < length) 
 			array[i] = template.substring(lastIndex);
 		
 

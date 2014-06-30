@@ -23,29 +23,39 @@ var refs_extractVars = (function() {
 	
 	function _extractVars(expr) {
 
-		if (expr == null) {
+		if (expr == null) 
 			return null;
-		}
-
-		var refs, x;
-
-		if (type_Body === expr.type) {
-
-			for (var i = 0, length = expr.body.length; i < length; i++) {
-				x = _extractVars(expr.body[i]);
+		
+		var exprType = expr.type,
+			refs, x;
+		if (type_Body === exprType) {
+			
+			var body = expr.body,
+				imax = body.length,
+				i = -1;
+			while ( ++i < imax ){
+				x = _extractVars(body[i]);
 				refs = _append(refs, x);
 			}
 		}
 
-		if (type_SymbolRef === expr.type) {
+		if (type_SymbolRef === exprType ||
+			type_Accessor === exprType ||
+			type_AccessorExpr === exprType) {
+			
 			var path = expr.body,
-				next = expr.next;
+				next = expr.next,
+				nextType;
 
 			while (next != null) {
-				if (type_FunctionRef === next.type) {
+				nextType = next.type;
+				if (type_FunctionRef === nextType) {
 					return _extractVars(next);
 				}
-				if (type_SymbolRef !== next.type) {
+				if ((type_SymbolRef !== nextType) &&
+					(type_Accessor !== nextType) &&
+					(type_AccessorExpr !== nextType)) {
+					
 					console.error('Ast Exception: next should be a symbol/function ref');
 					return null;
 				}
@@ -59,7 +69,7 @@ var refs_extractVars = (function() {
 		}
 
 
-		switch (expr.type) {
+		switch (exprType) {
 			case type_Statement:
 			case type_UnaryPrefix:
 			case type_Ternary:
@@ -69,7 +79,7 @@ var refs_extractVars = (function() {
 		}
 		
 		// get also from case1 and case2
-		if (type_Ternary === expr.type) {
+		if (type_Ternary === exprType) {
 			x = _extractVars(ast.case1);
 			refs = _append(refs, x);
 
@@ -78,9 +88,12 @@ var refs_extractVars = (function() {
 		}
 
 
-		if (type_FunctionRef === expr.type) {
-			for(var i = 0, length = expr.arguments.length; i < length; i++){
-				x = _extractVars(expr.arguments[i]);
+		if (type_FunctionRef === exprType) {
+			var args = expr.arguments,
+				imax = args.length,
+				i = -1;
+			while ( ++i < imax ){
+				x = _extractVars(args[i]);
 				refs = _append(refs, x);
 			}
 			
@@ -89,6 +102,8 @@ var refs_extractVars = (function() {
 			outer: while ((parent = parent.parent)) {
 				switch (parent.type) {
 					case type_SymbolRef:
+					case type_Accessor:
+					case type_AccessorExpr:
 						x = parent.body + (x == null ? '' : '.' + x);
 						break;
 					case type_Body:

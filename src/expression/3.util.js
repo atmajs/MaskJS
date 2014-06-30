@@ -8,7 +8,6 @@ var _throw,
 	util_resolveRef = function(astRef, model, ctx, controller) {
 		var current = astRef,
 			key = astRef.body,
-			
 			object,
 			value,
 			args,
@@ -119,10 +118,13 @@ var _throw,
 				
 	
 				current = current.next;
-				key = current.body;
+				key = current.type === type_AccessorExpr
+					? expression_evaluate(current.body, model, ctx, controller)
+					: current.body
+					;
+				
 				object = value;
 				value = value[key];
-	
 				
 				if (value == null) 
 					break;

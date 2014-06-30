@@ -23,29 +23,39 @@ var op_Minus = '-', //1,
 	op_LogicalLessEqual = '<=', //15,
 	op_Member = '.', // 16
 
-	punc_ParantheseOpen = 20,
-	punc_ParantheseClose = 21,
-	punc_Comma = 22,
-	punc_Dot = 23,
-	punc_Question = 24,
-	punc_Colon = 25,
+	punc_ParantheseOpen 	= 20,
+	punc_ParantheseClose 	= 21,
+	punc_BracketOpen 		= 22,
+	punc_BracketClose 		= 23,
+	punc_BraceOpen 			= 24,
+	punc_BraceClose 		= 25,
+	punc_Comma 				= 26,
+	punc_Dot 				= 27,
+	punc_Question 			= 28,
+	punc_Colon 				= 29,
+	punc_Semicolon 			= 30,
 
-	go_ref = 30,
-	go_string = 31,
-	go_number = 32;
+	go_ref = 31,
+	go_acs = 32,
+	go_string = 33,
+	go_number = 34,
+	go_objectKey = 35;
 
 var type_Body = 1,
 	type_Statement = 2,
 	type_SymbolRef = 3,
 	type_FunctionRef = 4,
 	type_Accessor = 5,
-	type_Value = 6,
+	type_AccessorExpr = 6,
+	type_Value = 7,
 
 
-	type_Number = 7,
-	type_String = 8,
-	type_UnaryPrefix = 9,
-	type_Ternary = 10;
+	type_Number = 8,
+	type_String = 9,
+	type_Object = 10,
+	type_Array = 11,
+	type_UnaryPrefix = 12,
+	type_Ternary = 13;
 
 var state_body = 1,
 	state_arguments = 2;
