@@ -4,7 +4,7 @@ module.exports = {
 		'mask.dom': {
 			exec: 'dom',
 			env: [
-				'lib/mask.js',
+				'lib/mask.js::mask',
 				'test/dom/utils.js'
 			],
 			tests: 'test/dom/**.test'

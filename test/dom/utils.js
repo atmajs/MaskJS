@@ -1,3 +1,7 @@
 function $render() {
-	return $(mask.render.apply(null, arguments));
+	var dom = mask.render.apply(null, arguments);
+	if (dom.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+		return $(dom.childNodes);
+	}
+	return $(dom);
 }

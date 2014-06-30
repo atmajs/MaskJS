@@ -23,7 +23,8 @@ var parser_parse,
 
 		_serialize;
 
-	// import cursor.js
+	// import ./cursor.js
+	// import ./parsers/var.js
 
 	function ensureTemplateFunction(template) {
 		var index = -1;
@@ -242,6 +243,15 @@ var parser_parse,
 						//next = custom_Tags[token] != null
 						//	? new Component(token, current, custom_Tags[token])
 						//	: new Node(token, current);
+						
+						if ('var' === token) {
+							var tuple = parser_var(template, index, length, current);
+							current.appendChild(tuple[0]);
+							index = tuple[1];
+							state = go_tag;
+							token = null;
+							continue;
+						}
 						
 						next = new Node(token, current);
 						

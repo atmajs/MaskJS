@@ -179,7 +179,22 @@ There are already many plugins, components and useful utilities. Some of them wo
 ###Changelog
 ------------
 
-
+- 0.9.1
+	- Expressions:
+		- Accessors with Bracket notation: ```~[foo[bar]]```,```~[foo["key"]]```
+	- VarStatement:
+	
+		```sass
+			ul {
+				var list = ['foo', 'bar'];
+				for(key of list){
+					li > '~[key]'
+				}
+			}
+			/* renders to:
+			 * <ul><li>foo</li><li>bar</li></ul>
+			 */
+		```
 - 0.9.0 
 	- Syntax: (statements)
 		- ```if (expression) { ... } else if (expr) {} else {} ```

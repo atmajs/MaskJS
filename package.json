@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.8.12",
+    "version": "0.9.1",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -20,9 +20,9 @@
     "licenses": [
         "MIT"
     ],
-    
     "devDependencies": {
-        "atma": ">0.9.26"
+        "atma": ">0.9.26",
+        "atma-loader-traceur": ">0.0.0"
     },
     "scripts": {
         "test": "atma test"
@@ -30,5 +30,18 @@
     "keywords": [],
     "engines": {
         "node": "~0.8.9"
+    },
+    "atma": {
+        "plugins": [
+            "atma-loader-traceur"
+        ],
+        "settings": {
+            "atma-loader-traceur": {
+                "extensions": [
+                    "es6",
+                    "test"
+                ]
+            }
+        }
     }
 }

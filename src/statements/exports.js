@@ -5,3 +5,4 @@
 // import 5.switch.js
 // import 6.include.js
 // import 7.import.js
+// import 8.var.js

@@ -6,10 +6,10 @@ var parse = mask.parse,
 
 UTest({
 	'is a function': function() {
-		eq(typeof parse, 'function');
+		eq_(typeof parse, 'function');
 	},
 	'tagName is div': function() {
-		eq(parse('div;').tagName, 'div');
+		eq_(parse('div;').tagName, 'div');
 	},
 	'single variations': function() {
 		testSingle([ 
@@ -18,7 +18,7 @@ UTest({
 			'\r.myklass;;;',
 			'#baz class=myklass'
 		], function(node) {
-			eq(node.attr.class, 'myklass', '!= myklass');
+			eq_(node.attr.class, 'myklass', '!= myklass');
 		});
 
 
@@ -43,8 +43,8 @@ UTest({
 		], function(node) {
 			var nodes = node.nodes;
 
-			eq(nodes.length, 1, 'shoud have 1 child');
-			eq(nodes[0].content, 'node', 'content shoud be "node"');
+			eq_(nodes.length, 1, 'shoud have 1 child');
+			eq_(nodes[0].content, 'node', 'content shoud be "node"');
 		});
 
 
@@ -61,17 +61,17 @@ UTest({
 
 			var nodes = node.nodes;
 
-			eq(nodes.length, 1, 'shoud have 1 sub-child');
-			eq(nodes[0].attr.id, 'myid', 'sub-child shoud have id myid');
+			eq_(nodes.length, 1, 'shoud have 1 sub-child');
+			eq_(nodes[0].attr.id, 'myid', 'sub-child shoud have id myid');
 
 			nodes = nodes[0].nodes;
-			eq(nodes.length, 1, 'shoud have 1 sub-sub-child');
-			eq(nodes[0].attr.class, 'my_-class', 'klass shoud be my_-class');
+			eq_(nodes.length, 1, 'shoud have 1 sub-sub-child');
+			eq_(nodes[0].attr.class, 'my_-class', 'klass shoud be my_-class');
 
 			nodes = nodes[0].nodes;
-			eq(nodes.length, 1, 'shoud have 1 sub-sub-sub-child');
+			eq_(nodes.length, 1, 'shoud have 1 sub-sub-sub-child');
 
-			eq(nodes[0].content, 'node', 'content shoud be "node"');
+			eq_(nodes[0].content, 'node', 'content shoud be "node"');
 
 		});
 
@@ -81,7 +81,7 @@ UTest({
 			'div; div {};', 
 			' div > div > div > div; span > span > span;'
 		], function(nodes, index) {
-			eq(nodes.length, 2, 'should have 2 childs - template nuber:', index)
+			eq_(nodes.length, 2, 'should have 2 childs - template nuber:', index)
 		});
 
 	},
@@ -112,16 +112,16 @@ UTest({
 	'right attributes (quoteless)': function(){
 		var attr = parse("div width=10 height=20 id=30 key otherkey p = tryam;").attr;
 
-		eq(attr.width, '10');
-		eq(attr.height, '20');
-		eq(attr.id, '30');
-		eq(attr.key, 'key');
-		eq(attr.otherkey, 'otherkey');
-		eq(attr.p, 'tryam');
+		eq_(attr.width, '10');
+		eq_(attr.height, '20');
+		eq_(attr.id, '30');
+		eq_(attr.key, 'key');
+		eq_(attr.otherkey, 'otherkey');
+		eq_(attr.p, 'tryam');
 
 		attr = parse("div dr = drrrr sh = shrrrr").attr;
-		eq(attr.dr, 'drrrr');
-		eq(attr.sh, 'shrrrr');
+		eq_(attr.dr, 'drrrr');
+		eq_(attr.sh, 'shrrrr');
 	},
 	'has literal': function() {
 		node = parse("someCusomTag { span; } customTag; span; someCusomTag{} div > 'mycontent'");
@@ -141,14 +141,14 @@ UTest({
 			combined += x.content;
 		}
 
-		eq(combined, '12345', 'Combined Text Failed:' + combined);
+		eq_(combined, '12345', 'Combined Text Failed:' + combined);
 
 
 		dom = parse("''| I'm unescaped block '' ... |''");
-		eq(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
+		eq_(dom.content, " I'm unescaped block '' ... ", 'Unesacped block failed');
 
 		dom = parse("div > \"\"| I\"m unescaped block \"\" ... |\"\"");
-		eq(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
+		eq_(dom.nodes[0].content, ' I"m unescaped block "" ... ', 'Unesacped block failed');
 	},
 
 	'valid model templating': function() {
