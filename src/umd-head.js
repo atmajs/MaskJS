@@ -19,9 +19,8 @@
     
 
     function construct(){
-
         return factory(_global, _exports, _document);
-    };
+    }
 
     
     if (typeof define === 'function' && define.amd) {

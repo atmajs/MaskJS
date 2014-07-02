@@ -1,4 +1,5 @@
-var arr_pushMany;
+var arr_pushMany,
+	arr_remove;
 
 (function(){
 	
@@ -14,5 +15,16 @@ var arr_pushMany;
 			arr[il + j] = arrSource[j];
 		}
 	};
-	
+	arr_remove = function(arr, item){
+		if (arr == null) 
+			return;
+		var imax = arr.length,
+			i = -1;
+		while( ++i < imax ){
+			if (arr[i] === item) {
+				arr.splice(i, 1);
+				return;
+			}
+		}
+	};
 }());

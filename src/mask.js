@@ -259,16 +259,12 @@ var cache = {},
 		plugin: function(source){
 			eval(source);
 		},
-		on: function(event, fn){
-			if (listeners == null){
-				listeners = {};
-			}
-
-			(listeners[event] || (listeners[event] = [])).push(fn);
-		},
+		
+		on: listeners_on,
+		off: listeners_off,
 
 		/*
-		 *	Stub for reload.js, which will be used by includejs.autoreload
+		 *	Stub for the reload.js, which will be used by includejs.autoreload
 		 */
 		delegateReload: function(){},
 

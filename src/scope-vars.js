@@ -7,7 +7,6 @@ var regexpWhitespace = /\s/g,
 		';': /\\>/g
 	},
 	hasOwnProp = {}.hasOwnProperty,
-	listeners = null,
 	
 	__cfg = {
 		

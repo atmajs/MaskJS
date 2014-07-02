@@ -1,9 +1,16 @@
-var _throw,
-
-	util_resolveRef
-	;
+var util_resolveRef,
+	util_throw;
 
 (function(){
+	
+	util_throw = function(msg, token){
+		return throw_parserError(msg
+			, template
+			, index
+			, token
+			, 'expr'
+		);
+	};
 	
 	util_resolveRef = function(astRef, model, ctx, controller) {
 		var current = astRef,
@@ -134,17 +141,14 @@ var _throw,
 	
 		if (value == null){
 			if (current == null || current.next != null){
-				_throw('Mask - Accessor error - ', key);
+				// notify that value is not in model, ctx, controller;
+				log_warn('<mask:expression> Accessor error:', key);
 			}
 		}
 	
 		return value;
 	};
 
-	
-	_throw = function(message, token) {
-		console.error('Expression parser:', message, token, template.substring(index));
-	};
 	
 	
 }());

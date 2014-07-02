@@ -1,18 +1,3 @@
-function listeners_emit(name) {
-	if (listeners == null || listeners[name] == null) 
-		return;
-	
-	var fns = listeners.compoCreated,
-		imax = fns.length,
-		i = -1,
-		args = _Array_slice.call(arguments, 1)
-		;
-		
-	while ( ++i < imax) 
-		fns[i].apply(null, args);
-	
-}
-
 function build_resumeDelegate(controller, model, cntx, container, childs){
 	var anchor = container.appendChild(document.createComment(''));
 	
@@ -20,8 +5,6 @@ function build_resumeDelegate(controller, model, cntx, container, childs){
 		return build_resumeController(controller, model, cntx, anchor, childs);
 	};
 }
-
-
 function build_resumeController(controller, model, cntx, anchor, childs) {
 	
 	

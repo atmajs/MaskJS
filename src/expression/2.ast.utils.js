@@ -5,12 +5,7 @@ var ast_handlePrecedence,
 	
 		
 	ast_append = function(current, next) {
-		if (null == current) 
-			console.error('<Mask:Ast> Current undefined', next);
-		
-		var type = current.type;
-	
-		switch(type) {
+		switch(current.type) {
 			case type_Body:
 				current.body.push(next);
 				return next;
@@ -30,8 +25,7 @@ var ast_handlePrecedence,
 				return (current.next = next);
 		}
 		
-		console.error('Unsupported - append:', current, next);
-		return next;
+		return util_throw('Invalid expression');
 	};
 	
 	

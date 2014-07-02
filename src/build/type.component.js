@@ -59,11 +59,16 @@ var build_compo;
 				attr[key] = attr[key]('attr', model, ctx, container, controller, key);
 		}
 	
-		if (listeners != null) 
-			listeners_emit('compoCreated', compo, model, ctx, container);
+		
+		listeners_emit(
+			'compoCreated'
+			, compo
+			, model
+			, ctx
+			, container);
 			
 	
-		if (typeof compo.renderStart === 'function') 
+		if (is_Function(compo.renderStart)) 
 			compo.renderStart(model, ctx, container);
 		
 		

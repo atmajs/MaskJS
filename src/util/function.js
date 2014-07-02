@@ -1,39 +1,42 @@
-
-function fn_proxy(fn, ctx) {
-
-	return function() {
-		return fn_apply(fn, ctx, arguments);
-	};
-}
-
-function fn_apply(fn, ctx, _arguments){
+var fn_proxy,
+	fn_apply,
+	fn_doNothing
+	;
+(function(){
 	
-	switch (_arguments.length) {
-		case 0:
-			return fn.call(ctx);
-		case 1:
-			return fn.call(ctx, _arguments[0]);
-		case 2:
-			return fn.call(ctx,
-				_arguments[0],
-				_arguments[1]);
-		case 3:
-			return fn.call(ctx,
-				_arguments[0],
-				_arguments[1],
-				_arguments[2]);
-		case 4:
-			return fn.call(ctx,
-				_arguments[0],
-				_arguments[1],
-				_arguments[2],
-				_arguments[3]);
+	fn_proxy = function(fn, ctx) {
+		return function(){
+			return fn_apply(fn, ctx, arguments);
+		};
 	};
 	
-	return fn.apply(ctx, _arguments);
-}
-
-
-function fn_doNothing(){
+	fn_apply = function(fn, ctx, _arguments){
+		
+		switch (_arguments.length) {
+			case 0:
+				return fn.call(ctx);
+			case 1:
+				return fn.call(ctx, _arguments[0]);
+			case 2:
+				return fn.call(ctx,
+					_arguments[0],
+					_arguments[1]);
+			case 3:
+				return fn.call(ctx,
+					_arguments[0],
+					_arguments[1],
+					_arguments[2]);
+			case 4:
+				return fn.call(ctx,
+					_arguments[0],
+					_arguments[1],
+					_arguments[2],
+					_arguments[3]);
+		}
+		
+		return fn.apply(ctx, _arguments);
+	};
 	
-}
+	fn_doNothing = function(){};
+
+}());

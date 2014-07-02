@@ -49,7 +49,7 @@ var parser_skipWhitespace,
 			if (code === 46) {
 				// .
 				if (isDouble === true) {
-					_throw('Unexpected punc');
+					util_throw('Invalid number', code);
 					return null;
 				}
 				isDouble = true;
@@ -94,7 +94,7 @@ var parser_skipWhitespace,
 				(65 <= c && c <= 90) ||		// A-Z
 				(97 <= c && c <= 122)) {	// a-z
 				index++;
-				continue
+				continue;
 			}
 			// - [removed] (exit on not allowed chars) 5ba755ca
 			break;
@@ -153,7 +153,9 @@ var parser_skipWhitespace,
 			case 61:
 				// =
 				if (template.charCodeAt(++index) !== code) {
-					_throw('Not supported (Apply directive) - view can only access model/controllers');
+					util_throw(
+						'Assignment violation: View can only access model/controllers', '='
+					);
 					return null;
 				}
 				if (template.charCodeAt(index + 1) === code) {
@@ -193,14 +195,18 @@ var parser_skipWhitespace,
 			case 38:
 				// &
 				if (template.charCodeAt(++index) !== code) {
-					_throw('Single Binary Operator AND');
+					util_throw(
+						'Not supported: Bitwise AND', code
+					);
 					return null;
 				}
 				return op_LogicalAnd;
 			case 124:
 				// |
 				if (template.charCodeAt(++index) !== code) {
-					_throw('Single Binary Operator OR');
+					util_throw(
+						'Not supported: Bitwise OR', code
+					);
 					return null;
 				}
 				return op_LogicalOr;
@@ -230,7 +236,9 @@ var parser_skipWhitespace,
 			return go_string;
 		}
 	
-		_throw('Unexpected / Unsupported directive');
+		util_throw(
+			'Unexpected or unsupported directive', code
+		);
 		return null;
 	};
 }());

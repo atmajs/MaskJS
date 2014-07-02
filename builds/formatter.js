@@ -3,7 +3,7 @@
 
     function construct(mask){
         if (mask == null){
-            throw 'MaskJS Core is not Loaded';
+            throw Error('MaskJS Core is not Loaded');
         }
         return factory(mask);
     }
@@ -30,14 +30,14 @@
 
 	return {
 		/* deprecated */
-		beautify: (mask.stringify = stringify),
+		beautify: (mask.stringify = mask_stringify),
 
 		/**
 		 *	mask.stringify(template[, settings=4]) -> String
 		 * - template(String | MaskDOM): Mask Markup or Mask AST
 		 * - settings(Number): indention space count, if 0 then markup will be minified
 		 **/
-		stringify: (mask.stringify = stringify),
+		stringify: (mask.stringify = mask_stringify),
 
 		/**
 		 *	mask.HtmlToMask(html) -> String

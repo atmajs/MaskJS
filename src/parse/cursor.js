@@ -32,8 +32,7 @@ var cursor_bracketsEnd,
 					return index;
 			}
 		}
-		
-		_throw(template, index, null, 'Not closed brackets `' + String.fromCharCode(startCode) + '`');
+		throw_parserError('Interpolation was not closed', template, index, c);
 		return index;
 	};
 	

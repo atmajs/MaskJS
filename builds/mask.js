@@ -13,6 +13,8 @@
 	// import /src/util/string.js
     // import /src/util/object.js
 	// import /src/util/function.js
+	// import /src/util/listeners.js
+	// import /src/util/reporters.js
     
 	// import /src/custom/exports.js
 	
@@ -33,9 +35,9 @@
 	// import /src/handlers/sys.js
 	// import /src/handlers/utils.js
 
-	// import /src/libs/compo.js
-	// import /src/libs/jmask.js
-	// import /src/libs/mask.binding.js
+	// import /mask-compo/lib/compo.embed.js
+	// import /mask-j/lib/jmask.embed.js
+	// import /mask-binding/lib/binding.embed.js
 
 
 	Mask.Compo = Compo;

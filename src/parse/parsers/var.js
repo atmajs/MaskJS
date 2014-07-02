@@ -38,7 +38,13 @@ var parser_var;
 				
 				if (c !== 61) {
 					// =
-					_throw(template, index, null, token);
+					throw_parserError(
+						'Assignment expected'
+						, template
+						, index
+						, token
+						, 'var'
+					);
 					return [node, index];
 				}
 				var tuple = ExpressionUtil.parse(template.substring(++index), true);

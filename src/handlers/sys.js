@@ -53,7 +53,11 @@
 					}
 					return;
 				}
-				console.error('Previous Node should be "% if=\'condition\'"', prev, this.parent);
+				
+				throw_(
+					'`% else` should be after `% if=\'condition\'`, got: '
+					   + (prev && (prev.compoName || prev.tagName))
+				);
 				return;
 			}
 			

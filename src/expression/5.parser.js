@@ -30,13 +30,19 @@ function expression_parse(expr, earlyExit) {
 		if (directive == null && index < length) {
 			break;
 		}
-		if (earlyExit === true && current.parent != null) {
+		if (directive === punc_Semicolon) {
+			if (earlyExit === true) 
+				return [ast, index];
+			
+			break;
+		}
+		
+		if (earlyExit === true) {
 			var p = current.parent;
-			if (p.type === type_Body && p.parent == null) {
-				if (directive === go_ref || directive === punc_Semicolon) {
+			if (p != null && p.type === type_Body && p.parent == null) {
+				// is in root body
+				if (directive === go_ref) 
 					return [ast, index];
-				}
-				
 			}
 		}
 		
@@ -67,7 +73,7 @@ function expression_parse(expr, earlyExit) {
 				}
 
 				if (current == null) {
-					_throw('OutOfAst Exception - body closed');
+					util_throw('OutOfAst Exception', c);
 					break outer;
 				}
 				index++;
@@ -96,7 +102,7 @@ function expression_parse(expr, earlyExit) {
 					);
 					index++;
 					if (current == null) {
-						_throw('Unexpected punctuation, comma');
+						throw_util('Unexpected comma', c);
 						break outer;	
 					}
 					
@@ -112,7 +118,7 @@ function expression_parse(expr, earlyExit) {
 				} while (current != null && current.type !== type_FunctionRef);
 
 				if (current == null) {
-					_throw('OutOfAst Exception - next argument');
+					util_throw('OutOfAst Exception', c);
 					break outer;
 				}
 
@@ -159,9 +165,6 @@ function expression_parse(expr, earlyExit) {
 				current = current.body;
 				index++;
 				continue;
-				
-				_throw('Unexpected `[`');
-				return null;
 			case punc_BracketClose:
 				do {
 					current = current.parent;
@@ -209,8 +212,9 @@ function expression_parse(expr, earlyExit) {
 				}
 
 				if (current.body == null) {
-					_throw('Unexpected operator', current);
-					break outer;
+					return util_throw(
+						'Unexpected operator', c
+					);
 				}
 
 				current.join = directive;
@@ -220,7 +224,9 @@ function expression_parse(expr, earlyExit) {
 				} while (current != null && current.type !== type_Body);
 
 				if (current == null) {
-					console.error('Unexpected parent', current);
+					return util_throw(
+						'Unexpected operator' , c
+					);
 				}
 
 
@@ -229,8 +235,9 @@ function expression_parse(expr, earlyExit) {
 			case go_string:
 			case go_number:
 				if (current.body != null && current.join == null) {
-					_throw('Directive Expected');
-					break outer;
+					return util_throw(
+						'Directive expected', c 
+					);
 				}
 				if (go_string === directive) {
 					index++;
@@ -301,7 +308,9 @@ function expression_parse(expr, earlyExit) {
 				
 				if (parser_skipWhitespace() !== 58) {
 					//:
-					return _throw('Object parser, semicolon expeted')
+					return util_throw(
+						'Object parser. Semicolon expeted', c
+					); 
 				}
 				index++;
 				current = current.nextProp(key);
@@ -310,8 +319,12 @@ function expression_parse(expr, earlyExit) {
 		}
 	}
 
-	if (current.body == null && current.type === type_Statement) {
-		_throw('Unexpected end of expression');
+	if (current.body == null &&
+		current.type === type_Statement) {
+		
+		return util_throw(
+			'Unexpected end of expression', c
+		); 
 	}
 
 	ast_handlePrecedence(ast);

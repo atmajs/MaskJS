@@ -32,6 +32,9 @@ include
 		'/src/util/function.js',
 		'/src/util/condition.js',
 		
+		'/src/util/listeners.js',
+		'/src/util/reporters.js',
+		
 		'/src/custom/exports.js',
 		
 		'/src/dom/exports.js',

@@ -106,31 +106,15 @@ var parser_parse,
 				return string;
 			}
 
-			return util_interpolate(array, type, model, ctx, element, controller, name);
+			return util_interpolate(
+				array
+				, type
+				, model
+				, ctx
+				, element
+				, controller
+				, name);
 		};
-
-	}
-
-
-	function _throw(template, index, state, token) {
-		var parsing = {
-				2: 'tag',
-				3: 'tag',
-				5: 'attribute key',
-				6: 'attribute value',
-				8: 'literal'
-			}[state],
-
-			lines = template.substring(0, index).split('\n'),
-			line = lines.length,
-			row = lines[line - 1].length,
-
-			message = ['Mask - Unexpected:', token, 'at(', line, ':', row, ') [ in', parsing, ']'];
-
-		console.error(message.join(' '), {
-			stopped: template.substring(index),
-			template: template
-		});
 	}
 
 	var go_tag = 2,
@@ -285,6 +269,7 @@ var parser_parse,
 							current.attr[key] = key;
 						}
 					}
+					c = null;
 					break;
 				}
 
@@ -344,35 +329,32 @@ var parser_parse,
 
 					index++;
 
-
-
 					var isEscaped = false,
 						isUnescapedBlock = false,
-						nindex, _char = c === 39 ? "'" : '"';
+						_char = c === 39 ? "'" : '"';
 
 					start = index;
 
-					while ((nindex = template.indexOf(_char, index)) > -1) {
-						index = nindex;
-						if (template.charCodeAt(nindex - 1) !== 92 /*'\\'*/ ) {
+					while ((index = template.indexOf(_char, index)) > -1) {
+						if (template.charCodeAt(index - 1) !== 92 /*'\\'*/ ) {
 							break;
 						}
 						isEscaped = true;
 						index++;
 					}
-
-					if (start === index) {
+					if (index === -1) 
+						index = length;
+					
+					if (index === start) {
 						nextC = template.charCodeAt(index + 1);
 						if (nextC === 124 || nextC === c) {
 							// | (obsolete) or triple quote
 							isUnescapedBlock = true;
 							start = index + 2;
-							index = nindex = template.indexOf((nextC === 124 ? '|' : _char) + _char + _char, start);
+							index = template.indexOf((nextC === 124 ? '|' : _char) + _char + _char, start);
 
-							if (index === -1) {
+							if (index === -1) 
 								index = length;
-							}
-
 						}
 					}
 
@@ -382,8 +364,6 @@ var parser_parse,
 					}
 
 					token = ensureTemplateFunction(token);
-
-
 					index += isUnescapedBlock ? 3 : 1;
 					continue;
 				}
@@ -475,8 +455,8 @@ var parser_parse,
 					// if DEBUG
 					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
 						// '"/<,
-						_throw(template, index, state, String.fromCharCode(c));
-						break;
+						throw_parserError('', template, index, c, state);
+						break outer;
 					}
 					// endif
 
@@ -504,39 +484,66 @@ var parser_parse,
 
 				token = template.substring(start, index);
 
-				// if DEBUG
-				if (!token) {
-					_throw(template, index, state, '<empty token>');
+				
+				if (token === '') {
+					throw_parserError('String expected', template, index, c, state);
 					break;
 				}
-				if (isInterpolated === true && state === state_tag) {
-					_throw(template, index, state, 'Tag Names cannt be interpolated (in dev)');
-					break;
+				
+				if (isInterpolated === true) {
+					if (state === state_tag) {
+						throw_parserError('Invalid interpolation (in tag name)'
+							, template
+							, index
+							, token
+							, state);
+						break;
+					}
+					if (state === state_attr) {
+						if (key === 'id' || last === go_attrVal) {
+							token = ensureTemplateFunction(token);
+						}
+						else if (key === 'class') {
+							// interpolate later
+						}
+						else {
+							throw_parserError('Invalid interpolation (in attr name)'
+								, template
+								, index
+								, token
+								, state);
+							break;
+						}
+					}
 				}
-				// endif
-
-
-				if (isInterpolated === true && (state === state_attr && key === 'class') === false) {
-					token = ensureTemplateFunction(token);
-				}
-
+				
 			}
 
-			////if (isNaN(c)) {
-			////	_throw(template, index, state, 'Parse IndexOverflow');
-			////
-			////}
+			if (c !== c) {
+				throw_parserError('IndexOverflow'
+					, template
+					, index
+					, c
+					, state
+				);
+			}
 
 			// if DEBUG
-			if (current.parent != null && current.parent !== fragment && current.parent.__single !== true && current.nodes != null) {
-				console.warn('Mask - ', current.parent.tagName, JSON.stringify(current.parent.attr), 'was not proper closed.');
+			var parent = current.parent;
+			if (parent != null &&
+				parent !== fragment &&
+				parent.__single !== true &&
+				current.nodes != null) {
+				throw_parserError('Tag was not closed: ' + current.parent.tagName, template)
 			}
 			// endif
 
 			
-			return fragment.nodes != null && fragment.nodes.length === 1
-				? fragment.nodes[0]
-				: fragment;
+			var nodes = fragment.nodes;
+			return nodes != null && nodes.length === 1
+				? nodes[0]
+				: fragment
+				;
 		},
 		
 		// obsolete

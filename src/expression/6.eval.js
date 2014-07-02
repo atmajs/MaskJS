@@ -16,6 +16,9 @@ function expression_evaluate(mix, model, ctx, controller) {
 	}else{
 		ast = mix;
 	}
+	if (ast == null) 
+		return null;
+	
 	var type = ast.type,
 		i, x, length;
 	

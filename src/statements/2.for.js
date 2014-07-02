@@ -49,7 +49,7 @@
 			
 		if ('of' === type) {
 			if (is_Array(value) === false) {
-				console.warn('<ForStatement> Value is not enumerable', value);
+				log_error('<ForStatement> Value is not enumerable', value);
 				return null;
 			}
 			
@@ -58,12 +58,12 @@
 		
 		if ('in' === type) {
 			if (typeof value !== 'object') {
-				console.warn('<ForStatement> Value is not an object', value);
+				log_warn('<ForStatement> Value is not an object', value);
 				return null;
 			}
 			
 			if (is_Array(value)) 
-				console.log('<mask:for> Consider to use `for..of` for Arrays')
+				log_warn('<mask:for> Consider to use `for..of` for Arrays');
 			
 			return loop_Object(nodes, value, prop1, prop2);
 		}
