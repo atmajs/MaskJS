@@ -4,7 +4,7 @@ var util_resolveRef,
 (function(){
 	
 	util_throw = function(msg, token){
-		return throw_parserError(msg
+		return parser_error(msg
 			, template
 			, index
 			, token

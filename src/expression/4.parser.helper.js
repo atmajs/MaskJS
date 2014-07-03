@@ -84,13 +84,12 @@ var parser_skipWhitespace,
 			
 			c = template.charCodeAt(index);
 			
-			if (c === 36) {
-				// $
+			if (c === 36 || c === 95) {
+				// $ _
 				index++;
 				continue;
 			}
-			if ((c === 95) || 				// _
-				(48 <= c && c <= 57) ||		// 0-9
+			if ((48 <= c && c <= 57) ||		// 0-9
 				(65 <= c && c <= 90) ||		// A-Z
 				(97 <= c && c <= 122)) {	// a-z
 				index++;

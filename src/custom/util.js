@@ -18,7 +18,10 @@
 	};
 
 	customUtil_get = function(name) {
-		return name != null ? repository[name] : repository;
+		return name != null
+			? repository[name]
+			: repository
+			;
 	};
 
 	// = private

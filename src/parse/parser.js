@@ -52,7 +52,7 @@ var parser_parse,
 
 
 		while (true) {
-			end = cursor_bracketsEnd(
+			end = cursor_groupEnd(
 				template
 				, index + 2
 				, length
@@ -342,8 +342,10 @@ var parser_parse,
 						isEscaped = true;
 						index++;
 					}
-					if (index === -1) 
+					if (index === -1) {
+						parser_warn('Literal has no ending', template, start);
 						index = length;
+					}
 					
 					if (index === start) {
 						nextC = template.charCodeAt(index + 1);
@@ -405,13 +407,17 @@ var parser_parse,
 						// =;
 						index++;
 						state = go_attrVal;
+						
+						if (last === state_tag && key == null) {
+							parser_warn('Unexpected tag assignment', template, index, c, state);
+						}
 						continue;
 					}
 					
 					else if (c === 40) {
 						// (
 						start = 1 + index;
-						index = 1 + cursor_bracketsEnd(template, start, length, c, 41 /* ) */);
+						index = 1 + cursor_groupEnd(template, start, length, c, 41 /* ) */);
 						current.expression = template.substring(start, index - 1);
 						current.type = Dom.STATEMENT;
 						continue;
@@ -455,7 +461,7 @@ var parser_parse,
 					// if DEBUG
 					if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
 						// '"/<,
-						throw_parserError('', template, index, c, state);
+						parser_warn('', template, index, c, state);
 						break outer;
 					}
 					// endif
@@ -486,13 +492,13 @@ var parser_parse,
 
 				
 				if (token === '') {
-					throw_parserError('String expected', template, index, c, state);
+					parser_warn('String expected', template, index, c, state);
 					break;
 				}
 				
 				if (isInterpolated === true) {
 					if (state === state_tag) {
-						throw_parserError('Invalid interpolation (in tag name)'
+						parser_warn('Invalid interpolation (in tag name)'
 							, template
 							, index
 							, token
@@ -507,7 +513,7 @@ var parser_parse,
 							// interpolate later
 						}
 						else {
-							throw_parserError('Invalid interpolation (in attr name)'
+							parser_warn('Invalid interpolation (in attr name)'
 								, template
 								, index
 								, token
@@ -520,7 +526,7 @@ var parser_parse,
 			}
 
 			if (c !== c) {
-				throw_parserError('IndexOverflow'
+				parser_warn('IndexOverflow'
 					, template
 					, index
 					, c
@@ -534,7 +540,7 @@ var parser_parse,
 				parent !== fragment &&
 				parent.__single !== true &&
 				current.nodes != null) {
-				throw_parserError('Tag was not closed: ' + current.parent.tagName, template)
+				parser_warn('Tag was not closed: ' + current.parent.tagName, template)
 			}
 			// endif
 
@@ -565,11 +571,11 @@ var parser_parse,
 		},
 		setInterpolationQuotes: function(start, end) {
 			if (!start || start.length !== 2) {
-				console.error('Interpolation Start must contain 2 Characters');
+				log_error('Interpolation Start must contain 2 Characters');
 				return;
 			}
 			if (!end || end.length !== 1) {
-				console.error('Interpolation End must be of 1 Character');
+				log_error('Interpolation End must be of 1 Character');
 				return;
 			}
 

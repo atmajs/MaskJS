@@ -45,16 +45,33 @@ UTest({
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `=` at (2:')
 	},
+	'invalid tag assignment': function(){
+		var fragment = mask.parse(`
+			name=foo;
+		`);
+		
+		var error = errors.pop();
+		has_(error.message, 'Invalid token: `=`');
+	},
+	'invalid': function(){
+		var fragment = mask.parse(`
+			div name='baz;
+			div;
+		`);
+		
+		var error = errors.pop();
+		has_(error.message, 'Literal has no ending at');
+	},
 	'valid attribute': function(){
 		var node = mask.parse("lorem ipsum='some;")
 		var error = errors.pop();
-		eq_(error, null);
+		is_(error, 'Object');
 		has_(node.attr, { ipsum: 'some;'})
 	},
 	'valid empty string': function(){
 		var frag = mask.parse("lorem ipsum=some;'foo")
 		var error = errors.pop();
-		eq_(error, null);
+		is_(error, 'Object');
 		has_(frag.nodes[0].attr, {
 			ipsum: 'some'
 		});
@@ -96,14 +113,14 @@ UTest({
 			var error = errors.pop();
 			
 			has_(error.message, 'Unexpected operator Invalid token: `+` at (1:3)');
-			has_(error.message, 'Parser stopped at: +1');
+			has_(error.message, 'Parser error at: +1');
 		},
 		'unsupported bit shifting': function(){
 			var ast = mask.render('"~[: 64<<1 ]"');
 			var error = errors.pop();
 			
 			has_(error.message, 'Unexpected operator Invalid token: `<`');
-			has_(error.message, 'Parser stopped at: <1');
+			has_(error.message, 'Parser error at: <1');
 		},
 	}
 })

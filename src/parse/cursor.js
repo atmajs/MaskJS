@@ -1,22 +1,24 @@
-var cursor_bracketsEnd,
-	cursor_quotesEnd
+var cursor_groupEnd,
+	cursor_quoteEnd,
+	cursor_refEnd;
 	;
 
 (function(){
 	
-	cursor_bracketsEnd = function(template, index, length, startCode, endCode){
+	cursor_groupEnd = function(str, i, imax, startCode, endCode){
 		
-		var c, count = 0;
-		
-		for( ; index < length; index++){
-			c = template.charCodeAt(index);
+		var count = 0,
+			start = i,
+			c;
+		for( ; i < imax; i++){
+			c = str.charCodeAt(i);
 			
 			if (c === 34 || c === 39) {
 				// "|'
-				index = cursor_quotesEnd(
-					template
-					, index + 1
-					, length
+				i = cursor_quoteEnd(
+					str
+					, i + 1
+					, imax
 					, c === 34 ? '"' : "'"
 				);
 				continue;
@@ -29,25 +31,45 @@ var cursor_bracketsEnd,
 			
 			if (c === endCode) {
 				if (--count === -1) 
-					return index;
+					return i;
 			}
 		}
-		throw_parserError('Interpolation was not closed', template, index, c);
-		return index;
+		parser_warn('Group was not closed', str, start);
+		return imax;
 	};
 	
-	cursor_quotesEnd = function(template, index, length, char_){
-		var nindex;
-
-		while ((nindex = template.indexOf(char_, index)) !== -1) {
-			index = nindex;
-			if (template.charCodeAt(nindex - 1) !== 92 /*'\\'*/ ) 
-				break;
+	cursor_refEnd = function(str, i, imax){
+		var c;
+		while (i < imax){
+			c = str.charCodeAt(i);
 			
-			index++;
+			if (c === 36 || c === 95) {
+				// $ _
+				i++;
+				continue;
+			}
+			if ((48 <= c && c <= 57) ||		// 0-9
+				(65 <= c && c <= 90) ||		// A-Z
+				(97 <= c && c <= 122)) {	// a-z
+				i++;
+				continue;
+			}
+			
+			break;
 		}
-		
-		return index;
+		return i;
+	}
+	
+	cursor_quoteEnd = function(str, i, imax, char_){
+		var start = i;
+		while ((i = str.indexOf(char_, i)) !== -1) {
+			if (str.charCodeAt(i - 1) !== 92)
+				// \ 
+				return i;
+			i++;
+		}
+		parser_warn('Quote was not closed', str, start);
+		return imax;
 	};
 	
 }());

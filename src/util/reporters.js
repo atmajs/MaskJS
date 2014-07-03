@@ -1,5 +1,6 @@
 var throw_,
-	throw_parserError,
+	parser_error,
+	parser_warn,
 	log_warn,
 	log_error;
 	
@@ -11,51 +12,18 @@ var throw_,
 		listeners_emit('error', error);
 	};
 	
-	throw_parserError = function(msg, str, index, token, state, filename){
-		if (typeof token === 'number') 
-			token = String.fromCharCode(token);
-			
-		if (token != null) {
-			token = ' Invalid token: `'
-				+ token
-				+ '`';
-		}else {
-			token = '';
-		}
+	parser_error = function(msg, str, i, token, state, file){
+		var error = createMsg('error', msg, str, i, token, state, file);
 		
-		var states = {
-			'2': 'tag',
-			'3': 'tag',
-			'5': 'attribute key',
-			'6': 'attribute value',
-			'8': 'literal',
-			'var': 'VarStatement',
-			'expr': 'Expression'
-		};
-		
-		if (index != null) {
-			var lines = str.substring(0, index).split('\n'),
-				line = lines.length,
-				row = index + 1 - lines.slice(0, line - 2).join('\n').length;
-			
-			msg += token
-				+' at '
-				+ (filename == null ? '' : (' ' + filename))
-				+ '(' + line + ':' + row + ')'
-				;
-			var stopped = str.substring(index);
-			if (stopped.length > 30) 
-				stopped = stopped.substring(0, 30) + '...';
-			
-			msg += '\n    Parser stopped at: ' + stopped;
-		}
-		
-		if (state != null && states[state] != null) 
-			msg += '\n    , when parsing ' + states[state];
-		
-		var error = new ParseError(msg, str, index);
-		
-		throw_(error);
+		log_error(error.message);
+		log_warn(error.stack);
+		listeners_emit('error', error);
+	};
+	parser_warn = function(msg, str, i, token, state, file){
+		var error = createMsg('warn', msg, str, i, token, state, file);
+		log_warn(error.message);
+		log_warn(error.stack);
+		listeners_emit('error', error);
 	};
 	
 	log_error = function(){
@@ -72,11 +40,92 @@ var throw_,
 		console[type].apply(console, args);
 	}
 	
-	function ParseError(msg, orig, index){
-		this.type = 'ParseError';
-		this.message = msg;
-		this.original = orig;
-		this.index = index;
+	var ParserError = createError('Error'),
+		ParserWarn  = createError('Warning');
+	
+	function createError(type) {
+		function ParserError(msg, orig, index){
+			this.type = 'Parser' + type;
+			this.message = msg;
+			this.original = orig;
+			this.index = index;
+			this.stack = prepairStack();
+		}
+		inherit(ParserError, Error);
+		return ParserError;
 	}
-	ParseError.prototype = Error.prototype;
+	
+	function prepairStack(){
+		var stack = new Error().stack;
+		if (stack == null) 
+			return null;
+		
+		return stack
+			.split('\n')
+			.slice(6)
+			.join('\n');
+	}
+	function inherit(Ctor, Base){
+		if (Object.create) 
+			Ctor.prototype = Object.create(Base.prototype);
+	}
+	function createMsg(type, msg, str, index, token, state, filename){
+		msg += formatToken(token)
+			+ formatFilename(str, index, filename)
+			+ formatStopped(type, str, index)
+			+ formatState(state)
+			;
+		
+		var Ctor = type === 'error'
+			? ParserError
+			: ParserWarn;
+			
+		return new Ctor(msg, str, index);
+	}
+	function formatToken(token){
+		if (token == null) 
+			return '';
+		
+		if (typeof token === 'number') 
+			token = String.fromCharCode(token);
+			
+		return ' Invalid token: `'+ token + '`';
+	}
+	function formatFilename(str, index, filename) {
+		if (index == null && !filename) 
+			return '';
+		
+		var lines = str.substring(0, index).split('\n'),
+			line = lines.length,
+			row = index + 1 - lines.slice(0, line - 2).join('\n').length;
+		
+		return ' at '
+			+ (filename || '')
+			+ '(' + line + ':' + row + ')';
+	}
+	function formatState(state){
+		var states = {
+			'2': 'tag',
+			'3': 'tag',
+			'5': 'attribute key',
+			'6': 'attribute value',
+			'8': 'literal',
+			'var': 'VarStatement',
+			'expr': 'Expression'
+		};
+		if (state == null || states[state] == null) 
+			return '';
+		
+		return '\n    , when parsing ' + states[state];
+	}
+	function formatStopped(type, str, index){
+		if (index == null) 
+			return '';
+		
+		var stopped = str.substring(index);
+		if (stopped.length > 30) 
+			stopped = stopped.substring(0, 30) + '...';
+		
+		return '\n    Parser ' + type + ' at: ' + stopped;
+	}
 }());

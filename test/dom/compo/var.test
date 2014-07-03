@@ -75,7 +75,7 @@ UTest({
 			$vars.each(($var, i) => {
 				var key = x.varNames[i];
 				$var = $var.attr[key];
-				is_($var, 'Object');
+				is_($var, 'String');
 				
 				
 				deepEq_(
@@ -87,14 +87,36 @@ UTest({
 		});
 		
 	},
+	'vars many': function(){
+		$render(`
+			var foo=1;
+			div > '~[:foo]'
+		`)
+		.eq_('text', '1');
+		
+		$render(`
+			var foo=1,bar=2
+				,qux=3;
+			div > '~[: foo+ bar -qux]'
+		`)
+		.eq_('text', '0');
+		
+		$render(`
+			var foo=1,bar= foo + 5;
+			div > '~[: foo+ bar]'
+		`)
+		.eq_('text', '7');
+	},
 	'render list': function(){
 		
-		var $dom = $render(`
-			var list = [1, 2, 3];
-			for( key of list ){
-				span > "~[key]"
-			}
-		`);
+		var ast = mask.parse(`
+				var list = [1, 2, 3];
+				for( key of list ){
+					span > "~[key]"
+				}
+			`),
+			$dom = $render(ast);
+		
 		$dom
 			.filter('span')
 			.eq_('length', 3)

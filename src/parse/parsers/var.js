@@ -6,8 +6,9 @@ var parser_var;
 			c;
 		
 		var go_varName = 1,
-			go_value = 2,
-			go_next = 3,
+			go_assign = 2,
+			go_value = 3,
+			go_next = 4,
 			state = go_varName,
 			token,
 			key;
@@ -17,52 +18,69 @@ var parser_var;
 				continue;
 			}
 			
-			// consumeToken
-			start = index;
-			while (index < length){
-				c = template.charCodeAt(index);
-				if (c < 33 || c === 61) {
-					// =
-					break;
-				}
-				index++;
-			}
-			
-			token = template.substring(start, index);
 			if (state === go_varName) {
-				key = token;
-				state = go_value;
+				start = index;
+				index = cursor_refEnd(template, index, length);
+				key = template.substring(start, index);
+				state = go_assign;
 				continue;
 			}
-			if (state === go_value) {
-				
-				if (c !== 61) {
+			
+			if (state === go_assign) {
+				if (c !== 61 ) {
 					// =
-					throw_parserError(
+					parser_error(
 						'Assignment expected'
 						, template
 						, index
-						, token
+						, c
 						, 'var'
 					);
 					return [node, index];
 				}
-				var tuple = ExpressionUtil.parse(template.substring(++index), true);
-				index = index + tuple[1];
-				
-				node.attr[key] = tuple[0];
+				state = go_value;
+				index++;
+				continue;
+			}
+			
+			if (state === go_value) {
+				start = index;
+				index++;
+				switch(c){
+					case 123:
+					case 91:
+						// { [
+						index = cursor_groupEnd(template, index, length, c, c + 2);
+						break;
+					case 39:
+					case 34:
+						// ' "
+						index = cursor_quoteEnd(template, index, length, c === 39 ? "'" : '"')
+						break;
+					default:
+						while (index < length) {
+							c = template.charCodeAt(index);
+							if (c === 44 || c === 59) {
+								//, ;
+								break;
+							}
+							index++;
+						}
+						index--;
+						break;
+				}
+				index++;
+				node.attr[key] = template.substring(start, index);
 				state = go_next;
 				continue;
 			}
 			if (state === go_next) {
-				if (token === ',') {
+				if (c === 44) {
+					// ,
 					state = go_varName;
 					index++;
 					continue;
 				}
-				
-				if (token !== ';') 
-					index--;
 				break;
 			}
 		}
