@@ -5,6 +5,7 @@ var parser_var;
 		var start,
 			c;
 		
+		node.stringify = stingify;
 		var go_varName = 1,
 			go_assign = 2,
 			go_value = 3,
@@ -86,4 +87,16 @@ var parser_var;
 		}
 		return [node, index];
 	};
+	
+	function stingify(){
+		var attr = this.attr;
+		var str = 'var ';
+		for(var key in attr){
+			if (str !== 'var ') 
+				str += ',';
+			
+			str += key + '=' + attr[key];
+		};
+		return str + ';';
+	}
 }());

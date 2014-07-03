@@ -23,7 +23,6 @@ var mask_stringify;
 			_minimize = _indent === 0 || settings && settings.minimizeAttributes;
 		}
 
-
 		return run(input);
 	};
 
@@ -43,24 +42,20 @@ var mask_stringify;
 
 
 	function run(node, indent, output) {
-
 		var outer, i;
-
+		
 		if (indent == null) 
 			indent = 0;
-		
-
+			
 		if (output == null) {
 			outer = true;
 			output = [];
 		}
 
 		var index = output.length;
-
-		if (node.type === Dom.FRAGMENT){
+		if (node.type === Dom.FRAGMENT)
 			node = node.nodes;
-		}
-
+		
 		if (node instanceof Array) {
 			for (i = 0; i < node.length; i++) {
 				processNode(node[i], indent, output);
@@ -75,13 +70,15 @@ var mask_stringify;
 			output[i] = spaces + output[i];
 		}
 
-		if (outer) {
+		if (outer) 
 			return output.join(_indent === 0 ? '' : '\n');
-		}
-
 	}
 
 	function processNode(node, currentIndent, output) {
+		if (typeof node.stringify === 'function') {
+			output.push(node.stringify(_minimize));
+			return;
+		}
 		if (typeof node.content === 'string') {
 			output.push(wrapString(node.content));
 			return;
