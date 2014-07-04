@@ -339,5 +339,17 @@ UTest({
 				}
 			}
 		);
+	},
+	
+	'should eval array of statements': function(){
+		var x;
+		x = Expression.evalStatements('"a", 2');
+		deepEq_(x, ['a', 2]);
+		
+		x = Expression.evalStatements('"a" + "b", 10 /2');
+		deepEq_(x, ['ab', 5]);
+		
+		x = Expression.evalStatements('1+1, 10 - 2 * 3');
+		deepEq_(x, [2, 4]);
 	}
 });

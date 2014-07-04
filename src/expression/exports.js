@@ -50,10 +50,15 @@ var ExpressionUtil = (function(){
                 imax = body.length,
                 i = -1
                 ;
+			var group = new Ast_Body;
             while( ++i < imax ){
-                args[i] = expression_evaluate(body[i], model, ctx, controller);
+				group.body.push(body[i]);
+				if (body[i].join != null) 
+					continue;
+				
+                args.push(expression_evaluate(group, model, ctx, controller));
+				group.body.length = 0;
             }
-			
 			return args;
 		}
 	};
