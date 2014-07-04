@@ -1,12 +1,14 @@
+git:
+  submodules: false
+
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - sleep 5
-  - node_modules/.bin/atma &
+  - sleep 4
   - node_modules/.bin/atma server &
-  - sleep 5
+  - sleep 4
   - firefox http://localhost:5777/utest/ &
-  - sleep 8
+  - sleep 4
  
 script:
   - "npm test"
