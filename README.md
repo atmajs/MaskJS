@@ -26,8 +26,8 @@ Quickly embed MaskJS into your web application:
 <DOCTYPE html>
 <html>
 	<head>
-		<!-- ... meta, scripts, etc -->
-		<script src='http://cdn.jsdelivr.net/maskjs/0.9.2/mask.min.js'></script>
+		<!-- ... meta, styles, etc -->
+		
 	</head>
 	<body>
 		<header>
@@ -44,6 +44,9 @@ Quickly embed MaskJS into your web application:
 		<!-- ... Other html, or mask blocks -->
 		<!-- usually you would have only one Mask block, which is the entry point for the app -->
 		
+
+		<!-- ... scripts -->
+		<script src='http://cdn.jsdelivr.net/maskjs/0.9.2/mask.min.js'></script>
 		<script type='text/javascript'>
 			var model = {
 				pages: [ 'blog', 'about', 'contact' ]
