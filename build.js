@@ -86,15 +86,6 @@ module.exports = {
 		script: 'build.docs.js'
 	},
 
-	'handlers': {
-		action: 'copy',
-		files: {
-			'mask-binding/lib/mask.binding.embeded.js'	: 'src/handlers/mask.binding.js',
-			'mask-compo/lib/compo.embed.js'				: 'src/libs/compo.js',
-			'mask-j/lib/jmask.embed.js'					: 'src/libs/jmask.js'
-		}
-	},
-
 	'watch': {
 		files: 'src/**',
 		config: '#[import]'

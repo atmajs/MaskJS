@@ -36,10 +36,8 @@ var cache = {},
 					template = cache[template] = parser_parse(template);
 				}
 			}
-			
-			if (ctx == null) {
+			if (ctx == null) 
 				ctx = {};
-			}
 			
 			return builder_build(template, model, ctx, container, controller);
 		},
@@ -56,6 +54,14 @@ var cache = {},
 		parse: parser_parse,
 
 		build: builder_build,
+		
+		/*
+		 * - ?model:Object
+		 * - ?Controller: Function
+		 * - ?container: Node (@default: body)
+		 */
+		run: mask_run,
+		
 		/**
 		 * mask.registerHandler(tagName, tagHandler) -> void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'

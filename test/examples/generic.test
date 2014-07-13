@@ -1,7 +1,7 @@
 UTest({
 	'syntax': function(done){
 		
-		UTest
+		return UTest
 			.server
 			.request('/examples/syntax.html')
 			.done(function(doc, win){
@@ -19,14 +19,12 @@ UTest({
 					.has_('h2 > span', 1)
 					.has_('h3 > span', 2)
 					;
-				
-				done()
 			});
 	},
 	
 	'statements': function(done){
 		
-		UTest
+		return UTest
 			.server
 			.request('/examples/statements.html')
 			.done(function(doc, win){
@@ -66,13 +64,11 @@ UTest({
 					.has_('text', 'foo')
 					.has_('text', 'baz')
 					;
-					
-				done();
 			})
 	},
 	
-	'interpolation': function(done){
-		UTest
+	'interpolation': function(){
+		return UTest
 			.server
 			.request('/examples/interpolation.html')
 			.done(function(doc, win){
@@ -108,13 +104,11 @@ UTest({
 					.find('.settings')
 					.eq_('text', 'Settings 100')
 					;
-				
-				done();
 			});
 	},
 	
-	'component': function(done) {
-		UTest
+	'component': function() {
+		return UTest
 			.server
 			.request('/examples/component.html')
 			.done(function(doc, win){
@@ -176,8 +170,6 @@ UTest({
 					.find('input')
 					.eq_('val', 'Bob')
 					;
-				
-				done();
 			});
 	}
 })

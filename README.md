@@ -11,12 +11,49 @@
 		</a>
 	</p>
 
-[MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine.
+[MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine for
+modern and fast web(_Browser_), server(_NodeJS_) or mobile(_PhoneGap_) applications. Component-based architecture
+simplifies defining, implementing and composing loosely coupled independent elements into a single application.
 
 Resources:
 
 - [maskFiddle](http://atmajs.com/mask-try)
 - [Documentation](http://atmajs.com/mask)
+
+#### Quick start
+Quickly embed MaskJS into your web application:
+```html
+<DOCTYPE html>
+<html>
+	<head>
+		<!-- ... meta, scripts, etc -->
+		<script src='lib/mask.js'></script>
+	</head>
+	<body>
+		<header>
+			<!-- e.g add menu into header -->
+			<script type='text/mask' data-run='true'>
+				ul {
+					for(page of pages) {
+						li > a href='/~[page].html' > '~[page]'
+					}
+				}
+			</script>
+		</header>
+		
+		<!-- ... Other html, or mask blocks ->
+		<!-- usually you would have only one Mask block, which is the entry point for the app -->
+		
+		<script type='text/javascript'>
+			var model = {
+				pages: [ 'blog', 'about', 'contact' ]
+			};
+			mask.run(model);
+		</script>
+	</body>
+</html>
+```
+
 
 ----
 
@@ -26,7 +63,7 @@ Resources:
 - [jMask](#jmask-library)
 - [jQuery](#jquery)
 - [Performance](#performance)
-- [Node.js](#nodejs)
+- [NodeJS](#nodejs)
 - [Browser Support](#browser-support)
 - [Plugins](#plugins)
 
@@ -38,7 +75,7 @@ Resources:
 - Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).
 - DOM Builder
 	[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]
-- HTML Builder
+- HTML Builder (_nodejs_)
 	[Template &rarr; Mask DOM &rarr; HTML]
 
 ```scss

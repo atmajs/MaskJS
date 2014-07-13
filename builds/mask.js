@@ -24,9 +24,12 @@
 	
 	// import /src/parse/parser.js
 	// import /src/build/builder.dom.js
+	
+	/* Features */
+	// import /src/feature/run.js
+	
 	// import /src/mask.js
-
-
+	
 
 	// import /src/formatter/stringify.lib.js
 
@@ -35,10 +38,13 @@
 	// import /src/handlers/sys.js
 	// import /src/handlers/utils.js
 
+	/* Libraries */
+	
 	// import /mask-compo/lib/compo.embed.js
 	// import /mask-j/lib/jmask.embed.js
 	// import /mask-binding/lib/binding.embed.js
-
+	
+	
 
 	Mask.Compo = Compo;
 	Mask.jmask = jmask;
