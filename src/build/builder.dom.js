@@ -71,7 +71,7 @@ var builder_componentID = 0,
 					// Dom.COMPONENT
 					type = 4;
 				} else {
-					console.error('<mask: statement is undefined', node.tagName);
+					log_error('<mask: statement is undefined', node.tagName);
 					return container;
 				}
 				

@@ -70,7 +70,7 @@ function html_toString(element) {
 	}
 
 
-	console.error('Unknown node Type', nodeType, element.tagName, element.textContent, element.firstChild == null);
+	log_error('Unknown node Type', nodeType, element.tagName, element.textContent, element.firstChild == null);
 	return '';
 }
 

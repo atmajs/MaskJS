@@ -167,7 +167,8 @@
 			x;
 
 		// if DEBUG
-		(isNaN(index) || isNaN(length)) && console.error('Repeat attribute(from..to) invalid', compo.attr.repeat);
+		if (index !== index || length !== length) 
+			log_error('Repeat attribute(from..to) invalid', compo.attr.repeat);
 		// endif
 
 		compo.nodes = [];
@@ -211,7 +212,7 @@
 
 	var ListProto = {
 		append: function(model){
-			var item = new Component();
+			var item = new Dom.Component();
 			item.nodes = this.template;
 			item.model = model;
 

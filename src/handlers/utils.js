@@ -16,7 +16,7 @@
 	function TemplateHandler() {}
 	TemplateHandler.prototype.render = function() {
 		if (this.attr.id == null) {
-			console.warn('Template Should be defined with ID attribute for future lookup');
+			log_warn('Template Should be defined with ID attribute for future lookup');
 			return;
 		}
 
@@ -62,7 +62,7 @@
 
 				// @TODO = load template from remote
 				if (this.nodes == null) {
-					console.warn('Template could be not imported', this.attr.id);
+					log_warn('Template could be not imported', this.attr.id);
 				}
 			}
 		}
@@ -86,7 +86,7 @@
 			var html = jmask(this.nodes).text(model, cntx, this);
 	
 			if (!html) {
-				console.warn('No HTML for node', this);
+				log_warn('No HTML for node', this);
 				return;
 			}
 			

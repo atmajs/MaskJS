@@ -8,13 +8,13 @@ custom_Statements['import'] = {
 			name = args[0]
 			;
 		if (typeof name !== 'string') {
-			console.error('<mask:import> Invalid argument', expr);
+			log_error('<mask:import> Invalid argument', expr);
 			return;
 		}
 	
 		while (true) {
 			
-			if (controller.compoName == 'include') 
+			if (controller.compoName === 'include') 
 				break;
 			
 			controller = controller.parent;

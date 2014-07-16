@@ -102,7 +102,7 @@ function expression_parse(expr, earlyExit) {
 					);
 					index++;
 					if (current == null) {
-						throw_util('Unexpected comma', c);
+						util_throw('Unexpected comma', c);
 						break outer;	
 					}
 					

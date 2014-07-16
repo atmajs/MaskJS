@@ -179,7 +179,7 @@ var parser_parse,
 						
 						if (index === 1) {
 							// if DEBUG
-							console.warn('<mask:parse> block comment has no end');
+							log_warn('<mask:parse> block comment has no end');
 							// endif
 							index = length;
 						}

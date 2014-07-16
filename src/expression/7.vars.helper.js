@@ -56,7 +56,7 @@ var refs_extractVars = (function() {
 					(type_Accessor !== nextType) &&
 					(type_AccessorExpr !== nextType)) {
 					
-					console.error('Ast Exception: next should be a symbol/function ref');
+					log_error('Ast Exception: next should be a symbol/function ref');
 					return null;
 				}
 

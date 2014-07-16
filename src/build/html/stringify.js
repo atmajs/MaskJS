@@ -33,7 +33,7 @@ function html_stringify(document, model, component) {
 			if (body){
 				body.appendChild(new html_TextNode(setupCode));
 			}else{
-				console.warn('Body not found');
+				log_warn('Body not found');
 			}
 		}
 
@@ -92,7 +92,7 @@ function html_maskSetup(meta, model) {
 			var Handler = mask.getHandler(meta.compoName);
 
 			if (Handler == null){
-				console.error('Component Handler was not loaded:', meta.compoName);
+				log_error('Component Handler was not loaded:', meta.compoName);
 				return;
 			}
 
@@ -143,7 +143,7 @@ function html_maskSetup(meta, model) {
 		var endNode = document.getElementsByName(id)[0];
 
 		if (startNode == null || endNode == null) {
-			console.error('Invalid node range to initialize mask components');
+			log_error('Invalid node range to initialize mask components');
 			return;
 		}
 

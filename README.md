@@ -20,15 +20,12 @@ Resources:
 - [maskFiddle](http://atmajs.com/mask-try)
 - [Documentation](http://atmajs.com/mask)
 
-#### Quick start
+#### Quick start and examples
 Quickly embed MaskJS into your web application:
 ```html
 <DOCTYPE html>
 <html>
-	<head>
-		<!-- ... meta, styles, etc -->
-		
-	</head>
+	<head><!-- ... meta, styles, etc --></head>
 	<body>
 		<header>
 			<!-- e.g add menu into header -->
@@ -41,10 +38,9 @@ Quickly embed MaskJS into your web application:
 			</script>
 		</header>
 		
-		<!-- ... Other html, or mask blocks -->
+		<!-- ... other html, or mask blocks -->
 		<!-- usually you would have only one Mask block, which is the entry point for the app -->
 		
-
 		<!-- ... scripts -->
 		<script src='http://cdn.jsdelivr.net/maskjs/0.9.2/mask.min.js'></script>
 		<script type='text/javascript'>
@@ -56,6 +52,10 @@ Quickly embed MaskJS into your web application:
 	</body>
 </html>
 ```
+
+Other resources:
+- [Samples](/examples)
+- [TodoMVC app](http://todomvc.com/labs/architecture-examples/atmajs/)
 
 
 ----

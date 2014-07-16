@@ -109,7 +109,7 @@ var ConditionUtil = (function() {
 				// |
 			case 124:
 				if (T.template.charCodeAt(++T.index) !== c) {
-					console.error('Unary operation not valid');
+					log_error('Unary operation not valid');
 				}
 
 				current.join = c === 38 ? '&&' : '||';

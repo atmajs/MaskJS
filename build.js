@@ -132,13 +132,13 @@ function JSHint() {
 			"maxstatements": false,
 			"maxcomplexity": false,
 			"maxlen": false,
-			"asi": false,
+			"asi": true,
 			"boss": true,
 			"debug": true,
 			"eqnull": true,
 			"esnext": true,
 			"evil": true,
-			"expr": false,
+			"expr": true,
 			"funcscope": false,
 			"gcl": false,
 			"globalstrict": true,
@@ -157,7 +157,7 @@ function JSHint() {
 			"shadow": true,
 			"sub": true,
 			"supernew": true,
-			"validthis": false,
+			"validthis": true,
 			"noyield": false,
 			"browser": true,
 			"couch": false,
@@ -184,3 +184,4 @@ function JSHint() {
 		globals: options.predef
 	};
 }
+

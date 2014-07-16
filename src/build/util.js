@@ -63,7 +63,7 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 			}
 			
 			if (attrFn != null) {
-				attrFn(node, controller.attr[key], model, cntx, elements[0], controller);
+				attrFn(anchor, controller.attr[key], model, cntx, elements[0], controller);
 			}
 		}
 	}
@@ -81,9 +81,9 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 
 	if (childs != null && childs !== elements){
 		var il = childs.length,
-			jl = elements.length;
-
-		j = -1;
+			jl = elements.length,
+			j  = -1;
+			
 		while(++j < jl){
 			childs[il + j] = elements[j];
 		}

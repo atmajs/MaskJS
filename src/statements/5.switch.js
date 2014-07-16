@@ -36,12 +36,12 @@
 			}
 			
 			if (child.tagName !== 'case') {
-				console.warn('<mask:switch> Case expected', child.tagName);
+				log_warn('<mask:switch> Case expected', child.tagName);
 				continue;
 			}
 			expr = child.expression;
 			if (!expr) {
-				console.warn('<mask:switch:case> Expression expected');
+				log_warn('<mask:switch:case> Expression expected');
 				continue;
 			}
 			

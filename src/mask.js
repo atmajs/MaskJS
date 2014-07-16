@@ -22,8 +22,8 @@ var cache = {},
 
 			// if DEBUG
 			if (container != null && typeof container.appendChild !== 'function'){
-				console.error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
-				console.warn('Args:', arguments);
+				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
+				log_warn('Args:', arguments);
 			}
 			// endif
 
@@ -209,7 +209,7 @@ var cache = {},
 		
 		registerUtility: function (utilityName, fn) {
 			// if DEBUG
-			console.warn('@registerUtility - deprecated - use registerUtil(utilName, mix)', utilityName);
+			log_warn('@registerUtility - deprecated - use registerUtil(utilName, mix)', utilityName);
 			// endif
 			this.registerUtility = this.registerUtil;
 			this.registerUtility(utilityName, fn);
@@ -217,7 +217,7 @@ var cache = {},
 		
 		getUtility: function(util){
 			// if DEBUG
-			console.warn('@getUtility - deprecated - use getUtil(utilName)', util);
+			log_warn('@getUtility - deprecated - use getUtil(utilName)', util);
 			// endif
 			this.getUtility = this.getUtil;
 			

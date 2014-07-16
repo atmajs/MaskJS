@@ -10,7 +10,7 @@ var build_node = (function(){
 				return doc.createElement(name);
 			// if DEBUG
 			} catch(error) {
-				console.error(name, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
+				log_error(name, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
 				return null;
 			}
 			// endif
