@@ -35,9 +35,12 @@ var mask_run;
 			? new Ctr
 			: new Dom.Component
 			;
+		controller.ID = ++builder_componentID;
 		
 		var scripts = document.getElementsByTagName('script'),
-			script, found = false;
+			script,
+			found = false;
+			
 		imax = scripts.length;
 		i = -1;
 		while( ++i < imax ){
@@ -53,8 +56,12 @@ var mask_run;
 			script.parentNode.insertBefore(fragment, script);
 			found = true;
 		}
-		
-		
+		if (found === false) {
+			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
+		}
+		if (is_Function(controller.renderEnd)) {
+			controller.renderEnd(container, model);
+		}
 		Compo.signal.emitIn(controller, 'domInsert');
 		return controller;
 	};
