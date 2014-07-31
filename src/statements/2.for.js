@@ -1,6 +1,8 @@
 
 (function(){
-
+	var FOR_OF_ITEM = 'for..of/item',
+		FOR_IN_ITEM = 'for..in/item';
+		
 	custom_Statements['for'] = {
 		
 		render: function(node, model, ctx, container, controller, childs){
@@ -32,6 +34,19 @@
 			return createHandler(compoName, model);
 		}
 	};
+	
+	function createBootstrapCompo(name) {
+		var Ctor = function(){};
+		Ctor.prototype = {
+			type: Dom.COMPONENT,
+			compoName: name,
+			renderEnd: handler_proto_renderEnd,
+			dispose: handler_proto_dispose
+		};
+		return Ctor;
+	}
+	custom_Tags[FOR_OF_ITEM] = createBootstrapCompo(FOR_OF_ITEM);
+	custom_Tags[FOR_IN_ITEM] = createBootstrapCompo(FOR_IN_ITEM);
 	
 	function build(value, For, nodes, model, ctx, container, ctr, childs) {
 		
@@ -85,7 +100,7 @@
 				scope[prop2] = i;
 			
 			
-			nodes[i] = createForItem('for..of/item', template, scope);
+			nodes[i] = createForItem(FOR_OF_ITEM, template, scope);
 		}
 		
 		return nodes;
@@ -106,7 +121,7 @@
 				scope[prop2] = value;
 			
 			
-			nodes[i++] = createForItem('for..in/item', template, scope);
+			nodes[i++] = createForItem(FOR_IN_ITEM, template, scope);
 		}
 		
 		return nodes;
@@ -121,7 +136,8 @@
 			controller: {
 				compoName: name,
 				scope: scope,
-				renderEnd: handler_proto_renderEnd
+				renderEnd: handler_proto_renderEnd,
+				dispose: handler_proto_dispose
 			}
 		};
 	}
@@ -130,12 +146,17 @@
 		return {
 			compoName: name,
 			scope: scope,
-			renderEnd: handler_proto_renderEnd
+			renderEnd: handler_proto_renderEnd,
+			dispose: handler_proto_dispose
 		}
 	}
 	
 	function handler_proto_renderEnd(elements) {
 		this.elements = elements;
+	}
+	function handler_proto_dispose() {
+		if (this.elements) 
+			this.elements.length = 0;
 	}
 
 	

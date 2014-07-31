@@ -19,8 +19,10 @@
 	// import /src/custom/exports.js
 	
 	// import /src/expression/exports.js
-	// import /src/statements/exports.js
 	// import /src/dom/exports.js
+	
+	// import /src/statements/exports.js
+	
 	
 	// import /src/parse/parser.js
 	// import /src/build/builder.dom.js
