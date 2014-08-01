@@ -1,4 +1,5 @@
-var refs_extractVars = (function() {
+var  refs_extractVars;
+(function() {
 
 	/**
 	 * extract symbol references
@@ -9,19 +10,16 @@ var refs_extractVars = (function() {
 	 */
 
 
-	return function(expr){
-		if (typeof expr === 'string') {
+	refs_extractVars = function(expr, model, ctx, ctr){
+		if (typeof expr === 'string') 
 			expr = expression_parse(expr);
-		}
 		
-		return _extractVars(expr);
-		
-		
+		return _extractVars(expr, model, ctx, ctr);
 	};
 	
 	
 	
-	function _extractVars(expr) {
+	function _extractVars(expr, model, ctx, ctr) {
 
 		if (expr == null) 
 			return null;
@@ -34,7 +32,7 @@ var refs_extractVars = (function() {
 				imax = body.length,
 				i = -1;
 			while ( ++i < imax ){
-				x = _extractVars(body[i]);
+				x = _extractVars(body[i], model, ctx, ctr);
 				refs = _append(refs, x);
 			}
 		}
@@ -50,7 +48,7 @@ var refs_extractVars = (function() {
 			while (next != null) {
 				nextType = next.type;
 				if (type_FunctionRef === nextType) {
-					return _extractVars(next);
+					return _extractVars(next, model, ctx, ctr);
 				}
 				if ((type_SymbolRef !== nextType) &&
 					(type_Accessor !== nextType) &&
@@ -60,8 +58,15 @@ var refs_extractVars = (function() {
 					return null;
 				}
 
-				path += '.' + next.body;
-
+				var prop = nextType === type_AccessorExpr
+					? expression_evaluate(next.body, model, ctx, ctr)
+					: next.body
+					;
+				if (typeof prop !== 'string') {
+					log_warn('Can`t extract accessor name', path);
+					return null;
+				}
+				path += '.' + prop;
 				next = next.next;
 			}
 
@@ -73,17 +78,17 @@ var refs_extractVars = (function() {
 			case type_Statement:
 			case type_UnaryPrefix:
 			case type_Ternary:
-				x = _extractVars(expr.body);
+				x = _extractVars(expr.body, model, ctx, ctr);
 				refs = _append(refs, x);
 				break;
 		}
 		
 		// get also from case1 and case2
 		if (type_Ternary === exprType) {
-			x = _extractVars(ast.case1);
+			x = _extractVars(ast.case1, model, ctx, ctr);
 			refs = _append(refs, x);
 
-			x = _extractVars(ast.case2);
+			x = _extractVars(ast.case2, model, ctx, ctr);
 			refs = _append(refs, x);
 		}
 
@@ -93,7 +98,7 @@ var refs_extractVars = (function() {
 				imax = args.length,
 				i = -1;
 			while ( ++i < imax ){
-				x = _extractVars(args[i]);
+				x = _extractVars(args[i], model, ctx, ctr);
 				refs = _append(refs, x);
 			}
 			
@@ -120,7 +125,7 @@ var refs_extractVars = (function() {
 			}
 			
 			if (expr.next) {
-				x = _extractVars(expr.next);
+				x = _extractVars(expr.next, model, ctx, ctr);
 				refs = _append(refs, {accessor: _getAccessor(expr), ref: x});
 			}
 		}

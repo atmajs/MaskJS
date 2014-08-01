@@ -120,7 +120,6 @@
 			if (prop2) 
 				scope[prop2] = value;
 			
-			
 			nodes[i++] = createForItem(FOR_IN_ITEM, template, scope);
 		}
 		
