@@ -28,10 +28,15 @@
 
 	function createUtil(obj) {
 
-		if (obj.arguments !== 'parsed')
-			return fn_proxy(obj.process || processRawFn, obj);
-
-		return processParsedDelegate(obj.process);
+		if (obj.arguments === 'parsed')
+			return processParsedDelegate(obj.process);
+		
+		var fn = fn_proxy(obj.process || processRawFn, obj);
+		// <static> save reference to the initial util object.
+		// Mask.Bootstrap need the original util
+		// @workaround
+		fn.util = obj;
+		return fn;
 	}
 
 

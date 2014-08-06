@@ -28,8 +28,13 @@
 			itemCtr = createEachItem(i, nodes, controller);
 			builder_build(nodes, array[i], ctx, container, itemCtr, children);
 			
-			if (itemCtr.components != null) 
+			if (itemCtr.components != null) {
+				var compos = controller.components;
+				if (compos == null) 
+					compos = controller.components = [];
+				
 				arr_pushMany(controller.components, itemCtr.components);
+			}
 		}
 		
 	}
