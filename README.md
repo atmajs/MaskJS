@@ -9,6 +9,12 @@
 	<a href='https://travis-ci.org/atmajs/MaskJS' target='_blank'>
 		<img src='https://travis-ci.org/atmajs/MaskJS.png?branch=master' />
 		</a>
+	<a href='http://badge.fury.io/js/maskjs' target='_blank'>
+		<img src='https://badge.fury.io/js/maskjs.svg' />
+		</a>
+	<a href='http://badge.fury.io/bo/maskjs' target='_blank'>
+		<img src='https://badge.fury.io/bo/maskjs.svg' />
+		</a>
 	</p>
 
 [MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine for
@@ -32,22 +38,34 @@ Quickly embed MaskJS into your web application:
 			<script type='text/mask' data-run='true'>
 				ul {
 					for(page of pages) {
-						li > a href='/~[page].html' > '~[page]'
+						li > a href='/~[page].html' x-signal='click: bazAction' > '~[page]'
 					}
+					// nested components
+					:bazCompo > :quxCompo;
 				}
 			</script>
 		</header>
 		
 		<!-- ... other html, or mask blocks -->
 		<!-- usually you would have only one Mask block, which is the entry point for the app -->
+		<!-- and you would use nested component composition to encapsulate logic, models, templates and behaviour -->
 		
 		<!-- ... scripts -->
 		<script src='http://cdn.jsdelivr.net/maskjs/0.9.2/mask.min.js'></script>
 		<script type='text/javascript'>
-			var model = {
-				pages: [ 'blog', 'about', 'contact' ]
-			};
-			mask.run(model);
+			var App = mask.Compo({
+				model: {
+					pages: [ 'blog', 'about', 'contact' ]
+				},
+				slots: {
+					bazAction: function(event){
+						event.preventDefault();
+						console.log(this instanceof App);
+						// ...
+					}
+				}
+			});
+			mask.run(App);
 		</script>
 	</body>
 </html>
