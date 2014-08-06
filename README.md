@@ -27,7 +27,7 @@ Resources:
 - [Documentation](http://atmajs.com/mask)
 
 #### Quick start and examples
-Quickly embed MaskJS into your web application:
+Most simple MaskJS sample to show where you could start from:
 ```html
 <DOCTYPE html>
 <html>
@@ -38,7 +38,9 @@ Quickly embed MaskJS into your web application:
 			<script type='text/mask' data-run='true'>
 				ul {
 					for(page of pages) {
-						li > a href='/~[page].html' x-signal='click: bazAction' > '~[page]'
+						li > a
+							href='/~[page].html'
+							x-signal='click: bazAction' > '~[page]'
 					}
 					// nested components
 					:bazCompo > :quxCompo;
@@ -47,11 +49,13 @@ Quickly embed MaskJS into your web application:
 		</header>
 		
 		<!-- ... other html, or mask blocks -->
-		<!-- usually you would have only one Mask block, which is the entry point for the app -->
-		<!-- and you would use nested component composition to encapsulate logic, models, templates and behaviour -->
+		<!--
+			usually you would have only one Mask block, which is the entry point
+			for the app, and you would use nested component composition to
+			encapsulate logic, models, templates and behaviour
+		-->
 		
-		<!-- ... scripts -->
-		<script src='http://cdn.jsdelivr.net/maskjs/0.9.2/mask.min.js'></script>
+		<script src='http://cdn.jsdelivr.net/g/maskjs'></script>
 		<script type='text/javascript'>
 			var App = mask.Compo({
 				model: {
@@ -65,6 +69,8 @@ Quickly embed MaskJS into your web application:
 					}
 				}
 			});
+			mask.registerHandler(':bazCompo', mask.Compo({/*implement*/}));
+			mask.registerHandler(':quxCompo', mask.Compo({/*implement*/}));
 			mask.run(App);
 		</script>
 	</body>
