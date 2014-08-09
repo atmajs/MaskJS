@@ -1,5 +1,5 @@
 {
-    "name": "",
+    "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
     "version": "0.9.3",
     "homepage": "http://atmajs.com/mask",
@@ -9,6 +9,7 @@
             "email": "rma4ok@gmail.com"
         }
     ],
+    "main": "./lib/mask.node.js",
     "author": "Alexander Kit <alex.kit@atmajs.com>",
     "repository": {
         "type": "git",

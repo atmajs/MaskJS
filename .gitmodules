@@ -7,3 +7,6 @@
 [submodule "mask-j"]
 	path = mask-j
 	url = https://github.com/atmajs/mask-j.git
+[submodule "mask-node"]
+	path = mask-node
+	url = https://github.com/atmajs/mask-node

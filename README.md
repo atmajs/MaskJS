@@ -40,7 +40,7 @@ Most simple MaskJS sample to show where you could start from:
 					for(page of pages) {
 						li > a
 							href='/~[page].html'
-							x-signal='click: bazAction' > '~[page]'
+							x-signal='click: fooAction' > '~[page]'
 					}
 					// nested components
 					:bazCompo > :quxCompo;
@@ -62,7 +62,7 @@ Most simple MaskJS sample to show where you could start from:
 					pages: [ 'blog', 'about', 'contact' ]
 				},
 				slots: {
-					bazAction: function(event){
+					fooAction: function(event){
 						event.preventDefault();
 						console.log(this instanceof App);
 						// ...

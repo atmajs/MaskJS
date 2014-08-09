@@ -45,7 +45,8 @@ module.exports = {
 		action: 'custom',
 		script: 'tools/license-handler.js'
 	},
-	'import': {
+	'build mask': {
+		action: 'import',
 		files: 'builds/**',
 		output: 'lib/',
 		defines: {
@@ -59,6 +60,13 @@ module.exports = {
 		output: 'lib/mask.prod.js',
 		defines: {
 			DEBUG: false
+		}
+	},
+	'import libraries': {
+		action: 'copy',
+		files: {
+			'/mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
+			'/mask-node/lib/mask.node.js': '/lib/mask.node.js'
 		}
 	},
 	'jshint': {
@@ -88,7 +96,7 @@ module.exports = {
 
 	'watch': {
 		files: 'src/**',
-		config: '#[import]'
+		config: '#[build mask]'
 	},
 	
 	// `> atma bump`
@@ -97,7 +105,7 @@ module.exports = {
 		script: 'tools/bump.js'
 	},
 
-	'defaults': ['add-handlers', 'import', 'jshint', 'uglify']
+	'defaults': ['add-handlers', 'build mask', 'import libraries', 'jshint', 'uglify']
 };
 
 
