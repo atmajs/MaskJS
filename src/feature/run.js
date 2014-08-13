@@ -39,6 +39,7 @@ var mask_run;
 		
 		var scripts = document.getElementsByTagName('script'),
 			script,
+			els = [],
 			found = false;
 			
 		imax = scripts.length;
@@ -50,8 +51,8 @@ var mask_run;
 			if (script.getAttribute('data-run') !== 'true') 
 				continue;
 			
-			var fragment = Mask.render(
-				script.textContent, model, null, null, controller
+			var fragment = builder_build(
+				parser_parse(script.textContent), model, {}, null, controller, els
 			);
 			script.parentNode.insertBefore(fragment, script);
 			found = true;
@@ -60,7 +61,7 @@ var mask_run;
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
 		if (is_Function(controller.renderEnd)) {
-			controller.renderEnd(container, model);
+			controller.renderEnd(els, model);
 		}
 		Compo.signal.emitIn(controller, 'domInsert');
 		return controller;
