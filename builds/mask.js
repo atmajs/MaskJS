@@ -29,6 +29,7 @@
 	
 	/* Features */
 	// import /src/feature/run.js
+	// import /src/feature/merge.js
 	
 	// import /src/mask.js
 	

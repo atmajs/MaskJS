@@ -62,6 +62,15 @@ var cache = {},
 		 */
 		run: mask_run,
 		
+		
+		/*
+		 * - aTmpl: Mask Template
+		 * - bTmpl: Mask Template
+		 *
+		 * @returns New joined mask template
+		 */
+		merge: mask_merge,
+		
 		/**
 		 * mask.registerHandler(tagName, tagHandler) -> void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
