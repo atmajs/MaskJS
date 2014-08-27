@@ -50,6 +50,14 @@ var builder_componentID = 0,
 		if (container == null && type !== 1) 
 			container = document.createDocumentFragment();
 		
+		
+		// Dom.TEXTNODE
+		if (type === 2) {
+			
+			build_textNode(node, model, ctx, container, controller);
+			return container;
+		}
+		
 		// Dom.SET
 		if (type === 10) {
 			
@@ -61,17 +69,21 @@ var builder_componentID = 0,
 			}
 			return container;
 		}
-	
+		
+		var tagName = node.tagName;
+		if (tagName === 'else') 
+			return container;
+		
 		// Dom.STATEMENT
 		if (type === 15) {
-			var Handler = custom_Statements[node.tagName];
+			var Handler = custom_Statements[tagName];
 			if (Handler == null) {
 				
-				if (custom_Tags[node.tagName] != null) {
+				if (custom_Tags[tagName] != null) {
 					// Dom.COMPONENT
 					type = 4;
 				} else {
-					log_error('<mask: statement is undefined', node.tagName);
+					log_error('<mask: statement is undefined>', tagName);
 					return container;
 				}
 				
@@ -86,19 +98,8 @@ var builder_componentID = 0,
 	
 		// Dom.NODE
 		if (type === 1) {
-			
-			if (node.tagName === 'else') 
-				return container;
-	
 			container = build_node(node, model, ctx, container, controller, childs);
 			childs = null;
-		}
-	
-		// Dom.TEXTNODE
-		if (type === 2) {
-			
-			build_textNode(node, model, ctx, container, controller);
-			return container;
 		}
 	
 		// Dom.COMPONENT
@@ -171,13 +172,11 @@ var builder_componentID = 0,
 			
 			if (is_Function(node.renderEnd)) 
 				node.renderEnd(elements, model, ctx, container);
-			
 		}
 	
 		if (childs != null && elements != null && childs !== elements)
 			arr_pushMany(childs, elements);
 		
-	
 		return container;
 	};
 	
