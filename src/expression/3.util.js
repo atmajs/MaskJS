@@ -27,7 +27,6 @@ var util_resolveRef,
 			
 			var next = current.next,
 				nextBody = next != null && next.body;
-				
 			if (nextBody != null && value[nextBody] == null){
 					
 				if (next.type === type_FunctionRef
@@ -52,6 +51,12 @@ var util_resolveRef,
 						break;
 					}
 				}
+				
+				if (value == null) {
+					// prepair for warn message
+					key = '$c.' + nextBody;
+					current = next;
+				}
 			}
 			
 		}
@@ -67,27 +72,12 @@ var util_resolveRef,
 			value = ctx;
 		
 		else {
-			// dynamic resolver
+			// scope resolver
 			
 			if (model != null) {
 				object = model;
 				value = model[key];
 			}
-			
-			// @TODO - deprecate this for predefined accessors '$c' ...
-			
-			////// remove
-			//////if (value == null && ctx != null) {
-			//////	object = ctx;
-			//////	value = ctx[key];
-			//////}
-		
-			//////if (value == null && controller != null) {
-			//////	do {
-			//////		object = controller;
-			//////		value = controller[key];
-			//////	} while (value == null && (controller = controller.parent) != null);
-			//////}
 			
 			if (value == null) {
 				
@@ -105,51 +95,45 @@ var util_resolveRef,
 			}
 		}
 		
-	
-		if (value != null) {
-			do {
-				if (current.type === type_FunctionRef) {
-					
-					args = [];
-					i = -1;
-					imax = current.arguments.length;
-					
-					while( ++i < imax )
-						args[i] = expression_evaluate(current.arguments[i], model, ctx, controller);
-					
-					value = value.apply(object, args);
-				}
-	
-				if (value == null || current.next == null) 
-					break;
-				
-	
-				current = current.next;
-				key = current.type === type_AccessorExpr
-					? expression_evaluate(current.body, model, ctx, controller)
-					: current.body
-					;
-				
-				object = value;
-				value = value[key];
-				
-				if (value == null) 
-					break;
-	
-			} while (true);
-		}
-	
-		if (value == null){
+		if (value == null) {
 			if (current == null || current.next != null){
 				// notify that value is not in model, ctx, controller;
 				log_warn('<mask:expression> Accessor error:', key);
 			}
+			return null;
 		}
-	
+		
+		do {
+			if (current.type === type_FunctionRef) {
+				
+				args = [];
+				i = -1;
+				imax = current.arguments.length;
+				
+				while( ++i < imax )
+					args[i] = expression_evaluate(current.arguments[i], model, ctx, controller);
+				
+				value = value.apply(object, args);
+			}
+
+			if (value == null || current.next == null) 
+				break;
+			
+			current = current.next;
+			key = current.type === type_AccessorExpr
+				? expression_evaluate(current.body, model, ctx, controller)
+				: current.body
+				;
+			
+			object = value;
+			value = value[key];
+			
+			if (value == null) 
+				break;
+
+		} while (true);
+		
 		return value;
 	};
-
-	
-	
 }());
 
