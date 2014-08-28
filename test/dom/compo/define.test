@@ -1,0 +1,50 @@
+UTest({
+	'should define the component' () {
+		var template = `
+			define foo {
+				h4 > 'FooContent'
+				span > 'A'
+			}
+			// tmpl
+			
+			div > foo;
+		`;
+		var $div = $(mask.render(template).firstChild);
+		$div
+			.eq_('prop', 'tagName', 'DIV')
+			.children()
+			.eq_('length', 2)
+			.eq(0)
+			.eq_('prop', 'tagName', 'H4')
+			.eq_('html','FooContent')
+			.end()
+			.eq(1)
+			.eq_('prop', 'tagName', 'SPAN')
+			.eq_('html','A')
+			;
+	},
+	'should merge contents the component' () {
+		var template = `
+			define foo {
+				h4 > '~[: $a.text]'
+				section > @xContent;
+			}
+			div > foo text='FooText' {
+				@xContent > 'BazContent'
+			}
+		`;
+		var $div = $(mask.render(template).firstChild);
+		$div
+			.eq_('prop', 'tagName', 'DIV')
+			.children()
+			.eq_('length', 2)
+			.eq(0)
+			.eq_('prop', 'tagName', 'H4')
+			.eq_('html', 'FooText')
+			.end()
+			.eq(1)
+			.eq_('prop', 'tagName', 'SECTION')
+			.eq_('html', 'BazContent');
+			;
+	}
+})

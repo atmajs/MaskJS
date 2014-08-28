@@ -19,7 +19,7 @@ var custom_Utils,
 	// import util.js
 	
 	function initialize() {
-			
+		
 		custom_Utils = {
 			expression: function(value, model, ctx, element, controller){
 				return ExpressionUtil.eval(value, model, ctx, controller);
@@ -65,9 +65,14 @@ var custom_Utils,
 			li: null,
 			ol: null,
 			i: null,
+			em: null,
 			b: null,
 			strong: null,
-			form: null
+			form: null,
+			audio: null,
+			video: null,
+			canvas: null,
+			svg: null
 		};
 		
 		// use on server to define reserved tags and its meta info

@@ -69,8 +69,8 @@ UTest({
 		
 		var tmpl1 = mask.merge(a, b);
 		var tmpl2 = mask.merge(tmpl1, c);
-		
-		$(mask.render(tmpl2))
+		var dom = $(mask.render(tmpl2));
+		dom
 			.filter('div.outer')
 			.eq_('length', 1)
 			.children('div.inner')
@@ -88,9 +88,8 @@ UTest({
 			;
 		
 		var tmpl = mask.merge(a, b);
-		var $dom = $(tmpl);
-		
-		$(mask.render(tmpl))
+		var dom = $(mask.render(tmpl));
+		dom
 			.filter('div')
 			.eq_('length', 1)
 			.children()
@@ -115,8 +114,8 @@ UTest({
 			;
 		
 		var tmpl = mask.merge(a, b);
-		var $dom = $(tmpl);
-		$(mask.render(tmpl))
+		var dom = $(mask.render(tmpl));
+		dom
 			.filter('div')
 			.eq_('length', 1)
 			.eq_('html', '')
@@ -128,8 +127,8 @@ UTest({
 			;
 		
 		var tmpl = mask.merge(a, b);
-		var $dom = $(mask.render(tmpl));
-		$dom
+		var dom = $(mask.render(tmpl));
+		dom
 			.filter('p')
 			.eq_('length', 1)
 			.eq_('html', '<span>baz</span>')
@@ -141,11 +140,49 @@ UTest({
 			;
 		
 		var tmpl = mask.merge(a, b);
-		var $dom = $(mask.render(tmpl));
-		$dom
+		var dom = $(mask.render(tmpl));
+		dom
 			.eq_('attr', 'class', 'baz')
 			.eq_('attr', 'some', 'false')
 			.eq_('html', '<span>baz</span>')
+			;
+	},
+	'should join middle nodes' () {
+		var a = jmask('test { some; span > div > @fooContent; }').find('div').get(0),
+			b = jmask('span { some; p > @fooContent > span > "baz" }').find('p').get(0)
+			;
+		var tmpl = mask.merge(a, b);
+		var dom = $(mask.render(tmpl));
+		dom
+			.filter('p')
+			.eq_('length', 1)
+			.eq_('html', '<span>baz</span>')
+			;
+	},
+	'should join children' () {
+		var a = mask.parse(`
+				stub {
+					h4 > '-h4-'
+					section > @xContent;
+				}
+			`);
+		
+		var b = mask.parse(`
+				stub {
+					@xContent > 'BazContent'
+				}
+			`);
+		var tmpl = mask.merge(a.nodes, b.nodes);
+		var dom = $(mask.render(tmpl).children);
+		dom
+			.eq_('length', 2)
+			.eq(0)
+			.eq_('prop', 'tagName', 'H4')
+			.eq_('html', '-h4-')
+			.end()
+			.eq(1)
+			.eq_('prop', 'tagName', 'SECTION')
+			.eq_('html', 'BazContent')
 			;
 	}
 })

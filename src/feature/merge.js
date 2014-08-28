@@ -115,7 +115,7 @@ var mask_merge;
 			var imax = node.length,
 				i = -1;
 			while( ++i < imax ){
-				_getContents(b, node[i], contents);
+				_getContents(node === b ? node[i] : b, node[i], contents);
 			}
 			return contents;
 		}
