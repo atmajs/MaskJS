@@ -23,7 +23,7 @@ UTest({
 			.eq_('html','A')
 			;
 	},
-	'should merge contents the component' () {
+	'should merge contents' () {
 		var template = `
 			define foo {
 				h4 > '~[: $a.text]'
