@@ -509,10 +509,8 @@ var parser_parse,
 						if (key === 'id' || last === go_attrVal) {
 							token = ensureTemplateFunction(token);
 						}
-						else if (key === 'class') {
-							// interpolate later
-						}
-						else {
+						else if (key !== 'class') {
+							// interpolate class later
 							parser_warn('Invalid interpolation (in attr name)'
 								, template
 								, index
@@ -522,7 +520,6 @@ var parser_parse,
 						}
 					}
 				}
-				
 			}
 
 			if (c !== c) {

@@ -1,8 +1,8 @@
 var parser_var;
 (function(){
 	parser_var = function(template, index, length, parent){
-		var node = new Node('var', parent);
-		var start,
+		var node = new Node('var', parent),
+			start,
 			c;
 		
 		node.stringify = stingify;
@@ -96,7 +96,7 @@ var parser_var;
 				str += ',';
 			
 			str += key + '=' + attr[key];
-		};
+		}
 		return str + ';';
 	}
 }());

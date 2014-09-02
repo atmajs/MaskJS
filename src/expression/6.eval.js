@@ -75,13 +75,17 @@ function expression_evaluate(mix, model, ctx, controller) {
 				result %= value;
 				break;
 			case op_LogicalNotEqual:
+				/* jshint eqeqeq: false */
 				result = result != value;
+				/* jshint eqeqeq: true */
 				break;
 			case op_LogicalNotEqual_Strict:
 				result = result !== value;
 				break;
 			case op_LogicalEqual:
+				/* jshint eqeqeq: false */
 				result = result == value;
+				/* jshint eqeqeq: true */
 				break;
 			case op_LogicalEqual_Strict:
 				result = result === value;

@@ -1,6 +1,6 @@
 var cursor_groupEnd,
 	cursor_quoteEnd,
-	cursor_refEnd;
+	cursor_refEnd
 	;
 
 (function(){

@@ -45,8 +45,9 @@
 				continue;
 			}
 			
+			/* jshint eqeqeq: false */
 			if (eval_(expr, model, ctx, controller) == value) {
-				//! `==` comparison
+				/* jshint eqeqeq: true */
 				case_ = child;
 				break;
 			}
