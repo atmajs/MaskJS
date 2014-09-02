@@ -4,22 +4,25 @@
 	
 	function Define(){}
 	Define.prototype = {
-		render: function(){
-			var name;
-			for(name in this.attr) break;
-			
-			var nodes = this.nodes;
-			mask.registerHandler(name, Compo({
-				renderStart: function(){
-					this.nodes = this.nodes == null
-						? nodes
-						: mask.merge(nodes, this.nodes)
-						;
-						
-					
-				}
-			}));
-		}
+		$meta: {
+			serializeNodes: true
+		},
+		render: define,
+		onRenderStartClient: define
 	};
 	
+	function define(){
+		var name;
+		for(name in this.attr) break;
+		
+		var nodes = this.nodes;
+		mask.registerHandler(name, Compo({
+			renderStart: function(){
+				this.nodes = this.nodes == null
+					? nodes
+					: mask.merge(nodes, this.nodes)
+					;
+			}
+		}));
+	}
 }(Mask));
