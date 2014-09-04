@@ -1,9 +1,9 @@
 UTest({
-	'simple' () {
+	'simple - check mask nodes' () {
 		var a = '@foo',
 			b = '@foo { span > "Foo" }'
 			;
-		
+			
 		var tmpl = mask.merge(a, b);
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
@@ -17,17 +17,16 @@ UTest({
 				@title > em > 'Baz'
 				@body > section #content;
 			`;
-		var tmpl = mask.merge(a, b);
-		var $dom = $(mask.render(tmpl));
+		var $dom = $render(a, b);
 		$dom
-			.children('h4')
+			.filter('h4')
 			.eq_('length', 1)
 			.find('span > em')
 			.eq_('length', 1)
 			.eq_('text', 'Baz');
 		
 		$dom
-			.children('p')
+			.filter('p')
 			.eq_('length', 1)
 			.children('section#content')
 			.eq_('length', 1)
@@ -49,8 +48,7 @@ UTest({
 			b = '@foo { span > "Foo" }'
 			;
 		
-		var tmpl = mask.merge(a, b);
-		var $dom = $(mask.render(tmpl));
+		var $dom = $render(a, b);
 		$dom
 			.children('h4')
 			.eq_('length', 1)
@@ -68,8 +66,7 @@ UTest({
 		var c = '@title > "Hello"';
 		
 		var tmpl1 = mask.merge(a, b);
-		var tmpl2 = mask.merge(tmpl1, c);
-		var dom = $(mask.render(tmpl2));
+		var dom = $render(tmpl1, c);
 		dom
 			.filter('div.outer')
 			.eq_('length', 1)
@@ -87,8 +84,7 @@ UTest({
 			b = '@bazContent > span > "baz"'
 			;
 		
-		var tmpl = mask.merge(a, b);
-		var dom = $(mask.render(tmpl));
+		var dom = $render(a, b);
 		dom
 			.filter('div')
 			.eq_('length', 1)
@@ -113,8 +109,7 @@ UTest({
 			b = '@fooContent > span > "baz"'
 			;
 		
-		var tmpl = mask.merge(a, b);
-		var dom = $(mask.render(tmpl));
+		var dom = $render(a, b);
 		dom
 			.filter('div')
 			.eq_('length', 1)
@@ -139,8 +134,7 @@ UTest({
 			b = '.baz some=false > @foo > span > "baz"'
 			;
 		
-		var tmpl = mask.merge(a, b);
-		var dom = $(mask.render(tmpl));
+		var dom = $render(a, b);
 		dom
 			.eq_('attr', 'class', 'baz')
 			.eq_('attr', 'some', 'false')
@@ -172,8 +166,7 @@ UTest({
 					@xContent > 'BazContent'
 				}
 			`);
-		var tmpl = mask.merge(a.nodes, b.nodes);
-		var dom = $(mask.render(tmpl).children);
+		var dom = $render(a.nodes, b.nodes);
 		dom
 			.eq_('length', 2)
 			.eq(0)
@@ -184,5 +177,51 @@ UTest({
 			.eq_('prop', 'tagName', 'SECTION')
 			.eq_('html', 'BazContent')
 			;
+	},
+	'should insert attribute value' () {
+		var b = "@foo name=myFoo > br";
+		
+		[
+			"@foo > div name='@foo.attr.name' > @placeholder;",
+			"@foo > div name='@attr.name' > @placeholder",
+			"div name='@foo.attr.name' > br; span;"
+		].forEach(a => {
+			var dom = $render(a, b)
+			dom
+				.eq_('prop', 'tagName', 'DIV')
+				.eq_('attr', 'name', 'myFoo')
+				.eq_('html', '<br>')
+				;
+		});
+	},
+	'should render @each' () {
+		var a = "@each (tag) > section id='@tag.attr.id' > @placeholder"
+		var b = `
+			@tag #foo > div > 'fooContent'
+			@tag #bar > span > 'barContent'
+		`;
+		var dom = $render(a, b);
+		dom
+			.eq_('length', 2)
+			.eq(0)
+			.eq_('prop', 'tagName', 'SECTION')
+			.eq_('attr', 'id', 'foo')
+			.eq_('html', '<div>fooContent</div>')
+			.end()
+			.eq(1)
+			.eq_('prop', 'tagName', 'SECTION')
+			.eq_('attr', 'id', 'bar')
+			.eq_('html', '<span>barContent</span>')
+			;
 	}
 })
+
+function $render(tmplA, tmplB, model) {
+	var tmpl = mask.merge(tmplA, tmplB);
+	var dom = mask.render(tmpl, model);
+	notEq_(dom, null);
+	if (dom.nodeType === Node.DOCUMENT_FRAGMENT_NODE) 
+		return $(dom.children);
+	
+	return $(dom);
+}

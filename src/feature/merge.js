@@ -15,29 +15,30 @@ var mask_merge;
 	var tag_PLACEHOLDER_ELSE = '@else',
 		dom_NODE = Dom.NODE,
 		dom_TEXTNODE = Dom.TEXTNODE,
-		dom_FRAGMENT = Dom.FRAGMENT
+		dom_FRAGMENT = Dom.FRAGMENT,
+		dom_STATEMENT = Dom.STATEMENT
 		;
 	
-	function _merge(node, contents, _defaultContent, clonedParent){
+	function _merge(node, contents, tmplNode, clonedParent){
 		if (is_Array(node)) {
-			return _mergeArray(node, contents, _defaultContent, clonedParent);
+			return _mergeArray(node, contents, tmplNode, clonedParent);
 		}
 		switch(node.type){
 			case dom_TEXTNODE:
-				return node;
+				return _cloneTextNode(node);
 			case dom_NODE:
-				return _mergeNode(node, contents, _defaultContent, clonedParent);
+			case dom_STATEMENT:
+				return _mergeNode(node, contents, tmplNode, clonedParent);
 			case dom_FRAGMENT:
 				return {
 					type: node.type,
-					nodes: _mergeArray(node.nodes, contents, _defaultContent, clonedParent)
+					nodes: _mergeArray(node.nodes, contents, tmplNode, clonedParent)
 				};
 		}
-		
 		log_warn('Uknown type', node.type);
 		return null;
 	}
-	function _mergeArray(nodes, contents, _defaultContent, clonedParent){
+	function _mergeArray(nodes, contents, tmplNode, clonedParent){
 		var arr = [],
 			imax = nodes.length,
 			i = -1,
@@ -49,11 +50,11 @@ var mask_merge;
 				
 				if (x == null) {
 					// previous is null
-					x = _merge(nodes[i].nodes, contents, _defaultContent, clonedParent)
+					x = _merge(nodes[i].nodes, contents, tmplNode, clonedParent)
 				}
 			}
 			else {
-				x = _merge(node, contents, _defaultContent, clonedParent);
+				x = _merge(node, contents, tmplNode, clonedParent);
 			}
 			
 			if (x == null) 
@@ -67,16 +68,32 @@ var mask_merge;
 		}
 		return arr;
 	}
-	function _mergeNode(node, contents, _defaultContent, clonedParent){
+	function _mergeNode(node, contents, tmplNode, clonedParent){
 		var tagName = node.tagName;
 		if (tagName.charCodeAt(0) !== 64) {
 			// @
-			return _cloneNode(node, contents, _defaultContent, clonedParent);
+			return _cloneNode(node, contents, tmplNode, clonedParent);
 		}
 		
 		var id = node.attr.id;
 		if (tagName === '@placeholder' && id == null) 
-			return _defaultContent;
+			return tmplNode.nodes;
+		
+		if (tagName === '@each') {
+			
+			var arr = contents[node.expression];
+			if (arr == null) {
+				log_error('No template node: @' + node.expression);
+				return null;
+			}
+			var fragment = new Dom.Fragment,
+				imax = arr.length,
+				i = -1;
+			while ( ++i < imax ){
+				fragment.appendChild(_merge(node.nodes, contents, arr[i], clonedParent));
+			}
+			return fragment;
+		}
 		
 		if (id == null) 
 			id = tagName.substring(1);
@@ -91,13 +108,19 @@ var mask_merge;
 		if (node.nodes == null) 
 			return content.nodes;
 		
-		return _merge(node.nodes, contents.nodes, content, clonedParent);
+		return _merge(
+			node.nodes
+			, _getContents(content.nodes, content.nodes, {$parent: contents })
+			, content
+			, clonedParent
+		);
 	}
 	function _cloneNode(node, contents, _defaultContent, clonedParent){
 		var outnode = {
-			tagName: node.tagName || node.compoName,
-			attr: node.attr,
 			type: node.type,
+			tagName: node.tagName || node.compoName,
+			attr: _interpolate_obj(node.attr, contents, _defaultContent),
+			expression: _interpolate_str(node.expression, contents, _defaultContent),
 			controller: node.controller,
 			parent: clonedParent
 		};
@@ -106,7 +129,90 @@ var mask_merge;
 		
 		return outnode;
 	}
+	function _cloneTextNode(node, contents, _defaultContent, clonedParent){
+		return {
+			type: node.type,
+			content: _interpolate_str(node.content, contents, _defaultContent),
+			parent: clonedParent
+		};
+	}
+	function _interpolate_obj(obj, contents, node){
+		var clone = Object.create(obj);
+		for(var key in clone){
+			clone[key] = _interpolate_str(clone[key], contents, node);
+		}
+		return clone;
+	}
+	function _interpolate_str(str, contents, node){
+		var index = -1;
+		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1) 
+			return str;
+		
+		var result = str.substring(0, index),
+			length = str.length,
+			isBlockEntry = str.charCodeAt(index + 1) === 91, // [ 
+			last = -1,
+			c;
+		
+		while (index < length) {
+			last = index;
+			if (isBlockEntry === true) {
+				index = str.indexOf(']', ++last);
+			}
+			else {
+				while (index < length) {
+					c = str.charCodeAt(++index);
+					if (c < 33) break;
+				}
+			}
+			if (index === -1) 
+				break;
+			
+			var x = _interpolate(str.substring(last, index), contents, node);
+			if (x != null) 
+				result += x;
+			
+			last = index;
+		}
+		
+		result += str.substring(last);
+		return result;
+	}
+	function _interpolate(path, contents, node) {
+		var index = path.indexOf('.');
+		if (index == -1) {
+			log_warn('Merge templates. Accessing node');
+			return '';
+		}
+		var tagName = path.substring(0, index),
+			id = tagName.substring(1),
+			property = path.substring(index + 1),
+			obj = null;
+		
+		if (node != null) {
+			if (tagName === '@attr')
+				obj = node.attr;
+			else if (tagName === node.tagName) 
+				obj = node;
+		}
+		
+		if (obj == null) 
+			obj = contents[id];
+		
+		while (obj == null) {
+			contents = contents.$parent;
+			if (contents == null) 
+				break;
+			obj = contents[id];
+		}
+		if (obj == null) {
+			log_error('Merge templates. Node not found', tagName);
+			return '';
+		}
+		return obj_getProperty(obj, property);
+	}
 	
+	var RESERVED = ' else placeholder each attr '
 	function _getContents(b, node, contents) {
 		if (node == null) 
 			return contents;
@@ -129,10 +235,28 @@ var mask_merge;
 			if (tagName != null && tagName.charCodeAt(0) === 64) {
 				// @
 				var id = tagName.substring(1);
-				contents[id] = {
+				// if DEBUG
+				if (RESERVED.indexOf(' ' + id + ' ') !== -1) 
+					log_error('MaskMerge. Reserved Name', id);
+				// endif
+				var x = {
+					tagName: node.tagName,
+					parent: _getParentModifiers(b, node),
 					nodes: node.nodes,
-					parent: _getParentModifiers(b, node)
+					attr: node.attr,
+					expression: node.expression
 				};
+				if (contents[id] == null) {
+					contents[id] = x;
+				} else {
+					var current = contents[id];
+					if (is_Array(current)) {
+						current.push(x);
+					}
+					else {
+						contents[id] = [current, x];
+					}
+				}
 			}
 		}
 		return _getContents(b, node.nodes, contents);

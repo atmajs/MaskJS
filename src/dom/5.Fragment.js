@@ -1,8 +1,4 @@
-
-
-function Fragment(){
-	
-}
+function Fragment(){}
 
 Fragment.prototype = {
 	constructor: Fragment,
