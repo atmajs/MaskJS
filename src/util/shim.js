@@ -58,4 +58,11 @@
 		};
 	}
 
+	if (_Object_create == null) {
+		_Object_create = function(source){
+			var Ctor = function(){};
+			Ctor.prototype = source;
+			return new Ctor;
+		};
+	}
 }());

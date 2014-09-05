@@ -105,16 +105,39 @@ var mask_merge;
 		if (content.parent) 
 			_modifyParents(clonedParent, content.parent);
 		
+		var contentNodes = content.nodes;
+		if (node.attr.as !== void 0) {
+			var tagName_ = node.attr.as;
+			contentNodes = {
+				tagName: tagName_,
+				attr: _mergeAttr(node.attr, content.attr, contents, tmplNode),
+				parent: clonedParent,
+				nodes: contentNodes
+			};
+			contentNodes.attr.as = null;
+		}
+		
 		if (node.nodes == null) 
-			return content.nodes;
+			return contentNodes;
 		
 		return _merge(
 			node.nodes
-			, _getContents(content.nodes, content.nodes, {$parent: contents })
+			, _getContents(contentNodes, contentNodes, {$parent: contents })
 			, content
 			, clonedParent
 		);
 	}
+	function _mergeAttr(a, b, contents, tmplNode){
+		if (a == null || b == null) 
+			return a || b;
+		
+		var out = _interpolate_obj(a, contents, tmplNode);
+		for (var key in b){
+			out[key] = _interpolate_str(b[key], contents, tmplNode);
+		}
+		return out;
+	}
+	
 	function _cloneNode(node, contents, _defaultContent, clonedParent){
 		var outnode = {
 			type: node.type,
@@ -137,9 +160,13 @@ var mask_merge;
 		};
 	}
 	function _interpolate_obj(obj, contents, node){
-		var clone = Object.create(obj);
+		var clone = _Object_create(obj),
+			x;
 		for(var key in clone){
-			clone[key] = _interpolate_str(clone[key], contents, node);
+			x = clone[key];
+			if (x == null || typeof x !== 'string' || x.indexOf('@') === -1) 
+				continue;
+			clone[key] = _interpolate_str(x, contents, node);
 		}
 		return clone;
 	}
@@ -180,7 +207,7 @@ var mask_merge;
 	}
 	function _interpolate(path, contents, node) {
 		var index = path.indexOf('.');
-		if (index == -1) {
+		if (index === -1) {
 			log_warn('Merge templates. Accessing node');
 			return '';
 		}

@@ -213,6 +213,16 @@ UTest({
 			.eq_('attr', 'id', 'bar')
 			.eq_('html', '<span>barContent</span>')
 			;
+	},
+	'should render the template node as an element' () {
+		var a = "@foo as=p;"
+		var b = "@foo.hello > 'Hello'";
+		var dom = $render(a, b);
+		dom
+			.eq_('prop', 'tagName', 'P')
+			.eq_('attr', 'class', 'hello')
+			.eq_('html', 'Hello')
+			
 	}
 })
 

@@ -29,7 +29,7 @@ Resources:
 #### Quick start and examples
 Most simple MaskJS sample to show where you could start from:
 ```html
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head><!-- ... meta, styles, etc --></head>
 	<body>
@@ -80,7 +80,7 @@ Most simple MaskJS sample to show where you could start from:
 Other resources:
 - [Samples](/examples)
 - [TodoMVC app](http://todomvc.com/labs/architecture-examples/atmajs/)
-
+- [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
 
 ----
 
@@ -242,7 +242,24 @@ There are already many plugins, components and useful utilities. Some of them wo
 
 ###Changelog
 ------------
-
+- 0.9.6
+	- Merge feature for better encapsulation, e.g:
+	```less
+		define :dialog {
+			.wrapper > .modal {
+				.modal-header {
+					@title;
+					.close;
+				}
+				.modal-content > @body;
+			}
+		}
+		// ..
+		:dialog {
+			@title > 'Hello'
+			@body  > 'World!'
+		}
+	```
 - 0.9.1
 	- Expressions:
 		- Accessors with Bracket notation: ```~[foo[bar]]```,```~[foo["key"]]```
