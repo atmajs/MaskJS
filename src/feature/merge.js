@@ -8,7 +8,6 @@ var mask_merge;
 			b = parser_parse(b);
 		
 		var contents = _getContents(b, b, {});
-		
 		return _merge(a, contents);
 	};
 	
@@ -80,17 +79,33 @@ var mask_merge;
 			return tmplNode.nodes;
 		
 		if (tagName === '@each') {
-			
-			var arr = contents[node.expression];
+			var arr = contents[node.expression],
+				x;
 			if (arr == null) {
 				log_error('No template node: @' + node.expression);
 				return null;
 			}
+			if (is_Array(arr) === false) {
+				x = arr;
+				return _merge(
+					node.nodes
+					, _getContents(x.nodes, x.nodes, {$parent: contents })
+					, x
+					, clonedParent
+				);
+			}
+			
 			var fragment = new Dom.Fragment,
 				imax = arr.length,
 				i = -1;
 			while ( ++i < imax ){
-				fragment.appendChild(_merge(node.nodes, contents, arr[i], clonedParent));
+				x = arr[i];
+				fragment.appendChild(_merge(
+					node.nodes
+					, _getContents(x.nodes, x.nodes, {$parent: contents })
+					, x
+					, clonedParent
+				));
 			}
 			return fragment;
 		}
@@ -98,7 +113,7 @@ var mask_merge;
 		if (id == null) 
 			id = tagName.substring(1);
 		
-		var content = contents[id];
+		var content = getNode(contents, id);
 		if (content == null) 
 			return null;
 		
@@ -224,19 +239,24 @@ var mask_merge;
 		}
 		
 		if (obj == null) 
-			obj = contents[id];
+			obj = getNode(contents, id);
 		
-		while (obj == null) {
-			contents = contents.$parent;
-			if (contents == null) 
-				break;
-			obj = contents[id];
-		}
 		if (obj == null) {
 			log_error('Merge templates. Node not found', tagName);
 			return '';
 		}
 		return obj_getProperty(obj, property);
+	}
+	
+	function getNode(contents, id) {
+		var node = contents[id];
+		while (node == null) {
+			contents = contents.$parent;
+			if (contents == null) 
+				break;
+			node = contents[id];
+		}
+		return node;
 	}
 	
 	var RESERVED = ' else placeholder each attr '
@@ -284,6 +304,7 @@ var mask_merge;
 						contents[id] = [current, x];
 					}
 				}
+				return contents;
 			}
 		}
 		return _getContents(b, node.nodes, contents);

@@ -244,7 +244,7 @@ There are already many plugins, components and useful utilities. Some of them wo
 ------------
 - 0.9.6
 	- Merge feature for better encapsulation, e.g:
-	```less
+	```sass
 		define :dialog {
 			.wrapper > .modal {
 				.modal-header {

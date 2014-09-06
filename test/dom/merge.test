@@ -214,6 +214,49 @@ UTest({
 			.eq_('html', '<span>barContent</span>')
 			;
 	},
+	'should render nested template with wrapper' () {
+		var a = ".quux > @each (tag) > @head"
+		var b = "@tag > @head > .bar";
+		var dom = $render(a, b);
+		dom
+			.eq_('length', 1)
+			.eq_('hasClass', 'quux', true)
+			.children()
+			.eq_('hasClass', 'bar', true)
+			;
+	},
+	'should render nested template with outer scope' () {
+		var a = ".quux > @each (tag) > @container"
+		var b = `
+			@tag;
+			@tag;
+			@container > .wrapper
+		`;
+		var dom = $render(a, b);
+		dom
+			.eq_('length', 1)
+			.eq_('hasClass', 'quux', true)
+			.children()
+			.eq_('length', 2)
+			.eq(0)
+			.eq_('hasClass', 'wrapper', true)
+			.end()
+			.eq(1)
+			.eq_('hasClass', 'wrapper', true)
+			;
+	},
+	'should render nested template with interpolations' () {
+		var a = "@each (tag) > @head > .baz name='@tag.attr.name' > @placeholder"
+		var b = "@tag name=foo > @head > .bar";
+		var dom = $render(a, b);
+		dom
+			.eq_('length', 1)
+			.eq_('hasClass', 'baz', true)
+			.eq_('attr', 'name', 'foo')
+			.children()
+			.eq_('hasClass', 'bar', true)
+			;
+	},
 	'should render the template node as an element' () {
 		var a = "@foo as=p;"
 		var b = "@foo.hello > 'Hello'";
@@ -223,6 +266,27 @@ UTest({
 			.eq_('attr', 'class', 'hello')
 			.eq_('html', 'Hello')
 			
+	},
+	
+	'should render each tab' () {
+		var a = `
+			.some > @each (tab) > @head > .header name='@tab.attr.name' > @placeholder;
+			//.-tab-panels  >
+			//	@each (tab) >
+			//		@body .-tab-panel.-hidden name='@tab.attr.name' as=div;
+		`;
+		var b = `
+			@tab name=foo{
+				@head > 'Hello'
+				@body > 'World'
+			}
+		`
+		var dom = $render(a, b);
+		dom
+			.find('.header')
+			.eq_('length', 1)
+			.eq_('attr', 'name', 'foo')
+			;
 	}
 })
 
