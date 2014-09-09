@@ -8,6 +8,15 @@ UTest({
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
 	},
+	'simple - reversed' () {
+		var a = '@foo > span > "Foo"',
+			b = '@foo;'
+			;
+			
+		var tmpl = mask.merge(a, b);
+		eq_(tmpl[0].tagName, 'span');
+		eq_(tmpl[0].nodes[0].content, 'Foo');
+	},
 	'should render nested tags' () {
 		var a = `
 				h4 > span > @title;
@@ -300,6 +309,19 @@ UTest({
 			.eq_('length', 1)
 			.eq_('html', 'baz')
 			;
+	},
+	'should create proper expressions' () {
+		var a = `@foo > div > '~[: value + @foo.attr.base ]'`;
+		[
+			// model, base, expect
+			[{value: 2}, 4, 6],
+			[{value: 2, baz: 3}, "baz", 5],
+			[{value: "Aa"}, "'5'", "Aa5"],
+		]
+		.forEach(row => {
+			var dom = $render(a, '@foo base="' + row[1] + '";', row[0]);
+			eq_(dom.text(), row[2])
+		});
 	}
 })
 

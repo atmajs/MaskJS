@@ -24,7 +24,7 @@ var mask_merge;
 		}
 		switch(node.type){
 			case dom_TEXTNODE:
-				return _cloneTextNode(node);
+				return _cloneTextNode(node, contents, tmplNode);
 			case dom_NODE:
 			case dom_STATEMENT:
 				return _mergeNode(node, contents, tmplNode, clonedParent);
@@ -183,10 +183,18 @@ var mask_merge;
 		}
 		return clone;
 	}
-	function _interpolate_str(str, contents, node){
-		var index = -1;
+	function _interpolate_str(mix, contents, node){
+		var index = -1,
+			isFn = false,
+			str = mix;
+			
+		if (typeof mix === 'function') {
+			isFn = true;
+			str = mix();
+		}
+		
 		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1) 
-			return str;
+			return mix;
 		
 		var result = str.substring(0, index),
 			length = str.length,
@@ -205,18 +213,20 @@ var mask_merge;
 					if (c < 33) break;
 				}
 			}
-			if (index === -1) 
+			if (index === -1 || index === length) 
 				break;
 			
 			var x = _interpolate(str.substring(last, index), contents, node);
 			if (x != null) 
 				result += x;
-			
-			last = index;
 		}
 		
 		result += str.substring(last);
-		return result;
+		
+		return isFn
+			? parser_ensureTemplateFunction(result)
+			: result
+			;
 	}
 	function _interpolate(path, contents, node) {
 		var index = path.indexOf('.');
