@@ -192,7 +192,6 @@ var mask_merge;
 			isFn = true;
 			str = mix();
 		}
-		
 		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1) 
 			return mix;
 		
@@ -203,9 +202,12 @@ var mask_merge;
 			c;
 		
 		while (index < length) {
+			// interpolation
 			last = index;
 			if (isBlockEntry === true) {
 				index = str.indexOf(']', ++last);
+				if (index === -1) 
+					index = length;
 			}
 			else {
 				while (index < length) {
@@ -213,15 +215,19 @@ var mask_merge;
 					if (c < 33) break;
 				}
 			}
-			if (index === -1 || index === length) 
-				break;
 			
 			var x = _interpolate(str.substring(last, index), contents, node);
 			if (x != null) 
 				result += x;
+			
+			// tail
+			last = index;
+			index = str.indexOf('@', index);
+			if (index === -1) 
+				index = length;
+			
+			result += str.substring(last, index);
 		}
-		
-		result += str.substring(last);
 		
 		return isFn
 			? parser_ensureTemplateFunction(result)
