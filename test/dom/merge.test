@@ -271,9 +271,6 @@ UTest({
 	'should render each tab' () {
 		var a = `
 			.some > @each (tab) > @head > .header name='@tab.attr.name' > @placeholder;
-			//.-tab-panels  >
-			//	@each (tab) >
-			//		@body .-tab-panel.-hidden name='@tab.attr.name' as=div;
 		`;
 		var b = `
 			@tab name=foo{
@@ -286,6 +283,22 @@ UTest({
 			.find('.header')
 			.eq_('length', 1)
 			.eq_('attr', 'name', 'foo')
+			;
+	},
+	'should render self and children' () {
+		var a = `
+			@foo as=div > span > @placeholder;
+		`;
+		var b = `
+			@foo > 'baz'
+		`
+		var dom = $render(a, b);
+		dom
+			.filter('div')
+			.eq_('length', 1)
+			.children('span')
+			.eq_('length', 1)
+			.eq_('html', 'baz')
 			;
 	}
 })

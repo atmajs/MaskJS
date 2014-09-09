@@ -29,10 +29,7 @@ var mask_merge;
 			case dom_STATEMENT:
 				return _mergeNode(node, contents, tmplNode, clonedParent);
 			case dom_FRAGMENT:
-				return {
-					type: node.type,
-					nodes: _mergeArray(node.nodes, contents, tmplNode, clonedParent)
-				};
+				return _mergeArray(node.nodes, contents, tmplNode, clonedParent);
 		}
 		log_warn('Uknown type', node.type);
 		return null;
@@ -56,14 +53,7 @@ var mask_merge;
 				x = _merge(node, contents, tmplNode, clonedParent);
 			}
 			
-			if (x == null) 
-				continue;
-			
-			if (is_Array(x)) {
-				arr = arr.concat(x);
-				continue;
-			}
-			arr.push(x);
+			arr = append_Array(arr, x);
 		}
 		return arr;
 	}
@@ -100,7 +90,7 @@ var mask_merge;
 				i = -1;
 			while ( ++i < imax ){
 				x = arr[i];
-				fragment.appendChild(_merge(
+				append_Node(fragment, _merge(
 					node.nodes
 					, _getContents(x.nodes, x.nodes, {$parent: contents })
 					, x
@@ -120,27 +110,35 @@ var mask_merge;
 		if (content.parent) 
 			_modifyParents(clonedParent, content.parent);
 		
-		var contentNodes = content.nodes;
+		
+		var contentNodes = content.nodes,
+			wrapperNode;
 		if (node.attr.as !== void 0) {
 			var tagName_ = node.attr.as;
-			contentNodes = {
+			wrapperNode = {
+				type: dom_NODE,
 				tagName: tagName_,
 				attr: _mergeAttr(node.attr, content.attr, contents, tmplNode),
 				parent: clonedParent,
 				nodes: contentNodes
 			};
-			contentNodes.attr.as = null;
+			wrapperNode.attr.as = null;
 		}
 		
 		if (node.nodes == null) 
-			return contentNodes;
+			return wrapperNode || contentNodes;
 		
-		return _merge(
+		var nodes =  _merge(
 			node.nodes
 			, _getContents(contentNodes, contentNodes, {$parent: contents })
 			, content
-			, clonedParent
+			, wrapperNode || clonedParent
 		);
+		if (wrapperNode != null) {
+			wrapperNode.nodes = nodes;
+			return wrapperNode;
+		}
+		return nodes;
 	}
 	function _mergeAttr(a, b, contents, tmplNode){
 		if (a == null || b == null) 
@@ -247,7 +245,25 @@ var mask_merge;
 		}
 		return obj_getProperty(obj, property);
 	}
-	
+	function append_Node(node, x) {
+		var nodes = node.nodes;
+		if (nodes == null) 
+			nodes = node.nodes = [];
+			
+		node.nodes = append_Array(nodes, x);
+		return node;
+	}
+	function append_Array(arr, x){
+		if (x == null) 
+			return arr;
+		if (is_Array(x)) 
+			return arr.concat(x);
+		if (x.type === dom_FRAGMENT) 
+			return append_Array(arr, x.nodes);
+		
+		arr.push(x);
+		return arr;
+	}
 	function getNode(contents, id) {
 		var node = contents[id];
 		while (node == null) {
