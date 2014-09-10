@@ -44,16 +44,20 @@ Resources:
 ----
 
 - [Quick Start](#quick-start)
+
+----
+
 ##### Syntax
 
-- Component- and element-based markup
+
+- Component and element-based markup
 - Statements, Expressions, Interpolations
 - Performance. _No precompilation is required_
 - Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).
 - DOM Builder
-	[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]
+	`[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]`
 - HTML Builder (_nodejs_)
-	[Template &rarr; Mask DOM &rarr; HTML]
+	`[Template &rarr; Mask DOM &rarr; HTML]`
 
 ```scss
 .container {
@@ -153,8 +157,10 @@ $.fn.beforeMask
 $.fn.afterMask
 $.fn.emptyAndDispose
 $.fn.removeAndDispose
+//e.g.
+$('.foo').appendMask('h4 > "~[title]"', { title: 'Hello' });
 ```
-So you would never need to use raw HTML.
+_So you would never need to use the HTML._
 
 ##### Performance
 
@@ -169,13 +175,15 @@ Some benchmarks:
 
 ##### Node.JS
 
-MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node)
+MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([server](https://github.com/atmajs/atma-server))
 
 - HMVC benefits
 - Models serialization/de-serialization
 - Components render mode - Server, Client, Both
 - HTML rendered output with the Bootstrapping on the client, so that the components are initialized, all events and bindings are attached
+- Application start performance: browser receives ready html for rendering. 
 - SEO
+
 
 ##### Browser Support
 

@@ -62,7 +62,7 @@ var throw_,
 		
 		return stack
 			.split('\n')
-			.slice(6)
+			.slice(6, 8)
 			.join('\n');
 	}
 	function inherit(Ctor, Base){
