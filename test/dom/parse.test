@@ -165,7 +165,11 @@ UTest({
 		dom = parse('div{span}');
 		eq_(dom.nodes.length, 1);
 		eq_(dom.nodes[0].tagName, 'span');
-		
+	},
+	'interpolation in tag attribute' () {
+		dom = parse('div class="~[some]";');
+		is_(dom.attr.class, 'Function');
+		eq_(dom.attr.class(), '~[some]');
 	}
 });
 

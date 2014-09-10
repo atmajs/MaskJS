@@ -144,40 +144,42 @@ var mask_merge;
 		if (a == null || b == null) 
 			return a || b;
 		
-		var out = _interpolate_obj(a, contents, tmplNode);
+		var out = _interpolate_obj(a, contents, tmplNode, true);
 		for (var key in b){
 			out[key] = _interpolate_str(b[key], contents, tmplNode);
 		}
 		return out;
 	}
 	
-	function _cloneNode(node, contents, _defaultContent, clonedParent){
+	function _cloneNode(node, contents, tmplNode, clonedParent){
 		var outnode = {
 			type: node.type,
 			tagName: node.tagName || node.compoName,
-			attr: _interpolate_obj(node.attr, contents, _defaultContent),
-			expression: _interpolate_str(node.expression, contents, _defaultContent),
+			attr: _interpolate_obj(node.attr, contents, tmplNode, true),
+			expression: _interpolate_str(node.expression, contents, tmplNode),
 			controller: node.controller,
 			parent: clonedParent
 		};
 		if (node.nodes) 
-			outnode.nodes = _merge(node.nodes, contents, _defaultContent, outnode);
+			outnode.nodes = _merge(node.nodes, contents, tmplNode, outnode);
 		
 		return outnode;
 	}
-	function _cloneTextNode(node, contents, _defaultContent, clonedParent){
+	function _cloneTextNode(node, contents, tmplNode, clonedParent){
 		return {
 			type: node.type,
-			content: _interpolate_str(node.content, contents, _defaultContent),
+			content: _interpolate_str(node.content, contents, tmplNode),
 			parent: clonedParent
 		};
 	}
-	function _interpolate_obj(obj, contents, node){
+	function _interpolate_obj(obj, contents, node, doAny){
 		var clone = _Object_create(obj),
 			x;
 		for(var key in clone){
 			x = clone[key];
-			if (x == null || typeof x !== 'string' || x.indexOf('@') === -1) 
+			if (x == null) 
+				continue;
+			if (doAny !== true && (typeof x !== 'string' || x.indexOf('@') === -1)) 
 				continue;
 			clone[key] = _interpolate_str(x, contents, node);
 		}
@@ -212,7 +214,16 @@ var mask_merge;
 			else {
 				while (index < length) {
 					c = str.charCodeAt(++index);
-					if (c < 33) break;
+					if (c === 36 || c === 95 || c === 46) {
+						// $ _ .
+						continue;
+					}
+					if ((48 <= c && c <= 57) ||		// 0-9
+						(65 <= c && c <= 90) ||		// A-Z
+						(97 <= c && c <= 122)) {	// a-z
+						continue;
+					}
+					break;
 				}
 			}
 			

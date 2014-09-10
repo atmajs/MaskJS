@@ -322,6 +322,34 @@ UTest({
 			var dom = $render(a, '@foo base="' + row[1] + '";', row[0]);
 			eq_(dom.text(), row[2])
 		});
+	},
+	'combine template- and render-time interpolations' () {
+		var a = `@foo > div class="~[: name + '@foo.attr.name']"`,
+			b = `@foo name="baz"`
+		
+		var tmpl = mask.merge(a, b);
+		is_(tmpl[0].attr.class, 'Function');
+		
+		var klass = tmpl[0].attr.class();
+		eq_(klass, "~[: name + 'baz']");
+		
+		var div = mask.render(tmpl, { name: 'foo' }).firstChild;
+		eq_(div.tagName, 'DIV');
+		eq_(div.className, 'foobaz');
+	},
+	'combine template- and render-time interpolations in template nodes' () {
+		var a = `@foo class="~[: name + '@foo.attr.name']" as=div;`,
+			b = `@foo name="baz"`
+		
+		var tmpl = mask.merge(a, b);
+		is_(tmpl.attr.class, 'Function');
+		
+		var klass = tmpl.attr.class();
+		eq_(klass, "~[: name + 'baz']");
+		
+		var div = mask.render(tmpl, { name: 'foo' });
+		eq_(div.tagName, 'DIV');
+		eq_(div.className, 'foobaz');
 	}
 })
 

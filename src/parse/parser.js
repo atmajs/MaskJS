@@ -364,8 +364,10 @@ var parser_parse,
 					if (isEscaped === true) {
 						token = token.replace(regexpEscapedChar[_char], _char);
 					}
-
-					token = ensureTemplateFunction(token);
+					
+					if (state !== state_attr && key !== 'class') 
+						token = ensureTemplateFunction(token);
+						
 					index += isUnescapedBlock ? 3 : 1;
 					continue;
 				}
