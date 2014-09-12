@@ -350,6 +350,55 @@ UTest({
 		var div = mask.render(tmpl, { name: 'foo' });
 		eq_(div.tagName, 'DIV');
 		eq_(div.className, 'foobaz');
+	},
+	
+	'should replace `:import` with the templates content' () {
+		var a = `
+			:template #foo > h4 name="@attr.name" > "Hello"
+			@master {
+				section > :import id='@attr.import';
+			}
+		`;
+		var b = `
+			@master import='foo' name='baz';
+		`;
+		var dom = $render(a, b);
+		dom
+			.find('h4')
+			.eq_('length', 1)
+			.eq_('attr', 'name', 'baz')
+			.eq_('text', 'Hello')
+			;
+	},
+	
+	'should render @if' () {
+		var a = `
+			@master {
+				@if (attr.name == "foo") {
+					h1;
+				}
+				@else if (attr.name == 'bar') {
+					h2;
+				}
+				@else {
+					h3;
+				}
+			}
+		`;
+		[
+			[ `@master name='foo';`, 'h1' ],
+			[ `@master name='bar';`, 'h2' ],
+			[ `@master name='isElse';`, 'h3' ]
+			
+		].forEach((row) => {
+			var [b, expect] = row;
+			var dom = $render(a, b);
+			dom
+				.eq_('length', 1)
+				.filter(expect)
+				.eq_('length', 1)
+				;
+		});
 	}
 })
 
