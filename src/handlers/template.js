@@ -9,7 +9,7 @@
 				if (nodes != null) 
 					return nodes;
 				
-				var selector = ':template[id='+this.attr.id+']',
+				var selector = ':template[id=' + id +']',
 					parent = node.parent,
 					tmpl = null
 					;
@@ -49,7 +49,7 @@
 				log_error('`:import` shoud reference the template via id attr')
 				return;
 			}
-			this.nodes = helper_.resolve(id);
+			this.nodes = helper_.resolve(this, id);
 		}
 	});
 }());
