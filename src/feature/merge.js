@@ -1,14 +1,14 @@
 var mask_merge;
 (function(){
 	
-	mask_merge = function(a, b){
+	mask_merge = function(a, b, owner){
 		if (typeof a === 'string') 
 			a = parser_parse(a);
 		if (typeof b === 'string') 
 			b = parser_parse(b);
 		
 		var contents = _getContents(b, b, new Contents);
-		return _merge(a, contents);
+		return _merge(a, contents, owner);
 	};
 	
 	var tag_ELSE = '@else',
@@ -160,9 +160,9 @@ var mask_merge;
 		if (a == null || b == null) 
 			return a || b;
 		
-		var out = _interpolate_obj(a, contents, tmplNode, true);
+		var out = interpolate_obj_(a, contents, tmplNode);
 		for (var key in b){
-			out[key] = _interpolate_str(b[key], contents, tmplNode);
+			out[key] = interpolate_str_(b[key], contents, tmplNode);
 		}
 		return out;
 	}
@@ -170,20 +170,20 @@ var mask_merge;
 	function _cloneNode(node, contents, tmplNode, clonedParent){
 		var tagName = node.tagName || node.compoName;
 		if (':template' === tagName) {
-			var id = _interpolate_str(node.attr.id, contents, tmplNode);
+			var id = interpolate_str_(node.attr.id, contents, tmplNode);
 			Mask.templates.register(id, node.nodes);
 			return null;
 		}
 		if (':import' === tagName) {
-			var id = _interpolate_str(node.attr.id, contents, tmplNode),
+			var id = interpolate_str_(node.attr.id, contents, tmplNode),
 				nodes = Mask.templates.resolve(node, id);
 			return _merge(nodes, contents, tmplNode, clonedParent);
 		}
 		var outnode = {
 			type: node.type,
 			tagName: tagName,
-			attr: _interpolate_obj(node.attr, contents, tmplNode, true),
-			expression: _interpolate_str(node.expression, contents, tmplNode),
+			attr: interpolate_obj_(node.attr, contents, tmplNode),
+			expression: interpolate_str_(node.expression, contents, tmplNode),
 			controller: node.controller,
 			parent: clonedParent
 		};
@@ -195,24 +195,23 @@ var mask_merge;
 	function _cloneTextNode(node, contents, tmplNode, clonedParent){
 		return {
 			type: node.type,
-			content: _interpolate_str(node.content, contents, tmplNode),
+			content: interpolate_str_(node.content, contents, tmplNode),
 			parent: clonedParent
 		};
 	}
-	function _interpolate_obj(obj, contents, node, doAny){
+	function interpolate_obj_(obj, contents, node){
 		var clone = _Object_create(obj),
 			x;
 		for(var key in clone){
 			x = clone[key];
 			if (x == null) 
 				continue;
-			if (doAny !== true && (typeof x !== 'string' || x.indexOf('@') === -1)) 
-				continue;
-			clone[key] = _interpolate_str(x, contents, node);
+			
+			clone[key] = interpolate_str_(x, contents, node);
 		}
 		return clone;
 	}
-	function _interpolate_str(mix, contents, node){
+	function interpolate_str_(mix, contents, node){
 		var index = -1,
 			isFn = false,
 			str = mix;
@@ -234,9 +233,10 @@ var mask_merge;
 			// interpolation
 			last = index;
 			if (isBlockEntry === true) {
-				index = str.indexOf(']', ++last);
+				index = str.indexOf(']', last);
 				if (index === -1) 
 					index = length;
+				last += 2;
 			}
 			else {
 				while (index < length) {
@@ -254,12 +254,15 @@ var mask_merge;
 				}
 			}
 			
-			var x = _interpolate(str.substring(last, index), contents, node);
+			var expr = str.substring(last, index),
+				fn = isBlockEntry ? eval_ : interpolate_,
+				x = fn(expr, contents, node);
+					
 			if (x != null) 
 				result += x;
 			
 			// tail
-			last = index;
+			last = isBlockEntry ? (index + 1): index;
 			index = str.indexOf('@', index);
 			if (index === -1) 
 				index = length;
@@ -272,7 +275,7 @@ var mask_merge;
 			: result
 			;
 	}
-	function _interpolate(path, contents, node) {
+	function interpolate_(path, contents, node) {
 		var index = path.indexOf('.');
 		if (index === -1) {
 			log_warn('Merge templates. Accessing node');

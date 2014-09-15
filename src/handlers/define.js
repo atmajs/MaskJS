@@ -20,7 +20,7 @@
 			renderStart: function(){
 				this.nodes = this.nodes == null
 					? nodes
-					: mask.merge(nodes, this.nodes)
+					: mask.merge(nodes, this.nodes, this)
 					;
 			}
 		}));
