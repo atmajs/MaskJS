@@ -18,10 +18,7 @@
 		var nodes = this.nodes;
 		mask.registerHandler(name, Compo({
 			renderStart: function(){
-				this.nodes = this.nodes == null
-					? nodes
-					: mask.merge(nodes, this.nodes, this)
-					;
+				this.nodes = mask.merge(nodes, this.nodes || [], this);
 			}
 		}));
 	}
