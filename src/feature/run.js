@@ -33,7 +33,7 @@ var mask_run;
 			
 		var controller = is_Function(Ctr)
 			? new Ctr
-			: new Dom.Component
+			: new Compo
 			;
 		controller.ID = ++builder_componentID;
 		
