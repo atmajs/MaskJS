@@ -278,7 +278,7 @@ var mask_merge;
 	function interpolate_(path, contents, node) {
 		var index = path.indexOf('.');
 		if (index === -1) {
-			log_warn('Merge templates. Accessing node');
+			log_warn('Merge templates. Accessing node', path);
 			return '';
 		}
 		var tagName = path.substring(0, index),
