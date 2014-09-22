@@ -1,4 +1,0 @@
-div {
-	input type='text' value='input - 4';
-	div > button > 'Input4'
-}
