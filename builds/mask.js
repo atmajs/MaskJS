@@ -43,9 +43,9 @@
 
 	/* Libraries */
 	
-	// import /mask-compo/lib/compo.embed.js
-	// import /mask-j/lib/jmask.embed.js
-	// import /mask-binding/lib/binding.embed.js
+	// import /ref-mask-compo/lib/compo.embed.js
+	// import /ref-mask-j/lib/jmask.embed.js
+	// import /ref-mask-binding/lib/binding.embed.js
 	
 	
 

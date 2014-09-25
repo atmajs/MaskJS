@@ -65,8 +65,8 @@ module.exports = {
 	'import libraries': {
 		action: 'copy',
 		files: {
-			'/mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
-			'/mask-node/lib/mask.node.js': '/lib/mask.node.js'
+			'/ref-mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
+			'/ref-mask-node/lib/mask.node.js': '/lib/mask.node.js'
 		}
 	},
 	'jshint': {
@@ -99,12 +99,6 @@ module.exports = {
 		config: '#[build mask]'
 	},
 	
-	// `> atma bump`
-	'bump': {
-		action: 'custom',
-		script: 'tools/bump.js'
-	},
-
 	'defaults': ['add-handlers', 'build mask', 'import libraries', 'jshint', 'uglify']
 };
 

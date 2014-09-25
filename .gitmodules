@@ -1,12 +1,12 @@
-[submodule "mask-binding"]
-	path = mask-binding
+[submodule "ref-mask-binding"]
+	path = ref-mask-binding
 	url = https://github.com/atmajs/mask-binding.git
-[submodule "mask-compo"]
-	path = mask-compo
+[submodule "ref-mask-compo"]
+	path = ref-mask-compo
 	url = https://github.com/atmajs/mask-compo.git
-[submodule "mask-j"]
-	path = mask-j
+[submodule "ref-mask-j"]
+	path = ref-mask-j
 	url = https://github.com/atmajs/mask-j.git
-[submodule "mask-node"]
-	path = mask-node
+[submodule "ref-mask-node"]
+	path = ref-mask-node
 	url = https://github.com/atmajs/mask-node
