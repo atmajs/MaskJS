@@ -1,8 +1,8 @@
 (function(){
 	
-	function getNodes(node, model, ctx, controller){
+	function getNodes(node, model, ctx, ctr){
 		function evaluate(expr){
-			return ExpressionUtil.eval(expr, model, ctx, controller);
+			return ExpressionUtil.eval(expr, model, ctx, ctr);
 		}
 		
 		if (evaluate(node.expression)) 
@@ -24,13 +24,13 @@
 	
 	custom_Statements['if'] = {
 		getNodes: getNodes,
-		render: function(node, model, ctx, container, controller, childs){
+		render: function(node, model, ctx, container, ctr, childs){
 			
-			var nodes = getNodes(node, model, ctx, controller);
+			var nodes = getNodes(node, model, ctx, ctr);
 			if (nodes == null) 
 				return;
 			
-			builder_build(nodes, model, ctx, container, controller, childs);
+			builder_build(nodes, model, ctx, container, ctr, childs);
 		}
 	};
 	

@@ -35,7 +35,7 @@ var parser_skipWhitespace,
 	
 		string = template.substring(start, index);
 		if (isEscaped === true) {
-			string = string.replace(regexpEscapedChar[_char], _char);
+			string = string.replace(__rgxEscapedChar[_char], _char);
 		}
 		return string;
 	};

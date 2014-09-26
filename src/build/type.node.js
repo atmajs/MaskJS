@@ -43,7 +43,7 @@ var build_node = (function(){
 		for (key in attr) {
 		
 			/* if !SAFE
-			if (hasOwnProp.call(attr, key) === false) {
+			if (_Object_hasOwnProp.call(attr, key) === false) {
 				continue;
 			}
 			*/

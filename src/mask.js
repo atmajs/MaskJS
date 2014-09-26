@@ -28,7 +28,7 @@ var cache = {},
 			// endif
 
 			if (typeof template === 'string') {
-				if (hasOwnProp.call(cache, template)){
+				if (_Object_hasOwnProp.call(cache, template)){
 					/* if Object doesnt contains property that check is faster
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 					template = cache[template];

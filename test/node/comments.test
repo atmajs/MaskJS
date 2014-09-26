@@ -29,7 +29,6 @@ include
 		'/src/util/attr.js',
 		'/src/util/template.js',
 		'/src/util/string.js',
-		'/src/util/function.js',
 		'/src/util/condition.js',
 		
 		'/src/util/listeners.js',

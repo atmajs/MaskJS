@@ -1,46 +1,7 @@
-var obj_extend,
-    obj_getProperty,
-    obj_getPropertyEx,
-    obj_toDictionary
-    ;
-
-
+var obj_getPropertyEx,
+    obj_toDictionary;
 (function(){
-    obj_extend = function(target, source) {
-    
-        if (target == null) {
-            target = {};
-        }
-        for (var key in source) {
-            // if !SAFE
-            if (hasOwnProp.call(source, key) === false) {
-                continue;
-            }
-            // endif
-            target[key] = source[key];
-        }
-        return target;
-    };
-    
-        
-    obj_getProperty = function(obj, path) {
-        if (path === '.') 
-            return obj;
-        
-        var value = obj,
-            props = path.split('.'),
-            i = -1,
-            imax = props.length;
-    
-        while (value != null && ++i < imax) {
-            value = value[props[i]];
-        }
-    
-        return value;
-    };
-        
-        
-    obj_getPropertyEx = function(path, model, ctx, controller){
+    obj_getPropertyEx = function(path, model, ctx, ctr){
         if (path === '.') 
             return model;
     
@@ -53,12 +14,12 @@ var obj_extend,
             ;
         
         if ('$c' === key) {
-            value = controller;
+            value = ctr;
             i++;
         }
         
         else if ('$a' === key) {
-            value = controller && controller.attr;
+            value = ctr && ctr.attr;
             i++;
         }
         
@@ -73,30 +34,26 @@ var obj_extend,
         }
         
         start_i = i;
-        while (value != null && ++i < imax) 
+        while (value != null && ++i < imax) {
             value = value[props[i]];
-        
+        }
         if (value == null && start_i === -1) {
             var $scope;
-            while (true){
+            while (ctr != null){
                 
-                if (controller == null) 
-                    break;
-                
-                $scope = controller.scope;
+                $scope = ctr.scope;
                 if ($scope != null) {
-                    value = getProperty($scope, props, 0, imax);
+                    value = getProperty_($scope, props, 0, imax);
                     if (value != null) 
                         return value;
                 }
                 
-                controller = controller.parent;
+                ctr = ctr.parent;
             }
         }
         
         return value;
     };
-    
     
     obj_toDictionary = function(obj){
         var array = [],
@@ -112,17 +69,14 @@ var obj_extend,
         return array;
     };
     
-    
     // = private
     
-    function getProperty(obj, props, i, imax) {
-        var value = obj;
-        
-        while(i < imax && value != null){
-            value = value[props[i]];
+    function getProperty_(obj, props, i, imax) {
+        var val = obj;
+        while(i < imax && val != null){
+            val = val[props[i]];
             i++;
         }
-        
-        return value;
+        return val;
     }
 }());

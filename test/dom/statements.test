@@ -1,9 +1,7 @@
 
-var $render = function(template, model, ctx, container, controller){
-	
-	return $(mask.render(template, model, ctx, container, controller));
+function $render(template, model, ctx, container, ctr){
+	return $(mask.render(template, model, ctx, container, ctr));
 }
-
 
 UTest({
 	
@@ -189,6 +187,34 @@ UTest({
 			eq(frag.textContent, 'a');
 			done();
 		});
+		
+	},
+	
+	'visible' () {
+		var template = `
+			section >
+				for ((letter, index) of letters)>
+					visible(index % 2 === 0) >
+						span name='~[letter]' data-index='~[index]';
+		`;
+		
+		var model = {
+			letters: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+		};
+		var $dom = $render(template, model);
+		
+		$dom
+			.find('span')
+			.eq_('length', model.letters.length)
+			.each(function(){
+				var letter = this.getAttribute('name');
+				var i = model.letters.indexOf(letter);
+				var visible = i / 2 === 0;
+				
+				$(this)
+					[i % 2 === 0 ? 'notEq_' : 'eq_']
+					('css', 'display', 'none');
+			});
 		
 	}
 	

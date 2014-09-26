@@ -64,7 +64,7 @@ Template.prototype = {
 
 		this.index = index;
 
-		return isEscaped ? value.replace(regexpEscapedChar[c], c) : value;
+		return isEscaped ? value.replace(__rgxEscapedChar[c], c) : value;
 	}
 
 };

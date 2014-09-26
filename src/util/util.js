@@ -53,7 +53,7 @@ function util_interpolate(arr, type, model, ctx, element, controller, name) {
 				
 			} else {
 				utility = index > 0
-					? str_trim(key.substring(0, index))
+					? key.substring(0, index).trim()
 					: '';
 					
 				if (utility === '') {

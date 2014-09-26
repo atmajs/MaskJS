@@ -362,7 +362,7 @@ var parser_parse,
 
 					token = template.substring(start, index);
 					if (isEscaped === true) {
-						token = token.replace(regexpEscapedChar[_char], _char);
+						token = token.replace(__rgxEscapedChar[_char], _char);
 					}
 					
 					if (state !== state_attr || key !== 'class') 

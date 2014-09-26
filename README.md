@@ -210,12 +210,15 @@ Most simple MaskJS sample to show where you could start from:
 			<script type='text/mask' data-run='true'>
 				ul {
 					for(page of pages) {
+						log('>> Log current:', page);
 						li > a
 							href='/~[page].html'
 							x-signal='click: fooAction' > '~[page]'
 					}
 					// nested components
 					:bazCompo > :quxCompo;
+					
+					debugger;
 				}
 			</script>
 		</header>
