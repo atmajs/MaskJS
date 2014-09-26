@@ -275,6 +275,17 @@ var cache = {},
 			eval(source);
 		},
 		
+		obj: {
+			get: obj_getProperty,
+			set: obj_setProperty,
+			extend: obj_extend,
+		},
+		is: {
+			Function: is_Function,
+			String: is_String,
+			ArrayLike: is_ArrayLike,
+		},
+		
 		on: listeners_on,
 		off: listeners_off,
 

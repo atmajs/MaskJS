@@ -42,10 +42,10 @@ var mask_merge;
 		return null;
 	}
 	function _mergeArray(nodes, contents, tmplNode, clonedParent){
-		var arr = [],
+		var fragment = new Dom.Fragment,
 			imax = nodes.length,
 			i = -1,
-			x, tagName, node;
+			x, node;
 		while( ++i < imax ) {
 			node = nodes[i];
 			
@@ -63,9 +63,9 @@ var mask_merge;
 				x = _merge(node, contents, tmplNode, clonedParent);
 			}
 			
-			arr = append_Array(arr, x);
+			appendAny(fragment, x);
 		}
-		return arr;
+		return fragment;
 	}
 	function _mergeNode(node, contents, tmplNode, clonedParent){
 		var tagName = node.tagName;
@@ -99,7 +99,7 @@ var mask_merge;
 				i = -1;
 			while ( ++i < imax ){
 				x = arr[i];
-				append_Node(fragment, _merge(
+				appendAny(fragment, _merge(
 					node.nodes
 					, _getContents(x.nodes, x.nodes, new Contents(contents))
 					, x
@@ -302,24 +302,22 @@ var mask_merge;
 		}
 		return obj_getProperty(obj, property);
 	}
-	function append_Node(node, x) {
-		var nodes = node.nodes;
-		if (nodes == null) 
-			nodes = node.nodes = [];
-			
-		node.nodes = append_Array(nodes, x);
-		return node;
-	}
-	function append_Array(arr, x){
-		if (x == null) 
-			return arr;
-		if (is_Array(x)) 
-			return arr.concat(x);
-		if (x.type === dom_FRAGMENT) 
-			return append_Array(arr, x.nodes);
-		
-		arr.push(x);
-		return arr;
+	
+	function appendAny(node, mix){
+		if (mix == null) 
+			return;
+		if (typeof mix.concat === 'function') {
+			var imax = mix.length;
+			for (var i = 0; i < imax; i++) {
+				appendAny(node, mix[i]);
+			}
+			return;
+		}
+		if (mix.type === dom_FRAGMENT) {
+			appendAny(node, mix.nodes);
+			return;
+		}
+		node.appendChild(mix);
 	}
 	
 	var RESERVED = ' else placeholder each attr if parent scope'

@@ -30,7 +30,7 @@ UTest({
 			
 			var $frag = $render(test.template, test.model, null, null, test.controller);
 			eq($frag.text(), test.result);
-		})
+		});
 		
 	},
 	
