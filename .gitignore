@@ -1,6 +1,0 @@
-# node
-.npmignore
-node_modules
-
-# WebStorm
-.idea
