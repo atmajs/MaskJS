@@ -7,7 +7,7 @@
 		}
 	};
 	customTag_register('debugger', {
-		render: function(model, ctx, container){
+		render: function(model, ctx, container, compo){
 			debugger;
 		}
 	});

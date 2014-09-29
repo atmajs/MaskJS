@@ -47,6 +47,7 @@ var build_compo;
 		compo.attr = attr = attr_extend(compo.attr, node.attr);
 		compo.parent = controller;
 		compo.ID = ++builder_componentID;
+		compo.expression = node.expression;
 		
 		if (compo.model == null) 
 			compo.model = model;
@@ -100,16 +101,15 @@ var build_compo;
 	}
 	
 	
-	function build_Static(static_, node, model, ctx, container, controller, childs) {
+	function build_Static(static_, node, model, ctx, container, ctr, children) {
 		var Ctor = static_.__Ctor,
 			wasRendered = false,
 			elements,
 			compo,
-			
 			clone;
 		
 		if (Ctor) {
-			clone = new Ctor(node, controller);
+			clone = new Ctor(node, ctr);
 		}
 		else {
 			clone = static_;
@@ -117,30 +117,37 @@ var build_compo;
 			for (var key in node) 
 				clone[key] = node[key];
 			
-			clone.parent = controller;
+			clone.parent = ctr;
 		}
 		
 		var attr = clone.attr;
 		if (attr != null) {
 			for (var key in attr) {
 				if (typeof attr[key] === 'function') 
-					attr[key] = attr[key]('attr', model, ctx, container, controller, key);
+					attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
 			}
 		}
 		
 		if (is_Function(clone.renderStart)) 
-			clone.renderStart(model, ctx, container, controller, childs);
+			clone.renderStart(model, ctx, container, ctr, children);
 		
+		controller_pushCompo(ctr, clone);
+		
+		var i = ctr.components.length - 1;
 		if (is_Function(clone.render)){
 			wasRendered = true;
-			elements = clone.render(model, ctx, container, controller, childs);
-			arr_pushMany(childs, elements);
+			elements = clone.render(model, ctx, container, ctr, children);
+			arr_pushMany(children, elements);
 			
-			if (is_Function(clone.renderEnd))
-				compo = clone.renderEnd(elements, model, ctx, container, controller);
+			if (is_Function(clone.renderEnd)) {
+				compo = clone.renderEnd(elements, model, ctx, container, ctr);
+				if (compo != null) {
+					// overriden
+					ctr.components[i] = compo;
+				}
+			}
 		}
-			
-		controller_pushCompo(controller, compo || clone);
+		
 		return wasRendered
 			? null
 			: clone

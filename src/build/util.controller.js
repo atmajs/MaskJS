@@ -1,9 +1,8 @@
-function controller_pushCompo(controller, compo) {
-	
-	if (controller.components == null) {
-		controller.components = [ compo ];
+function controller_pushCompo(ctr, compo) {
+	var compos = ctr.components;
+	if (compos == null) {
+		ctr.components = [ compo ];
 		return;
-	} 
-	
-	controller.components.push(compo);
+	}
+	compos.push(compo);
 }

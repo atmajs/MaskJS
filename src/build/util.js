@@ -1,32 +1,28 @@
-function build_resumeDelegate(controller, model, cntx, container, childs){
+function build_resumeDelegate(controller, model, ctx, container, children){
 	var anchor = container.appendChild(document.createComment(''));
 	
 	return function(){
-		return build_resumeController(controller, model, cntx, anchor, childs);
+		return build_resumeController(controller, model, ctx, anchor, children);
 	};
 }
-function build_resumeController(controller, model, cntx, anchor, childs) {
+function build_resumeController(ctr, model, ctx, anchor, children) {
 	
-	
-	if (controller.tagName != null && controller.tagName !== controller.compoName) {
-		controller.nodes = {
-			tagName: controller.tagName,
-			attr: controller.attr,
-			nodes: controller.nodes,
+	if (ctr.tagName != null && ctr.tagName !== ctr.compoName) {
+		ctr.nodes = {
+			tagName: ctr.tagName,
+			attr: ctr.attr,
+			nodes: ctr.nodes,
 			type: 1
 		};
 	}
-	
-	if (controller.model != null) {
-		model = controller.model;
+	if (ctr.model != null) {
+		model = ctr.model;
 	}
 	
-	
-	var nodes = controller.nodes,
+	var nodes = ctr.nodes,
 		elements = [];
 	if (nodes != null) {
 
-		
 		var isarray = nodes instanceof Array,
 			length = isarray === true ? nodes.length : 1,
 			i = 0,
@@ -36,7 +32,7 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 		for (; i < length; i++) {
 			childNode = isarray === true ? nodes[i] : nodes;
 			
-			builder_build(childNode, model, cntx, fragment, controller, elements);
+			builder_build(childNode, model, ctx, fragment, ctr, elements);
 		}
 		
 		anchor.parentNode.insertBefore(fragment, anchor);
@@ -45,12 +41,12 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 		
 	// use or override custom attr handlers
 	// in Compo.handlers.attr object
-	// but only on a component, not a tag controller
-	if (controller.tagName == null) {
-		var attrHandlers = controller.handlers && controller.handlers.attr,
+	// but only on a component, not a tag ctr
+	if (ctr.tagName == null) {
+		var attrHandlers = ctr.handlers && ctr.handlers.attr,
 			attrFn,
 			key;
-		for (key in controller.attr) {
+		for (key in ctr.attr) {
 			
 			attrFn = null;
 			
@@ -63,29 +59,23 @@ function build_resumeController(controller, model, cntx, anchor, childs) {
 			}
 			
 			if (attrFn != null) {
-				attrFn(anchor, controller.attr[key], model, cntx, elements[0], controller);
+				attrFn(anchor, ctr.attr[key], model, ctx, elements[0], ctr);
 			}
 		}
 	}
 	
-	if (is_Function(controller.renderEnd)) {
-		/* if !DEBUG
-		try{
-		*/
-		controller.renderEnd(elements, model, cntx, anchor.parentNode);
-		/* if !DEBUG
-		} catch(error){ console.error('Custom Tag Handler:', controller.tagName, error); }
-		*/
+	if (is_Function(ctr.renderEnd)) {
+		ctr.renderEnd(elements, model, ctx, anchor.parentNode);
 	}
 	
 
-	if (childs != null && childs !== elements){
-		var il = childs.length,
+	if (children != null && children !== elements){
+		var il = children.length,
 			jl = elements.length,
 			j  = -1;
 			
 		while(++j < jl){
-			childs[il + j] = elements[j];
+			children[il + j] = elements[j];
 		}
 	}
 }
