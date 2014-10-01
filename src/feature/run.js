@@ -37,7 +37,7 @@ var mask_run;
 			;
 		controller.ID = ++builder_componentID;
 		
-		var scripts = document.getElementsByTagName('script'),
+		var scripts = _Array_slice.call(document.getElementsByTagName('script')),
 			script,
 			found = false;
 			
