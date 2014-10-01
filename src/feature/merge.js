@@ -36,13 +36,13 @@ var mask_merge;
 			case dom_STATEMENT:
 				return _mergeNode(node, contents, tmplNode, clonedParent);
 			case dom_FRAGMENT:
-				return _mergeArray(node.nodes, contents, tmplNode, clonedParent);
+				return _mergeFragment(node, contents, tmplNode, clonedParent);
 		}
 		log_warn('Uknown type', node.type);
 		return null;
 	}
 	function _mergeArray(nodes, contents, tmplNode, clonedParent){
-		var fragment = new Dom.Fragment,
+		var fragment = [],
 			imax = nodes.length,
 			i = -1,
 			x, node;
@@ -65,6 +65,12 @@ var mask_merge;
 			
 			appendAny(fragment, x);
 		}
+		return fragment;
+	}
+	function _mergeFragment(frag, contents, tmplNode, clonedParent) {
+		var fragment = new Dom.Fragment;
+		fragment.parent = clonedParent;
+		fragment.nodes = _mergeArray(frag.nodes, contents, tmplNode, fragment);
 		return fragment;
 	}
 	function _mergeNode(node, contents, tmplNode, clonedParent){
@@ -317,7 +323,18 @@ var mask_merge;
 			appendAny(node, mix.nodes);
 			return;
 		}
-		node.appendChild(mix);
+		
+		if (typeof node.appendChild === 'function') {
+			node.appendChild(mix);
+			return;
+		}
+		
+		var l = node.length;
+		if (l > 0) {
+			var prev = node[l - 1];
+			prev.nextSibling = mix;
+		}
+		node.push(mix);
 	}
 	
 	var RESERVED = ' else placeholder each attr if parent scope'

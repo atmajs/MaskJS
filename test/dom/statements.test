@@ -5,7 +5,7 @@ function $render(template, model, ctx, container, ctr){
 
 UTest({
 	
-	'if': function(){
+	'!if': function(){
 		[
 			{
 				template: 'if (1) > "foo"',
@@ -25,6 +25,30 @@ UTest({
 				model: { i: 2 },
 				result: 'bar'
 			},
+			{
+				template: `
+					if (Id) > 'A'
+					else > 'B'
+					
+					if (!Id) > 'C'
+					else > 'D'
+				`,
+				model: { Id: true },
+				result: 'AD'
+			},
+			{
+				template: `
+					if (Id == 1) > span > 'A'
+					else > span > 'B'
+					
+					if (Id == 1) > span > 'C'
+					else (Id == 3) > span > 'D'
+					else (Id == 2) > span > 'E'
+					else  > span > 'F'
+				`,
+				model: { Id: 2 },
+				result: 'BE'
+			}
 		]
 		.forEach(function(test){
 			

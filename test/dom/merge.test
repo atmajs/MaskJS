@@ -401,7 +401,7 @@ UTest({
 		});
 	},
 	
-	'!renders generic `if`wich should support `nextSibling` for the `else`' (){
+	'renders generic `if` which should support `nextSibling` for the `else`' (){
 		var a = `
 			section {
 				if (Id) {
@@ -428,7 +428,7 @@ UTest({
 			.has_('div[name=none]')
 			.hasNot_('span[name=false]')
 			.hasNot_('div[name=false]');
-		
+			
 		var dom = $render(a, b, { Id: 'foo' });
 		dom
 			.has_('span[name=foo]')
