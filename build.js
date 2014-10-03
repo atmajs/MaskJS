@@ -62,11 +62,11 @@ module.exports = {
 			DEBUG: false
 		}
 	},
-	'import libraries': {
+	'import.libs': {
 		action: 'copy',
 		files: {
-			'/ref-mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
-			'/ref-mask-node/lib/mask.node.js': '/lib/mask.node.js'
+			'/../mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
+			'/../mask-node/lib/mask.node.js': '/lib/mask.node.js'
 		}
 	},
 	'jshint': {

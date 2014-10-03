@@ -19,6 +19,7 @@
 
 		if (!cache) {
 			console.log('No compos', compoName, _cache);
+			window.location.reload();
 			return;
 		}
 

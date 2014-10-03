@@ -109,8 +109,12 @@ var mask_stringify;
 
 	function processNodeHead(node) {
 		var tagName = node.tagName,
+			_id, _class;
+
+		if (node.attr != null) {
 			_id = node.attr.id || '',
 			_class = node.attr['class'] || '';
+		}
 
 
 		if (typeof _id === 'function')
@@ -121,7 +125,6 @@ var mask_stringify;
 		
 
 		if (_id) {
-			
 			_id = _id.indexOf(' ') !== -1
 				? ''
 				: '#' + _id
@@ -133,7 +136,6 @@ var mask_stringify;
 		
 
 		var attr = '';
-
 		for (var key in node.attr) {
 			if (key === 'id' || key === 'class') {
 				// the properties was not deleted as this template can be used later
