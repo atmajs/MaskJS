@@ -1,7 +1,6 @@
 <!DOCTYPe html>
 <html>
 <head>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 	<script src='../lib/mask.js'></script>
 </head>
 <body>
@@ -18,7 +17,7 @@
 			onRenderStart: function(model, ctx){
 				// Only this component is paused,
 				// all sync components will still be renderd,
-				// and other components are then loaded in parallel
+				// and other async components are loaded parallel
 				
 				var resume = Compo.pause(this, ctx),
 					profile = this;

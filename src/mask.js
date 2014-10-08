@@ -1,4 +1,3 @@
-
 /**
  *  mask
  *
@@ -182,37 +181,7 @@ var cache = {},
 		 **/
 		
 		registerUtil: customUtil_register,
-		//////function(utilName, mix){
-		//////	if (typeof mix === 'function') {
-		//////		custom_Utils[utilName] = mix;
-		//////		return;
-		//////	}
-		//////	
-		//////	if (typeof mix.process !== 'function') {
-		//////		mix.process = function(expr, model, ctx, element, controller, attrName, type){
-		//////			if ('node' === type) {
-		//////				
-		//////				this.nodeRenderStart(expr, model, ctx, element, controller);
-		//////				return this.node(expr, model, ctx, element, controller);
-		//////			}
-		//////			
-		//////			// asume 'attr'
-		//////			
-		//////			this.attrRenderStart(expr, model, ctx, element, controller, attrName);
-		//////			return this.attr(expr, model, ctx, element, controller, attrName);
-		//////		};
-		//////	
-		//////	}
-		//////	
-		//////	custom_Utils[utilName] = mix;
-		//////},
-		
 		getUtil: customUtil_get,
-		//////function(util){
-		//////	return util != null
-		//////		? custom_Utils[util]
-		//////		: custom_Utils;
-		//////},
 		
 		$utils: customUtil_$utils,
 		
@@ -266,13 +235,17 @@ var cache = {},
 			 *	mask.render('span > ~[.]', 'Some string') // -> <span>Some string</span>
 			 *	```
 			 **/
-			getProperty: obj_getProperty,
+			getProperty: function (model, path){
+				log_warn('mask.getProperty is deprecated. Use `mask.obj.get`');
+				return obj_getProperty(model, path);
+			},
 			
 			ensureTmplFn: Parser.ensureTemplateFunction
 		},
 		Dom: Dom,
 		plugin: function(source){
-			eval(source);
+			/* In dev mode only as sources are not minimized */
+			global.eval(source);
 		},
 		
 		obj: {

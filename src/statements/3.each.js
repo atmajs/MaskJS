@@ -1,60 +1,55 @@
-
 (function(){
 
-	custom_Statements['each'] = {
-		
-		render: function(node, model, ctx, container, controller, children){
+	custom_Statements['each'] = {		
+		render: function(node, model, ctx, container, ctr, children){
 			
-			var array = ExpressionUtil.eval(node.expression, model, ctx, controller);
-			
+			var array = ExpressionUtil.eval(node.expression, model, ctx, ctr);
 			if (array == null) 
 				return;
 			
-			
-			build(node.nodes, array, ctx, container, controller, children);
-		},
-		createItem: createEachItem,
-		build: build
+			builder_build(
+				getNodes(node, array)
+				, array
+				, ctx
+				, container
+				, ctr
+				, children
+			);
+		}
 	};
 	
-	function build(template, array, ctx, container, controller, children){
+	function getNodes(node, array){
 		var imax = array.length,
-			i = -1,
-			nodes = template,
-			itemCtr;
-		
-		while ( ++i < imax ){
-			
-			itemCtr = createEachItem(i, nodes, controller);
-			builder_build(nodes, array[i], ctx, container, itemCtr, children);
-			
-			if (itemCtr.components != null) {
-				var compos = controller.components;
-				if (compos == null) 
-					compos = controller.components = [];
-				
-				arr_pushMany(controller.components, itemCtr.components);
-			}
+			nodes = new Array(imax),
+			template = node.nodes,
+			expression = node.expression,
+			exprPrefix = expression === '.'
+				? '."'
+				: '(' + node.expression + ')."',
+			i = 0;
+		for(; i < imax; i++){
+			nodes[i] = createEachNode(template, array[i], exprPrefix, i);
 		}
-		
+		return nodes;
 	}
-	
-	function createEachItem(index, nodes, parent) {
-		
+	function createEachNode(nodes, model, exprPrefix, i){
 		return {
 			type: Dom.COMPONENT,
-			compoName: 'each::item',
-			scope: {
-				index: index
-			},
-			parent: parent,
+			tagName: 'each::item',
 			nodes: nodes,
-			model: null,
-			attr: null,
-			components: null,
-			elements: null,
-			ID: null
+			controller: createEachItemHandler(model, i, exprPrefix)
 		};
 	}
-	
+	function createEachItemHandler(model, i, exprPrefix) {
+		return {
+			compoName: 'each::item',
+			model: model,
+			scope: {
+				index: i
+			},
+			modelRef: exprPrefix + i + '"',
+			attr: null,
+			meta: null
+		};
+	}
 }());

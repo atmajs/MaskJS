@@ -1,15 +1,15 @@
 
 (function(){
-	var FOR_OF_ITEM = 'for..of/item',
-		FOR_IN_ITEM = 'for..in/item';
+	var FOR_OF_ITEM = 'for..of::item',
+		FOR_IN_ITEM = 'for..in::item';
 		
 	custom_Statements['for'] = {
 		
-		render: function(node, model, ctx, container, controller, childs){
+		render: function(node, model, ctx, container, ctr, children){
 			
 			parse_For(node.expression);
 			
-			var value = ExpressionUtil.eval(__ForDirective[3], model, ctx, controller);
+			var value = ExpressionUtil.eval(__ForDirective[3], model, ctx, ctr);
 			if (value == null) 
 				return;
 			
@@ -20,38 +20,46 @@
 				model,
 				ctx,
 				container,
-				controller,
-				childs
+				ctr,
+				children
 			);
 		},
 		
 		build: build,
 		parseFor: parse_For,
-		createForItem: createForItem,
+		createForNode: createForItemNode,
 		getNodes: getNodes,
 		
 		getHandler: function(compoName, model){
-			return createHandler(compoName, model);
+			return createForItemHandler(compoName, model);
 		}
 	};
 	
-	function createBootstrapCompo(name) {
-		var Ctor = function(){};
-		Ctor.prototype = {
-			type: Dom.COMPONENT,
-			compoName: name,
-			renderEnd: handler_proto_renderEnd,
-			dispose: handler_proto_dispose
-		};
-		return Ctor;
-	}
-	custom_Tags[FOR_OF_ITEM] = createBootstrapCompo(FOR_OF_ITEM);
-	custom_Tags[FOR_IN_ITEM] = createBootstrapCompo(FOR_IN_ITEM);
+	(function(){
+		custom_Tags[FOR_OF_ITEM] = createBootstrapCompo(FOR_OF_ITEM);
+		custom_Tags[FOR_IN_ITEM] = createBootstrapCompo(FOR_IN_ITEM);
+		
+		function createBootstrapCompo(name) {
+			function For_Item(){}
+			For_Item.prototype = {
+				meta: {
+					serializeScope: true
+				},
+				serializeScope: for_proto_serializeScope,
+				type: Dom.COMPONENT,
+				compoName: name,
+				renderEnd: handler_proto_renderEnd,
+				dispose: handler_proto_dispose
+			};
+			return For_Item;
+		}
+	}());
+	
 	
 	function build(value, For, nodes, model, ctx, container, ctr, childs) {
 		
 		builder_build(
-			getNodes(nodes, value, For[0], For[1], For[2]),
+			getNodes(nodes, value, For[0], For[1], For[2], For[3]),
 			model,
 			ctx,
 			container,
@@ -60,15 +68,14 @@
 		);
 	}
 	
-	function getNodes(nodes, value, prop1, prop2, type) {
+	function getNodes(nodes, value, prop1, prop2, type, expr) {
 			
 		if ('of' === type) {
 			if (is_Array(value) === false) {
 				log_error('<ForStatement> Value is not enumerable', value);
 				return null;
 			}
-			
-			return loop_Array(nodes, value, prop1, prop2);
+			return loop_Array(nodes, value, prop1, prop2, expr);
 		}
 		
 		if ('in' === type) {
@@ -76,15 +83,14 @@
 				log_warn('<ForStatement> Value is not an object', value);
 				return null;
 			}
-			
 			if (is_Array(value)) 
-				log_warn('<mask:for> Consider to use `for..of` for Arrays');
+				log_warn('<ForStatement> Consider to use `for..of` for Arrays');
 			
-			return loop_Object(nodes, value, prop1, prop2);
+			return loop_Object(nodes, value, prop1, prop2, expr);
 		}
 	}
 	
-	function loop_Array(template, arr, prop1, prop2){
+	function loop_Array(template, arr, prop1, prop2, expr){
 		
 		var i = -1,
 			imax = arr.length,
@@ -93,20 +99,25 @@
 		
 		while ( ++i < imax ) {
 			scope = {};
-			
 			scope[prop1] = arr[i];
 			
 			if (prop2) 
 				scope[prop2] = i;
 			
-			
-			nodes[i] = createForItem(FOR_OF_ITEM, template, scope);
+			nodes[i] = createForItemNode(
+				FOR_OF_ITEM
+				, template
+				, scope
+				, i
+				, prop1
+				, expr
+			);
 		}
 		
 		return nodes;
 	}
 	
-	function loop_Object(template, obj, prop1, prop2){
+	function loop_Object(template, obj, prop1, prop2, expr){
 		var nodes = [],
 			i = 0,
 			scope, key, value;
@@ -114,40 +125,48 @@
 		for (key in obj) {
 			value = obj[key];
 			scope = {};
-			
 			scope[prop1] = key;
 			
 			if (prop2) 
 				scope[prop2] = value;
 			
-			nodes[i++] = createForItem(FOR_IN_ITEM, template, scope);
+			nodes[i++] = createForItemNode(
+				FOR_IN_ITEM
+				, template
+				, scope
+				, key
+				, prop2
+				, expr
+			);
 		}
-		
 		return nodes;
 	}
 	
-	function createForItem(name, nodes, scope) {
-		
+	function createForItemNode(name, nodes, scope, key, propVal, expr) {
 		return {
 			type: Dom.COMPONENT,
 			tagName: name,
 			nodes: nodes,
-			controller: {
-				compoName: name,
-				scope: scope,
-				renderEnd: handler_proto_renderEnd,
-				dispose: handler_proto_dispose
-			}
+			controller: createForItemHandler(name, scope, key, propVal, expr)
 		};
 	}
-	
-	function createHandler(name, scope) {
+	function createForItemHandler(name, scope, key, propVal, expr) {
 		return {
+			meta: {
+				serializeScope: true,
+			},
 			compoName: name,
 			scope: scope,
+			elements: null,
+			
+			propVal: propVal,
+			key: key,
+			expression: expr,
+			
 			renderEnd: handler_proto_renderEnd,
-			dispose: handler_proto_dispose
-		}
+			dispose: handler_proto_dispose,
+			serializeScope: for_proto_serializeScope
+		};
 	}
 	
 	function handler_proto_renderEnd(elements) {
@@ -157,9 +176,27 @@
 		if (this.elements) 
 			this.elements.length = 0;
 	}
+	function for_proto_serializeScope(scope, model) {
+		var ctr = this,
+			expr = ctr.expression,
+			key = ctr.key,
+			propVal = ctr.propVal;
+		
+	
+		var val = scope[propVal];
+		if (val != null && typeof val === 'object') 
+			scope[propVal] = '$ref:(' + expr + ')."' + key + '"';
+		
+		return scope;
+	}
 
 	
 	var __ForDirective = [ 'prop1', 'prop2', 'in|of', 'expression' ],
+		i_PROP_1 = 0,
+		i_PROP_2 = 1,
+		i_TYPE = 2,
+		i_EXPR = 3,
+		
 		state_prop = 1,
 		state_multiprop = 2,
 		state_loopType = 3

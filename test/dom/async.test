@@ -2,21 +2,16 @@
 UTest({
 	'async - core': function(done){
 		
+		var cb;
 		mask.registerHandler(':test', Class({
 			
 			nodes: mask.parse('#defer > "foo"'),
 			async: true,
 			await: function(callback){
-				this.callback = callback;
+				cb = callback;
 			},
 			renderStart: function(){
-				
-				var that = this;
-				setTimeout(function(){
-					
-					that.callback();
-					
-				}, 200);
+				setTimeout(() => cb(), 200);
 			}
 		}));
 		
