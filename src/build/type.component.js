@@ -1,9 +1,6 @@
 var build_compo;
-
 (function(){
-	
-	
-	build_compo = function(node, model, ctx, container, controller, childs){
+	build_compo = function(node, model, ctx, container, ctr, children){
 		
 		var compoName = node.tagName,
 			Handler;
@@ -15,37 +12,34 @@ var build_compo;
 			Handler = custom_Tags[compoName];
 		
 		if (Handler == null) 
-			return build_NodeAsCompo(node, model, ctx, container, controller, childs);
-		
+			return build_NodeAsCompo(node, model, ctx, container, ctr, children);
 		
 		var isStatic = false,
 			handler, attr, key;
 		
 		if (typeof Handler === 'function') {
-			handler = new Handler(model);
+			handler = new Handler(node, model, ctx, container, ctr);
 		} else{
 			handler = Handler;
 			isStatic = true;
 		}
-		
 		var fn = isStatic
 			? build_Static
 			: build_Component
 			;
-		
-		return fn(handler, node, model, ctx, container, controller, childs);
+		return fn(handler, node, model, ctx, container, ctr, children);
 	}
 	
 	
 	// PRIVATE
 	
-	function build_Component(compo, node, model, ctx, container, controller, childs){
+	function build_Component(compo, node, model, ctx, container, ctr, children){
 		
 		var attr, key;
 		
 		compo.compoName = node.tagName;
 		compo.attr = attr = attr_extend(compo.attr, node.attr);
-		compo.parent = controller;
+		compo.parent = ctr;
 		compo.ID = ++builder_componentID;
 		compo.expression = node.expression;
 		
@@ -57,7 +51,7 @@ var build_compo;
 		
 		for (key in attr) {
 			if (typeof attr[key] === 'function') 
-				attr[key] = attr[key]('attr', model, ctx, container, controller, key);
+				attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
 		}
 	
 		
@@ -73,10 +67,10 @@ var build_compo;
 			compo.renderStart(model, ctx, container);
 		
 		
-		controller_pushCompo(controller, compo);
+		controller_pushCompo(ctr, compo);
 		
 		if (compo.async === true) {
-			compo.await(build_resumeDelegate(compo, model, ctx, container, childs));
+			compo.await(build_resumeDelegate(compo, model, ctx, container, children));
 			return null;
 		}
 		
@@ -91,7 +85,6 @@ var build_compo;
 		
 		
 		if (typeof compo.render === 'function') {
-			
 			compo.render(compo.model, ctx, container);
 			// Overriden render behaviour - do not render subnodes
 			return null;
@@ -108,7 +101,7 @@ var build_compo;
 			compo,
 			clone;
 		
-		if (Ctor) {
+		if (Ctor != null) {
 			clone = new Ctor(node, ctr);
 		}
 		else {

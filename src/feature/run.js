@@ -31,11 +31,14 @@ var mask_run;
 		if (container == null) 
 			container = document.body;
 			
-		var controller = is_Function(Ctr)
+		var ctr = is_Function(Ctr)
 			? new Ctr
 			: new Compo
 			;
-		controller.ID = ++builder_componentID;
+		ctr.ID = ++builder_componentID;
+		
+		if (model == null) 
+			model = ctr.model || {};
 		
 		var scripts = _Array_slice.call(document.getElementsByTagName('script')),
 			script,
@@ -51,7 +54,7 @@ var mask_run;
 				continue;
 			
 			var fragment = builder_build(
-				parser_parse(script.textContent), model, {}, null, controller
+				parser_parse(script.textContent), model, {}, null, ctr
 			);
 			script.parentNode.insertBefore(fragment, script);
 			found = true;
@@ -59,10 +62,10 @@ var mask_run;
 		if (found === false) {
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
-		if (is_Function(controller.renderEnd)) {
-			controller.renderEnd(container, model);
+		if (is_Function(ctr.renderEnd)) {
+			ctr.renderEnd(container, model);
 		}
-		Compo.signal.emitIn(controller, 'domInsert');
-		return controller;
+		Compo.signal.emitIn(ctr, 'domInsert');
+		return ctr;
 	};
 }());
