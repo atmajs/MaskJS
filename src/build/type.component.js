@@ -34,14 +34,15 @@ var build_compo;
 	// PRIVATE
 	
 	function build_Component(compo, node, model, ctx, container, ctr, children){
-		
 		var attr, key;
 		
-		compo.compoName = node.tagName;
+		compo.ID = ++builder_componentID;
 		compo.attr = attr = attr_extend(compo.attr, node.attr);
 		compo.parent = ctr;
-		compo.ID = ++builder_componentID;
 		compo.expression = node.expression;
+		
+		if (compo.compoName == null) 
+			compo.compoName = node.tagName;
 		
 		if (compo.model == null) 
 			compo.model = model;
@@ -60,8 +61,8 @@ var build_compo;
 			, compo
 			, model
 			, ctx
-			, container);
-			
+			, container
+		);
 	
 		if (is_Function(compo.renderStart)) 
 			compo.renderStart(model, ctx, container);
@@ -88,8 +89,7 @@ var build_compo;
 			compo.render(compo.model, ctx, container);
 			// Overriden render behaviour - do not render subnodes
 			return null;
-		}
-	
+		}	
 		return compo;
 	}
 	
