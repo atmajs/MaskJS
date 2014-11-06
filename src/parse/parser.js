@@ -1,4 +1,5 @@
 var parser_parse,
+	parser_parseAttr,
 	parser_ensureTemplateFunction,
 	parser_setInterpolationQuotes,
 	parser_cleanObject,
@@ -24,98 +25,11 @@ var parser_parse,
 		_serialize;
 
 	// import ./cursor.js
+	// import ./function.js
 	// import ./parsers/var.js
+	// import ./parsers/style.js
 
-	function ensureTemplateFunction(template) {
-		var index = -1;
-
-		/*
-		 * - single char indexOf is much faster then '~[' search
-		 * - function is divided in 2 parts: interpolation start lookup/ interpolation parse
-		 * for better performance
-		 */
-		while ((index = template.indexOf(interp_START, index)) !== -1) {
-			if (template.charCodeAt(index + 1) === interp_code_OPEN) 
-				break;
-			
-			index++;
-		}
-
-		if (index === -1) 
-			return template;
-		
-		var length = template.length,
-			array = [],
-			lastIndex = 0,
-			i = 0,
-			end;
-
-
-		while (true) {
-			end = cursor_groupEnd(
-				template
-				, index + 2
-				, length
-				, interp_code_OPEN
-				, interp_code_CLOSE
-			);
-			if (end === -1) 
-				break;
-			
-			array[i++] = lastIndex === index
-				? ''
-				: template.substring(lastIndex, index);
-			array[i++] = template.substring(index + 2, end);
-
-			lastIndex = index = end + 1;
-
-			while ((index = template.indexOf(interp_START, index)) !== -1) {
-				if (template.charCodeAt(index + 1) === interp_code_OPEN) 
-					break;
-				
-				index++;
-			}
-			if (index === -1) 
-				break;
-		}
-
-		if (lastIndex < length) 
-			array[i] = template.substring(lastIndex);
-		
-
-		template = null;
-		return function(type, model, ctx, element, controller, name) {
-			if (type == null) {
-				// http://jsperf.com/arguments-length-vs-null-check
-				// this should be used to stringify parsed MaskDOM
-				var string = '',
-					imax = array.length,
-					i = -1,
-					x;
-				while ( ++i < imax) {
-					x = array[i];
-					
-					string += i % 2 === 1
-						? interp_START
-							+ interp_OPEN
-							+ x
-							+ interp_CLOSE
-						: x
-						;
-				}
-				return string;
-			}
-
-			return util_interpolate(
-				array
-				, type
-				, model
-				, ctx
-				, element
-				, controller
-				, name);
-		};
-	}
+	
 
 	var go_tag = 2,
 		state_tag = 3,
@@ -132,8 +46,6 @@ var parser_parse,
 		/** @out : nodes */
 		parse: function(template) {
 
-			//_serialize = T.serialize;
-
 			var current = new Fragment(),
 				fragment = current,
 				state = go_tag,
@@ -145,13 +57,9 @@ var parser_parse,
 				key,
 				value,
 				next,
-				//-next_Type,
 				c, // charCode
 				start,
 				nextC;
-
-			
-
 
 			outer: while (true) {
 
@@ -228,14 +136,18 @@ var parser_parse,
 						//	? new Component(token, current, custom_Tags[token])
 						//	: new Node(token, current);
 						
-						if ('var' === token) {
-							var tuple = parser_var(template, index, length, current);
-							current.appendChild(tuple[0]);
+						if (custom_Parsers[token] != null) {
+							var tuple = custom_Parsers[token](template, index, length, current);
+							var node = tuple[0];
+							if (node != null) {
+								current.appendChild(node);
+							}
 							index = tuple[1];
 							state = go_tag;
 							token = null;
 							continue;
 						}
+						
 						
 						next = new Node(token, current);
 						
@@ -596,5 +508,48 @@ var parser_parse,
 	parser_ensureTemplateFunction = Parser.ensureTemplateFunction;
 	parser_cleanObject = Parser.cleanObject;
 	parser_setInterpolationQuotes = Parser.setInterpolationQuotes;
+	
+	parser_parseAttr = function(str, start, end){
+		var attr = {},
+			i = start,
+			key, val, c;
+		while(i < end) {
+			i = cursor_skipWhitespace(str, i, end);
+			if (i === end) 
+				break;
+			
+			start = i;
+			for(; i < end; i++){
+				c = str.charCodeAt(i);
+				if (c === 61 || c < 33) break;
+			}
+			
+			key = str.substring(start, i);
+			
+			i = cursor_skipWhitespace(str, i, end);
+			if (i === end) {
+				attr[key] = key;
+				break;
+			}
+			if (str.charCodeAt(i) !== 61 /*=*/) {
+				attr[key] = key;
+				continue;
+			}
+			
+			i = start = cursor_skipWhitespace(str, i + 1, end);
+			c = str.charCodeAt(i);
+			if (c === 34 || c === 39) {
+				// "|'
+				i = cursor_quoteEnd(str, i + 1, end, c === 39 ? "'" : '"');
+				
+				attr[key] = str.substring(start + 1, i);
+				i++;
+				continue;
+			}
+			i = cursor_goToWhitespace(str, i, end);
+			attr[key] = str.substring(start, i);
+		}
+		return attr;
+	};
 	
 }(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));

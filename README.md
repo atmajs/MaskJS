@@ -252,6 +252,21 @@ Most simple MaskJS sample to show where you could start from:
 
 ###Changelog
 ------------
+- 0.12.2
+	- `style` node syntax support with
+		- `:host` support
+		- scoped css support (IE6+)
+		```sass
+		section {
+			style scoped {
+				span {
+					color: red;
+				}
+			}
+			span > 'Hello World'
+		}
+		```
+		
 - 0.9.6
 	- Merge feature for better encapsulation, e.g:
 	```sass

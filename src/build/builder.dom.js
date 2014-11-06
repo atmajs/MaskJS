@@ -1,20 +1,16 @@
 var builder_componentID = 0,
-	
 	builder_build;
 
 (function(custom_Attributes, custom_Tags, Component){
 	
+	// import ./util.js
+	// import ./util.controller.js
 	
-		
-	// import util.js
-	// import util.controller.js
+	// import ./type.textNode.js
+	// import ./type.node.js
+	// import ./type.component.js
 	
-	// import type.textNode.js
-	// import type.node.js
-	// import type.component.js
-	
-
-	builder_build = function(node, model, ctx, container, controller, childs) {
+	builder_build = function(node, model, ctx, container, ctr, childs) {
 	
 		if (node == null) 
 			return container;
@@ -25,8 +21,8 @@ var builder_componentID = 0,
 			value,
 			j, jmax;
 		
-		if (controller == null) 
-			controller = new Component();
+		if (ctr == null) 
+			ctr = new Component();
 			
 		if (type == null){
 			// in case if node was added manually, but type was not set
@@ -43,7 +39,7 @@ var builder_componentID = 0,
 		}
 		
 		if (type === 1 && custom_Tags[node.tagName] != null) {
-			// check if custom controller exists
+			// check if custom ctr exists
 			type = 4;
 		}
 	
@@ -54,7 +50,7 @@ var builder_componentID = 0,
 		// Dom.TEXTNODE
 		if (type === 2) {
 			
-			build_textNode(node, model, ctx, container, controller);
+			build_textNode(node, model, ctx, container, ctr);
 			return container;
 		}
 		
@@ -65,7 +61,7 @@ var builder_componentID = 0,
 			jmax = node.length;
 			
 			for(; j < jmax; j++) {
-				builder_build(node[j], model, ctx, container, controller, childs);
+				builder_build(node[j], model, ctx, container, ctr, childs);
 			}
 			return container;
 		}
@@ -91,30 +87,30 @@ var builder_componentID = 0,
 			
 			if (type === 15) {
 				
-				Handler.render(node, model, ctx, container, controller, childs);
+				Handler.render(node, model, ctx, container, ctr, childs);
 				return container;
 			}
 		}
 	
 		// Dom.NODE
 		if (type === 1) {
-			container = build_node(node, model, ctx, container, controller, childs);
+			container = build_node(node, model, ctx, container, ctr, childs);
 			childs = null;
 		}
 	
 		// Dom.COMPONENT
 		if (type === 4) {
 	
-			controller = build_compo(node, model, ctx, container, controller, childs);
+			ctr = build_compo(node, model, ctx, container, ctr, childs);
 			
-			if (controller == null) 
+			if (ctr == null) 
 				return container;
 			
 			elements = [];
-			node = controller;
+			node = ctr;
 			
-			if (controller.model !== model && controller.model != null) 
-				model = controller.model;
+			if (ctr.model !== model && ctr.model != null) 
+				model = ctr.model;
 			
 		}
 	
@@ -134,7 +130,7 @@ var builder_componentID = 0,
 					? nodes[i]
 					: nodes;
 				
-				builder_build(childNode, model, ctx, container, controller, elements);
+				builder_build(childNode, model, ctx, container, ctr, elements);
 			}
 	
 		}
@@ -143,7 +139,7 @@ var builder_componentID = 0,
 			
 			// use or override custom attr handlers
 			// in Compo.handlers.attr object
-			// but only on a component, not a tag controller
+			// but only on a component, not a tag ctr
 			if (node.tagName == null && node.compoName !== '%') {
 				var attrHandlers = node.handlers && node.handlers.attr,
 					attrFn,
@@ -166,7 +162,7 @@ var builder_componentID = 0,
 						attrFn = custom_Attributes[key];
 					
 					if (attrFn != null) 
-						attrFn(node, val, model, ctx, elements[0], controller);
+						attrFn(node, val, model, ctx, elements[0], ctr);
 				}
 			}
 			

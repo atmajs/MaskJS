@@ -149,16 +149,20 @@ var build_compo;
 	}
 	
 	
-	function build_NodeAsCompo(node, model, ctx, container, controller, childs){
+	function build_NodeAsCompo(node, model, ctx, container, ctr, childs){
 		node.ID = ++builder_componentID;
 		
-		controller_pushCompo(controller, node);
+		controller_pushCompo(ctr, node);
 		
 		if (node.model == null) 
 			node.model = model;
 		
 		var els = node.elements = [];
-		builder_build(node.nodes, node.model, ctx, container, node, els);
+		if (node.render) {
+			node.render(node.model, ctx, container, ctr, els);
+		} else {
+			builder_build(node.nodes, node.model, ctx, container, node, els);
+		}
 		
 		if (childs != null && els.length !== 0)
 			arr_pushMany(childs, els);

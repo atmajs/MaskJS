@@ -18,11 +18,11 @@ UTest({
 			})
 			.forEach(function(parts){
 				
-				eq(parts.length, 2, 'Test case expected. Source<->Result');
+				eq_(parts.length, 2, 'Test case expected. Source<->Result');
 				
 				var str = M.stringify(parts[0]);
 				
-				eq(str, parts[1]);
+				eq_(str, parts[1]);
 			});
 	}
 	

@@ -32,6 +32,6 @@ custom_Statements['import'] = {
 		if (nodes == null) 
 			return;
 		
-		builder_build(Parser.parse(nodes), model, ctx, container, controller, childs);
+		builder_build(parser_parse(nodes), model, ctx, container, controller, childs);
 	}
 };

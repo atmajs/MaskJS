@@ -1,6 +1,5 @@
-var parser_var;
 (function(){
-	parser_var = function(template, index, length, parent){
+	custom_Parsers['var'] = function(template, index, length, parent){
 		var node = new Node('var', parent),
 			start,
 			c;

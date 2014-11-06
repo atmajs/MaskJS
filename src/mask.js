@@ -244,8 +244,9 @@ var cache = {},
 		},
 		Dom: Dom,
 		plugin: function(source){
-			/* In dev mode only as sources are not minimized */
-			global.eval(source);
+			//if DEBUG
+			eval(source);
+			//endif
 		},
 		
 		obj: {

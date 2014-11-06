@@ -1,6 +1,8 @@
 var cursor_groupEnd,
 	cursor_quoteEnd,
-	cursor_refEnd
+	cursor_refEnd,
+	cursor_skipWhitespace,
+	cursor_goToWhitespace
 	;
 
 (function(){
@@ -72,4 +74,19 @@ var cursor_groupEnd,
 		return imax;
 	};
 	
+	cursor_skipWhitespace = function(str, i, imax) {
+		for(; i < imax; i++) {
+			if (str.charCodeAt(i) > 32) 
+				return i;
+		}
+		return i;
+	};
+	
+	cursor_goToWhitespace = function(str, i, imax) {
+		for(; i < imax; i++) {
+			if (str.charCodeAt(i) < 33) 
+				return i;
+		}
+		return i;
+	};
 }());
