@@ -59,7 +59,7 @@ Resources:
 - HTML Builder (_nodejs_)
 	`[Template &rarr; Mask DOM &rarr; HTML]`
 
-```scss
+```sass
 .container {
 	h4 > 'Title'
 	section.content data-id='myID' {
