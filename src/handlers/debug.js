@@ -11,4 +11,7 @@
 			debugger;
 		}
 	});
+	customTag_register(':utest', {
+		render: function () {}
+	});
 }());
