@@ -253,8 +253,9 @@ Most simple MaskJS sample to show where you could start from:
 ###Changelog
 ------------
 - 0.12.2
-	- `style` node syntax support with
-		- `:host` support
+	- `slot` and `event` javascript handlers ([handler](/test/dom/handler.test))
+	- `style` node syntax support with ([style](/test/dom/style.test))
+		- `:host`, `:host()` support
 		- scoped css support (IE6+)
 		```sass
 		section {

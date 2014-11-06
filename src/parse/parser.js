@@ -27,9 +27,8 @@ var parser_parse,
 	// import ./cursor.js
 	// import ./function.js
 	// import ./parsers/var.js
+	// import ./parsers/slot.js
 	// import ./parsers/style.js
-
-	
 
 	var go_tag = 2,
 		state_tag = 3,
