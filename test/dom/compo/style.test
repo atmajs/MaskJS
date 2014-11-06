@@ -9,7 +9,7 @@ UTest({
 					style {
 						.foo {
 							border: 2px solid red;
-							font-family: 'monospace';
+							font-family: monospace;
 						}
 					}
 				}
@@ -21,7 +21,7 @@ UTest({
 			`,
 			styles : {
 				'.foo': {
-					'border-width': '3px',
+					'border-top-width': '3px',
 					'font-family' : 'monospace'
 				}
 			},
@@ -92,7 +92,7 @@ UTest({
 			styles: {
 				'.foo': {
 					'display': 'inline-block',
-					'border-width': '1px'
+					'border-top-width': '1px'
 				}
 			},
 			count: 1
@@ -137,7 +137,7 @@ UTest({
 			`,
 			styles: {
 				'.foo': {
-					'border-width': '4px'
+					'border-top-width': '4px'
 				}
 			},
 			count: 0
@@ -160,8 +160,8 @@ UTest({
 			},
 			styles: {
 				'.foo': {
-					'border-width': '5px',
-					'border-style' : 'dotted'
+					'border-top-width': '5px',
+					'border-top-style' : 'dotted'
 				}
 			},
 			count: 1,

@@ -24,6 +24,8 @@ include
 		}
 	})
 	.inject(
+		'/ref-utils/lib/utils.embed.js',
+		
 		'/src/scope-vars.js',
 		'/src/util/util.js',
 		'/src/util/attr.js',
