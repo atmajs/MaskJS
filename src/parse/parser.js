@@ -454,7 +454,7 @@ var parser_parse,
 				parent !== fragment &&
 				parent.__single !== true &&
 				current.nodes != null) {
-				parser_warn('Tag was not closed: ' + current.parent.tagName, template)
+				parser_warn('Tag was not closed: ' + current.tagName, template)
 			}
 			// endif
 
