@@ -222,7 +222,11 @@ var parser_parse,
 					/* falls through */
 				case 125:
 					// ;}
-
+					if (c === 125 && (state === state_tag || state === state_attr)) {
+						// single tag was not closed with `;` but closing parent
+						index--;
+					}
+					
 					index++;
 					last = state;
 					state = go_up;
