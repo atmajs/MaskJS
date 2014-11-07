@@ -161,10 +161,30 @@ UTest({
 		assert(typeof node.nodes[0].content, 'function');
 	},
 	
-	'valid nesting': function(){
-		dom = parse('div{span}');
-		eq_(dom.nodes.length, 1);
-		eq_(dom.nodes[0].tagName, 'span');
+	'!valid nesting with not closed last child': function(){
+		
+		testSingle([
+			'div{span}',
+			'div>span',
+			'div { span .klass}',
+			'div > span .klass',
+			'div { span data-foo=bar }',
+		], function(node, index) {
+			eq_(node.nodes.length, 1);
+			eq_(node.nodes[0].tagName, 'span');
+		});
+		
+		testMultiple([
+			'div{span } section',
+			'div { span .klass} section {} a;'
+		], function(node, index) {
+			eq_(node[0].tagName, 'div');
+			eq_(node[1].tagName, 'section');
+			
+			node = node[0];
+			eq_(node.nodes.length, 1);
+			eq_(node.nodes[0].tagName, 'span');
+		});
 	},
 	'interpolation in tag attribute' () {
 		dom = parse('div class="~[some]";');
