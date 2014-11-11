@@ -147,7 +147,7 @@ var mask_stringify;
 				value = value();
 			
 
-			if (_minimize === false || /[^\w_$\-\.]/.test(value))
+			if (key !== value && (_minimize === false || /[^\w_$\-\.]/.test(value)))
 				value = wrapString(value);
 			
 

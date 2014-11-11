@@ -1,0 +1,10 @@
+do ("Hello") type
+---
+do type("Hello");
+===
+section {
+	div id='foo'
+}
+---
+section > 
+  #foo;

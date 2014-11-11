@@ -1,0 +1,33 @@
+div {
+	'Hello'
+}
+---
+div>'Hello'
+===
+div.class name='some' {
+	div#header > 'Wow ~[name]';
+};
+---
+.class name=some>#header>'Wow ~[name]'
+===
+span.~[class]#~[id] name='~[: foo.bar + "!"]';
+---
+span#~[id].~[class] name='~[: foo.bar + "!"]';
+===
+if (username.indexOf('a') === 0) {
+	'admin';
+}
+---
+if(username.indexOf('a') === 0)>'admin'
+===
+div { span; 'Hello' }
+---
+div{span;'Hello'}
+===
+
+	input checked disabled='disabled' {
+		:dualbind expression="user.name";
+	}
+
+---
+input checked disabled>:dualbind expression=user.name;

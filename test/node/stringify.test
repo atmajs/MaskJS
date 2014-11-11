@@ -1,29 +1,36 @@
 UTest({
 	
-	'minify': function(){
-		
-		var M = Mask.mask
-		
-		io
-			.File
-			.read('test/tmpl/stringify.mask')
-			.split(/^===$/gm)
-			.map(function(test){
-				
-				return test
-					.split(/^---$/gm)
-					.map(function(x){
-						return x.trim();
-					});
-			})
-			.forEach(function(parts){
-				
-				eq_(parts.length, 2, 'Test case expected. Source<->Result');
-				
-				var str = M.stringify(parts[0]);
-				
-				eq_(str, parts[1]);
-			});
+	'minify' () {
+		process('min');
+	},
+	
+	'!beautify' () {
+		process('format', 2);
 	}
 	
 })
+
+function process(filename, indent) {
+	var M = Mask.mask
+	
+	io
+		.File
+		.read(`test/tmpl/stringify.${filename}.mask`)
+		.split(/^===$/gm)
+		.map(function(test){
+			
+			return test
+				.split(/^---$/gm)
+				.map(x => x.trim());
+		})
+		.forEach(function(parts){
+			if (parts.length < 2) 
+				return;
+			
+			var [ mask, expect ] = parts;
+			var str = M.stringify(mask, indent);
+			
+			
+			eq_(str, expect);
+		});
+}
