@@ -71,7 +71,8 @@
 	});
 	var Event = class_create(Handler, {
 		tagName: 'event',
-		render: function(model, ctx, container) {
+		render: function(model, ctx, container, ctr) {
+			this.fn = this.fn.bind(ctr);
 			container.addEventListener(this.name, this.fn, false);
 		}
 	});
