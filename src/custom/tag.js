@@ -13,6 +13,7 @@
 	
 	function wrapStatic(proto) {
 		function Ctor(node, parent) {
+			this.ID = null;
 			this.tagName = node.tagName;
 			this.attr = node.attr;
 			this.expression = node.expression;

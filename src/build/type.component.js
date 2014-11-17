@@ -124,6 +124,7 @@ var build_compo;
 		if (is_Function(clone.renderStart)) 
 			clone.renderStart(model, ctx, container, ctr, children);
 		
+		clone.ID = ++builder_componentID;
 		controller_pushCompo(ctr, clone);
 		
 		var i = ctr.components.length - 1;
