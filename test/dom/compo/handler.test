@@ -29,7 +29,7 @@ UTest({
 			section {
 				button {
 					event click (event) {
-						this.textContent = 'Baz'
+						event.target.textContent = 'Baz'
 					}
 					'Foo'
 				}

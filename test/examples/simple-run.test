@@ -9,7 +9,7 @@ UTest({
 				$(doc.body)
 					.find('ul')
 					.eq_('length', 1)
-					.has_('html', '<li>Sunflower</li>')
+					.has_('html', '>Sunflower</li>')
 					;
 			});
 	}
