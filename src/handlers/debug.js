@@ -11,7 +11,11 @@
 			debugger;
 		}
 	});
-	customTag_register(':utest', {
-		render: function () {}
-	});
+	customTag_register(':utest', mask.Compo({
+		render: function (model, ctx, container) {
+			if (container.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
+				container = container.childNodes;
+			this.$ = $(container);
+		}
+	}));
 }());

@@ -25,7 +25,7 @@
 	// import /src/parse/parser.js
 	// import /src/build/builder.dom.js
 	
-	/* Features */
+	/*** Features ***/
 	// import /src/feature/run.js
 	// import /src/feature/merge.js
 	
@@ -33,19 +33,17 @@
 	
 	// import /src/formatter/stringify.lib.js
 
-	/* Handlers */
+	/*** Libraries ***/
+	// import /ref-mask-compo/lib/compo.embed.js
+	// import /ref-mask-j/lib/jmask.embed.js
+	// import /ref-mask-binding/lib/binding.embed.js
+		
+	/*** Handlers ***/
 	// import /src/handlers/html.js
 	// import /src/handlers/define.js
 	// import /src/handlers/template.js
 	// import /src/handlers/debug.js
 
-	/* Libraries */
-	
-	// import /ref-mask-compo/lib/compo.embed.js
-	// import /ref-mask-j/lib/jmask.embed.js
-	// import /ref-mask-binding/lib/binding.embed.js
-	
-	
 
 	Mask.Compo = Compo;
 	Mask.jmask = jmask;
