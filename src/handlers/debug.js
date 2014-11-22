@@ -11,7 +11,7 @@
 			debugger;
 		}
 	});
-	customTag_register(':utest', mask.Compo({
+	customTag_register(':utest', Compo({
 		render: function (model, ctx, container) {
 			if (container.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
 				container = container.childNodes;
