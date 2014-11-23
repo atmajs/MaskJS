@@ -65,7 +65,6 @@
 			if (slots == null) {
 				slots = ctr.slots = {};
 			}
-			
 			slots[this.name] = this.fn;
 		}
 	});
@@ -73,7 +72,7 @@
 		tagName: 'event',
 		render: function(model, ctx, container, ctr) {
 			this.fn = this.fn.bind(ctr);
-			container.addEventListener(this.name, this.fn, false);
+			Compo.Dom.addEventListener(container, this.name, this.fn);
 		}
 	});
 	
