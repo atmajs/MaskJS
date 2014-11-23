@@ -25,9 +25,13 @@ Resources:
 
 - [maskFiddle](http://atmajs.com/mask-try)
 - [Documentation](http://atmajs.com/mask)
-- [Samples](/examples)
-- [TodoMVC app](http://todomvc.com/labs/architecture-examples/atmajs/)
-- [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
+- **Examples**
+	- [Samples](/examples)
+	- [TodoMVC app](http://todomvc.com/labs/architecture-examples/atmajs/)
+- **Tools**
+	- [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
+	- [Sublime Package](https://github.com/tenbits/sublime-mask)
+	- [Atom Package](https://github.com/tenbits/package-atom)
 
 ----
 
