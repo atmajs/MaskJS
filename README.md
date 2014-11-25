@@ -27,7 +27,7 @@ Resources:
 - [Documentation](http://atmajs.com/mask)
 - **Examples**
 	- [Samples](/examples)
-	- [TodoMVC app](http://todomvc.com/labs/architecture-examples/atmajs/)
+	- [TodoMVC app](http://todomvc.com/examples/atmajs/)
 - **Tools**
 	- [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
 	- [Sublime Package](https://github.com/tenbits/sublime-mask)
