@@ -4,7 +4,6 @@
 
 
 ----
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/atmajs/MaskJS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <p align="center">
 	<a href='https://travis-ci.org/atmajs/MaskJS' target='_blank'>
