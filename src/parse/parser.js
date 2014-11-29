@@ -189,17 +189,19 @@ var parser_parse,
 					while (current != null && current.__single != null) {
 						current = current.parent;
 					}
+					if (current == null) {
+						current = fragment;
+						parser_warn('Unexpected tag closing', template, index - 1);
+					}
 					state = go_tag;
 				}
 
 				switch (c) {
 				case 123:
 					// {
-
 					last = state;
 					state = go_tag;
 					index++;
-
 					continue;
 				case 62:
 					// >
@@ -208,17 +210,13 @@ var parser_parse,
 					index++;
 					current.__single = true;
 					continue;
-
-
 				case 59:
 					// ;
-
-					// skip ; , when node is not a single tag (else goto 125)
 					if (current.nodes != null) {
+						// skip ; , when node is not a single tag (else goto 125)
 						index++;
 						continue;
 					}
-
 					/* falls through */
 				case 125:
 					// ;}
@@ -226,12 +224,10 @@ var parser_parse,
 						// single tag was not closed with `;` but closing parent
 						index--;
 					}
-					
 					index++;
 					last = state;
 					state = go_up;
 					continue;
-
 				case 39:
 				case 34:
 					// '"
@@ -241,7 +237,6 @@ var parser_parse,
 					} else {
 						last = state = state_literal;
 					}
-
 					index++;
 
 					var isEscaped = false,
@@ -286,7 +281,6 @@ var parser_parse,
 					index += isUnescapedBlock ? 3 : 1;
 					continue;
 				}
-
 
 				if (state === go_tag) {
 					last = state_tag;

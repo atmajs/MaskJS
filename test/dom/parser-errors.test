@@ -8,7 +8,13 @@ UTest({
 		
 		mask.off('error');
 	},
-	
+	'unexpected close' () {
+		mask.parse(`
+			div { span }} span;
+		`);
+		var error = errors.pop();
+		has_(error.message, 'tag closing');
+	},
 	'unexpect `,` in tagname' () {
 		mask.parse(`
 			div, other;
