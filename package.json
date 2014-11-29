@@ -23,7 +23,7 @@
     ],
     "devDependencies": {
         "atma": ">0.9.26",
-        "atma-loader-traceur": ">0.0.0"
+        "atma-loader-traceur": ">=1.0.19"
     },
     "scripts": {
         "test": "atma test"

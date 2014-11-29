@@ -22,7 +22,6 @@ var cache = {},
 			// if DEBUG
 			if (container != null && typeof container.appendChild !== 'function'){
 				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
-				log_warn('Args:', arguments);
 			}
 			// endif
 
@@ -243,6 +242,8 @@ var cache = {},
 			ensureTmplFn: Parser.ensureTemplateFunction
 		},
 		Dom: Dom,
+		TreeWalker: mask_TreeWalker,
+		
 		plugin: function(source){
 			//if DEBUG
 			eval(source);
