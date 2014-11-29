@@ -5,6 +5,7 @@ var custom_Utils,
 	custom_Tags_defs,
 	
 	custom_Parsers,
+	custom_Optimizers,
 	
 	customUtil_get,
 	customUtil_$utils,
@@ -69,6 +70,7 @@ var custom_Utils,
 			return ExpressionUtil.eval(value, model, ctx, controller);
 		},
 	};
+	custom_Optimizers   = {};
 	custom_Statements 	= {};
 	custom_Attributes 	= obj_create(HtmlAttr);
 	custom_Tags 		= obj_create(HtmlTags);

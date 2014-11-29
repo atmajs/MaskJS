@@ -69,6 +69,15 @@ var cache = {},
 		 */
 		merge: mask_merge,
 		
+		/*
+		 * (dom:MaskDom, done:Action<MaskDom>)
+		 */
+		optimize: mask_optimize,
+		
+		registerOptimizer: function(tagName, fn){
+			custom_Optimizers[tagName] = fn;
+		},
+		
 		/**
 		 * mask.registerHandler(tagName, tagHandler) -> void
 		 * - tagName (String): Any tag name. Good practice for custom handlers it when its name begins with ':'
