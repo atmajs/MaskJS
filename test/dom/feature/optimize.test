@@ -1,0 +1,16 @@
+UTest({
+	'should change text' () {
+		
+		mask.registerOptimizer('foo', function(node, next){
+			node.nodes = mask.parse("'Foo'");
+			next({ deep: false });
+		});
+		
+		var frag = mask.parse('div; foo > "Bar"');
+		
+		eq_(jmask(frag).filter('foo').text(), 'Bar');
+		mask.optimize(frag, assert.await(function(frag){
+			eq_(jmask(frag).filter('foo').text(), 'Foo');
+		}));
+	}
+})
