@@ -270,6 +270,10 @@ var cache = {},
 			ArrayLike: is_ArrayLike,
 		},
 		
+		'class': {
+			create: class_create
+		},
+		
 		on: listeners_on,
 		off: listeners_off,
 
