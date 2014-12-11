@@ -1,5 +1,4 @@
-(function(){
-	
+(function(){	
 	function create(Ctor){
 		return function(str, i, imax, parent) {
 			var start = str.indexOf('{', i) + 1,
@@ -12,8 +11,7 @@
 			
 			return [ new Ctor(head, body, parent), end + 1 ];
 		};
-	}
-	
+	}	
 	function parseHead(head) {
 		var parts = /(\w+)\s*\(([^\)]*)\)/.exec(head);
 		if (parts == null) {
@@ -25,14 +23,13 @@
 			parts[2].replace(/\s/g, '').split(',')
 		);
 		return arr;
-	}
-	
+	}	
 	function Handler(head, body, parent) {
 		this.name = head.shift();
 		this.args = head;
 		this.body = body;
-		this.fn = this.compile();
 		this.parent	= parent;
+		this.fn = this.compile();
 	}
 	Handler.prototype = {
 		type: Dom.COMPONENT,
@@ -51,8 +48,7 @@
 		},
 		compile: function(){
 			var arr = _Array_slice.call(this.args);
-			arr.push(this.body);
-			
+			arr.push(this.body);			
 			return new (Function.bind.apply(Function, [null].concat(arr)));
 		},
 		render: function() {}
@@ -60,7 +56,7 @@
 	
 	var Slot = class_create(Handler, {
 		tagName: 'slot',
-		render: function(model, ctx, container, ctr) {
+		render: function(model, ctx, el, ctr) {
 			var slots = ctr.slots;
 			if (slots == null) {
 				slots = ctr.slots = {};
@@ -70,13 +66,35 @@
 	});
 	var Event = class_create(Handler, {
 		tagName: 'event',
-		render: function(model, ctx, container, ctr) {
+		render: function(model, ctx, el, ctr) {
 			this.fn = this.fn.bind(ctr);
-			Compo.Dom.addEventListener(container, this.name, this.fn);
+			Compo.Dom.addEventListener(el, this.name, this.fn);
+		}
+	});
+	var Fn = class_create(Handler, {
+		tagName: 'function',
+		render: function(model, ctx, el, ctr) {
+			ctr[this.name] = this.fn;
+		}
+	});
+	var Script = class_create(Handler, {
+		tagName: 'script',
+		render: function(model, ctx, el, ctr){
+			if (this.attr.src != null) {
+				var script = document.createElement('script');
+				for(var key in this.attr) {
+					script.addAttribute(key, this.attr[key]);
+				}
+				el.appendChild(script);
+				return;
+			}
+			this.fn.call(ctr);
 		}
 	});
 	
-	custom_Parsers['slot' ] =  create(Slot);
-	custom_Parsers['event'] =  create(Event);
+	custom_Parsers['slot' ] = create(Slot);
+	custom_Parsers['event'] = create(Event);
+	custom_Parsers['script'] = create(Script);
+	custom_Parsers['function'] = create(Fn);
 	
 }());
