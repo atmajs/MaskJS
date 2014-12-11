@@ -19,24 +19,36 @@ var mask_merge;
 		dom_NODE = Dom.NODE,
 		dom_TEXTNODE = Dom.TEXTNODE,
 		dom_FRAGMENT = Dom.FRAGMENT,
-		dom_STATEMENT = Dom.STATEMENT
+		dom_STATEMENT = Dom.STATEMENT,
+		dom_COMPONENT = Dom.COMPONENT
 		;
 	
 	function _merge(node, contents, tmplNode, clonedParent){
 		if (node == null) 
 			return null;
 		
-		if (is_Array(node)) 
-			return _mergeArray(node, contents, tmplNode, clonedParent);
-		
-		switch(node.type){
-			case dom_TEXTNODE:
-				return _cloneTextNode(node, contents, tmplNode);
-			case dom_NODE:
-			case dom_STATEMENT:
-				return _mergeNode(node, contents, tmplNode, clonedParent);
-			case dom_FRAGMENT:
-				return _mergeFragment(node, contents, tmplNode, clonedParent);
+		var fn;
+		if (is_Array(node)) {
+			fn = _mergeArray;
+		} else {
+			switch(node.type){
+				case dom_TEXTNODE:
+					fn = _cloneTextNode;
+					break;
+				case dom_NODE:
+				case dom_STATEMENT:
+					fn = _mergeNode;
+					break;
+				case dom_FRAGMENT:
+					fn = _mergeFragment;
+					break;
+				case dom_COMPONENT:
+					fn = _mergeComponent;
+					break;
+			}
+		}
+		if (fn !== void 0) {
+			return fn(node, contents, tmplNode, clonedParent);
 		}
 		log_warn('Uknown type', node.type);
 		return null;
@@ -72,6 +84,15 @@ var mask_merge;
 		fragment.parent = clonedParent;
 		fragment.nodes = _mergeArray(frag.nodes, contents, tmplNode, fragment);
 		return fragment;
+	}
+	function _mergeComponent(node, contents, tmplNode, clonedParent) {
+		if (node.nodes == null) 
+			return node;
+		
+		var cloned = new Dom.Component;
+		obj_extend(cloned, node);
+		cloned.nodes = _merge(cloned.nodes, contents, tmplNode, clonedParent);
+		return cloned;
 	}
 	function _mergeNode(node, contents, tmplNode, clonedParent){
 		var tagName = node.tagName;
