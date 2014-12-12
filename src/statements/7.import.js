@@ -1,10 +1,8 @@
-
-
 custom_Statements['import'] = {
-	render: function(node, model, ctx, container, controller, childs){
+	render: function(node, model, ctx, container, ctr, elements){
 		
 		var expr = node.expression,
-			args = ExpressionUtil.evalStatements(expr, model, ctx, controller),
+			args = ExpressionUtil.evalStatements(expr, model, ctx, ctr),
 			name = args[0]
 			;
 		if (typeof name !== 'string') {
@@ -14,24 +12,22 @@ custom_Statements['import'] = {
 	
 		while (true) {
 			
-			if (controller.compoName === 'include') 
+			if (ctr.compoName === 'include') 
 				break;
 			
-			controller = controller.parent;
+			ctr = ctr.parent;
 			
-			if (controller == null)
+			if (ctr == null)
 				break;
 		}
 		
-		
-		
-		if (controller == null) 
+		if (ctr == null) 
 			return;
 		
-		var nodes = controller.templates[name];
+		var nodes = ctr.templates[name];
 		if (nodes == null) 
 			return;
 		
-		builder_build(parser_parse(nodes), model, ctx, container, controller, childs);
+		builder_build(parser_parse(nodes), model, ctx, container, ctr, elements);
 	}
 };
