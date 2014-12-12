@@ -1,5 +1,5 @@
 (function(){
-	custom_Parsers['var'] = function(template, index, length, parent){
+	custom_Parsers['var'] = function(str, index, length, parent){
 		var node = new Node('var', parent),
 			start,
 			c;
@@ -13,15 +13,15 @@
 			token,
 			key;
 		while(true) {
-			if (index < length && (c = template.charCodeAt(index)) < 33) {
+			if (index < length && (c = str.charCodeAt(index)) < 33) {
 				index++;
 				continue;
 			}
 			
 			if (state === go_varName) {
 				start = index;
-				index = cursor_refEnd(template, index, length);
-				key = template.substring(start, index);
+				index = cursor_refEnd(str, index, length);
+				key = str.substring(start, index);
 				state = go_assign;
 				continue;
 			}
@@ -31,7 +31,7 @@
 					// =
 					parser_error(
 						'Assignment expected'
-						, template
+						, str
 						, index
 						, c
 						, 'var'
@@ -50,16 +50,16 @@
 					case 123:
 					case 91:
 						// { [
-						index = cursor_groupEnd(template, index, length, c, c + 2);
+						index = cursor_groupEnd(str, index, length, c, c + 2);
 						break;
 					case 39:
 					case 34:
 						// ' "
-						index = cursor_quoteEnd(template, index, length, c === 39 ? "'" : '"')
+						index = cursor_quoteEnd(str, index, length, c === 39 ? "'" : '"')
 						break;
 					default:
 						while (index < length) {
-							c = template.charCodeAt(index);
+							c = str.charCodeAt(index);
 							if (c === 44 || c === 59) {
 								//, ;
 								break;
@@ -70,7 +70,7 @@
 						break;
 				}
 				index++;
-				node.attr[key] = template.substring(start, index);
+				node.attr[key] = str.substring(start, index);
 				state = go_next;
 				continue;
 			}
