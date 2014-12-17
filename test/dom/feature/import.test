@@ -7,7 +7,7 @@ UTest({
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
-			has_($import.data, {
+			has_($import, {
 				path: '/test/tmpl/a.mask',
 				alias: 'foo3'
 			});
@@ -19,7 +19,7 @@ UTest({
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
-			has_($import.data, {
+			has_($import, {
 				path: '/test/tmpl/a.mask',
 				exports: [
 					{
@@ -29,34 +29,53 @@ UTest({
 				]
 			});
 		},
+		'generic path' () {
+			var tmpl = mask.parse(`
+				import foo3 from 'compo/bar';
+				baz3;
+			`);
+			var $import = tmpl.nodes[0];
+			eq_($import.tagName, 'import');
+			eq_($import.path, 'compo/bar.mask')
+			has_($import.exports, [ { name: 'foo3' } ]);
+		}
 	},
 	'render': {
 		'all' (done) {
-			var ctx = {};
-			var dom = mask.render(`
-				import * as foo1 from '/test/tmpl/a.mask';
-				foo1;
-			`, {}, ctx);
-			
-			eq_(ctx.async, true);
-			is_(ctx.done, 'Function');
-			ctx.done(assert.await(function(){
-				$(dom).has_('h4');
-				done();
-			}));
+			mask
+				.renderAsync(`
+					import * as foo1 from '/test/tmpl/modules/h4.mask';
+					foo1;
+				`)
+				.done(assert.await(function(dom){
+					$(dom).has_('h4');
+					done();
+				}));
 		},
 		'selector' (done) {
-			var ctx = {};
-			var dom = mask.render(`
-				import header as foo2 from '/test/tmpl/header_content.mask';
-				foo2;
-			`, {}, ctx);
-			
-			ctx.done(assert.await(function(){
-				$(dom).has_('header');
-				$(dom).hasNot_('.content');
-				done();
-			}))
+			mask
+				.renderAsync(`
+					import header as foo2 from '/test/tmpl/modules/header_content.mask';
+					foo2;
+				`)
+				.done(assert.await(function(dom){
+					$(dom).has_('header');
+					$(dom).hasNot_('.content');
+					done();
+				}))
+		},
+		'deep nesting' (done) {
+			mask
+				.renderAsync(`
+					import * as :nest from '/test/tmpl/modules/nest.mask';
+					:nest;
+				`)
+				.done(assert.await(function(dom){
+					$(dom)
+						.has_('section.a')
+						.has_('h4.b');
+					done();
+				}))
 		}
 	}
 	

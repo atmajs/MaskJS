@@ -28,11 +28,13 @@ var path_getDir,
 	};
 	path_getExtension = function(path) {
 		var query = path.indexOf('?');
-		if (query === -1) {
-			return path.substring(path.lastIndexOf('.') + 1);
+		if (query !== -1) {
+			return path_getExtension(path.substring(0, query));
 		}
-		
-		return path.substring(path.lastIndexOf('.', query) + 1, query);
+		var i = path.lastIndexOf('.');
+		if (i === -1) 
+			return '';
+		return path.substring(i + 1);
 	};
 	path_resolveCurrent = function() {
 		if (document == null) {
@@ -66,18 +68,14 @@ var path_getDir,
 		
 		return 'file:///' + path;
 	};
-	path_resolveUrl = function(url, parent) {
+	path_resolveUrl = function(url, base) {
 		if (rgx_PROTOCOL.test(url)) 
 			return path_collapse(url);
 		
 		if (url.substring(0, 2) === './') 
 			url = url.substring(2);
 		
-		if (url[0] === '/' && parent != null && parent.base != null) {
-			url = path_combine(parent.base, url);
-			if (rgx_PROTOCOL.test(url)) 
-				return path_collapse(url);
-		}
+		
 		if (url[0] === '/' && __cfg.path) {
 			url = __cfg.path + url.substring(1);
 			if (rgx_PROTOCOL.test(url)) 
@@ -87,8 +85,8 @@ var path_getDir,
 			if (isWeb === false || __cfg.lockedToFolder === true) {
 				url = url.substring(1);
 			}
-		} else if (parent != null && parent.location != null) {
-			url = parent.location + url;
+		} else if (base != null) {
+			url = base + url;
 		}
 	
 		return path_collapse(url);

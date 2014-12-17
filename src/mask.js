@@ -39,6 +39,24 @@ var cache = {},
 			
 			return builder_build(template, model, ctx, container, controller);
 		},
+		
+		renderAsync: function(template, model, ctx, container, ctr) {
+			if (ctx == null) {
+				ctx = {};
+			}
+			var dom = mask.render(template, model, ctx, container, ctr),
+				dfr = new class_Dfr;
+			
+			if (ctx.async === true) {
+				ctx.done(function(){
+					dfr.resolve(dom);
+				});
+			} else {
+				dfr.resolve(dom);
+			}
+			
+			return dfr;
+		},
 
 		/* deprecated, renamed to parse */
 		compile: parser_parse,

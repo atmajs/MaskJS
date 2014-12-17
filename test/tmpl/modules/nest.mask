@@ -1,0 +1,3 @@
+import * as a_nest from 'nest-a';
+
+div > a_nest;
