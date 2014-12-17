@@ -51,7 +51,8 @@ module.exports = {
 		output: 'lib/',
 		defines: {
 			DEBUG: true,
-			SAFE: true
+			SAFE: true,
+			BROWSER: true,
 		}
 	},
 	'build.prod': {
@@ -59,7 +60,8 @@ module.exports = {
 		files: 'builds/mask.js',
 		output: 'lib/mask.prod.js',
 		defines: {
-			DEBUG: false
+			DEBUG: false,
+			BROWSER: true,
 		}
 	},
 	'import.libs': {
@@ -85,7 +87,8 @@ module.exports = {
 		output: 'lib/mask.min.js',
 		defines: {
 			DEBUG: false,
-			SAFE: false
+			SAFE: false,
+			BROWSER: true,
 		}
 	},
 

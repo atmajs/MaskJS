@@ -3,7 +3,7 @@ var parser_parse,
 	parser_ensureTemplateFunction,
 	parser_setInterpolationQuotes,
 	parser_cleanObject,
-	
+	parser_ObjectLexer,
 	
 	// deprecate
 	Parser
@@ -26,9 +26,11 @@ var parser_parse,
 
 	// import ./cursor.js
 	// import ./function.js
+	// import ./object/ObjectLexer.js
 	// import ./parsers/var.js
 	// import ./parsers/slot.js
 	// import ./parsers/style.js
+	// import ./parsers/import.js
 
 	var go_tag = 2,
 		state_tag = 3,
@@ -61,10 +63,9 @@ var parser_parse,
 				nextC;
 
 			outer: while (true) {
-
-				if (index < length && (c = template.charCodeAt(index)) < 33) {
+				
+				while (index < length && (c = template.charCodeAt(index)) < 33) {
 					index++;
-					continue;
 				}
 
 				// COMMENTS
@@ -83,10 +84,9 @@ var parser_parse,
 					if (nextC === 42) {
 						// block (*)
 						index = template.indexOf('*/', index + 2) + 2;
-						
 						if (index === 1) {
 							// if DEBUG
-							log_warn('<mask:parse> block comment has no end');
+							parse_warn('Block comment has no ending', str, index);
 							// endif
 							index = length;
 						}
@@ -253,7 +253,7 @@ var parser_parse,
 						index++;
 					}
 					if (index === -1) {
-						parser_warn('Literal has no ending', template, start);
+						parser_warn('Literal has no ending', template, start - 1);
 						index = length;
 					}
 					
@@ -400,8 +400,6 @@ var parser_parse,
 				}
 
 				token = template.substring(start, index);
-
-				
 				if (token === '') {
 					parser_warn('String expected', template, index, c, state);
 					break;
@@ -505,7 +503,7 @@ var parser_parse,
 	parser_ensureTemplateFunction = Parser.ensureTemplateFunction;
 	parser_cleanObject = Parser.cleanObject;
 	parser_setInterpolationQuotes = Parser.setInterpolationQuotes;
-	
+	parser_ObjectLexer = ObjectLexer;
 	parser_parseAttr = function(str, start, end){
 		var attr = {},
 			i = start,

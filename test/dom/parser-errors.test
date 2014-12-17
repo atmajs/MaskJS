@@ -8,12 +8,19 @@ UTest({
 		
 		mask.off('error');
 	},
-	'unexpected close' () {
+	'unexpected tag close' () {
 		mask.parse(`
 			div { span }} span;
 		`);
 		var error = errors.pop();
 		has_(error.message, 'tag closing');
+	},
+	'quote not closed' () {
+		mask.parse(`
+			div > 'some
+		`);
+		var error = errors.pop();
+		has_(error.message, 'Literal has no ending');
 	},
 	'unexpect `,` in tagname' () {
 		mask.parse(`

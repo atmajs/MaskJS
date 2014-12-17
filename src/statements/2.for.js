@@ -206,7 +206,7 @@
 		index,
 		length
 		;
-		
+	
 	function parse_For(expr) {
 		// /([\w_$]+)((\s*,\s*([\w_$]+)\s*\))|(\s*\))|(\s+))(of|in)\s+([\w_$\.]+)/
 		

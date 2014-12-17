@@ -1,23 +1,22 @@
 (function(){
-	
 	custom_Statements['include'] = {
 		
-		render: function(node, model, ctx, container, controller, childs){
+		render: function(node, model, ctx, container, ctr, childs){
 			
 			var arguments_ = ExpressionUtil.evalStatements(node.expression);
 				
 			var resource;
 			
-			while(controller != null){
+			while(ctr != null){
 				
-				resource = controller.resource;
+				resource = ctr.resource;
 				if (resource != null) 
 					break;
 				
-				controller = controller.parent;
+				ctr = ctr.parent;
 			}
 			
-			var ctr = new IncludeController(controller),
+			var ctr = new IncludeController(ctr),
 				resume = Compo.pause(ctr, ctx);
 			
 			

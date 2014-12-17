@@ -1,20 +1,18 @@
 var cursor_groupEnd,
 	cursor_quoteEnd,
 	cursor_refEnd,
+	cursor_tokenEnd,
 	cursor_skipWhitespace,
 	cursor_goToWhitespace
 	;
-
 (function(){
 	
-	cursor_groupEnd = function(str, i, imax, startCode, endCode){
-		
+	cursor_groupEnd = function(str, i, imax, startCode, endCode){		
 		var count = 0,
 			start = i,
 			c;
 		for( ; i < imax; i++){
 			c = str.charCodeAt(i);
-			
 			if (c === 34 || c === 39) {
 				// "|'
 				i = cursor_quoteEnd(
@@ -25,12 +23,10 @@ var cursor_groupEnd,
 				);
 				continue;
 			}
-			
 			if (c === startCode) {
 				count++;
 				continue;
 			}
-			
 			if (c === endCode) {
 				if (--count === -1) 
 					return i;
@@ -43,8 +39,7 @@ var cursor_groupEnd,
 	cursor_refEnd = function(str, i, imax){
 		var c;
 		while (i < imax){
-			c = str.charCodeAt(i);
-			
+			c = str.charCodeAt(i);			
 			if (c === 36 || c === 95) {
 				// $ _
 				i++;
@@ -56,11 +51,30 @@ var cursor_groupEnd,
 				i++;
 				continue;
 			}
-			
 			break;
 		}
 		return i;
-	}
+	};
+	
+	cursor_tokenEnd = function(str, i, imax){
+		var c;
+		while (i < imax){
+			c = str.charCodeAt(i);
+			if (c === 36 || c === 95 || c === 58) {
+				// $ _ :
+				i++;
+				continue;
+			}
+			if ((48 <= c && c <= 57) ||		// 0-9
+				(65 <= c && c <= 90) ||		// A-Z
+				(97 <= c && c <= 122)) {	// a-z
+				i++;
+				continue;
+			}
+			break;
+		}
+		return i;
+	};
 	
 	cursor_quoteEnd = function(str, i, imax, char_){
 		var start = i;
@@ -70,7 +84,7 @@ var cursor_groupEnd,
 				return i;
 			i++;
 		}
-		parser_warn('Quote was not closed', str, start);
+		parser_warn('Quote was not closed', str, start - 1);
 		return imax;
 	};
 	

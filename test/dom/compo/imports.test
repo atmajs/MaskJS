@@ -1,0 +1,20 @@
+UTest({
+	'parser' () {
+		var x = mask.parse('import "path"');
+		eq_(x.type, mask.Dom.COMPONENT);
+	},
+	'!imports' () {
+		[
+		 {
+			template: `import './some.mask'`,
+			path: './some.mask'
+		 }
+		].forEach((data) => {
+			var { template, path, exports } = data;
+			var x = mask.parse(template);
+			
+			eq_(x.path, path);
+			deepEq_(x.exports, exports);
+		})
+	}
+})

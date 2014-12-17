@@ -1,0 +1,97 @@
+include
+	.inject(
+		'/src/util/reporters.js',
+		'/src/parse/cursor.js',
+		'/src/parse/object/ObjectLexer.js'
+	)
+	.done(function(){
+		
+		function Test(data) {
+			var lex;
+			if (data.pattern) {
+				lex = ObjectLexer(data.pattern);
+			} else if (data.args) {
+				lex = ObjectLexer.apply(null, data.args);
+			}
+			var obj = {};
+			lex(data.template, 0, data.template.length, obj);
+			deepEq_(obj, data.expect);
+		}
+		UTest({
+			'simple key-value' () {
+				Test({
+					pattern: '$key in $value',
+					template: 'foo in bar',
+					expect: {
+						key: 'foo',
+						value: 'bar'
+					}
+				});
+			},
+			'should consume strings' () {
+				Test({
+					pattern: 'var $name = "$text"',
+					template: 'var foo = "Some bar!"',
+					expect: {
+						name: 'foo',
+						text: 'Some bar!'
+					}
+				});
+			},
+			'should consume arrays' () {
+				Test({
+					pattern: '$$exports[$name?( as $alias)](,) from "$path"',
+					template: 'foo as bar, qux from "some.mask"',
+					expect: {
+						exports: [
+							{ name: 'foo', alias: 'bar' },
+							{ name: 'qux' },
+						],
+						path: 'some.mask'
+					}
+				});
+			},
+			'should support regexps' () {
+				Test({
+					pattern: '$key $$type(of|in) $value',
+					template: 'baz in foo',
+					expect: {
+						key: 'baz',
+						value: 'foo',
+						type: 'in'
+					}
+				})
+			},
+			'should break on complete' () {
+				Test({
+					pattern: '$key $value',
+					template: 'a b c d',
+					expect: {
+						key: 'a',
+						value: 'b'
+					}
+				})
+			},
+			'should support sequance' () {
+				Test({
+					args: ['$key',' $value'],
+					template: 'a b c d',
+					expect: {
+						key: 'a',
+						value: 'b'
+					}
+				})
+			},
+			'should support sequance with switch group' () {
+				Test({
+					args: ['$key', ' ', ['in $obj', 'of $arr']],
+					template: 'name of users',
+					expect: {
+						key: 'name',
+						arr: 'users'
+					}
+				})
+			}
+		})
+		
+	});

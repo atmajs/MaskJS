@@ -46,5 +46,43 @@ UTest({
 			.eq_('prop', 'tagName', 'SECTION')
 			.eq_('html', 'BazContent');
 			;
-	}
+	},
+	'should call onRenderStart' () {
+		var template = `
+			define foo {
+				function onRenderStart(model) {
+					eq_(model.name, 'Foo');
+					this.parent.count = this.parent.count == null
+						? 1
+						: ++this.parent.count
+						;
+				}
+			}
+			foo;
+			foo;
+		`;
+		
+		var app = mask.Compo.initialize(template, { name: 'Foo' });
+		var Foo = mask.getHandler('foo');
+		is_(Foo.prototype.onRenderStart, 'Function');
+		
+		eq_(app.components.length, 3);
+		eq_(app.count, 2);
+	},
+	'should define a function' () {
+		var template = `
+			define foo {
+				function fooBar() {
+					return 'hello';
+				}
+				h4 > 'Foo'
+			}
+			foo;
+		`;
+		
+		var app = mask.Compo.initialize(template, { name: 'Foo' });
+		app.$.has_('h4');
+		eq_(app.find('foo').fooBar(), 'hello');
+	},
+	
 })

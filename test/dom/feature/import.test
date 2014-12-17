@@ -1,0 +1,63 @@
+UTest({
+	'parser': {
+		'all' () {
+			var tmpl = mask.parse(`
+				import * as foo from '/test/tmpl/a.mask';
+				foo;
+			`);
+			var $import = tmpl.nodes[0];
+			eq_($import.tagName, 'import');
+			has_($import.data, {
+				path: '/test/tmpl/a.mask',
+				alias: 'foo'
+			});
+		},
+		'compos' () {
+			var tmpl = mask.parse(`
+				import foo as baz from '/test/tmpl/a.mask';
+				baz;
+			`);
+			var $import = tmpl.nodes[0];
+			eq_($import.tagName, 'import');
+			has_($import.data, {
+				path: '/test/tmpl/a.mask',
+				exports: [
+					{
+						name: 'foo',
+						alias: 'baz'
+					}
+				]
+			});
+		},
+	},
+	'render': {
+		'all' (done) {
+			var ctx = {};
+			var dom = mask.render(`
+				import * as foo1 from '/test/tmpl/a.mask';
+				foo1;
+			`, {}, ctx);
+			
+			eq_(ctx.async, true);
+			is_(ctx.done, 'Function');
+			ctx.done(assert.await(function(){
+				$(dom).has_('h4');
+				done();
+			}));
+		},
+		'selector' (done) {
+			var ctx = {};
+			var dom = mask.render(`
+				import header as foo2 from '/test/tmpl/header_content.mask';
+				foo2;
+			`, {}, ctx);
+			
+			ctx.done(assert.await(function(){
+				$(dom).has_('header');
+				$(dom).hasNot_('.content');
+				done();
+			}))
+		}
+	}
+	
+})

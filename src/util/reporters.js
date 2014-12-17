@@ -17,13 +17,13 @@ var throw_,
 		var error = createMsg('error', msg, str, i, token, state, file);
 		
 		log_error(error.message);
-		log_warn(error.stack);
+		log_warn('\n' + error.stack);
 		listeners_emit('error', error);
 	};
 	parser_warn = function(msg, str, i, token, state, file){
 		var error = createMsg('warn', msg, str, i, token, state, file);
 		log_warn(error.message);
-		log(error.stack);
+		log('\n' + error.stack);
 		listeners_emit('error', error);
 	};
 	
@@ -158,7 +158,7 @@ var throw_,
 				
 				if (i + 1 === line) {
 					str += '\n' + repeat(' ', lineNumberLength + 1);
-					str += lines[i].substring(0, row - 2).replace(/[^\s]/g, ' ');
+					str += lines[i].substring(0, row - 1).replace(/[^\s]/g, ' ');
 					str += '^';
 				}
 			}
@@ -184,7 +184,11 @@ var throw_,
 	function splitLines(str, index) {
 		var lines = str.substring(0, index).split('\n'),
 			line = lines.length,
-			row = index + 1 - lines.slice(0, line - 2).join('\n').length;
+			row = index + 1 - lines.slice(0, line - 1).join('\n').length;
+		if (line > 1) {
+			// remote trailing newline
+			row -= 1;
+		}
 		return [str.split('\n'), line, row];
 	}
 }());
