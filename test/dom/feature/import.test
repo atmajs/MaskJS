@@ -2,20 +2,20 @@ UTest({
 	'parser': {
 		'all' () {
 			var tmpl = mask.parse(`
-				import * as foo from '/test/tmpl/a.mask';
-				foo;
+				import * as foo3 from '/test/tmpl/a.mask';
+				foo3;
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
 			has_($import.data, {
 				path: '/test/tmpl/a.mask',
-				alias: 'foo'
+				alias: 'foo3'
 			});
 		},
 		'compos' () {
 			var tmpl = mask.parse(`
-				import foo as baz from '/test/tmpl/a.mask';
-				baz;
+				import foo as baz3 from '/test/tmpl/a.mask';
+				baz3;
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
@@ -24,7 +24,7 @@ UTest({
 				exports: [
 					{
 						name: 'foo',
-						alias: 'baz'
+						alias: 'baz3'
 					}
 				]
 			});

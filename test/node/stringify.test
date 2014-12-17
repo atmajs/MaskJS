@@ -4,7 +4,7 @@ UTest({
 		process('min');
 	},
 	
-	'!beautify' () {
+	'beautify' () {
 		process('format', 2);
 	}
 	
@@ -29,8 +29,7 @@ function process(filename, indent) {
 			
 			var [ mask, expect ] = parts;
 			var str = M.stringify(mask, indent);
-			
-			
+			eq_(str.length, expect.length);
 			eq_(str, expect);
 		});
 }

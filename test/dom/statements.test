@@ -52,7 +52,13 @@ UTest({
 		]
 		.forEach(function(test){
 			
-			var $frag = $render(test.template, test.model, null, null, test.controller);
+			var $frag = $render(
+				test.template
+				, test.model
+				, null
+				, null
+				, test.controller
+			);
 			eq($frag.text(), test.result);
 		});
 		
@@ -197,22 +203,6 @@ UTest({
 		})
 	},
 	
-	'include': function(done){
-		
-		var template = 'include("/test/tmpl/a.mask"){ import("a"); }',
-			ctx = {};
-			
-		var frag = mask.render(template, null, ctx);
-		
-		eq(typeof ctx.done, 'function');
-		
-		ctx.done(function(){
-			
-			eq(frag.textContent, 'a');
-			done();
-		});
-		
-	},
 	
 	'visible' () {
 		var template = `
