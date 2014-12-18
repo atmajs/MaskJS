@@ -53,11 +53,16 @@ var mask_run;
 			if (script.getAttribute('data-run') !== 'true') 
 				continue;
 			
-			var fragment = builder_build(
-				parser_parse(script.textContent), model, {}, null, ctr
-			);
-			script.parentNode.insertBefore(fragment, script);
 			found = true;
+			var ctx = {};
+			var fragment = builder_build(
+				parser_parse(script.textContent), model, ctx, null, ctr
+			);
+			if (ctx.async === true) {
+				ctx.done(insertDelegate(fragment, script));
+				continue;
+			}
+			script.parentNode.insertBefore(fragment, script);
 		}
 		if (found === false) {
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
@@ -68,4 +73,9 @@ var mask_run;
 		Compo.signal.emitIn(ctr, 'domInsert');
 		return ctr;
 	};
+	function insertDelegate(fragment, script) {
+		return function(){
+			script.parentNode.insertBefore(fragment, script);
+		};
+	}
 }());
