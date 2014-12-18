@@ -38,6 +38,14 @@ UTest({
 			eq_($import.tagName, 'import');
 			eq_($import.path, 'compo/bar.mask')
 			has_($import.exports, [ { name: 'foo3' } ]);
+		},
+		'include' () {
+			var tmpl = mask.parse(`
+				import from 'compo/bar';
+			`);
+			var incl = tmpl;
+			eq_(incl.tagName, 'include');
+			eq_(incl.path, 'compo/bar.mask')
 		}
 	},
 	'render': {
@@ -74,6 +82,18 @@ UTest({
 					$(dom)
 						.has_('section.a')
 						.has_('h4.b');
+					done();
+				}))
+		},
+		'include' (done) {
+			mask
+				.renderAsync(`
+					import from '/test/tmpl/modules/h4.mask';
+				`)
+				.done(assert.await(function(dom){
+					$(dom)
+						.has_('h4')
+						.eq_('text', 'a');
 					done();
 				}))
 		}

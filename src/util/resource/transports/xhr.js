@@ -10,7 +10,7 @@ var xhr_get;
 						status: xhr.status,
 						content: res
 					};
-				};
+				}
 				cb(err, res);
 			}
 		};

@@ -59,7 +59,7 @@ var ObjectLexer;
 				arr[0](str, start, imax, out, optional);
 			}
 			return start;
-		};
+		}
 		function __createConsumer(mix) {
 			if (typeof mix === 'string') {
 				return ObjectLexer_single(mix);
