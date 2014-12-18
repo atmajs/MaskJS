@@ -64,7 +64,7 @@ UTest({
 					done();
 				}));
 		},
-		'!selector' (done) {
+		'selector' (done) {
 			mask
 				.renderAsync(`
 					import header as foo2 from '/test/tmpl/modules/header_content.mask';
@@ -76,7 +76,7 @@ UTest({
 					done();
 				}))
 		},
-		'!deep nesting' (done) {
+		'deep nesting' (done) {
 			mask
 				.renderAsync(`
 					import * as :nest from '/test/tmpl/modules/nest.mask';
@@ -89,7 +89,7 @@ UTest({
 					done();
 				}))
 		},
-		'!include' (done) {
+		'include' (done) {
 			mask
 				.renderAsync(`
 					import from '/test/tmpl/modules/h4.mask';

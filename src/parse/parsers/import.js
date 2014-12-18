@@ -28,7 +28,7 @@
 		Resolver = function (node, model, ctx, container, ctr) {
 			var name = node.tagName;
 			while(ctr != null) {
-				if (is_Function(ctr.compoName)) {
+				if (is_Function(ctr.getHandler)) {
 					var x = ctr.getHandler(name);
 					if (x != null) 
 						return x;
@@ -70,7 +70,7 @@
 					});
 			},
 			get: function(name){
-				if (this.ast == null) {
+				if (this.error != null) {
 					
 				}
 				if ('*' === name) {

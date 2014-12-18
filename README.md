@@ -133,17 +133,19 @@ MaskJS itself supports simple interpolations. It means the models are only acces
 Simple bindings sample:
 
 ```mask
-h4 > '~[bind: age/percent]'
+h4 > '~[bind: fooDate.getSeconds() * barAge ]'
+
+input type=date >
+	:dualbind value='fooDate';
+
 input type=number >
 	:dualbind
-		value='age'
-		// e.g. send a signal when the value changes in the DOM
-		x-signal='dom: ageChanged'
-		;
-input type=number >
-	:dualbind value='percent';
-
-// `:dualbind` component also supports some other properties
+		value='barAge'
+		x-signal='dom: ageChanged';
+/*
+ * `ageChanged` is emitted in this sample each time `barAge` changes
+ * `:dualbind` component also supports much more properties and configurations
+ */
 ```
 
 ##### jMask Library
