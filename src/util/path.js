@@ -32,9 +32,9 @@ var path_getDir,
 			return path_getExtension(path.substring(0, query));
 		}
 		var i = path.lastIndexOf('.');
-		if (i === -1) 
-			return '';
-		return path.substring(i + 1);
+		return i === -1
+			? ''
+			: path.substring(i + 1);
 	};
 	path_resolveCurrent = function() {
 		if (document == null) {
@@ -42,17 +42,14 @@ var path_getDir,
 				? '' 
 				: path_win32Normalize(module.parent.filename);
 		}
-		
 		var location = window
 			.location
 			.pathname
 			.replace(/\/[^\/]+\.\w+$/, '');
 		
-		if (location[location.length - 1] !== '/') {
-			location += '/';
-		}
-		
-		return location;
+		return location[location.length - 1] === '/'
+			? location
+			: location + '/';
 	};
 	path_normalize = function(path) {
 		return path

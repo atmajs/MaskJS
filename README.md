@@ -63,23 +63,25 @@ Resources:
 - HTML Builder (_nodejs_)
 	`[Template &rarr; Mask DOM &rarr; HTML]`
 
-```sass
+```mask
+import :customComponent from './foo'
+
 .container {
-	h4 > 'Title'
-	section.content data-id='myID' {
-		span > 'Hello ~[name]!'
-		
-		if (admins.indexOf(name) > -1) {
-			em > 'Admin'
-		}
-	}
-	:customComponent {
-        button x-signal='click: changeName' >
-		    '~[bind: name]'
-			
-		for (tag of tags) {
-			h4 > '~[tag.title]'
-		}
+    h4 > 'Title'
+    section.content data-id='myID' {
+        span > 'Hello ~[name]!'
+        
+        if (admins.indexOf(name) > -1) {
+            em > 'Admin'
+        }
+    }
+    :customComponent {
+        button x-tap='changeName' >
+            '~[bind: name]'
+            
+        for (tag of tags) {
+            h4 > '~[tag.title]'
+        }
     }
 }
 ```
@@ -130,7 +132,7 @@ MaskJS itself supports simple interpolations. It means the models are only acces
 
 Simple bindings sample:
 
-```sass
+```mask
 h4 > '~[bind: age/percent]'
 input type=number >
 	:dualbind
@@ -261,7 +263,7 @@ Most simple MaskJS sample to show where you could start from:
 	- `style` node syntax support with ([style](/test/dom/compo/style.test))
 		- `:host`, `:host()` support
 		- scoped css support (IE6+)
-		```sass
+		```mask
 		section {
 			style scoped {
 				span {
@@ -274,7 +276,7 @@ Most simple MaskJS sample to show where you could start from:
 		
 - 0.9.6
 	- Merge feature for better encapsulation, e.g:
-	```sass
+	```mask
 		define :dialog {
 			.wrapper > .modal {
 				.modal-header {
@@ -295,7 +297,7 @@ Most simple MaskJS sample to show where you could start from:
 		- Accessors with Bracket notation: ```~[foo[bar]]```,```~[foo["key"]]```
 	- VarStatement:
 	
-		```sass
+		```mask
 			ul {
 				var list = ['foo', 'bar'];
 				for(key of list){
@@ -318,7 +320,7 @@ Most simple MaskJS sample to show where you could start from:
 		- ```switch (value) { case (expression) { ... } /*...*/ } ```
 	- Controllers scoped model
 	- IncludeJS integration
-	```sass
+	```mask
 		include ("./UserTemplate.mask") { 
 			for(user in users) {
 				import('UserTemplate');
