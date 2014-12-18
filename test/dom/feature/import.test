@@ -7,8 +7,10 @@ UTest({
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
-			has_($import, {
-				path: '/test/tmpl/a.mask',
+			has_($import.dependency, {
+				module: {
+					path: '/test/tmpl/a.mask',
+				},
 				alias: 'foo3'
 			});
 		},
@@ -19,8 +21,10 @@ UTest({
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
-			has_($import, {
-				path: '/test/tmpl/a.mask',
+			has_($import.dependency, {
+				module: {
+					path: '/test/tmpl/a.mask',
+				},
 				exports: [
 					{
 						name: 'foo',
@@ -36,20 +40,20 @@ UTest({
 			`);
 			var $import = tmpl.nodes[0];
 			eq_($import.tagName, 'import');
-			eq_($import.path, 'compo/bar.mask')
-			has_($import.exports, [ { name: 'foo3' } ]);
+			eq_($import.dependency.module.path, 'compo/bar.mask')
+			has_($import.dependency.exports, [ { name: 'foo3' } ]);
 		},
 		'include' () {
 			var tmpl = mask.parse(`
 				import from 'compo/bar';
 			`);
 			var incl = tmpl;
-			eq_(incl.tagName, 'include');
-			eq_(incl.path, 'compo/bar.mask')
+			eq_(incl.tagName, 'import');
+			eq_(incl.dependency.module.path, 'compo/bar.mask')
 		}
 	},
 	'render': {
-		'all' (done) {
+		'!all' (done) {
 			mask
 				.renderAsync(`
 					import * as foo1 from '/test/tmpl/modules/h4.mask';
@@ -60,7 +64,7 @@ UTest({
 					done();
 				}));
 		},
-		'selector' (done) {
+		'!selector' (done) {
 			mask
 				.renderAsync(`
 					import header as foo2 from '/test/tmpl/modules/header_content.mask';
@@ -72,7 +76,7 @@ UTest({
 					done();
 				}))
 		},
-		'deep nesting' (done) {
+		'!deep nesting' (done) {
 			mask
 				.renderAsync(`
 					import * as :nest from '/test/tmpl/modules/nest.mask';
@@ -85,7 +89,7 @@ UTest({
 					done();
 				}))
 		},
-		'include' (done) {
+		'!include' (done) {
 			mask
 				.renderAsync(`
 					import from '/test/tmpl/modules/h4.mask';

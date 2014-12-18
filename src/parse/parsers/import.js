@@ -14,16 +14,13 @@
 			path: null
 		};
 		var end = lex(str, i, imax, obj);
-		var Ctor = obj.exports == null && obj.alias == null
-			? Include
-			: Import;
-		return [ new Ctor(parent, obj),  end ];
+		return [ new ImportNode(parent, obj),  end ];
 	};
 	
 	function Resolver(node, model, ctx, container, ctr) {
 		var name = node.tagName;
 		while(ctr != null) {
-			if (ctr.tagName === 'imports') {
+			if (ctr.compoName === 'imports') {
 				var x = ctr.getHandler(name);
 				if (x != null) 
 					return x;
@@ -34,69 +31,58 @@
 		return null;
 	}
 	
-	var Resource = class_create({
-		type: Dom.COMPONENT,
-		constructor: function(parent, data){
-			var path = data.path;
-			if (path_getExtension(path) === '') {
-				path += '.mask';
+	var Module;
+	(function(){
+		Module = class_create({
+			constructor: function(path){
+				if (path_getExtension(path) === '') {
+					path += '.mask';
+				}
+				this.path = path;
+				this.location = path_getDir(path);
+				this.content 
+			},
+			load: function(owner, cb){
+				var self = this;
+				var path = this.path;
+				if (path_isRelative(path)) {
+					path = path_combine(trav_getBase(owner), path);
+				}
+				file_get(path)
+					.fail(function(err){
+						logger.error(err);
+						throw Error('Not implemented');
+					})
+					.done(function(str){
+						self.ast = parser_parse(str);
+						cb(null, self);
+					});
+			},
+			get: function(name){
+				if ('*' === name) {
+					return is_Array(this.ast)
+						? this.ast
+						: [ this.ast ];
+				}
+				var node = jmask(this.ast).filter(name).get(0);
+				if (node == null) {
+					log_error('Export not found', name);
+				}
+				return node;
 			}
-			this.parent = parent;
-			this.path = path;
-			this.resource = {
-				location: path_getDir(path)
-			};
-		},
-		load: function(owner, cb){
-			var self = this;
-			var path = this.path;
-			if (path_isRelative(path)) {
-				path = path_combine(trav_getBase(owner), path);
-			}
-			file_get(path)
-				.fail(function(err){
-					logger.error(err);
-					throw Error('Not implemented');
-				})
-				.done(function(str){
-					self._onload(str, cb);
-				});
-		},
-		render: function(model, ctx, container, ctr, elements){
-			if (this._createHandler != null) {
-				ctr = this._createHandler(ctr) || ctr;
-			}
-			
-			var resume = Compo.pause(ctr, ctx);
-			this.load(ctr, function(nodes){
-				builder_build(
-					nodes,
-					model,
-					ctx,
-					container,
-					ctr,
-					elements
-				);
-				resume();
-			});
-		}
-	});
-	var Include = class_create(Resource, {
-		tagName: 'include',
-		_onload: function(str, cb) {
-			cb(parser_parse(str));
-		}
-	});
-	
-	var Import = class_create(Resource, {
-		tagName: 'import',
-		constructor: function(parent, data){
-			
+		});	
+	}());
+	var Dependency = class_create({
+		constructor: function(data){
+			this.module = new Module(data.path);
 			this.exports = data.exports;
 			this.alias = data.alias;
 			this.handlers = {};
 			this.eachExport(function(name, alias){
 				var compoName = alias || name;
+				if (compoName === '*') 
+					return;
+				
 				var current = mask.getHandler(compoName);
 				if (current && current !== Resolver) {
 					throw Error('Component was already registered before:' + compoName);
@@ -119,75 +105,229 @@
 				}
 			}
 		},
-		_nodes: null,
-		_onload: function(str, cb){
-			var dom = parser_parse(str);
+		load: function(owner, cb){
 			var self = this;
-			this.eachExport(function(name, alias){
-				self.register(name, alias, dom);
+			this.module.load(owner, function(err, module){
+				self.eachExport(function(name, alias){
+					var compoName = alias || name;
+					self.handlers[compoName] = {
+						resource: {
+							location: path_getDir(module.path)
+						},
+						nodes: module.get(name)
+					};
+				});
+				cb(err, self);
 			});
-			cb(this._nodes);
 		},
-		_createHandler: function(ctr){
-			var siblings = this.parent.nodes;
+		isEmbeddable: function(){
+			return this.alias == null && this.exports == null;
+		},
+		get: function(name){
+			return this.module.get(name);
+		},
+		getHandler: function(name){
+			return this.handlers[name];
+		}
+	});
+	
+	var ImportNode = class_create({
+		type: Dom.COMPONENT,
+		tagName: 'import',
+		constructor: function(parent, data){
+			this.dependency = new Dependency(data);
+			this.parent = parent;
+		},
+		controller: function(node, model, ctx, container, ctr){
+			var siblings = node.parent.nodes;
 			var nodes = [],
 				imports = [];
 			var imax = siblings.length,
 				i = 0, x;
 			for (; i < imax; i++) {
 				x = siblings[i];
-				(x.tagName === 'import'
-					? imports
-					: nodes
-				).push(x);
+				
 				siblings[i] = null;
+				if (x.tagName === 'import') {
+					imports.push(x.dependency);
+					continue;
+				}
+				nodes.push(x);
 			}
-			this._nodes = nodes;
-			return new ImportHandler(imports, ctr);
-		},
-		register: function(name, alias, dom){
-			var tmpl = name === '*'
-				? dom
-				: jmask(dom).filter(name).get(0);
-			if (tmpl == null) {
-				log_error('Export not found', name);
-				return;
-			}
-			this.handlers[alias || name] = {
-				resource: {
-					location: path_getDir(this.path)
-				},
-				nodes: tmpl
-			};
-		},
-		getHandler: function(name){
-			return this.handlers[name];
+			return new ImportHandler(imports, nodes, ctr);
 		}
 	})
+	//
+	//var Resource = class_create({
+	//	type: Dom.COMPONENT,
+	//	constructor: function(parent, data){
+	//		var path = data.path;
+	//		if (path_getExtension(path) === '') {
+	//			path += '.mask';
+	//		}
+	//		this.parent = parent;
+	//		this.path = path;
+	//		this.resource = {
+	//			location: path_getDir(path)
+	//		};
+	//	},
+	//	load: function(owner, cb){
+	//		var self = this;
+	//		var path = this.path;
+	//		if (path_isRelative(path)) {
+	//			path = path_combine(trav_getBase(owner), path);
+	//		}
+	//		file_get(path)
+	//			.fail(function(err){
+	//				logger.error(err);
+	//				throw Error('Not implemented');
+	//			})
+	//			.done(function(str){
+	//				self._onload(str, cb);
+	//			});
+	//	},
+	//	render: function(model, ctx, container, ctr, elements){
+	//		if (this._createHandler != null) {
+	//			ctr = this._createHandler(ctr) || ctr;
+	//		}
+	//		
+	//		var resume = Compo.pause(ctr, ctx);
+	//		var path = this.path;
+	//		ctr.load(function(nodes){
+	//			ctr.process(model, ctx, container, elements);
+	//			resume();
+	//		});
+	//	},
+	//	_createHandler: function(ctr){
+	//		var siblings = this.parent.nodes;
+	//		var nodes = [],
+	//			imports = [];
+	//		var imax = siblings.length,
+	//			i = 0, x;
+	//		for (; i < imax; i++) {
+	//			x = siblings[i];
+	//			(x.tagName === 'import'
+	//				? imports
+	//				: nodes
+	//			).push(x);
+	//			siblings[i] = null;
+	//		}
+	//		return new ImportHandler(imports, nodes, ctr);
+	//	},
+	//});
+	//var Include = class_create(Resource, {
+	//	tagName: 'import',
+	//	_onload: function(str, cb) {
+	//		this._nodes = parser_parse(str);
+	//		cb();
+	//	}
+	//});
+	//
+	//var Import = class_create(Resource, {
+	//	tagName: 'import',
+	//	constructor: function(parent, data){
+	//		
+	//		this.exports = data.exports;
+	//		this.alias = data.alias;
+	//		this.handlers = {};
+	//		this.eachExport(function(name, alias){
+	//			var compoName = alias || name;
+	//			var current = mask.getHandler(compoName);
+	//			if (current && current !== Resolver) {
+	//				throw Error('Component was already registered before:' + compoName);
+	//			}
+	//			mask.registerHandler(compoName, Resolver);
+	//		});
+	//	},
+	//	eachExport: function(fn){
+	//		var alias = this.alias;
+	//		if (alias != null) {
+	//			fn('*', alias);
+	//		}
+	//		var exports = this.exports;
+	//		if (exports != null) {
+	//			var imax = exports.length,
+	//				i = -1, x;
+	//			while(++i < imax) {
+	//				x = exports[i];
+	//				fn(x.name, x.alias);
+	//			}
+	//		}
+	//	},
+	//	_onload: function(str, cb){
+	//		var dom = parser_parse(str);
+	//		var self = this;
+	//		this.eachExport(function(name, alias){
+	//			self.register(name, alias, dom);
+	//		});
+	//		cb();
+	//	},
+	//	
+	//	register: function(name, alias, dom){
+	//		var tmpl = name === '*'
+	//			? dom
+	//			: jmask(dom).filter(name).get(0);
+	//		if (tmpl == null) {
+	//			log_error('Export not found', name);
+	//			return;
+	//		}
+	//		this.handlers[alias || name] = {
+	//			resource: {
+	//				location: path_getDir(this.path)
+	//			},
+	//			nodes: tmpl
+	//		};
+	//	},
+	//	getHandler: function(name){
+	//		return this.handlers[name];
+	//	}
+	//})
 	
 	var ImportHandler = class_create({
-		tagName: 'imports',
-		constructor: function(imports, owner){
-			this.imports = imports;
+		compoName: 'imports',
+		constructor: function(deps, nodes, owner){
+			this.deps = deps;
 			this.parent = owner;
 			this.base = trav_getBase(owner);
+			this.nodes = nodes;
 		},
 		load: function(cb){
-			var count = this.imports.length,
-				i = count;
+			var self = this,
+				imax = this.deps.length,
+				await = imax,
+				i = imax;
 			while( --i > -1 ) {
-				this.imports[i].load(this, done);
+				this.deps[i].load(this, done);
 			}
 			function done(err) {
-				if (--count === 0) 
-					cb();
+				if (--await !== 0)
+					return;
+				cb();
 			}
 		},
+		renderStart: function(model, ctx, container, ctr, elements){
+			var resume = Compo.pause(this, ctx);
+			var self = this;
+			this.load(function(){
+				var nodes = self.nodes || [],
+					deps = self.deps;
+				var imax = deps.length,
+					i = -1, x;
+				while( ++i < imax ) {
+					x =  deps[i];
+					if (x.isEmbeddable()) {
+						nodes = x.get('*').concat(nodes);
+					}
+				}
+				self.nodes = nodes;
+				resume();
+			})
+		},
 		getHandler: function(name){
-			var i = this.imports.length,
+			var i = this.deps.length,
 				x;
 			while( --i > -1) {
-				x = this.imports[i].getHandler(name);
+				x = this.deps[i].getHandler(name);
 				if (x != null) 
 					return x;
 			}
