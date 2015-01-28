@@ -1,7 +1,6 @@
 (function(repository){
 	
-	customTag_register = function(name, Handler){
-		
+	customTag_register = function(name, Handler){		
 		if (Handler != null && typeof Handler === 'object') {
 			//> static
 			Handler.__Ctor = wrapStatic(Handler);

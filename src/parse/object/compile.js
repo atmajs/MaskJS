@@ -40,7 +40,7 @@ var _compile;
 					i = cursor_tokenEnd(str, i, imax);
 					
 					var name = str.substring(start, i);
-					if (isExtended === false) {
+					if (optional === false && isExtended === false) {
 						tokens.push(new token_Var(name));
 						i--;
 						continue;
@@ -48,11 +48,15 @@ var _compile;
 					
 					c = str.charCodeAt(i);
 					if (c === 91 /*[*/) {
-						i = compileArray(name, tokens, str, i, imax);
+						i = compileArray(name, tokens, str, i, imax, optional);
 						continue;
 					}
 					if (c === 40 /*(*/) {
 						i = compileExtendedVar(name, tokens, str, i, imax);
+						continue;
+					}
+					if (c === 60 /*<*/ ) {
+						i = compileCustomVar(name, tokens, str, i, imax);
 						continue;
 					}
 					throw_('Unexpected extended type');
@@ -68,6 +72,8 @@ var _compile;
 				case 41 /*)*/:
 				case 91 /*[*/:
 				case 93 /*]*/:
+				case 123 /*{*/:
+				case 125 /*}*/:
 					tokens.push(new token_Punctuation(String.fromCharCode(c)));
 					continue;
 			}
@@ -83,10 +89,24 @@ var _compile;
 			}
 		}
 		
+		var jmax = tokens.length,
+			j = -1,
+			orGroup = jmax > 1,
+			x;
+		while(orGroup === true && ++j < jmax) {
+			x = tokens[j];
+			if (x instanceof token_Group === false || x.optional !== true) {
+				orGroup = false;
+			}
+		}
+		if (orGroup === true) {
+			tokens = [ new token_OrGroup(tokens) ];
+		}
+		
 		return tokens;
 	};
 	
-	function compileArray(name, tokens, str, i, imax){
+	function compileArray(name, tokens, str, i, imax, optional){
 		var start = ++i;
 		i = cursor_groupEnd(str, i, imax, 91, 93);
 		var innerTokens = _compile(str, start, i);
@@ -99,7 +119,12 @@ var _compile;
 		i = cursor_groupEnd(str, i, imax, 40, 41)
 		var delimiter = str.substring(start, i);
 		tokens.push(
-			new token_Array(name, innerTokens, new token_Punctuation(delimiter))
+			new token_Array(
+				name
+				, innerTokens
+				, new token_Punctuation(delimiter)
+				, optional
+			)
 		);
 		return i;
 	}
@@ -108,6 +133,14 @@ var _compile;
 		i = cursor_groupEnd(str, i, imax, 40, 41);
 		tokens.push(
 			new token_ExtendedVar(name, str.substring(start, i))
+		);
+		return i;
+	}
+	function compileCustomVar(name, tokens, str, i, imax) {
+		var start = ++i;
+		i = cursor_tokenEnd(str, i, imax);
+		tokens.push(
+			new token_CustomVar(name, str.substring(start, i))
 		);
 		return i;
 	}

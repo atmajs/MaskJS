@@ -84,7 +84,7 @@
 				break;
 			}
 		}
-		return [node, index];
+		return [node, index, 0];
 	};
 	
 	function stingify(){

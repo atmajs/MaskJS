@@ -5,7 +5,9 @@ var token_Const,
 	token_Array,
 	token_Punctuation,
 	token_ExtendedVar,
-	token_Group;
+	token_CustomVar,
+	token_Group,
+	token_OrGroup;
 (function(){
 	
 	token_Whitespace = create('Whitespace', {
@@ -63,6 +65,51 @@ var token_Const,
 			return i + x.length;
 		}
 	});
+	(function(){
+		token_CustomVar = create('CustomVar', {
+			constructor: function(name, consumer) {
+				this.fn = Consumers[consumer];
+				this.token = name;
+				this.setter = generateSetter(name);
+			},
+			consume: function(str, i, imax, out) {
+				var start = i;
+				
+				var c;
+				for (; i < imax; i++){
+					c = str.charCodeAt(i);
+					if (c === 36 || c === 95 || c === 58) {
+						// $ _ :
+						continue;
+					}
+					if ((48 <= c && c <= 57) ||		// 0-9
+						(65 <= c && c <= 90) ||		// A-Z
+						(97 <= c && c <= 122)) {	// a-z
+						continue;
+					}
+					if (this.fn(c) === true) {
+						continue;
+					}
+					break;
+				}
+				if (i === start) 
+					return i;
+				
+				this.setter(out, str.substring(start, i));
+				return i;
+			}
+		});
+		
+		var Consumers = {
+			accessor: function(c){
+				if (c === 46 /*.*/) {
+					return true;
+				}
+				return false;
+			}
+		};
+	}());
+	
 	token_String = create('String', {
 		constructor: function(tokens){
 			this.tokens = tokens;
@@ -83,16 +130,18 @@ var token_Const,
 		}
 	});
 	token_Array = create('Array', {
-		constructor: function(name, tokens, delim) {
+		constructor: function(name, tokens, delim, optional) {
 			this.token = name;
 			this.delim = delim;
 			this.tokens = tokens;
+			this.optional = optional;
 		},
 		consume: function(str, i, imax, out){
 			var obj, end, arr;
 			while(true) {
 				obj = {};
-				end = _consume(this.tokens, str, i, imax, obj);
+				end = _consume(this.tokens, str, i, imax, obj, this.optional);
+				
 				if (i === end) {
 					if (arr == null) 
 						return i;
@@ -117,6 +166,7 @@ var token_Const,
 			this.before = new token_Whitespace(true);
 			this.delim = new token_Const(str);
 			this.after = new token_Whitespace(true);
+			this.token = str;
 		},
 		consume: function(str, i, imax){
 			var start = this.before.consume(str, i, imax);
@@ -135,7 +185,23 @@ var token_Const,
 		consume: function(str, i, imax, out){
 			return _consume(this.tokens, str, i, imax, out, this.optional);
 		}
-	})
+	});
+	token_OrGroup = create('OrGroup', {
+		constructor: function(groups) {
+			this.groups = groups,
+			this.length = groups.length;
+		},
+		consume: function(str, i, imax, out) {
+			var start = i,
+				j = 0;
+			for(; j < this.length; j++) {
+				i = this.groups[j].consume(str, i, imax, out);
+				if (i !== start) 
+					return i;
+			}
+			return i;
+		}
+	});
 	
 	function generateSetter(name) {
 		return new Function('obj', 'val', 'obj.' + name + '= val;');

@@ -1,6 +1,14 @@
-var file_get;
+var file_get,
+	file_getScript;
 (function(){
 	file_get = function(path, ctr){
+		return get(xhr_get, path, ctr);
+	};
+	file_getScript = function(path, ctr){
+		return get(script_get, path, ctr);
+	};
+	
+	function get(fn, path, ctr) {
 		path = path_resolveUrl(path, ctr);
 
 		var dfr = Cache[path];
@@ -8,13 +16,13 @@ var file_get;
 			return dfr;
 		}
 		dfr = new class_Dfr;
-		xhr_get(path, dfr.pipeCallback());
+		fn(path, dfr.pipeCallback());
 		return dfr;
-	};
+	}
 	
 	var Cache = {};
 	
 	
 	// import ./transports/xhr.js
-	
+	// import ./transports/script.js
 }());

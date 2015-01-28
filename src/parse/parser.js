@@ -28,10 +28,11 @@ var parser_parse,
 	// import ./function.js
 	// import ./object/ObjectLexer.js
 	// import ./parsers/var.js
-	// import ./parsers/slot.js
 	// import ./parsers/style.js
 	// import ./parsers/import.js
-
+	// import ./parsers/define.js
+	// import ./parsers/handlers.js
+	
 	var go_tag = 2,
 		state_tag = 3,
 		state_attr = 5,
@@ -86,7 +87,7 @@ var parser_parse,
 						index = template.indexOf('*/', index + 2) + 2;
 						if (index === 1) {
 							// if DEBUG
-							parse_warn('Block comment has no ending', str, index);
+							parser_warn('Block comment has no ending', template, index);
 							// endif
 							index = length;
 						}
@@ -136,14 +137,26 @@ var parser_parse,
 						//	: new Node(token, current);
 						
 						if (custom_Parsers[token] != null) {
-							var tuple = custom_Parsers[token](template, index, length, current);
-							var node = tuple[0];
+							var tuple = custom_Parsers[token](
+								template
+								, index
+								, length
+								, current
+							);
+							var node = tuple[0],
+								nextState = tuple[2];
+								
+							index = tuple[1];
+							state = nextState === 0
+								? go_tag
+								: nextState;
+							token = null;
 							if (node != null) {
 								current.appendChild(node);
+								if (nextState !== 0) {
+									current  = node;
+								}
 							}
-							index = tuple[1];
-							state = go_tag;
-							token = null;
 							continue;
 						}
 						

@@ -1,9 +1,6 @@
-
 var mask_stringify;
-
 (function() {
-	
-		
+
 	//settings (Number | Object) - Indention Number (0 - for minification)
 	mask_stringify = function(input, settings) {
 		if (input == null) 
@@ -28,8 +25,7 @@ var mask_stringify;
 
 
 	var _minimize,
-		_indent,
-		Dom = mask.Dom;
+		_indent;
 
 	function doindent(count) {
 		var output = '';
@@ -76,7 +72,7 @@ var mask_stringify;
 
 	function processNode(node, currentIndent, output) {
 		if (typeof node.stringify === 'function') {
-			output.push(node.stringify(_minimize));
+			output.push(node.stringify(_indent));
 			return;
 		}
 		if (typeof node.content === 'string') {

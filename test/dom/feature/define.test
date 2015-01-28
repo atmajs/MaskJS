@@ -1,0 +1,74 @@
+UTest({
+	'parser': {
+		'single' () {
+			var tmpl = mask.parse(`
+				define :foo {
+					h4;
+				}
+				:foo;
+			`);
+			var $foo = tmpl.nodes[0];
+			eq_($foo.tagName, 'define');
+			eq_($foo.name, ':foo');
+		},
+		'extend compo' () {
+			var tmpl = mask.parse(`
+				define :bar extends :foo {
+					h4;
+				}
+				:bar;
+			`);
+			var $bar = tmpl.nodes[0];
+			eq_($bar.tagName, 'define');
+			eq_($bar.name, ':bar');
+			deepEq_($bar.extends,  [ { compo: ':foo' } ]);
+			
+			eq_($bar.nodes[0].tagName, 'h4');
+		},
+		'extend compos' () {
+			var tmpl = mask.parse(`
+				define :qux extends :foo, :bar {
+					h4;
+				}
+				:qux;
+			`);
+			var $bar = tmpl.nodes[0];
+			eq_($bar.tagName, 'define');
+			eq_($bar.name, ':qux');
+			deepEq_($bar.extends,  [
+				{ compo: ':foo' },
+				{ compo: ':bar' },
+			]);
+		},
+		'extend resource' () {
+			var tmpl = mask.parse(`
+				define :qux extends './foo' {
+					h4;
+				}
+				:qux;
+			`);
+			var $bar = tmpl.nodes[0];
+			eq_($bar.tagName, 'define');
+			eq_($bar.name, ':qux');
+			deepEq_($bar.extends,  [
+				{ path: './foo' },
+			]);
+		},
+		'extend resource and component' () {
+			var tmpl = mask.parse(`
+				define :qux extends './foo', :baz {
+					h4;
+				}
+				:qux;
+			`);
+			var $bar = tmpl.nodes[0];
+			eq_($bar.tagName, 'define');
+			eq_($bar.name, ':qux');
+			deepEq_($bar.extends,  [
+				{ path: './foo' },
+				{ compo: ':baz' },
+			]);
+		},
+		
+	}
+});

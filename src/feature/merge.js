@@ -196,16 +196,22 @@ var mask_merge;
 	
 	function _cloneNode(node, contents, tmplNode, clonedParent){
 		var tagName = node.tagName || node.compoName;
-		if (':template' === tagName) {
-			var id = interpolate_str_(node.attr.id, contents, tmplNode);
-			Mask.templates.register(id, node.nodes);
-			return null;
+		switch (tagName) {
+			case ':template':
+				var id = interpolate_str_(node.attr.id, contents, tmplNode);
+				Mask.templates.register(id, node.nodes);
+				return null;
+			case ':import':
+				var id = interpolate_str_(node.attr.id, contents, tmplNode),
+					nodes = Mask.templates.resolve(node, id);
+				return _merge(nodes, contents, tmplNode, clonedParent);
+			case 'define':
+			case 'function':
+			case 'var':
+			case 'import':
+				return node;
 		}
-		if (':import' === tagName) {
-			var id = interpolate_str_(node.attr.id, contents, tmplNode),
-				nodes = Mask.templates.resolve(node, id);
-			return _merge(nodes, contents, tmplNode, clonedParent);
-		}
+		
 		var outnode = {
 			type: node.type,
 			tagName: tagName,

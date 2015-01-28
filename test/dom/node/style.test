@@ -1,6 +1,4 @@
-
-UTest({
-	
+UTest({	
 	'check generic multiple style nodes' () {
 		TestRunner({
 			template: `
@@ -167,6 +165,18 @@ UTest({
 			count: 1,
 			isInterpolated: true
 		});
+	},
+	'check serialization' () {
+		var tmpl = `
+			section >
+				style {
+					body {
+						border: ~[width]px;
+					}
+				}
+		`;
+		var str = mask.stringify(mask.parse(tmpl), 4);
+		eq_(tmpl.replace(/\s/g, ''), str.replace(/\s/g, ''));
 	}
 })
 

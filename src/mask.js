@@ -68,7 +68,7 @@ var cache = {},
 		 * Create MaskDOM from Mask markup
 		 **/
 		parse: parser_parse,
-
+		stringify: mask_stringify,
 		build: builder_build,
 		
 		/*
@@ -286,10 +286,17 @@ var cache = {},
 			Function: is_Function,
 			String: is_String,
 			ArrayLike: is_ArrayLike,
+			Array: is_ArrayLike,
+			Object: is_Object
 		},
 		
 		'class': {
-			create: class_create
+			create: class_create,
+			Deferred: class_Dfr
+		},
+		
+		parser: {
+			ObjectLexer: parser_ObjectLexer
 		},
 		
 		on: listeners_on,

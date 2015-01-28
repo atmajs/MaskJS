@@ -2,8 +2,13 @@
 	
 	custom_Tags['define']  = Define;
 	
-	function Define(){}
+	function Define(node){
+		this.name = node.name;
+		this['extends'] = node['extends'];
+	}
 	Define.prototype = {
+		'name': null,
+		'extends': null,
 		$meta: {
 			serializeNodes: true
 		},
@@ -12,9 +17,6 @@
 	};
 	
 	function define(){
-		var name;
-		for(name in this.attr) break;
-		
 		var nodes = this.nodes;
 		var Proto = {
 			renderStart: function(){
@@ -32,7 +34,7 @@
 				x.render = null;
 			}
 		}
-		mask.registerHandler(name, Compo(Proto));
+		mask.registerHandler(this.name, Compo(Proto));
 	}
 	
 }(Mask));

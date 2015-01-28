@@ -3,7 +3,8 @@ var throw_,
 	parser_warn,
 	log,
 	log_warn,
-	log_error;
+	log_error,
+	log_errorNode;
 	
 (function(){
 	
@@ -15,16 +16,23 @@ var throw_,
 	
 	parser_error = function(msg, str, i, token, state, file){
 		var error = createMsg('error', msg, str, i, token, state, file);
-		
+		if (listeners_emit('error', error))
+			return;
 		log_error(error.message);
 		log_warn('\n' + error.stack);
-		listeners_emit('error', error);
 	};
 	parser_warn = function(msg, str, i, token, state, file){
 		var error = createMsg('warn', msg, str, i, token, state, file);
+		if (listeners_emit('error', error))
+			return;
 		log_warn(error.message);
 		log('\n' + error.stack);
-		listeners_emit('error', error);
+	};
+	
+	log_errorNode = function(message){
+		return parser_parse(
+			'div style="background:red;color:white;">tt>"' + message + '"'
+		);
 	};
 	
 	if (typeof console === 'undefined') {
@@ -63,8 +71,7 @@ var throw_,
 			.join('\n');
 	}
 	function inherit(Ctor, Base){
-		if (Object.create) 
-			Ctor.prototype = Object.create(Base.prototype);
+		Ctor.prototype = obj_create(Base.prototype);
 	}
 	function createMsg(type, msg, str, index, token, state, filename){
 		msg += formatToken(token)

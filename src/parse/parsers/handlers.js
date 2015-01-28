@@ -9,7 +9,7 @@
 				body = str.substring(start, end)
 				;
 			
-			return [ new Ctor(head, body, parent), end + 1 ];
+			return [ new Ctor(head, body, parent), end + 1, 0 ];
 		};
 	}	
 	function parseHead(head) {
@@ -38,6 +38,7 @@
 		model: null,
 		stringify: function(){
 			return this.tagName
+				+ ' '
 				+ this.name
 				+ '('
 				+ this.args.join(',')

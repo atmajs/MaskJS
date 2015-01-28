@@ -14,18 +14,21 @@ var listeners_on,
 		arr_remove(bin[event], fn);
 	};
 	listeners_emit = function(event){
-	
 		var fns = bin[event];
-		if (fns == null) 
-			return;
-		
+		if (fns == null) {
+			return false;
+		}
 		var imax = fns.length,
 			i = -1,
 			args = _Array_slice.call(arguments, 1)
 			;
-			
-		while ( ++i < imax) 
+		if (imax === 0) {
+			return false;
+		}
+		while ( ++i < imax) {
 			fns[i].apply(null, args);
+		}
+		return true;
 	};
 	
 	// === private

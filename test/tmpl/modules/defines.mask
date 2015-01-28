@@ -1,0 +1,9 @@
+'Tester'
+
+define :menu {
+	menu > li > 'Home'
+}
+
+define :footer {
+	footer > span > 'Copyright'
+}

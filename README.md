@@ -59,9 +59,9 @@ Resources:
 - Performance. _No precompilation is required_
 - Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).
 - DOM Builder
-	`[Template &rarr; Mask DOM &rarr; Shadow DOM &rarr; Live DOM]`
+	`[Template → Mask DOM → Shadow DOM → Live DOM]`
 - HTML Builder (_nodejs_)
-	`[Template &rarr; Mask DOM &rarr; HTML]`
+	`[Template → Mask DOM → HTML]`
 
 ```mask
 import :customComponent from './foo'
@@ -116,7 +116,7 @@ mask.registerHandler(':customComponent', mask.Compo({
 		this.model = { date: new Date(); }
 	},
 	onRenderEnd: function(elements, model, ctx){
-		this.$ // is a domLibrary (jQuery/Zepto/Kimbo) wrapper over `elements`
+		this.$ // is a domLibrary (jQuery-lite, jQuery/Zepto/Kimbo) wrapper over `elements`
 	},
 	dispose: function(){
 		// do some cleanup
@@ -374,4 +374,4 @@ Most simple MaskJS sample to show where you could start from:
 		``` mask.setInterpolationQuotes('#{','}') ``` - for fallback (or any other start/end, caution - start should be of 2 chars and the end of 1
 	
 ----
-:copyright: MIT - 2014 Atma.js Project
+:copyright: MIT - 2015 Atma.js Project

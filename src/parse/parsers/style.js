@@ -13,7 +13,7 @@
 			return [null, end + 1];
 		}
 		
-		return [ new Style(attr, css, parent), end + 1 ];
+		return [ new Style(attr, css, parent), end + 1, 0 ];
 	};
 	
 	function Style(attr, css, parent) {
@@ -54,7 +54,10 @@
 		
 		getStyle: function(model, ctx, el, ctr){
 			return is_Function(this.content)
-				? this.content('node', model, ctx, el, ctr)
+				? (arguments.length === 0
+				   ? this.content()
+				   : this.content('node', model, ctx, el, ctr)
+				)
 				: this.content;
 		}
 	};

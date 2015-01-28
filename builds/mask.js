@@ -25,17 +25,20 @@
 	
 	
 	// import /src/parse/parser.js
+	// import /src/formatter/stringify.js
 	// import /src/build/builder.dom.js
 	
 	/*** Features ***/
 	// import /src/feature/run.js
 	// import /src/feature/merge.js
 	// import /src/feature/optimize.js
+	// import /src/feature/Module.js
+	// import /src/feature/Define.js
 	// import /src/feature/TreeWalker.js
 	
 	// import /src/mask.js
 	
-	// import /src/formatter/stringify.lib.js
+	
 
 	/*** Libraries ***/
 	// import /ref-mask-compo/lib/compo.embed.js
