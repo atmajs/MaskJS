@@ -183,6 +183,24 @@ UTest({
 						`)
 						.always(done);
 				}));
+			},
+			
+			'!load package with embedded modules' (done) {
+				mask.renderAsync(`
+					import * as X from '/test/tmpl/modules/package';
+					
+					p > X;
+				`, { name: 'Baz' })
+				.done(assert.await(function(dom) {
+					UTest
+						.domtest(dom, `
+							filter('p') {
+								has h4;
+								text Baz;
+							}
+						`)
+						.always(done);
+				}));
 			}
 		}
 		

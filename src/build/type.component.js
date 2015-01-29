@@ -30,7 +30,6 @@ var build_compo;
 		return fn(handler, node, model, ctx, container, ctr, children);
 	}
 	
-	
 	// PRIVATE
 	
 	function build_Component(compo, node, model, ctx, container, ctr, children){

@@ -1,9 +1,59 @@
-
-var build_node = (function(){
+var build_node;
+(function(){
+	build_node = function build_node(node, model, ctx, container, ctr, children){
+		
+		var tagName = node.tagName,
+			attr = node.attr;
+		
+		var el = el_create(tagName);
+		if (el == null) 
+			return;
+		
+		if (children != null){
+			children.push(el);
+			attr['x-compo-id'] = ctr.ID;
+		}
+		
+		// ++ insert el into container before setting attributes, so that in any
+		// custom util parentNode is available. This is for mask.node important
+		// http://jsperf.com/setattribute-before-after-dom-insertion/2
+		if (container != null) {
+			container.appendChild(el);
+		}
+		
+		var key,
+			value;
+		for (key in attr) {
+			/* if !SAFE
+			if (_Object_hasOwnProp.call(attr, key) === false) {
+				continue;
+			}
+			*/
+		
+			if (is_Function(attr[key])) {
+				value = attr[key]('attr', model, ctx, el, ctr, key);
+				if (value instanceof Array) {
+					value = value.join('');
+				}
+			} else {
+				value = attr[key];
+			}
+		
+			// null or empty string will not be handled
+			if (value) {
+				if (is_Function(custom_Attributes[key])) {
+					custom_Attributes[key](node, value, model, ctx, el, ctr, container);
+				} else {
+					el.setAttribute(key, value);
+				}
+			}
+		}
+		return el;
+	};
 	
-	var el_create = (function(doc){
-		return function(name){
-			
+	var el_create;
+	(function(doc){
+		el_create = function(name){			
 			// if DEBUG
 			try {
 			// endif
@@ -16,59 +66,4 @@ var build_node = (function(){
 			// endif
 		};
 	}(document));
-	
-	return function build_node(node, model, ctx, container, controller, childs){
-		
-		var tagName = node.tagName,
-			attr = node.attr;
-		
-		var tag = el_create(tagName);
-		if (tag == null) 
-			return;
-		
-		if (childs != null){
-			childs.push(tag);
-			attr['x-compo-id'] = controller.ID;
-		}
-		
-		// ++ insert tag into container before setting attributes, so that in any
-		// custom util parentNode is available. This is for mask.node important
-		// http://jsperf.com/setattribute-before-after-dom-insertion/2
-		if (container != null) {
-			container.appendChild(tag);
-		}
-		
-		var key,
-			value;
-		for (key in attr) {
-		
-			/* if !SAFE
-			if (_Object_hasOwnProp.call(attr, key) === false) {
-				continue;
-			}
-			*/
-		
-			if (is_Function(attr[key])) {
-				value = attr[key]('attr', model, ctx, tag, controller, key);
-				if (value instanceof Array) {
-					value = value.join('');
-				}
-		
-			} else {
-				value = attr[key];
-			}
-		
-			// null or empty string will not be handled
-			if (value) {
-				if (is_Function(custom_Attributes[key])) {
-					custom_Attributes[key](node, value, model, ctx, tag, controller, container);
-				} else {
-					tag.setAttribute(key, value);
-				}
-			}
-		}
-
-		return tag;
-	}
-	
 }());

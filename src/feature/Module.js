@@ -1,7 +1,7 @@
 var Module;
 (function(){
 	Module = {
-		create: function(path, ctr) {
+		createModule: function(path, ctr) {
 			var ext = path_getExtension(path);
 			if (ext === '') {
 				ext = 'mask';
@@ -14,7 +14,7 @@ var Module;
 			if (_cache[path] != null) 
 				return _cache[path];
 			
-			return (_cache[path] = new (ctor_get(ext))(path, ctr));
+			return (_cache[path] = new (ctor_get(ext))(path));
 		},
 		createDependency: function(data){
 			return new Dependency(data);
@@ -26,7 +26,25 @@ var Module;
 		cfg: function(name, val){
 			_Configs[name](val);
 		},
-		resolveLocation: trav_getLocation
+		resolveLocation: trav_getLocation,
+		register: function(path, nodes) {
+			var module;
+			if (Module.isMask(path)) {
+				module = new _MaskModule(path);
+				
+				module.state = 1;
+				module._handle(nodes, function(){
+					module.resolve();
+				});
+			}
+			
+			_cache[path] = module;
+		}
+	};
+	
+	custom_Tags['module'] = function(node, model, ctx, container, ctr) {
+		var path = path_resolveUrl(node.attr.path, trav_getLocation(ctr));
+		Module.register(path, node.nodes);
 	};
 	
 	var Resolver;
@@ -81,7 +99,7 @@ var Module;
 		},
 		load: function(owner, cb){
 			var self = this;
-			this.module = Module.create(this.path, owner);
+			this.module = Module.createModule(this.path, owner);
 			this.module
 				.load()
 				.fail(cb)
@@ -163,30 +181,31 @@ var Module;
 	
 	var _MaskModule = class_create(_Module, {
 		_load: file_get,
-		_preproc: function(str, next) {
+		_handle: function(ast, next){
 			this.imports = [];
 			this.defines = {};
-			
-			var ast = parser_parse(str);
-			var imports = [],
-				nodes = [];
-			
-			var type = ast.type;
-			if (ast.type === Dom.FRAGMENT) {
-				ast = ast.nodes;
-			} else if (type != null) {
-				ast = [ ast ];
-			}
-			
+			this.exports = [];
 			this.nodes = ast;
 			
-			var imax = ast.length,
-				i = -1, x, name, arr;
+			var imports = this.imports,
+				nodes 	= this.exports,
+				defines = this.defines,
+				type = ast.type,
+				arr = ast;
+				
+			if (type === Dom.FRAGMENT) {
+				arr = ast.nodes;
+			} else if (type != null) {
+				arr = [ ast ];
+			}
+			
+			var imax = arr.length,
+				i = -1, x, name;
 			while( ++i < imax ){
-				x = ast[i];
+				x = arr[i];
 				name = x.tagName;
 				if ('define' === name) {
-					this.defines[x.name] = Define.create(x);
+					defines[x.name] = Define.create(x);
 					continue;
 				}
 				if ('import' === name) {
@@ -210,13 +229,13 @@ var Module;
 			}
 			
 			while( ++i < imax ) {
-				x = imports[i];
-				//var path = path_resolveUrl(imports[i].path, this.location);
-				//var module = Module.create(path);
-				
-				this.imports.push(x);
-				x.load(this, await);
+				this.imports[i].load(this, await);
 			}
+		},
+		_preproc: function(str, next) {
+			this._handle(
+				parser_parse(str), next
+			);
 		},
 		_get: function(name, model, ctr){
 			var node = this.defines[name];
