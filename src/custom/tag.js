@@ -11,12 +11,12 @@
 	
 	customTag_registerResolver = function(name){
 		var Ctor = repository[name];
-		if (Ctor != null) {
-			if (Ctor !== Resolver) 
-				global[name] = Ctor;
-				
+		if (Ctor === Resolver) 
 			return;
-		}
+		
+		if (Ctor != null) 
+			global[name] = Ctor;
+		
 		repository[name] = Resolver;
 	};
 	

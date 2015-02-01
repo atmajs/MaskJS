@@ -192,7 +192,6 @@ UTest({
 					p > Y;
 				`, { name: 'Baz' })
 				.done(assert.await(function(dom) {
-					logger.log('Complete'.bold);
 					UTest
 						.domtest(dom, `
 							filter('p') {
