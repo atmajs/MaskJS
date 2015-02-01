@@ -56,6 +56,7 @@ var path_getDir,
 			.replace(/\\/g, '/')
 			// remove double slashes, but not near protocol
 			.replace(/([^:\/])\/{2,}/g, '$1/')
+			.replace(/\.\//g, '')
 			;
 	};
 	path_win32Normalize = function(path){

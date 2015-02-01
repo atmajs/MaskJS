@@ -94,7 +94,7 @@
 			})
 		},
 		getHandler: function(name) {
-			logger.log('Get'.red, name.bold.cyan);
+			//logger.log('Get'.red, name.bold.cyan);
 		}
 	});
 	

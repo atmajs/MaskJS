@@ -2,6 +2,7 @@ var custom_Utils,
 	custom_Statements,
 	custom_Attributes,
 	custom_Tags,
+	custom_Tags_global,
 	custom_Tags_defs,
 	
 	custom_Parsers,
@@ -11,7 +12,8 @@ var custom_Utils,
 	customUtil_$utils,
 	customUtil_register,
 	
-	customTag_register
+	customTag_register,
+	customTag_registerResolver
 	;
 	
 (function(){
@@ -74,6 +76,7 @@ var custom_Utils,
 	custom_Statements 	= {};
 	custom_Attributes 	= obj_create(HtmlAttr);
 	custom_Tags 		= obj_create(HtmlTags);
+	custom_Tags_global 	= obj_create(HtmlTags);
 	custom_Parsers 		= obj_create(HtmlTags);
 	
 	// use on server to define reserved tags and its meta info

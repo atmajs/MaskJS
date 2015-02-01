@@ -11,10 +11,24 @@ var Module;
 				path = path_combine(trav_getLocation(ctr), path);
 			}
 			
+			path = path_normalize(path);
 			if (_cache[path] != null) 
 				return _cache[path];
 			
 			return (_cache[path] = new (ctor_get(ext))(path));
+		},
+		registerModule: function(path, nodes) {
+			var module;
+			if (Module.isMask(path)) {
+				module = new _MaskModule(path);
+				
+				module.state = 1;
+				module._handle(nodes, function(){
+					module.resolve();
+				});
+			}
+			
+			_cache[path] = module;
 		},
 		createDependency: function(data){
 			return new Dependency(data);
@@ -27,42 +41,14 @@ var Module;
 			_Configs[name](val);
 		},
 		resolveLocation: trav_getLocation,
-		register: function(path, nodes) {
-			var module;
-			if (Module.isMask(path)) {
-				module = new _MaskModule(path);
-				
-				module.state = 1;
-				module._handle(nodes, function(){
-					module.resolve();
-				});
-			}
-			
-			_cache[path] = module;
-		}
+		
 	};
 	
 	custom_Tags['module'] = function(node, model, ctx, container, ctr) {
 		var path = path_resolveUrl(node.attr.path, trav_getLocation(ctr));
-		Module.register(path, node.nodes);
+		Module.registerModule(path, node.nodes);
 	};
 	
-	var Resolver;
-	(function(){
-		Resolver = function (node, model, ctx, container, ctr) {
-			var name = node.tagName;
-			while(ctr != null) {
-				if (is_Function(ctr.getHandler)) {
-					var x = ctr.getHandler(name);
-					if (x != null) 
-						return x;
-				}
-				ctr = ctr.parent;
-			}
-			log_error('Imported component not found:', name);
-			return null;
-		};
-	}());
 	var Dependency = class_create({
 		constructor: function(data){
 			this.path = data.path;
@@ -74,11 +60,7 @@ var Module;
 					if (compoName === '*') 
 						return;
 					
-					var current = mask.getHandler(compoName);
-					if (current && current !== Resolver) {
-						throw Error('Component was already registered before:' + compoName);
-					}
-					mask.registerHandler(compoName, Resolver);
+					customTag_registerResolver(compoName);
 				});
 			}
 		},
@@ -105,7 +87,7 @@ var Module;
 				.fail(cb)
 				.done(function(module){
 					self.eachExport(function(name, alias){
-						module.register(owner, name, alias);
+						self.module.register(owner, name, alias);
 					});
 					cb(null, self);
 				});
@@ -212,6 +194,13 @@ var Module;
 					imports.push(x.dependency);
 					continue;
 				}
+				
+				if ('module' === name) {
+					var path = path_resolveUrl(x.attr.path, this.location);
+					Module.registerModule(path, x.nodes);
+					continue;
+				}
+				
 				nodes.push(x);
 			}
 			imax = imports.length;
@@ -275,11 +264,9 @@ var Module;
 			);
 		},
 		//getHandler: function(name){
-		//	logger.log('getting', name.cyan.bold, 'from', this.path.bold.yellow)
 		//	var imax = this.imports.length,
 		//		i = -1, x;
 		//	while (++i < imax) {
-		//		logger.log('mod', this.modules[i].path.bold)
 		//		
 		//		x = this.imports[i].getHandler(name);
 		//		if (x != null) 

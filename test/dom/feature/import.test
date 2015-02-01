@@ -185,13 +185,14 @@ UTest({
 				}));
 			},
 			
-			'!load package with embedded modules' (done) {
+			'load package with embedded modules' (done) {
 				mask.renderAsync(`
-					import * as X from '/test/tmpl/modules/package';
+					import * as Y from '/test/tmpl/modules/package';
 					
-					p > X;
+					p > Y;
 				`, { name: 'Baz' })
 				.done(assert.await(function(dom) {
+					logger.log('Complete'.bold);
 					UTest
 						.domtest(dom, `
 							filter('p') {

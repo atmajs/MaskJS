@@ -2,5 +2,5 @@ module path='a.mask' {
 	h4 > '~[name]'
 }
 
-import * as :test from './a';
+import * as :test from './a.mask';
 p > :test;
