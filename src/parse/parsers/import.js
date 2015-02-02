@@ -8,8 +8,8 @@
 		var end = lex_(str, i, imax, obj);
 		return [ new ImportNode(parent, obj),  end, 0 ];
 	};
-	custom_Tags['import:base'] = function(node){
-		var base = path_normalize(ExpressionUtil.eval(node.expression));
+	custom_Tags['import:base'] = function(node, model, ctx, el, ctr){
+		var base = path_normalize(ExpressionUtil.eval(node.expression, model, ctx, ctr));
 		if (base != null && base[base.length - 1] !== '/') {
 			base += '/';
 		}
