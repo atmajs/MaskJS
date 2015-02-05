@@ -26,7 +26,7 @@
 	
 	// import /src/parse/parser.js
 	// import /src/formatter/stringify.js
-	// import /src/build/builder.dom.js
+	// import /src/builder/exports.js
 	
 	/*** Features ***/
 	// import /src/feature/run.js
