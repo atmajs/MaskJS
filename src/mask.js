@@ -266,7 +266,7 @@ var cache = {},
 				return obj_getProperty(model, path);
 			},
 			
-			ensureTmplFn: Parser.ensureTemplateFunction
+			ensureTmplFn: parser_ensureTemplateFunction
 		},
 		Dom: Dom,
 		TreeWalker: mask_TreeWalker,
@@ -316,7 +316,7 @@ var cache = {},
 		 * Old '#{}' was changed to '~[]', while template is already overloaded with #, { and } usage.
 		 *
 		 **/
-		setInterpolationQuotes: Parser.setInterpolationQuotes,
+		setInterpolationQuotes: parser_setInterpolationQuotes,
 		
 		setCompoIndex: function(index){
 			builder_componentID = index;
