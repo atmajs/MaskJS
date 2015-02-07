@@ -56,7 +56,7 @@ var mask_run;
 				continue;
 			
 			found = true;
-			var ctx = {};
+			var ctx = new builder_Ctx;
 			var fragment = builder_build(
 				parser_parse(script.textContent), model, ctx, null, ctr
 			);
