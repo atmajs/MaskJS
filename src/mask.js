@@ -1,49 +1,46 @@
-/**
- *  mask
- *
- **/
+var Mask;
 
-var cache = {},
-	Mask = {
-
+(function(){
+	Mask = {	
 		/**
 		 *	mask.render(template[, model, ctx, container = DocumentFragment, controller]) -> container
 		 * - template (String | MaskDOM): Mask String or Mask DOM Json template to render from.
 		 * - model (Object): template values
 		 * - ctx (Object): can store any additional information, that custom handler may need,
-		 * this object stays untouched and is passed to all custom handlers
+		 * 		this object stays untouched and is passed to all custom handlers
 		 * - container (IAppendChild): container where template is rendered into
 		 * - controller (Object): instance of an controller that own this template
 		 *
 		 *	Create new Document Fragment from template or append rendered template to container
 		 **/
-		render: function (template, model, ctx, container, controller) {
+		render: function (mix, model, ctx, container, controller) {
 
 			// if DEBUG
 			if (container != null && typeof container.appendChild !== 'function'){
 				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
 			}
 			// endif
-
-			if (typeof template === 'string') {
-				if (_Object_hasOwnProp.call(cache, template)){
+			
+			var template = mix;
+			if (typeof mix === 'string') {
+				if (_Object_hasOwnProp.call(__templates, mix)){
 					/* if Object doesnt contains property that check is faster
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
-					template = cache[template];
+					template = __templates[mix];
 				}else{
-					template = cache[template] = parser_parse(template);
+					template = __templates[mix] = parser_parse(mix);
 				}
 			}
 			if (ctx == null) 
-				ctx = {};
-			
+				ctx = new builder_Ctx;
+				
 			return builder_build(template, model, ctx, container, controller);
 		},
 		
 		renderAsync: function(template, model, ctx, container, ctr) {
-			if (ctx == null) {
-				ctx = {};
-			}
+			if (ctx == null) 
+				ctx = new builder_Ctx;
+			
 			var dom = mask.render(template, model, ctx, container, ctr),
 				dfr = new class_Dfr;
 			
@@ -54,7 +51,6 @@ var cache = {},
 			} else {
 				dfr.resolve(dom);
 			}
-			
 			return dfr;
 		},
 
@@ -236,9 +232,9 @@ var cache = {},
 		 **/
 		clearCache: function(key){
 			if (typeof key === 'string'){
-				delete cache[key];
+				delete __templates[key];
 			}else{
-				cache = {};
+				__templates = {};
 			}
 		},
 
@@ -344,14 +340,13 @@ var cache = {},
 					__cfg[key] = obj[key]
 				}
 			}
+		},
+		// For the consistence with the NodeJS
+		toHtml: function(dom) {
+			return $(dom).outerHtml();
 		}
 	};
-
-
-/**	deprecated
- *	mask.renderDom(template[, model, container, ctx]) -> container
- *
- * Use [[mask.render]] instead
- * (to keep backwards compatiable)
- **/
-Mask.renderDom = Mask.render;
+	
+	
+	var __templates = {};
+}());

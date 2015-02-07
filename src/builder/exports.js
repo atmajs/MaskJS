@@ -1,5 +1,6 @@
 var builder_componentID = 0,
-	builder_build;
+	builder_build,
+	builder_Ctx;
 
 (function(custom_Attributes, custom_Tags, Component){
 	
@@ -8,6 +9,7 @@ var builder_componentID = 0,
 	// import ./type.textNode.js
 	// import ./type.node.js
 	// import ./type.component.js
+	// import ./ctx.js
 	
 	builder_build = function(node, model, ctx, container, ctr, childs) {
 	
