@@ -230,6 +230,56 @@ UTest({
 					('css', 'display', 'none');
 			});
 		
-	}
+	},
+	
+	'repeat': (function(){
+		function check(dom) {
+			return UTest.domtest(dom, `
+				find('span') > length 4;
+				
+				find('span:eq(0)') >
+					text ('Foo0; 1');
+				
+				find('span:eq(1)') >
+					text ('Foo1; 2');
+					
+				find('span:eq(2)') >
+					text ('Foo2; 3');
+					
+				find('span:eq(3)') >
+					text ('Foo3; 4');
+			`);
+		}
+		return {
+			'simple' () {
+				var template = `
+					section >
+						repeat (0..4) >
+							span > '~[: name + index ]; ~[: number + index]'
+				`;
+				
+				var dom = mask.render(template, {
+					name: 'Foo',
+					number: 1
+				});
+				
+				return check(dom);
+			},
+			'from model' () {
+				var template = `
+					section >
+						repeat (0..count) >
+							span > '~[: name + index ]; ~[: number + index]'
+				`;
+				
+				var dom = mask.render(template, {
+					count: 4,
+					name: 'Foo',
+					number: 1
+				});
+				return check(dom);
+			}
+		};
+	}())
 	
 })
