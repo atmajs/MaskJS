@@ -45,7 +45,7 @@
 		function Ctor(node, parent) {
 			this.ID = null;
 			this.tagName = node.tagName;
-			this.attr = node.attr;
+			this.attr = obj_create(node.attr);
 			this.expression = node.expression;
 			this.nodes = node.nodes;
 			this.nextSibling = node.nextSibling;
