@@ -1,42 +1,34 @@
-// import /src/license.txt
-// import /src/umd-head.js
+// import:base /src/
+// import:extension js
+
+// import license.txt
+// import umd-head
 
 	// import /ref-utils/lib/utils.embed.js
 
-	// import /src/scope-vars.js
-    // import /src/util/util.js
-    // import /src/util/attr.js
-	// import /src/util/template.js
-    
-	// import /src/util/array.js
-	// import /src/util/string.js
-    // import /src/util/object.js
-	// import /src/util/listeners.js
-	// import /src/util/reporters.js
-	// import /src/util/path.js
-	// import /src/util/resource/file.js
-    
-	// import /src/custom/exports.js
+	// import scope-vars
 	
-	// import /src/expression/exports.js
-	// import /src/dom/exports.js
-	
-	// import /src/statements/exports.js
+    // import util/
+	// import custom/
+	// import expression/
+	// import dom/
+	// import statements/
 	
 	
-	// import /src/parse/parser.js
-	// import /src/formatter/stringify.js
-	// import /src/builder/exports.js
+	// import parse/parser
+	// import formatter/stringify
+	
+	// import builder/
 	
 	/*** Features ***/
-	// import /src/feature/run.js
-	// import /src/feature/merge.js
-	// import /src/feature/optimize.js
-	// import /src/feature/Module.js
-	// import /src/feature/Define.js
-	// import /src/feature/TreeWalker.js
+	// import feature/run
+	// import feature/merge
+	// import feature/optimize
+	// import feature/Module
+	// import feature/Define
+	// import feature/TreeWalker
 	
-	// import /src/mask.js
+	// import mask
 	
 	
 
@@ -46,14 +38,16 @@
 	// import /ref-mask-binding/lib/binding.embed.js
 		
 	/*** Handlers ***/
-	// import /src/handlers/html.js
-	// import /src/handlers/define.js
-	// import /src/handlers/template.js
-	// import /src/handlers/debug.js
+	// import handlers/html
+	// import handlers/define
+	// import handlers/template
+	// import handlers/debug
 
 
 	Mask.Compo = Compo;
 	Mask.jmask = jmask;
-
+	
+	Mask.version = /*# import VERSION */;
+	
 	return (exports.mask = Mask);
 }));

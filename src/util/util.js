@@ -23,7 +23,7 @@
  *
  */
 
-function util_interpolate(arr, type, model, ctx, element, controller, name) {
+function util_interpolate(arr, type, model, ctx, element, ctr, name) {
 	var imax = arr.length,
 		i = -1,
 		array = null,
@@ -49,7 +49,7 @@ function util_interpolate(arr, type, model, ctx, element, controller, name) {
 			index = key.indexOf(':');
 
 			if (index === -1) {
-				value = obj_getPropertyEx(key,  model, ctx, controller);
+				value = obj_getPropertyEx(key,  model, ctx, ctr);
 				
 			} else {
 				utility = index > 0
@@ -68,13 +68,13 @@ function util_interpolate(arr, type, model, ctx, element, controller, name) {
 					continue;
 				}
 				
-				value = handler(key, model, ctx, element, controller, name, type);
+				value = handler(key, model, ctx, element, ctr, name, type);
 			}
 
 			if (value != null){
 
 				if (typeof value === 'object' && array == null){
-					array = [string];
+					array = [ string ];
 				}
 
 				if (array == null){
@@ -82,10 +82,8 @@ function util_interpolate(arr, type, model, ctx, element, controller, name) {
 				} else {
 					array.push(value);
 				}
-
 			}
 		}
-
 		even = !even;
 	}
 
