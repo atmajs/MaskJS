@@ -30,8 +30,6 @@
 	
 	// import mask
 	
-	
-
 	/*** Libraries ***/
 	// import /ref-mask-compo/lib/compo.embed.js
 	// import /ref-mask-j/lib/jmask.embed.js

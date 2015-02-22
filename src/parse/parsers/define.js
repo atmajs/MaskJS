@@ -42,12 +42,15 @@
 				+ this.name
 				+ str
 				+ '{'
-				+ mask_stringify(this.nodes, ++indent)
+				+ mask_stringify(this.nodes, indent)
 				+ '}'
 				;
 		},
 	});
 	var EmptyNode = class_create({
+		meta: {
+			serializeNodes: true
+		},
 		render: fn_doNothing
 	});
 }());

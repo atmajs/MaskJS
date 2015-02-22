@@ -37,16 +37,20 @@ var path_getDir,
 			: path.substring(i + 1);
 	};
 	path_resolveCurrent = function() {
-		if (document == null) {
-			return typeof module === 'undefined'
+		var location = null;
+		if (typeof window !== 'undefined') {
+			location = window.location && window.location.pathname;
+		}
+		if (location == null && typeof __filename !== 'undefined') {
+			location = __filename;
+		}
+		if (location == null) {
+			location = typeof module === 'undefined'
 				? '' 
 				: path_win32Normalize(module.parent.filename);
 		}
-		var location = window
-			.location
-			.pathname
-			.replace(/\/[^\/]+\.\w+$/, '');
-		
+
+		location = location.replace(/\/[^\/]+\.\w+$/, '');
 		return location[location.length - 1] === '/'
 			? location
 			: location + '/';
