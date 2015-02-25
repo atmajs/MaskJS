@@ -11,7 +11,8 @@
 			
 			return [ new Ctor(head, body, parent), end + 1, 0 ];
 		};
-	}	
+	}
+	
 	function parseHead(head) {
 		var parts = /(\w+)\s*\(([^\)]*)\)/.exec(head);
 		if (parts == null) {
@@ -78,24 +79,8 @@
 			ctr[this.name] = this.fn;
 		}
 	});
-	var Script = class_create(Handler, {
-		tagName: 'script',
-		render: function(model, ctx, el, ctr){
-			if (this.attr.src != null) {
-				var script = document.createElement('script');
-				for(var key in this.attr) {
-					script.addAttribute(key, this.attr[key]);
-				}
-				el.appendChild(script);
-				return;
-			}
-			this.fn.call(ctr);
-		}
-	});
 	
 	custom_Parsers['slot' ] = create(Slot);
 	custom_Parsers['event'] = create(Event);
-	custom_Parsers['script'] = create(Script);
 	custom_Parsers['function'] = create(Fn);
-	
 }());

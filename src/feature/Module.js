@@ -162,7 +162,10 @@ var Module;
 	};
 	
 	var _MaskModule = class_create(_Module, {
-		_load: file_get,
+		_load: function(path){
+			var fn = __cfg.getFile || file_get;
+			return fn(path);
+		},
 		_handle: function(ast, next){
 			this.imports = [];
 			this.defines = {};

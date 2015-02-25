@@ -36,25 +36,10 @@ var path_getDir,
 			? ''
 			: path.substring(i + 1);
 	};
-	path_resolveCurrent = function() {
-		var location = null;
-		if (typeof window !== 'undefined') {
-			location = window.location && window.location.pathname;
-		}
-		if (location == null && typeof __filename !== 'undefined') {
-			location = __filename;
-		}
-		if (location == null) {
-			location = typeof module === 'undefined'
-				? '' 
-				: path_win32Normalize(module.parent.filename);
-		}
-
-		location = location.replace(/\/[^\/]+\.\w+$/, '');
-		return location[location.length - 1] === '/'
-			? location
-			: location + '/';
-	};
+	path_resolveCurrent = typeof window !== 'undefined' && window.location
+		? path_resolveCurrent_Browser
+		: path_resolveCurrent_Node
+		;
 	path_normalize = function(path) {
 		return path
 			.replace(/\\/g, '/')
@@ -132,13 +117,32 @@ var path_getDir,
 	};
 	
 	var rgx_PROTOCOL = /^(file|https?):/i,
-		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//;
+		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//,
+		rgx_FILENAME = /\/[^\/]+\.\w+$/;
 	
+	function path_resolveCurrent_Browser() {
+		return path_sliceFilename(window.location.pathname);
+	}
+	function path_resolveCurrent_Node() {
+		if (module.parent != null) {
+			return path_getDir(path_win32Normalize(module.parent.filename));
+		}
+		return path_win32Normalize(process.cwd());
+	}
 	function path_collapse(url) {
 		while (url.indexOf('../') !== -1) {
 			url = url.replace(rgx_SUB_DIR, '');
 		}
 		return url.replace(/\/\.\//g, '/');
+	}
+	function path_ensureTrailingSlash(path) {
+		if (path.charCodeAt(path.length - 1) === 47 /* / */)
+			return path;
+		
+		return path + '/';
+	}
+	function path_sliceFilename(path) {
+		return path_ensureTrailingSlash(path.replace(rgx_FILENAME, ''));
 	}
 	
 }());

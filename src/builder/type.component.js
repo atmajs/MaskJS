@@ -70,7 +70,15 @@ var build_compo;
 		controller_pushCompo(ctr, compo);
 		
 		if (compo.async === true) {
-			compo.await(build_resumeDelegate(compo, model, ctx, container, children));
+			var resume = build_resumeDelegate(
+				compo
+				, model
+				, ctx
+				, container
+				, children
+				, compo.renderEnd
+			); 
+			compo.await(resume);
 			return null;
 		}
 		

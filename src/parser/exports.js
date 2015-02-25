@@ -21,14 +21,15 @@ var parser_parse,
 
 		_serialize;
 
-	// import ./cursor.js
-	// import ./function.js
-	// import ./object/ObjectLexer.js
-	// import ./parsers/var.js
-	// import ./parsers/style.js
-	// import ./parsers/import.js
-	// import ./parsers/define.js
-	// import ./parsers/handlers.js
+	// import ./cursor
+	// import ./function
+	// import ./object/ObjectLexer
+	// import ./parsers/var
+	// import ./parsers/style
+	// import ./parsers/script
+	// import ./parsers/import
+	// import ./parsers/define
+	// import ./parsers/handlers
 	
 	var go_tag = 2,
 		state_tag = 3,

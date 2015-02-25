@@ -11,7 +11,7 @@ UTest({
 })
 
 function process(filename, indent) {
-	var M = Mask.mask
+	var M = Mask
 	
 	io
 		.File

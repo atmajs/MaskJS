@@ -14,10 +14,9 @@
 	// import dom/
 	// import statements/
 	
-	
-	// import parse/parser
 	// import formatter/stringify
 	
+	// import parser/
 	// import builder/
 	
 	/*** Features ***/

@@ -1,0 +1,15 @@
+UTest({
+	'should evaluate script' () {
+		var template = `
+			script {
+				window.foo = {
+					// this refers to the controllers context
+					isGlobal: this === window
+				};
+			}
+		`;
+		mask.render(template);
+		is_(window.foo, 'Object');
+		eq_(window.foo.isGlobal, false);
+	}
+})

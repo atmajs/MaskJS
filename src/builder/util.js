@@ -2,18 +2,18 @@ var build_resumeDelegate;
 
 (function(){
 
-	build_resumeDelegate = function (ctr, model, ctx, container, children){
+	build_resumeDelegate = function (ctr, model, ctx, container, children, finilize){
 		var anchor = document.createComment('');
 		
 		container.appendChild(anchor);
 		return function(){
-			return _resume(ctr, model, ctx, anchor, children);
+			return _resume(ctr, model, ctx, anchor, children, finilize);
 		};
 	};
 	
 	// == private
 	
-	function _resume(ctr, model, ctx, anchorEl, children) {
+	function _resume(ctr, model, ctx, anchorEl, children, finilize) {
 		
 		if (ctr.tagName != null && ctr.tagName !== ctr.compoName) {
 			ctr.nodes = {
@@ -72,8 +72,14 @@ var build_resumeDelegate;
 			}
 		}
 		
-		if (is_Function(ctr.renderEnd)) {
-			ctr.renderEnd(elements, model, ctx, anchorEl.parentNode);
+		if (is_Function(finilize)) {
+			finilize.call(
+				ctr
+				, elements
+				, model
+				, ctx
+				, anchorEl.parentNode
+			);
 		}
 		
 	

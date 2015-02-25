@@ -1,28 +1,28 @@
 (function (root, factory) {
     'use strict';
     
-    var _global = typeof window === 'undefined' || window.navigator == null
-		? global
-		: window,
-		
-		_exports, _document;
-
-    
-	if (typeof exports !== 'undefined' && (root == null || root === exports || root === _global)){
-		// raw commonjs module
+	var _env = (typeof window === 'undefined' || window.navigator == null)
+		? 'node'
+		: 'dom';
+	var _global = (_env === 'dom')
+		? window
+		: global;
+	var _isCommonJs = typeof exports !== 'undefined'
+		&& (root == null || root === exports || root === _global);
+	if (_isCommonJs) {
         root = exports;
     }
-	
+	var _exports = root || _global;
+	var _document = _global.document;
     
-    _document = _global.document;
-	_exports = root || _global;
-    
-
     function construct(){
-        return factory(_global, _exports, _document);
+        var mask = factory(_global, _exports, _document);
+		if (_isCommonJs) {
+			module.exports = mask;
+		}
+		return mask;
     }
 
-    
     if (typeof define === 'function' && define.amd) {
         return define(construct);
     }
