@@ -14,7 +14,7 @@
 			end = cursor_groupEnd(str, i, imax, 123, 125);
 			body = str.substring(i, end);
 		}
-		return [ new Script(attr, body, parent), end + 1, 0 ];
+		return [ new Script(attr, body, parent), end, 0 ];
 	};
 	
 	var Script = class_create({
