@@ -283,7 +283,9 @@ var Mask;
 			String: is_String,
 			ArrayLike: is_ArrayLike,
 			Array: is_ArrayLike,
-			Object: is_Object
+			Object: is_Object,
+			NODE: is_NODE,
+			DOM: is_DOM
 		},
 		
 		'class': {
@@ -344,6 +346,27 @@ var Mask;
 		// For the consistence with the NodeJS
 		toHtml: function(dom) {
 			return $(dom).outerHtml();
+		},
+		
+		factory: function(compoName){
+			var params_ = _Array_slice.call(arguments, 1),
+				factory = params_.pop(),
+				mode = 'both';
+			if (params_.length !== 0) {
+				var x = params_[0];
+				if (x === 'client' || x === 'server') {
+					mode = x;
+				}
+			}
+			if ((mode === 'client' && is_NODE) || (mode === 'server' && is_DOM) ) {
+				mask.registerHandler(compoName, {
+					meta: { mode: mode }
+				});
+				return;
+			}
+			factory(global, Compo.config.getDOMLibrary(), function(compo){
+				mask.registerHandler(compoName, compo);
+			});
 		}
 	};
 	
