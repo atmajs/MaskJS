@@ -28,7 +28,7 @@ var build_compo;
 			: build_Component
 			;
 		return fn(handler, node, model, ctx, container, ctr, children);
-	}
+	};
 	
 	// PRIVATE
 	

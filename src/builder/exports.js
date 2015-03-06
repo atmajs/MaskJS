@@ -11,7 +11,7 @@ var builder_componentID = 0,
 	// import ./type.component.js
 	// import ./ctx.js
 	
-	builder_build = function(node, model, ctx, container, ctr, childs) {
+	builder_build = function(node, model, ctx, container, ctr, children) {
 	
 		if (node == null) 
 			return container;
@@ -62,7 +62,7 @@ var builder_componentID = 0,
 			jmax = node.length;
 			
 			for(; j < jmax; j++) {
-				builder_build(node[j], model, ctx, container, ctr, childs);
+				builder_build(node[j], model, ctx, container, ctr, children);
 			}
 			return container;
 		}
@@ -88,21 +88,21 @@ var builder_componentID = 0,
 			
 			if (type === 15) {
 				
-				Handler.render(node, model, ctx, container, ctr, childs);
+				Handler.render(node, model, ctx, container, ctr, children);
 				return container;
 			}
 		}
 	
 		// Dom.NODE
 		if (type === 1) {
-			container = build_node(node, model, ctx, container, ctr, childs);
-			childs = null;
+			container = build_node(node, model, ctx, container, ctr, children);
+			children = null;
 		}
 	
 		// Dom.COMPONENT
 		if (type === 4) {
 	
-			ctr = build_compo(node, model, ctx, container, ctr, childs);
+			ctr = build_compo(node, model, ctx, container, ctr, children);
 			
 			if (ctr == null) 
 				return container;
@@ -112,14 +112,13 @@ var builder_componentID = 0,
 			
 			if (ctr.model !== model && ctr.model != null) 
 				model = ctr.model;
-			
 		}
 	
 		var nodes = node.nodes;
 		if (nodes != null) {
 	
-			if (childs != null && elements == null)
-				elements = childs;
+			if (children != null && elements == null)
+				elements = children;
 			
 			var isarray = nodes instanceof Array,
 				length = isarray === true ? nodes.length : 1,
@@ -171,8 +170,8 @@ var builder_componentID = 0,
 				node.renderEnd(elements, model, ctx, container);
 		}
 	
-		if (childs != null && elements != null && childs !== elements)
-			arr_pushMany(childs, elements);
+		if (children != null && elements != null && children !== elements)
+			arr_pushMany(children, elements);
 		
 		return container;
 	};

@@ -7,38 +7,33 @@
 				//{;
 				break;
 			}
+			i++;
 		}
+		var embedded = c !== 123 /*{*/;
+		
 		attr = parser_parseAttr(str, start, i);
-		if (c === 123 /*{*/) {
+		end = i;
+		if (embedded === false) {
 			i++;
 			end = cursor_groupEnd(str, i, imax, 123, 125);
 			body = str.substring(i, end);
 		}
-		return [ new Script(attr, body, parent), end, 0 ];
+		
+		var node = new ScriptNode('script', parent);
+		node.attr = attr;
+		if (body != null) {
+			node.nodes = [ new Dom.TextNode(body, node) ];
+		}
+		return [ node, end, 0 ];
 	};
 	
-	var Script = class_create({
+	var ScriptNode = class_create(Dom.Node, {
 		tagName: 'script',
-		type: Dom.COMPONENT,
-		controller: null,
-		elements: null,
-		model: null,
-		constructor: function(attr, body, parent){
-			this.attr = attr;
-			this.body = body;
-			this.parent = parent;
-			this.fn = new Function(body);
-		},
-		render: function(model, ctx, el, ctr){
-			if (this.attr.src != null) {
-				var script = document.createElement('script');
-				for(var key in this.attr) {
-					script.setAttribute(key, this.attr[key]);
-				}
-				el.appendChild(script);
-				return;
+		stringifyChildren: function(){
+			if (this.nodes == null || this.nodes.length === 0) {
+				return null;
 			}
-			this.fn.call(ctr);
+			return this.nodes[0].content;
 		}
 	});
 	

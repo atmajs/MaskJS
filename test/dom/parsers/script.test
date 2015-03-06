@@ -3,13 +3,28 @@ UTest({
 		var template = `
 			script {
 				window.foo = {
-					// this refers to the controllers context
+					// this refers to the window ctx
 					isGlobal: this === window
 				};
 			}
 		`;
-		mask.render(template);
+		document.body.appendChild(mask.render(template));
+		
 		is_(window.foo, 'Object');
-		eq_(window.foo.isGlobal, false);
+		eq_(window.foo.isGlobal, true);
+	},
+	'should serialize script node': {
+		'single' () {
+			var template = "section>script src=foo.js;";
+			var ast = mask.parse(template);
+			var str = mask.stringify(ast);
+			eq_(str, template);
+		},
+		'body' () {
+			var template = "section>script type='text/mask'{ @@%any text }";
+			var ast = mask.parse(template);
+			var str = mask.stringify(ast);
+			eq_(str, template);
+		}
 	}
 })

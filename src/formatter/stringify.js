@@ -71,25 +71,32 @@ var mask_stringify;
 	}
 
 	function processNode(node, currentIndent, output) {
-		if (typeof node.stringify === 'function') {
+		if (is_Function(node.stringify)) {
 			output.push(node.stringify(_indent));
 			return;
 		}
-		if (typeof node.content === 'string') {
+		if (is_String(node.content)) {
 			output.push(wrapString(node.content));
 			return;
 		}
-
-		if (typeof node.content === 'function'){
+		if (is_Function(node.content)){
 			output.push(wrapString(node.content()));
 			return;
 		}
-
+		if (is_Function(node.stringifyChildren)) {
+			var head = processNodeHead(node);
+			var body = node.stringifyChildren();
+			if (body == null) {
+				output.push(head + ';');
+				return;
+			}
+			output.push(head + '{', body, '}');
+			return;
+		}
 		if (isEmpty(node)) {
 			output.push(processNodeHead(node) + ';');
 			return;
 		}
-
 		if (isSingle(node)) {
 			var next = _minimize ? '>' : ' > ';
 			output.push(processNodeHead(node) + next);
