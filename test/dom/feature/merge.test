@@ -435,8 +435,41 @@ UTest({
 			.has_('div[name=foo]')
 			.hasNot_('span[name=none]')
 			.hasNot_('div[name=none]');
+	},
+	
+	'should merge $root placeholder' () {
+		var a = "div > @placeholder",
+			b = "span > 'Foo'";
+		var dom = $render(a, b);
+		return UTest.domtest(dom, `
+			find ('div > span') {
+				text Foo;
+			}
+		`);
+	},
+	'should merge $root placeholder with filtering' () {
+		var a = "section > @placeholder (div)",
+			b = "span > 'Foo'; div > 'Bar'";		
+		var dom = $render(a, b);
+		return UTest.domtest(dom, `
+			find ('section > div') {
+				text Bar;
+			}
+			hasNot ('span');
+		`);
+	},
+	'should merge $root placeholder with filtering (pseudo selector)' () {
+		var a = "section > @placeholder (::text)",
+			b = "span > 'Foo'; 'Bar'";		
+		var dom = $render(a, b);
+		return UTest.domtest(dom, `
+			find ('section') {
+				text Bar;
+			}
+			hasNot ('span');
+		`);
 	}
-})
+});
 
 function $render(tmplA, tmplB, model) {
 	var tmpl = mask.merge(tmplA, tmplB);

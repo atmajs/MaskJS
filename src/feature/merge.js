@@ -7,8 +7,8 @@ var mask_merge;
 		if (typeof b === 'string') 
 			b = parser_parse(b);
 		
-		var contents = _getContents(b, b, new Contents);
-		return _merge(a, contents, owner);
+		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b));
+		return _merge(a, placeholders, owner);
 	};
 	
 	var tag_ELSE = '@else',
@@ -23,7 +23,7 @@ var mask_merge;
 		dom_COMPONENT = Dom.COMPONENT
 		;
 	
-	function _merge(node, contents, tmplNode, clonedParent){
+	function _merge(node, placeholders, tmplNode, clonedParent){
 		if (node == null) 
 			return null;
 		
@@ -48,12 +48,12 @@ var mask_merge;
 			}
 		}
 		if (fn !== void 0) {
-			return fn(node, contents, tmplNode, clonedParent);
+			return fn(node, placeholders, tmplNode, clonedParent);
 		}
 		log_warn('Uknown type', node.type);
 		return null;
 	}
-	function _mergeArray(nodes, contents, tmplNode, clonedParent){
+	function _mergeArray(nodes, placeholders, tmplNode, clonedParent){
 		var fragment = [],
 			imax = nodes.length,
 			i = -1,
@@ -66,47 +66,54 @@ var mask_merge;
 				if (x != null)
 					continue;
 				
-				if (node.expression && !eval_(node.expression, contents, tmplNode)) 
+				if (node.expression && !eval_(node.expression, placeholders, tmplNode)) 
 					continue;
 				
-				x = _merge(nodes[i].nodes, contents, tmplNode, clonedParent)
+				x = _merge(nodes[i].nodes, placeholders, tmplNode, clonedParent)
 			}
 			else {
-				x = _merge(node, contents, tmplNode, clonedParent);
+				x = _merge(node, placeholders, tmplNode, clonedParent);
 			}
 			
 			appendAny(fragment, x);
 		}
 		return fragment;
 	}
-	function _mergeFragment(frag, contents, tmplNode, clonedParent) {
+	function _mergeFragment(frag, placeholders, tmplNode, clonedParent) {
 		var fragment = new Dom.Fragment;
 		fragment.parent = clonedParent;
-		fragment.nodes = _mergeArray(frag.nodes, contents, tmplNode, fragment);
+		fragment.nodes = _mergeArray(frag.nodes, placeholders, tmplNode, fragment);
 		return fragment;
 	}
-	function _mergeComponent(node, contents, tmplNode, clonedParent) {
+	function _mergeComponent(node, placeholders, tmplNode, clonedParent) {
 		if (node.nodes == null) 
 			return node;
 		
 		var cloned = new Dom.Component;
 		obj_extend(cloned, node);
-		cloned.nodes = _merge(cloned.nodes, contents, tmplNode, clonedParent);
+		cloned.nodes = _merge(cloned.nodes, placeholders, tmplNode, clonedParent);
 		return cloned;
 	}
-	function _mergeNode(node, contents, tmplNode, clonedParent){
+	function _mergeNode(node, placeholders, tmplNode, clonedParent){
 		var tagName = node.tagName;
 		if (tagName.charCodeAt(0) !== 64) {
 			// @
-			return _cloneNode(node, contents, tmplNode, clonedParent);
+			return _cloneNode(node, placeholders, tmplNode, clonedParent);
 		}
 		
 		var id = node.attr.id;
-		if (tagName === tag_PLACEHOLDER && id == null) 
-			return tmplNode.nodes;
+		if (tagName === tag_PLACEHOLDER && id == null) {
+			if (tmplNode != null) {
+				var tagName_ = tmplNode.tagName;
+				if (tagName_ != null && tmplNode.tagName.charCodeAt(0) === 64 /*@*/) {
+					return tmplNode.nodes
+				}
+			}
+			id = '$root';
+		}
 		
 		if (tag_EACH === tagName) {
-			var arr = contents[node.expression],
+			var arr = placeholders[node.expression],
 				x;
 			if (arr == null) {
 				log_error('No template node: @' + node.expression);
@@ -116,7 +123,7 @@ var mask_merge;
 				x = arr;
 				return _merge(
 					node.nodes
-					, _getContents(x.nodes, x.nodes, new Contents(contents))
+					, _resolvePlaceholders(x.nodes, x.nodes, new Placeholders(placeholders))
 					, x
 					, clonedParent
 				);
@@ -128,7 +135,7 @@ var mask_merge;
 				x = arr[i];
 				appendAny(fragment, _merge(
 					node.nodes
-					, _getContents(x.nodes, x.nodes, new Contents(contents))
+					, _resolvePlaceholders(x.nodes, x.nodes, new Placeholders(placeholders))
 					, x
 					, clonedParent
 				));
@@ -136,9 +143,9 @@ var mask_merge;
 			return fragment;
 		}
 		if (tag_IF === tagName) {
-			var val = eval_(node.expression, contents, tmplNode);
+			var val = eval_(node.expression, placeholders, tmplNode);
 			return val
-				? _merge(node.nodes, contents, tmplNode, clonedParent)
+				? _merge(node.nodes, placeholders, tmplNode, clonedParent)
 				: null
 				;
 		}
@@ -146,7 +153,7 @@ var mask_merge;
 		if (id == null) 
 			id = tagName.substring(1);
 		
-		var content = contents.$getNode(id);
+		var content = placeholders.$getNode(id, node.expression);
 		if (content == null) 
 			return null;
 		
@@ -161,7 +168,7 @@ var mask_merge;
 			wrapperNode = {
 				type: dom_NODE,
 				tagName: tagName_,
-				attr: _mergeAttr(node.attr, content.attr, contents, tmplNode),
+				attr: _mergeAttr(node.attr, content.attr, placeholders, tmplNode),
 				parent: clonedParent,
 				nodes: contentNodes
 			};
@@ -173,7 +180,7 @@ var mask_merge;
 		
 		var nodes =  _merge(
 			node.nodes
-			, _getContents(contentNodes, contentNodes, new Contents(contents))
+			, _resolvePlaceholders(contentNodes, contentNodes, new Placeholders(placeholders))
 			, content
 			, wrapperNode || clonedParent
 		);
@@ -183,28 +190,28 @@ var mask_merge;
 		}
 		return nodes;
 	}
-	function _mergeAttr(a, b, contents, tmplNode){
+	function _mergeAttr(a, b, placeholders, tmplNode){
 		if (a == null || b == null) 
 			return a || b;
 		
-		var out = interpolate_obj_(a, contents, tmplNode);
+		var out = interpolate_obj_(a, placeholders, tmplNode);
 		for (var key in b){
-			out[key] = interpolate_str_(b[key], contents, tmplNode);
+			out[key] = interpolate_str_(b[key], placeholders, tmplNode);
 		}
 		return out;
 	}
 	
-	function _cloneNode(node, contents, tmplNode, clonedParent){
+	function _cloneNode(node, placeholders, tmplNode, clonedParent){
 		var tagName = node.tagName || node.compoName;
 		switch (tagName) {
 			case ':template':
-				var id = interpolate_str_(node.attr.id, contents, tmplNode);
+				var id = interpolate_str_(node.attr.id, placeholders, tmplNode);
 				Mask.templates.register(id, node.nodes);
 				return null;
 			case ':import':
-				var id = interpolate_str_(node.attr.id, contents, tmplNode),
+				var id = interpolate_str_(node.attr.id, placeholders, tmplNode),
 					nodes = Mask.templates.resolve(node, id);
-				return _merge(nodes, contents, tmplNode, clonedParent);
+				return _merge(nodes, placeholders, tmplNode, clonedParent);
 			case 'define':
 			case 'function':
 			case 'var':
@@ -215,24 +222,25 @@ var mask_merge;
 		var outnode = {
 			type: node.type,
 			tagName: tagName,
-			attr: interpolate_obj_(node.attr, contents, tmplNode),
-			expression: interpolate_str_(node.expression, contents, tmplNode),
+			attr: interpolate_obj_(node.attr, placeholders, tmplNode),
+			expression: interpolate_str_(node.expression, placeholders, tmplNode),
 			controller: node.controller,
-			parent: clonedParent
+			parent: clonedParent,
+			nodes: null
 		};
 		if (node.nodes) 
-			outnode.nodes = _merge(node.nodes, contents, tmplNode, outnode);
+			outnode.nodes = _merge(node.nodes, placeholders, tmplNode, outnode);
 		
 		return outnode;
 	}
-	function _cloneTextNode(node, contents, tmplNode, clonedParent){
+	function _cloneTextNode(node, placeholders, tmplNode, clonedParent){
 		return {
 			type: node.type,
-			content: interpolate_str_(node.content, contents, tmplNode),
+			content: interpolate_str_(node.content, placeholders, tmplNode),
 			parent: clonedParent
 		};
 	}
-	function interpolate_obj_(obj, contents, node){
+	function interpolate_obj_(obj, placeholders, node){
 		var clone = _Object_create(obj),
 			x;
 		for(var key in clone){
@@ -240,11 +248,11 @@ var mask_merge;
 			if (x == null) 
 				continue;
 			
-			clone[key] = interpolate_str_(x, contents, node);
+			clone[key] = interpolate_str_(x, placeholders, node);
 		}
 		return clone;
 	}
-	function interpolate_str_(mix, contents, node){
+	function interpolate_str_(mix, placeholders, node){
 		var index = -1,
 			isFn = false,
 			str = mix;
@@ -289,7 +297,7 @@ var mask_merge;
 			
 			var expr = str.substring(last, index),
 				fn = isBlockEntry ? eval_ : interpolate_,
-				x = fn(expr, contents, node);
+				x = fn(expr, placeholders, node);
 					
 			if (x != null) 
 				result += x;
@@ -308,7 +316,7 @@ var mask_merge;
 			: result
 			;
 	}
-	function interpolate_(path, contents, node) {
+	function interpolate_(path, placeholders, node) {
 		var index = path.indexOf('.');
 		if (index === -1) {
 			log_warn('Merge templates. Accessing node', path);
@@ -327,7 +335,7 @@ var mask_merge;
 		}
 		
 		if (obj == null) 
-			obj = contents.$getNode(id);
+			obj = placeholders.$getNode(id);
 		
 		if (obj == null) {
 			log_error('Merge templates. Node not found', tagName);
@@ -365,22 +373,22 @@ var mask_merge;
 	}
 	
 	var RESERVED = ' else placeholder each attr if parent scope'
-	function _getContents(b, node, contents) {
+	function _resolvePlaceholders(b, node, placeholders) {
 		if (node == null) 
-			return contents;
+			return placeholders;
 		
 		if (is_Array(node)) {
 			var imax = node.length,
 				i = -1;
 			while( ++i < imax ){
-				_getContents(node === b ? node[i] : b, node[i], contents);
+				_resolvePlaceholders(node === b ? node[i] : b, node[i], placeholders);
 			}
-			return contents;
+			return placeholders;
 		}
 		
 		var type = node.type;
 		if (type === dom_TEXTNODE) 
-			return contents;
+			return placeholders;
 		
 		if (type === dom_NODE) {
 			var tagName = node.tagName;
@@ -398,21 +406,21 @@ var mask_merge;
 					attr: node.attr,
 					expression: node.expression
 				};
-				if (contents[id] == null) {
-					contents[id] = x;
+				if (placeholders[id] == null) {
+					placeholders[id] = x;
 				} else {
-					var current = contents[id];
+					var current = placeholders[id];
 					if (is_Array(current)) {
 						current.push(x);
 					}
 					else {
-						contents[id] = [current, x];
+						placeholders[id] = [current, x];
 					}
 				}
-				return contents;
+				return placeholders;
 			}
 		}
-		return _getContents(b, node.nodes, contents);
+		return _resolvePlaceholders(b, node.nodes, placeholders);
 	}
 	function _getParentModifiers(root, node) {
 		if (node === root) 
@@ -464,28 +472,41 @@ var mask_merge;
 		}
 	}
 	
-	function eval_(expr, contents, tmplNode) {
-		if (tmplNode) 
-			contents.attr = tmplNode.attr;
-		
-		return ExpressionUtil.eval(expr, contents, null, contents);
+	function eval_(expr, placeholders, tmplNode) {
+		if (tmplNode != null) {
+			placeholders.attr = tmplNode.attr;
+		}
+		return ExpressionUtil.eval(expr, placeholders, null, placeholders);
 	}
-	function Contents(parent){
+	function Placeholders(parent, nodes){
+		var $root = null;
+		if (nodes != null) {
+			$root = new Dom.Node(tag_PLACEHOLDER);
+			$root.nodes = nodes;
+		}
 		this.scope = this;
 		this.parent = parent;
+		this.$root = $root || (parent && parent.$root);
 	}
-	Contents.prototype = {
+	Placeholders.prototype = {
 		parent: null,
 		attr: null,
 		scope: null,
-		$getNode: function(id){
+		$root: null,
+		$getNode: function(id, filter){
 			var ctx = this, node;
 			while(ctx != null){
 				node = ctx[id];
 				if (node != null) 
-					return node;
+					break;
 				ctx = ctx.parent;
 			}
+			if (filter != null && node != null) {
+				node = {
+					nodes: jmask(node.nodes).filter(filter)
+				};
+			}
+			return node;
 		}
 	};
 	
