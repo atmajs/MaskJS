@@ -9,11 +9,11 @@
 			}
 			i++;
 		}
-		var embedded = c !== 123 /*{*/;
+		var hasBody = c === 123 /*{*/;
 		
 		attr = parser_parseAttr(str, start, i);
 		end = i;
-		if (embedded === false) {
+		if (hasBody) {
 			i++;
 			end = cursor_groupEnd(str, i, imax, 123, 125);
 			body = str.substring(i, end);
@@ -24,7 +24,7 @@
 		if (body != null) {
 			node.nodes = [ new Dom.TextNode(body, node) ];
 		}
-		return [ node, end, 0 ];
+		return [ node, end + 1, 0 ];
 	};
 	
 	var ScriptNode = class_create(Dom.Node, {

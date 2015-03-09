@@ -20,12 +20,26 @@ var Define;
 			}
 		};
 		var imax = nodes.length,
-			i = 0, x;
+			i = 0, x, name;
 		for(; i<imax; i++) {
 			x = nodes[i];
-			if (x.tagName === 'function') {
+			if (x == null) 
+				continue;
+			name = x.tagName;
+			if ('function' === name) {
 				Proto[x.name] = x.fn;
 				x.render = null;
+				continue;
+			}
+			if ('slot' === name || 'event' === name) {
+				var type = name + 's';
+				var fns = Proto[type];
+				if (fns == null) {
+					fns = Proto[type] = {};
+				}
+				fns[x.name] = x.fn;
+				x.render = null;
+				continue;
 			}
 		}
 		return Proto;
