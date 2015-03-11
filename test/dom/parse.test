@@ -158,7 +158,7 @@ UTest({
 		assert(typeof node.nodes[0].content, 'function');
 	},
 	
-	'!valid nesting with not closed last child': function(){
+	'valid nesting with not closed last child': function(){
 		
 		testSingle([
 			'div{span}',

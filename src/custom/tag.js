@@ -1,23 +1,24 @@
-(function(repository, global){
-	
+(function(){
 	customTag_register = function(name, Handler){		
-		if (Handler != null && typeof Handler === 'object') {
+		if (is_Object(Handler)) {
 			//> static
 			Handler.__Ctor = wrapStatic(Handler);
 		}
+		custom_Tags[name] = Handler;
 		
-		repository[name] = Handler;
+		//> make fast properties
+		custom_Tags = obj_create(custom_Tags);
 	};
 	
 	customTag_registerResolver = function(name){
-		var Ctor = repository[name];
+		var Ctor = custom_Tags[name];
 		if (Ctor === Resolver) 
 			return;
 		
 		if (Ctor != null) 
-			global[name] = Ctor;
+			custom_Tags_global[name] = Ctor;
 		
-		repository[name] = Resolver;
+		custom_Tags[name] = Resolver;
 	};
 	
 	var Resolver;
@@ -32,7 +33,7 @@
 				}
 				ctr = ctr.parent;
 			}
-			x = global[name];
+			x = custom_Tags_global[name];
 			if (x != null) 
 				return x;
 			
@@ -52,10 +53,8 @@
 			this.parent = parent;
 			this.components = null;
 		}
-		
 		Ctor.prototype = proto;
-		
 		return Ctor;
 	}
 	
-}(custom_Tags, custom_Tags_global));
+}());

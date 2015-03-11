@@ -331,6 +331,6 @@ var Module;
 				return next(name);
 			
 			return null;
-		}
+		};
 	}
 }());

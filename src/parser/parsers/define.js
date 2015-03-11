@@ -16,15 +16,6 @@
 	var DefineNode = class_create(Dom.Node, {
 		'name': null,
 		'extends': null,
-		
-		'controller': function(node, model, ctx, el, ctr){
-			
-			var Ctor = Define.create(node, model, ctr);
-			customTag_register(
-				node.name, Ctor
-			);
-			return new EmptyNode;
-		},
 		stringify: function(indent){
 			var extends_ = this['extends'],
 				str = '';
@@ -47,10 +38,18 @@
 				;
 		},
 	});
-	var EmptyNode = class_create({
+	
+	custom_Tags['define'] = class_create({
 		meta: {
 			serializeNodes: true
 		},
+		constructor: function(node, model, ctx, el, ctr) {
+			var Ctor = Define.create(node, model, ctr);
+			customTag_register(
+				node.name, Ctor
+			);
+		},
 		render: fn_doNothing
 	});
+	
 }());

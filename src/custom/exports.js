@@ -18,7 +18,7 @@ var custom_Utils,
 	
 (function(){
 	
-	var HtmlTags = {
+	var _HtmlTags = {
 		/*
 		 * Most common html tags
 		 * http://jsperf.com/not-in-vs-null/3
@@ -57,7 +57,7 @@ var custom_Utils,
 		canvas: null,
 		svg: null
 	};
-	var HtmlAttr = {
+	var _HtmlAttr = {
 		'class'	: null,
 		'id'	: null,
 		'style'	: null,
@@ -65,19 +65,20 @@ var custom_Utils,
 		'type'	: null,
 		'value' : null,
 		'required': null,
+		'disabled': null,
 	};
 	
 	custom_Utils = {
-		expression: function(value, model, ctx, element, controller){
-			return ExpressionUtil.eval(value, model, ctx, controller);
+		expression: function(value, model, ctx, element, ctr){
+			return ExpressionUtil.eval(value, model, ctx, ctr);
 		},
 	};
 	custom_Optimizers   = {};
 	custom_Statements 	= {};
-	custom_Attributes 	= obj_create(HtmlAttr);
-	custom_Tags 		= obj_create(HtmlTags);
-	custom_Tags_global 	= obj_create(HtmlTags);
-	custom_Parsers 		= obj_create(HtmlTags);
+	custom_Attributes 	= obj_create(_HtmlAttr);
+	custom_Tags 		= obj_create(_HtmlTags);
+	custom_Tags_global 	= obj_create(_HtmlTags);
+	custom_Parsers 		= obj_create(_HtmlTags);
 	
 	// use on server to define reserved tags and its meta info
 	custom_Tags_defs = {};

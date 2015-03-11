@@ -135,6 +135,7 @@ var parser_parse,
 					//	: new Node(token, current);
 					
 					if (custom_Parsers[token] != null) {
+						// Parser should return: [ parsedNode, nextIndex, nextState ]
 						var tuple = custom_Parsers[token](
 							template
 							, index
@@ -152,7 +153,13 @@ var parser_parse,
 						if (node != null) {
 							current.appendChild(node);
 							if (nextState !== 0) {
-								current  = node;
+								current = node;
+							} else {
+								if (current.__single === true) {
+									do {
+										current = current.parent;
+									} while (current != null && current.__single != null);
+								}
 							}
 						}
 						continue;

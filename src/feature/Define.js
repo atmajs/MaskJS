@@ -7,15 +7,16 @@ var Define;
 	};
 	
 	function compo_prototype(nodes) {
+		var arr = [];
 		var Proto = {
-			template: nodes,
+			template: arr,
 			meta: {
 				template: 'merge'
 			},
 			renderStart: function(){
 				Compo.prototype.renderStart.apply(this, arguments);
 				if (this.nodes === this.template) {
-					this.nodes = mask.merge(this.nodes, [], this);
+					this.nodes = mask_merge(this.nodes, [], this);
 				}
 			}
 		};
@@ -28,7 +29,6 @@ var Define;
 			name = x.tagName;
 			if ('function' === name) {
 				Proto[x.name] = x.fn;
-				x.render = null;
 				continue;
 			}
 			if ('slot' === name || 'event' === name) {
@@ -38,9 +38,9 @@ var Define;
 					fns = Proto[type] = {};
 				}
 				fns[x.name] = x.fn;
-				x.render = null;
 				continue;
 			}
+			arr.push(x);
 		}
 		return Proto;
 	}

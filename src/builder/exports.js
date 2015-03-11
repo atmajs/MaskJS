@@ -2,7 +2,7 @@ var builder_componentID = 0,
 	builder_build,
 	builder_Ctx;
 
-(function(custom_Attributes, custom_Tags, Component){
+(function(Component){
 	
 	// import ./util.js
 	// import ./util.controller.js
@@ -26,10 +26,10 @@ var builder_componentID = 0,
 			ctr = new Component();
 			
 		if (type == null){
-			// in case if node was added manually, but type was not set
-			
-			if (node instanceof Array) {
-				type = 10
+			// in case if node was added manually, but type was not set			
+			if (is_ArrayLike(node)) {
+				// Dom.FRAGMENT
+				type = 10;
 			}
 			else if (node.tagName != null){
 				type = 1;
@@ -49,8 +49,7 @@ var builder_componentID = 0,
 		
 		
 		// Dom.TEXTNODE
-		if (type === 2) {
-			
+		if (type === 2) {			
 			build_textNode(node, model, ctx, container, ctr);
 			return container;
 		}
@@ -74,8 +73,7 @@ var builder_componentID = 0,
 		// Dom.STATEMENT
 		if (type === 15) {
 			var Handler = custom_Statements[tagName];
-			if (Handler == null) {
-				
+			if (Handler == null) {				
 				if (custom_Tags[tagName] != null) {
 					// Dom.COMPONENT
 					type = 4;
@@ -83,11 +81,8 @@ var builder_componentID = 0,
 					log_error('<mask: statement is undefined>', tagName);
 					return container;
 				}
-				
 			}
-			
 			if (type === 15) {
-				
 				Handler.render(node, model, ctx, container, ctr, children);
 				return container;
 			}
@@ -101,22 +96,20 @@ var builder_componentID = 0,
 	
 		// Dom.COMPONENT
 		if (type === 4) {
-	
 			ctr = build_compo(node, model, ctx, container, ctr, children);
-			
-			if (ctr == null) 
+			if (ctr == null) {
 				return container;
-			
+			}
 			elements = [];
 			node = ctr;
 			
-			if (ctr.model !== model && ctr.model != null) 
+			if (ctr.model !== model && ctr.model != null) {
 				model = ctr.model;
+			}
 		}
 	
 		var nodes = node.nodes;
 		if (nodes != null) {
-	
 			if (children != null && elements == null)
 				elements = children;
 			
@@ -132,7 +125,6 @@ var builder_componentID = 0,
 				
 				builder_build(childNode, model, ctx, container, ctr, elements);
 			}
-	
 		}
 	
 		if (type === 4) {
@@ -178,4 +170,4 @@ var builder_componentID = 0,
 	
 	
 	
-}(custom_Attributes, custom_Tags, Dom.Component));
+}(Dom.Component));

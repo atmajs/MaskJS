@@ -42,7 +42,7 @@ UTest({
 			}
 		`);
 	},
-	'!should call onRenderStart' () {
+	'should call onRenderStart' () {
 		var template = `
 			define foo {
 				function onRenderStart(model) {

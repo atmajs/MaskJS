@@ -6,7 +6,8 @@ var path_getDir,
 	path_win32Normalize,
 	path_resolveUrl,
 	path_combine,
-	path_isRelative
+	path_isRelative,
+	path_toLocalFile
 	;
 (function(){
 	var isWeb = true;
@@ -116,9 +117,25 @@ var path_getDir,
 		return out;
 	};
 	
+	path_toLocalFile = function(path){
+		if (path_isRelative(path)) {
+			return path;
+		}
+		if (path.indexOf('file://') === 0) {
+			path = path.replace('file://', '');
+		}
+		var c = '/';
+		if (rgx_win32Drive.test(path)) {
+			c = '';
+		}
+		return path.replace(/^\/+/, c);
+	};
+	
 	var rgx_PROTOCOL = /^(file|https?):/i,
 		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//,
-		rgx_FILENAME = /\/[^\/]+\.\w+$/;
+		rgx_FILENAME = /\/[^\/]+\.\w+$/,
+		rgx_win32Drive = /(^\/?\w{1}:)(\/|$)/
+		;
 	
 	function path_resolveCurrent_Browser() {
 		return path_sliceFilename(window.location.pathname);

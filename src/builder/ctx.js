@@ -11,5 +11,8 @@
 		_id: null,
 		// ModelBuilder for later serialization to HTML
 		_model: null,
+
+		_redirect: null,
+		_rewrite: null
 	});
 }());

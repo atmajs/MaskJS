@@ -36,15 +36,8 @@
 		
 	/*** Handlers ***/
 	// import handlers/html
-	// import handlers/define
 	// import handlers/template
 	// import handlers/debug
 
 
-	Mask.Compo = Compo;
-	Mask.jmask = jmask;
-	
-	Mask.version = /*# import VERSION */;
-	
-	return (exports.mask = Mask);
-}));
+// import umd-footer
