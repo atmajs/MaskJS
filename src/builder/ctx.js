@@ -9,8 +9,8 @@
 		// NodeJS
 		// Track components ID
 		_id: null,
-		// ModelBuilder for HTML serialization
-		_model: null,
+		// ModelsBuilder for HTML serialization
+		_models: null,
 		
 		// ModulesBuilder fot HTML serialization
 		_modules: null,
