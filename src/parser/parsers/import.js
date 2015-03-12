@@ -82,6 +82,9 @@
 	});
 	
 	custom_Tags[IMPORT] = class_create({
+		meta: {
+			serializeNodes: true
+		},
 		constructor: function(node) {
 			this.dependency = Module.createDependency(node);
 		},
