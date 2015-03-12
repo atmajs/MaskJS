@@ -93,23 +93,24 @@ var custom_Utils,
 	
 	
 	(function(){
-		var _props = {};
-		
 		custom_optimize = function(){
-			
-			readProps(custom_Statements);
-			readProps(custom_Tags);
-			readProps(custom_Parsers);
-			
-			defineProps(custom_Statements);
-			defineProps(custom_Tags);
-			defineProps(custom_Parsers);
-			
-			toFastProps(custom_Statements);
-			toFastProps(custom_Tags);
-			toFastProps(custom_Parsers);
+			var i = _arr.length;
+			while (--i > -1) {
+				readProps(_arr[i]);
+			}
+			i = _arr.length;
+			while(--i > -1) {
+				defineProps(_arr[i]);
+				toFastProps(_arr[i]);
+			}
 		};
-		
+		var _arr = [
+			custom_Statements,
+			custom_Tags,
+			custom_Parsers,
+			custom_Parsers_Transform
+		];
+		var _props = {};
 		function readProps(obj) {
 			for (var key in obj) {
 				_props[key] = null;
@@ -122,7 +123,6 @@ var custom_Utils,
 				}
 			}
 		}
-		
 		function toFastProps(obj) {
 			/*jshint -W027*/
 			function F() {}
