@@ -42,10 +42,9 @@ var parser_parse,
 	
 	parser_ensureTemplateFunction = ensureTemplateFunction;
 	parser_ObjectLexer = ObjectLexer;
-	
+
 	/** @out : nodes */
 	parser_parse = function(template) {
-
 		var current = new Fragment(),
 			fragment = current,
 			state = go_tag,
@@ -133,10 +132,10 @@ var parser_parse,
 					//next = custom_Tags[token] != null
 					//	? new Component(token, current, custom_Tags[token])
 					//	: new Node(token, current);
-					
-					if (custom_Parsers[token] != null) {
+					var parser = custom_Parsers[token];
+					if (parser != null) {
 						// Parser should return: [ parsedNode, nextIndex, nextState ]
-						var tuple = custom_Parsers[token](
+						var tuple = parser(
 							template
 							, index
 							, length
@@ -149,8 +148,15 @@ var parser_parse,
 						state = nextState === 0
 							? go_tag
 							: nextState;
-						token = null;
 						if (node != null) {
+							var transform = custom_Parsers_Transform[token];
+							if (transform != null) {
+								var x = transform(current, node);
+								if (x != null) {
+									current = x;
+								}
+							}
+							
 							current.appendChild(node);
 							if (nextState !== 0) {
 								current = node;
@@ -162,6 +168,7 @@ var parser_parse,
 								}
 							}
 						}
+						token = null;
 						continue;
 					}
 					
@@ -463,7 +470,8 @@ var parser_parse,
 		if (parent != null &&
 			parent !== fragment &&
 			parent.__single !== true &&
-			current.nodes != null) {
+			current.nodes != null &&
+			parent.tagName !== 'imports') {
 			parser_warn('Tag was not closed: ' + current.tagName, template)
 		}
 		// endif

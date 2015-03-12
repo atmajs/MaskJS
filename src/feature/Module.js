@@ -101,6 +101,12 @@ var Module;
 				return null;
 			
 			return module.nodes || module._erroredExport();
+		},
+		isEmbeddable: function(){
+			return this.alias == null
+				&& this.exports == null
+				&& Module.isMask(this.path)
+				;
 		}
 	});
 	var _Module = class_create(class_Dfr, {

@@ -1,25 +1,29 @@
 UTest({
 	'parser': {
 		'all' () {
-			var tmpl = mask.parse(`
+			var imports = mask.parse(`
 				import * as foo3 from '/test/tmpl/a.mask';
 				foo3;
 			`);
-			var $import = tmpl.nodes[0];
-			eq_($import.tagName, 'import');
-			has_($import.dependency, {
+			eq_(imports.tagName, 'imports');
+			
+			var node = imports.nodes[0];
+			has_(node, {
+				tagName: 'import',
 				path: '/test/tmpl/a.mask',
 				alias: 'foo3'
 			});
 		},
 		'compos' () {
-			var tmpl = mask.parse(`
+			var imports = mask.parse(`
 				import foo as baz3 from '/test/tmpl/a.mask';
 				baz3;
 			`);
-			var $import = tmpl.nodes[0];
-			eq_($import.tagName, 'import');
-			has_($import.dependency, {
+			eq_(imports.tagName, 'imports');
+
+			var node = imports.nodes[0];
+			has_(node, {
+				tagName: 'import',
 				path: '/test/tmpl/a.mask',
 				exports: [
 					{
@@ -30,22 +34,96 @@ UTest({
 			});
 		},
 		'generic path' () {
-			var tmpl = mask.parse(`
+			var imports = mask.parse(`
 				import foo3 from 'compo/bar';
 				baz3;
 			`);
-			var $import = tmpl.nodes[0];
-			eq_($import.tagName, 'import');
-			eq_($import.dependency.path, 'compo/bar')
-			has_($import.dependency.exports, [ { name: 'foo3' } ]);
+			eq_(imports.tagName, 'imports');
+			
+			var node = imports.nodes[0];
+			has_(node, {
+				tagName: 'import',
+				path: 'compo/bar',
+				exports: [{
+					name: 'foo3'
+				}]
+			});
 		},
 		'include' () {
-			var tmpl = mask.parse(`
+			var imports = mask.parse(`
 				import from 'compo/bar';
 			`);
-			var incl = tmpl;
-			eq_(incl.tagName, 'import');
-			eq_(incl.dependency.path, 'compo/bar')
+			eq_(imports.tagName, 'imports');
+			
+			var node = imports.nodes[0];
+			has_(node, {
+				tagName: 'import',
+				path: 'compo/bar'
+			});
+		},
+		'template with nodes' () {
+			var imports = mask.parse(`
+				import h4 as b_nest from 'nest-b';
+				section {
+					span > 'H4'
+				}
+			`);
+			
+			has_(imports.nodes[0], {
+				tagName: 'import',
+				path: 'nest-b',
+				exports: [{
+					name: 'h4',
+					alias: 'b_nest'
+				}]
+			});
+			has_(imports.nodes[1], {
+				tagName: 'section'
+			});
+		}
+	},
+	'serialize': {
+		'all as alias' () {
+			var tmpl = "import * as A from 'compo/bar';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
+		},
+		'embed' () {
+			var tmpl = "import from 'compo/bar';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
+		},
+		'export' () {
+			var tmpl = "import A from 'compo/bar';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
+		},
+		'export as' () {
+			var tmpl = "import A as B from 'compo/bar';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
+		},
+		'exports' () {
+			var tmpl = "import A, B from 'compo/bar';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
+		},
+		'exports many' () {
+			var tmpl = "import A as a, B, C as c from 'compo/bar.mask';";
+			var ast = mask.parse(tmpl);
+			var str = mask.stringify(ast);
+			
+			eq_(tmpl, str);
 		}
 	},
 	'render': {
@@ -91,6 +169,7 @@ UTest({
 					import from '/test/tmpl/modules/h4.mask';
 				`)
 				.done(assert.await(function(dom){
+					
 					$(dom)
 						.has_('h4')
 						.eq_('text', 'a');

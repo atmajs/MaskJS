@@ -1,5 +1,8 @@
-(function(){	
-	custom_Parsers['import'] = function(str, i, imax, parent){
+(function(){
+	var IMPORT = 'import',
+		IMPORTS = 'imports';
+	
+	custom_Parsers[IMPORT] = function(str, i, imax, parent){
 		var obj = {
 			exports: null,
 			alias: null,
@@ -15,7 +18,14 @@
 		}
 		Module.cfg('base', base);
 	};
-	
+	custom_Parsers_Transform[IMPORT] = function(current) {
+		if (current.tagName === IMPORTS) {
+			return null;
+		}
+		var imports = new ImportsNode('imports', current);
+		current.appendChild(imports);
+		return imports;
+	};
 	
 	var lex_ = ObjectLexer(
 		[ 'from "$path"'
@@ -24,77 +34,98 @@
 		]
 	);
 	
-	var ImportNode = class_create({
-		type: Dom.COMPONENT,
-		tagName: 'import',
-		constructor: function(parent, data){
-			this.dependency = Module.createDependency(data);
-			this.parent = parent;
-		},
-		controller: function(node, model, ctx, el, ctr){
-			var siblings = node.parent.nodes;
-			var nodes = [],
-				imports = [];
-			var imax = siblings.length,
-				i = 0, x;
-			for (; i < imax; i++) {
-				x = siblings[i];
-				
-				siblings[i] = null;
-				if (x.tagName === 'import') {
-					imports.push(x.dependency);
-					continue;
-				}
-				nodes.push(x);
-			}
-			return new ImportsHandler(imports, nodes, ctr);
+	var ImportsNode = class_create(Dom.Node, {
+		stringify: function (opts) {
+			return mask_stringify(this.nodes, opts)
 		}
 	});
-	var ImportsHandler = custom_Tags['imports'] = class_create({
-		compoName: 'imports',
-		constructor: function(deps, nodes, owner){
-			this.deps = deps;
-			this.parent = owner;
-			this.base = Module.resolveLocation(owner);
-			this.nodes = nodes;
+	
+	var ImportNode = class_create({
+		type: Dom.COMPONENT,
+		tagName: IMPORT,
+		
+		path: null,
+		exports: null,
+		alias: null,
+		
+		constructor: function(parent, data){
+			this.path = data.path;
+			this.alias = data.alias;
+			this.exports = data.exports;
+			
+			this.parent = parent;
 		},
-		load: function(cb){
-			var self = this,
-				imax = this.deps.length,
-				await = imax,
-				i = imax;
-			while( --i > -1 ) {
-				this.deps[i].load(this, done);
+		stringify: function(){
+			var from = " from '" + this.path + "';";
+			if (this.alias != null) {
+				return IMPORT + " * as " + this.alias + from;
 			}
-			function done(err) {
-				if (--await !== 0)
-					return;
-				cb();
-			}
-		},
-		renderStart: function(model, ctx, container, ctr, elements){
-			var resume = Compo.pause(this, ctx);
-			var self = this;
-			this.load(function(){
-				var nodes = self.nodes || [],
-					deps = self.deps;
-				var imax = deps.length,
-					i = -1;
-				while( ++i < imax ) {
-					var x = deps[i].getEmbeddableNodes();
-					if (x != null) {
-						if (is_Array(x) === false) 
-							x = [ x ];
-						
-						nodes = x.concat(nodes);
+			if (this.exports != null) {
+				var arr = this.exports,
+					str = '',
+					imax = arr.length,
+					i = -1, x; 
+				while( ++i < imax ){
+					x = arr[i];
+					str += x.name;
+					if (x.alias) {
+						str += ' as ' + x.alias;
+					}
+					if (i !== imax - 1) {
+						str +=', ';
 					}
 				}
-				self.nodes = nodes;
-				resume();
-			})
+				return IMPORT + ' ' + str + from;
+			}
+			return IMPORT + from;
+		}
+	});
+	
+	custom_Tags[IMPORT] = class_create({
+		constructor: function(node) {
+			this.dependency = Module.createDependency(node);
 		},
-		getHandler: function(name) {
-			//logger.log('Get'.red, name.bold.cyan);
+		renderStart: function(model, ctx){
+			if (this.dependency.isEmbeddable() === false) 
+				return;
+			
+			var resume = Compo.pause(this, ctx);
+			this.dependency.load(this, function(){
+				this.nodes = this.dependency.getEmbeddableNodes();
+				resume();
+			}.bind(this));
+		}
+	});
+	
+	custom_Tags[IMPORTS] = class_create({
+		imports: null,
+		load: function(cb){
+			var arr = this.imports,
+				imax = arr.length,
+				await = imax,
+				i = -1;
+			
+			function done() {
+				if (--await === 0) cb();
+			}
+			
+			while( ++i < imax ){
+				arr[ i ].load(this, done);
+			}
+		},
+		renderStart: function(model, ctx){
+			var resume = Compo.pause(this, ctx),
+				nodes = this.nodes,
+				imax = nodes.length,
+				i = -1;
+			
+			var arr = this.imports = [];
+			while( ++i < imax ){
+				if (nodes[i].tagName === IMPORT) {
+					arr.push(Module.createDependency(nodes[i]));
+				}
+			}
+			this.load(resume);
 		}
 	});
 	

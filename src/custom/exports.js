@@ -6,6 +6,7 @@ var custom_Utils,
 	custom_Tags_defs,
 	
 	custom_Parsers,
+	custom_Parsers_Transform,
 	custom_Optimizers,
 	
 	customUtil_get,
@@ -79,6 +80,7 @@ var custom_Utils,
 	custom_Tags 		= obj_create(_HtmlTags);
 	custom_Tags_global 	= obj_create(_HtmlTags);
 	custom_Parsers 		= obj_create(_HtmlTags);
+	custom_Parsers_Transform = obj_create(_HtmlTags);
 	
 	// use on server to define reserved tags and its meta info
 	custom_Tags_defs = {};
