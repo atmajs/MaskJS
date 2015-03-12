@@ -44,10 +44,13 @@ var Module;
 		
 	};
 	
-	custom_Tags['module'] = function(node, model, ctx, container, ctr) {
-		var path = path_resolveUrl(node.attr.path, trav_getLocation(ctr));
-		Module.registerModule(path, node.nodes);
-	};
+	custom_Tags['module'] = class_create({
+		constructor: function(node, model, ctx, container, ctr) {
+			var path = path_resolveUrl(node.attr.path, trav_getLocation(ctr));
+			Module.registerModule(path, node.nodes);
+		},
+		render: fn_doNothing
+	});
 	
 	var Dependency = class_create({
 		constructor: function(data){

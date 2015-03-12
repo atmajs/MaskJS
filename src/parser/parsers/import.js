@@ -101,34 +101,58 @@
 	});
 	
 	custom_Tags[IMPORTS] = class_create({
-		imports: null,
-		load: function(cb){
-			var arr = this.imports,
+		imports_: null,
+		load_: function(ctx, cb){
+			var modules = ctx._modules,
+				arr = this.imports_,
 				imax = arr.length,
 				await = imax,
-				i = -1;
+				i = -1, x;
 			
 			function done() {
 				if (--await === 0) cb();
 			}
-			
 			while( ++i < imax ){
-				arr[ i ].load(this, done);
+				x = arr[i];
+				x.load(this, done);
+				if (modules != null) {
+					modules.add(x.module);
+				}
 			}
 		},
-		renderStart: function(model, ctx){
+		start_: function(model, ctx){
 			var resume = Compo.pause(this, ctx),
 				nodes = this.nodes,
 				imax = nodes.length,
-				i = -1;
-			
-			var arr = this.imports = [];
+				i = -1
+				;
+			var arr = this.imports_ = [];
 			while( ++i < imax ){
 				if (nodes[i].tagName === IMPORT) {
 					arr.push(Module.createDependency(nodes[i]));
 				}
 			}
-			this.load(resume);
+			this.load_(ctx, resume);
+		},
+		meta: {
+			serializeNodes: true
+		},
+		renderStart: function(model, ctx){
+			this.start_(model, ctx);
+		},
+		renderStartClient: function(model, ctx){
+			this.start_(model, ctx);
+		},
+		serializeNodes: function(){
+			var arr = [],
+				i = this.nodes.length, x;
+			while( --i > -1 ){
+				x = this.nodes[i];
+				if (x.tagName === IMPORT) {
+					arr.push(x);
+				}
+			}
+			return mask_stringify(arr);
 		}
 	});
 	

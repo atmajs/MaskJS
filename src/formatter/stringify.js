@@ -193,13 +193,13 @@ var mask_stringify;
 	function wrapString(str) {
 		
 		if (str.indexOf("'") === -1) 
-			return "'" + str.trim() + "'";
+			return "'" + str + "'";
 		
 		if (str.indexOf('"') === -1) 
-			return '"' + str.trim() + '"';
+			return '"' + str + '"';
 		
 
-		return '"' + str.replace(/"/g, '\\"').trim() + '"';
+		return '"' + str.replace(/"/g, '\\"') + '"';
 	}
 
 
