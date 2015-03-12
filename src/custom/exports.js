@@ -101,7 +101,7 @@ var custom_Utils,
 			i = _arr.length;
 			while(--i > -1) {
 				defineProps(_arr[i]);
-				toFastProps(_arr[i]);
+				obj_toFastProps(_arr[i]);
 			}
 		};
 		var _arr = [
@@ -122,13 +122,6 @@ var custom_Utils,
 					obj[key] = null;
 				}
 			}
-		}
-		function toFastProps(obj) {
-			/*jshint -W027*/
-			function F() {}
-			F.prototype = obj;
-			return new F();
-			eval(obj);
 		}
 	}());
 	

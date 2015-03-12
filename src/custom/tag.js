@@ -7,7 +7,7 @@
 		custom_Tags[name] = Handler;
 		
 		//> make fast properties
-		custom_Tags = obj_create(custom_Tags);
+		obj_toFastProps(custom_Tags);
 	};
 	
 	customTag_registerResolver = function(name){
