@@ -110,20 +110,18 @@ var builder_componentID = 0,
 	
 		var nodes = node.nodes;
 		if (nodes != null) {
-			if (children != null && elements == null)
+			if (children != null && elements == null) {
 				elements = children;
-			
-			var isarray = nodes instanceof Array,
-				length = isarray === true ? nodes.length : 1,
-				i = 0,
-				childNode = null;
-	
-			for (; i < length; i++) {
-				childNode = isarray === true
-					? nodes[i]
-					: nodes;
+			}
+			if (is_ArrayLike(nodes)) {
+				var imax = nodes.length,
+					i = 0;
+				for(; i < imax; i++) {
+					builder_build(nodes[i], model, ctx, container, ctr, elements);
+				}
+			} else {
 				
-				builder_build(childNode, model, ctx, container, ctr, elements);
+				builder_build(nodes, model, ctx, container, ctr, elements);
 			}
 		}
 	
