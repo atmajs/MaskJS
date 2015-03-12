@@ -14,7 +14,9 @@ var custom_Utils,
 	customUtil_register,
 	
 	customTag_register,
-	customTag_registerResolver
+	customTag_registerResolver,
+	
+	custom_optimize
 	;
 	
 (function(){
@@ -76,11 +78,11 @@ var custom_Utils,
 	};
 	custom_Optimizers   = {};
 	custom_Statements 	= {};
-	custom_Attributes 	= obj_create(_HtmlAttr);
-	custom_Tags 		= obj_create(_HtmlTags);
-	custom_Tags_global 	= obj_create(_HtmlTags);
-	custom_Parsers 		= obj_create(_HtmlTags);
-	custom_Parsers_Transform = obj_create(_HtmlTags);
+	custom_Attributes 	= obj_extend({}, _HtmlAttr);
+	custom_Tags 		= obj_extend({}, _HtmlTags);
+	custom_Tags_global 	= obj_extend({}, _HtmlTags);
+	custom_Parsers 		= obj_extend({}, _HtmlTags);
+	custom_Parsers_Transform = obj_extend({}, _HtmlTags);
 	
 	// use on server to define reserved tags and its meta info
 	custom_Tags_defs = {};
@@ -88,4 +90,46 @@ var custom_Utils,
 	
 	// import ./tag.js
 	// import ./util.js
+	
+	
+	(function(){
+		var _props = {};
+		
+		custom_optimize = function(){
+			
+			readProps(custom_Statements);
+			readProps(custom_Tags);
+			readProps(custom_Parsers);
+			
+			defineProps(custom_Statements);
+			defineProps(custom_Tags);
+			defineProps(custom_Parsers);
+			
+			toFastProps(custom_Statements);
+			toFastProps(custom_Tags);
+			toFastProps(custom_Parsers);
+		};
+		
+		function readProps(obj) {
+			for (var key in obj) {
+				_props[key] = null;
+			}
+		}
+		function defineProps(obj) {
+			for (var key in _props) {
+				if (obj[key] === void 0) {
+					obj[key] = null;
+				}
+			}
+		}
+		
+		function toFastProps(obj) {
+			/*jshint -W027*/
+			function F() {}
+			F.prototype = obj;
+			return new F();
+			eval(obj);
+		}
+	}());
+	
 }());

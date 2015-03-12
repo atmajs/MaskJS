@@ -4,8 +4,7 @@
 	Mask.version = /*# import VERSION */;
 	
 	//> make fast properties
-	custom_Tags       = obj_create(custom_Tags);
-	custom_Attributes = obj_create(custom_Attributes);
+	custom_optimize();
 	
 	return (exports.mask = Mask);
 }));
