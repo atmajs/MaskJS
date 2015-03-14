@@ -24,18 +24,26 @@
 	var Resolver;
 	(function(){
 		Resolver = function (node, model, ctx, container, ctr) {
-			var name = node.tagName, x;
+			var name = node.tagName,
+				Mix = null;
 			while(ctr != null) {
 				if (is_Function(ctr.getHandler)) {
-					x = ctr.getHandler(name);
-					if (x != null) 
-						return x;
+					Mix = ctr.getHandler(name);
+					if (Mix != null) {
+						break;
+					}
 				}
 				ctr = ctr.parent;
 			}
-			x = custom_Tags_global[name];
-			if (x != null) 
-				return x;
+			if (Mix == null) {
+				Mix = custom_Tags_global[name];
+			}
+			if (Mix != null) {
+				if (is_Function(Mix) === false)	{
+					return obj_create(Mix);
+				}
+				return new Mix(node, model, ctx, container, ctr);
+			}
 			
 			log_error('Component not found:', name);
 			return null;
