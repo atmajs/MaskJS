@@ -103,6 +103,7 @@ var custom_Utils,
 				defineProps(_arr[i]);
 				obj_toFastProps(_arr[i]);
 			}
+			obj_toFastProps(custom_Attributes);
 		};
 		var _arr = [
 			custom_Statements,

@@ -93,7 +93,7 @@
 				return;
 			
 			var resume = Compo.pause(this, ctx);
-			this.dependency.load(this, function(){
+			this.dependency.load(ctx, this, function(){
 				this.nodes = this.dependency.getEmbeddableNodes();
 				resume();
 			}.bind(this));
@@ -114,7 +114,7 @@
 			}
 			while( ++i < imax ){
 				x = arr[i];
-				x.load(this, done);
+				x.load(ctx, this, done);
 				if (modules != null) {
 					modules.add(x.module);
 				}

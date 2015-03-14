@@ -1,0 +1,22 @@
+include
+	.inject(
+		'/src/scope-vars.js',
+		'/src/util/path.js'
+	)
+	.done(function(){
+		
+		UTest({
+			'toRelative' () {
+				[
+					[ '/foo/bar.js', '/foo', 'bar.js' ],
+					[ 'file://D:/foo/bar.js', 'file://D:\\foo\\bar.js', 'bar.js' ],
+					[ 'file://D:/foo/bar.js', 'file://D:/', 'foo/bar.js' ]
+				].forEach(row => {
+					var [ path, anchor, expect ] = row;
+					
+					eq_(path_toRelative(path, anchor), expect);
+				});
+			}
+		})
+		
+	})

@@ -1,26 +1,25 @@
 var Module;
 (function(){
 	Module = {
-		createModule: function(path, ctr) {
+		createModule: function(path, ctx, ctr) {
 			var ext = path_getExtension(path);
 			if (ext === '') {
 				ext = 'mask';
 				path += '.mask';
 			}
 			if (path_isRelative(path)) {
-				path = path_combine(trav_getLocation(ctr), path);
+				path = path_combine(trav_getLocation(ctx, ctr), path);
 			}
-			
 			path = path_normalize(path);
 			if (_cache[path] != null) 
 				return _cache[path];
 			
 			return (_cache[path] = new (ctor_get(ext))(path));
 		},
-		registerModule: function(path, nodes) {
+		registerModule: function(nodes, path, ctx, ctr) {
 			var module;
 			if (Module.isMask(path)) {
-				module = new _MaskModule(path);
+				module = Module.createModule(path, ctx, ctr)
 				
 				module.state = 1;
 				module._handle(nodes, function(){
@@ -46,8 +45,9 @@ var Module;
 	
 	custom_Tags['module'] = class_create({
 		constructor: function(node, model, ctx, container, ctr) {
-			var path = path_resolveUrl(node.attr.path, trav_getLocation(ctr));
-			Module.registerModule(path, node.nodes);
+			var path = path_resolveUrl(node.attr.path, trav_getLocation(ctx, ctr));
+			debugger
+			Module.registerModule(node.nodes, path, ctx, ctr);
 		},
 		render: fn_doNothing
 	});
@@ -82,15 +82,15 @@ var Module;
 				}
 			}
 		},
-		load: function(owner, cb){
+		load: function(ctx, ctr, cb){
 			var self = this;
-			this.module = Module.createModule(this.path, owner);
+			this.module = Module.createModule(this.path, ctx, ctr);
 			this.module
 				.load()
 				.fail(cb)
 				.done(function(module){
 					self.eachExport(function(name, alias){
-						self.module.register(owner, name, alias);
+						self.module.register(ctr, name, alias);
 					});
 					cb(null, self);
 				});
@@ -209,7 +209,7 @@ var Module;
 				
 				if ('module' === name) {
 					var path = path_resolveUrl(x.attr.path, this.location);
-					Module.registerModule(path, x.nodes);
+					Module.registerModule(x.nodes, path);
 					continue;
 				}
 				
@@ -262,13 +262,12 @@ var Module;
 		register: function(ctr, name, alias){
 			var self = this;
 			var compoName = alias || name;
-			var compo = {
+			var compo = class_create({
 				resource: {
 					location: this.location
 				},
-				getHandler: this.getHandler.bind(this),
 				nodes: this.get(name, null, ctr)
-			};
+			});
 			ctr.getHandler = mask_getHandlerDelegate(
 				compoName
 				, compo
@@ -320,7 +319,8 @@ var Module;
 		
 		return _ScriptModule;
 	}
-	function trav_getLocation(ctr) {
+	
+	function trav_getLocation(ctx, ctr) {
 		while(ctr != null) {
 			if (ctr.location) {
 				return ctr.location;
@@ -330,8 +330,25 @@ var Module;
 			}
 			ctr = ctr.parent;
 		}
+		var path = null;
+		if (ctx != null) {
+			if (ctx.filename != null) {
+				path = path_getDir(path_normalize(ctx.filename));
+			}
+			if (ctx.dirname != null) {
+				path = path_normalize(ctx.dirname + '/');
+			}
+		}
+		if (path != null) {
+			if (path_isRelative(path) === false) {
+				return path;
+			}
+			return path_combine(_base || path_resolveCurrent(), path);
+		}
 		return _base || path_resolveCurrent();
 	}
+	
+	
 	function mask_getHandlerDelegate(compoName, compo, next) {
 		return function(name) {
 			if (name === compoName) 

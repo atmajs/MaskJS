@@ -21,30 +21,39 @@ var build_node;
 			container.appendChild(el);
 		}
 		
-		var key,
-			value;
-		for (key in attr) {
+		var key, mix, val, fn;
+		for(key in attr) {
 			/* if !SAFE
 			if (_Object_hasOwnProp.call(attr, key) === false) {
 				continue;
 			}
 			*/
-		
-			if (is_Function(attr[key])) {
-				value = attr[key]('attr', model, ctx, el, ctr, key);
-				if (value instanceof Array) {
-					value = value.join('');
+			mix = attr[key];
+			if (is_Function(mix)) {
+				var result = mix('attr', model, ctx, el, ctr, key);
+				if (result == null) {
+					continue;
+				}
+				if (typeof result === 'string') {
+					val = result;
+				} else if (is_ArrayLike(result)){
+					if (result.length === 0) {
+						continue;
+					}
+					val = result.join('');
+				} else {
+					val = result;
 				}
 			} else {
-				value = attr[key];
+				val = mix;
 			}
-		
-			// null or empty string will not be handled
-			if (value) {
-				if (is_Function(custom_Attributes[key])) {
-					custom_Attributes[key](node, value, model, ctx, el, ctr, container);
+			
+			if (val != null && val !== '') {
+				fn = custom_Attributes[key];
+				if (fn != null) {
+					fn(node, val, model, ctx, el, ctr, container);
 				} else {
-					el.setAttribute(key, value);
+					el.setAttribute(key, val);
 				}
 			}
 		}

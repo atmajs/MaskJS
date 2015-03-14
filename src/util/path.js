@@ -3,11 +3,10 @@ var path_getDir,
 	path_getExtension,
 	path_resolveCurrent,
 	path_normalize,
-	path_win32Normalize,
 	path_resolveUrl,
 	path_combine,
 	path_isRelative,
-	path_toLocalFile
+	path_toRelative
 	;
 (function(){
 	var isWeb = true;
@@ -30,54 +29,41 @@ var path_getDir,
 	path_getExtension = function(path) {
 		var query = path.indexOf('?');
 		if (query !== -1) {
-			return path_getExtension(path.substring(0, query));
+			path = path.substring(0, query);
 		}
-		var i = path.lastIndexOf('.');
-		return i === -1
-			? ''
-			: path.substring(i + 1);
+		var match = rgx_EXT.exec(path);
+		return match == null ? '' : match[1];
 	};
 	path_resolveCurrent = typeof window !== 'undefined' && window.location
 		? path_resolveCurrent_Browser
 		: path_resolveCurrent_Node
 		;
 	path_normalize = function(path) {
-		return path
+		var path_ = path
 			.replace(/\\/g, '/')
 			// remove double slashes, but not near protocol
 			.replace(/([^:\/])\/{2,}/g, '$1/')
-			.replace(/\.\//g, '')
+			// './xx' to relative string
+			.replace(/^\.\//, '')
+			// join 'xx/./xx'
+			.replace(/\/\.\//g, '')
 			;
+		return path_collapse(path_);
 	};
-	path_win32Normalize = function(path){
-		path = path_normalize(path);
-		if (path.substring(0, 5) === 'file:')
-			return path;
-		
-		return 'file:///' + path;
-	};
-	path_resolveUrl = function(url, base) {
+	path_resolveUrl = function(path, base) {
+		var url = path_normalize(path);
+		if (path_isRelative(url)) {
+			return path_normalize(path_combine(base || path_resolveCurrent(), url));
+		}
 		if (rgx_PROTOCOL.test(url)) 
-			return path_collapse(url);
+			return url;
 		
-		if (url.substring(0, 2) === './') 
-			url = url.substring(2);
-		
-		
-		if (url[0] === '/' && __cfg.path) {
-			url = __cfg.path + url.substring(1);
-			if (rgx_PROTOCOL.test(url)) 
-				return path_collapse(url);
-		}
-		if (url[0] === '/') {
-			if (isWeb === false || __cfg.lockedToFolder === true) {
-				url = url.substring(1);
+		if (url.charCodeAt(0) === 47 /*/*/) {
+			if (__cfg.base) {
+				return path_combine(__cfg.base, url);
 			}
-		} else if (base != null) {
-			url = base + url;
 		}
-	
-		return path_collapse(url);
+		return url;
 	};
 	path_isRelative = function(path) {
 		var c = path.charCodeAt(0);
@@ -91,6 +77,19 @@ var path_getDir,
 				return rgx_PROTOCOL.test(path) === false;
 		}
 		return true;
+	};
+	path_toRelative = function(path, anchor, base){
+		var path_     = path_resolveUrl(path_normalize(path), base),
+			absolute_ = path_resolveUrl(path_normalize(anchor), base);
+		
+		if (path_getExtension(absolute_) !== '') {
+			absolute_ = path_getDir(absolute_);
+		}
+		absolute_ = path_combine(absolute_, '/');
+		if (path_.toUpperCase().indexOf(absolute_.toUpperCase()) === 0) {
+			return path_.substring(absolute_.length);
+		}
+		return path;
 	};
 	
 	path_combine = function() {
@@ -117,33 +116,24 @@ var path_getDir,
 		return out;
 	};
 	
-	path_toLocalFile = function(path){
-		if (path_isRelative(path)) {
-			return path;
-		}
-		if (path.indexOf('file://') === 0) {
-			path = path.replace('file://', '');
-		}
-		var c = '/';
-		if (rgx_win32Drive.test(path)) {
-			c = '';
-		}
-		return path.replace(/^\/+/, c);
-	};
-	
 	var rgx_PROTOCOL = /^(file|https?):/i,
 		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//,
 		rgx_FILENAME = /\/[^\/]+\.\w+$/,
+		rgx_EXT      = /\.(\w+)$/,
 		rgx_win32Drive = /(^\/?\w{1}:)(\/|$)/
 		;
-	
+
+	function path_win32Normalize (path){
+		path = path_normalize(path);
+		if (path.substring(0, 5) === 'file:')
+			return path;
+		
+		return 'file:///' + path;
+	}
 	function path_resolveCurrent_Browser() {
 		return path_sliceFilename(window.location.pathname);
 	}
 	function path_resolveCurrent_Node() {
-		if (module.parent != null) {
-			return path_getDir(path_win32Normalize(module.parent.filename));
-		}
 		return path_win32Normalize(process.cwd());
 	}
 	function path_collapse(url) {

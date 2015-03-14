@@ -31,15 +31,15 @@ var Mask;
 					template = __templates[mix] = parser_parse(mix);
 				}
 			}
-			if (ctx == null) 
-				ctx = new builder_Ctx;
+			if (ctx == null || ctx.constructor !== builder_Ctx)
+				ctx = new builder_Ctx(ctx);
 				
 			return builder_build(template, model, ctx, container, controller);
 		},
 		
 		renderAsync: function(template, model, ctx, container, ctr) {
-			if (ctx == null) 
-				ctx = new builder_Ctx;
+			if (ctx == null || ctx.constructor !== builder_Ctx)
+				ctx = new builder_Ctx(ctx);
 			
 			var dom = mask.render(template, model, ctx, container, ctr),
 				dfr = new class_Dfr;
