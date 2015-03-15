@@ -85,26 +85,26 @@
 		meta: {
 			serializeNodes: true
 		},
-		constructor: function(node) {
-			this.dependency = Module.createDependency(node);
+		constructor: function(node, model, ctx, el, ctr) {
+			this.dependency = Module.createDependency(node, ctx, this);
 		},
 		renderStart: function(model, ctx){
 			if (this.dependency.isEmbeddable() === false) 
 				return;
 			
 			var resume = Compo.pause(this, ctx);
-			this.dependency.load(ctx, this, function(){
-				this.nodes = this.dependency.getEmbeddableNodes();
+			var self   = this;
+			this.dependency.loadImport(function(){
+				self.nodes = self.dependency.getEmbeddableNodes();
 				resume();
-			}.bind(this));
+			});
 		}
 	});
 	
 	custom_Tags[IMPORTS] = class_create({
 		imports_: null,
 		load_: function(ctx, cb){
-			var modules = ctx._modules,
-				arr = this.imports_,
+			var arr = this.imports_,
 				imax = arr.length,
 				await = imax,
 				i = -1, x;
@@ -114,10 +114,7 @@
 			}
 			while( ++i < imax ){
 				x = arr[i];
-				x.load(ctx, this, done);
-				if (modules != null) {
-					modules.add(x.module);
-				}
+				x.loadImport(done);
 			}
 		},
 		start_: function(model, ctx){
@@ -129,7 +126,7 @@
 			var arr = this.imports_ = [];
 			while( ++i < imax ){
 				if (nodes[i].tagName === IMPORT) {
-					arr.push(Module.createDependency(nodes[i]));
+					arr.push(Module.createDependency(nodes[i], ctx, this));
 				}
 			}
 			this.load_(ctx, resume);

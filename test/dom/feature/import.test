@@ -80,6 +80,17 @@ UTest({
 			has_(imports.nodes[1], {
 				tagName: 'section'
 			});
+		},
+		'modules with nested imports' () {
+			var fragment = mask.parse(`
+				module path='a.mask' {
+					import from 'b.mask';
+				}
+				module path='b.mask' {
+					import from 'c'
+				}
+			`);
+			eq_(fragment.type, mask.Dom.FRAGMENT);
 		}
 	},
 	'serialize': {

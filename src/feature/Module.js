@@ -1,20 +1,23 @@
 var Module;
 (function(){
 	Module = {
-		createModule: function(path, ctx, ctr) {
+		createModule: function(path, ctx, ctr, parent) {
 			var ext = path_getExtension(path);
 			if (ext === '') {
 				ext = 'mask';
 				path += '.mask';
 			}
 			if (path_isRelative(path)) {
-				path = path_combine(trav_getLocation(ctx, ctr), path);
+				path = path_combine(trav_getLocation(ctx, ctr, parent), path);
 			}
 			path = path_normalize(path);
-			if (_cache[path] != null) 
-				return _cache[path];
 			
-			return (_cache[path] = new (ctor_get(ext))(path));
+			var module = _cache[path];
+			if (module == null) {
+				module = new (ctor_get(ext))(path, ctx, ctr, parent);
+				_cache[path] = module;
+			}
+			return module;
 		},
 		registerModule: function(nodes, path, ctx, ctr) {
 			var module;
@@ -22,15 +25,16 @@ var Module;
 				module = Module.createModule(path, ctx, ctr)
 				
 				module.state = 1;
-				module._handle(nodes, function(){
+				module._preproc(nodes, function(){
+					module.state = 4;
 					module.resolve();
 				});
 			}
 			
 			_cache[path] = module;
 		},
-		createDependency: function(data){
-			return new Dependency(data);
+		createDependency: function(data, ctx, ctr, module){
+			return  new Dependency(data, ctx, ctr, module);
 		},
 		isMask: function(path){
 			var ext = path_getExtension(path);
@@ -46,17 +50,20 @@ var Module;
 	custom_Tags['module'] = class_create({
 		constructor: function(node, model, ctx, container, ctr) {
 			var path = path_resolveUrl(node.attr.path, trav_getLocation(ctx, ctr));
-			debugger
 			Module.registerModule(node.nodes, path, ctx, ctr);
 		},
 		render: fn_doNothing
 	});
 	
 	var Dependency = class_create({
-		constructor: function(data){
+		constructor: function(data, ctx, ctr, module){
+			this.getExport = this.getExport.bind(this);
+			this.compos = {};
+			
 			this.path = data.path;
 			this.exports = data.exports;
 			this.alias = data.alias;
+			
 			if (Module.isMask(this.path) === true) {
 				this.eachExport(function(name, alias){
 					var compoName = alias || name;
@@ -66,11 +73,18 @@ var Module;
 					customTag_registerResolver(compoName);
 				});
 			}
+			
+			this.ctx = ctx;
+			this.ctr = ctr;
+			this.module = Module.createModule(this.path, ctx, ctr, module);
+			if (ctx._modules) {
+				ctx._modules.add(this.module);
+			}
 		},
 		eachExport: function(fn){
 			var alias = this.alias;
 			if (alias != null) {
-				fn('*', alias);
+				fn.call(this, '*', alias);
 			}
 			var exports = this.exports;
 			if (exports != null) {
@@ -78,22 +92,62 @@ var Module;
 					i = -1, x;
 				while(++i < imax) {
 					x = exports[i];
-					fn(x.name, x.alias);
+					fn.call(this, x.name, x.alias);
 				}
 			}
 		},
-		load: function(ctx, ctr, cb){
+		hasExport: function(name) {
+			if (name === '*') {
+				return true;
+			}
+			var exports = this.exports;
+			if (exports != null) {
+				var imax = exports.length,
+					i = -1, x;
+				while(++i < imax) {
+					x = exports[i];
+					if (name === (x.alias || x.name)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		getExport: function(name){
+			return this.compos[name];
+		},
+		loadImport: function(cb){
 			var self = this;
-			this.module = Module.createModule(this.path, ctx, ctr);
-			this.module
-				.load()
+			this
+				.module
+				.loadModule()
 				.fail(cb)
 				.done(function(module){
 					self.eachExport(function(name, alias){
-						self.module.register(ctr, name, alias);
+						self.module.register(self.ctr, name, alias);
 					});
+					
 					cb(null, self);
 				});
+		},
+		__defineComponents: function(){
+			var ctr = this.ctr;
+			this.eachExport(function(name, alias){
+				var compoName = alias || name;
+				var compo = class_create({
+					resource: {
+						location: this.module.location
+					},
+					nodes: this.module.get(name, null, ctr)
+				});
+				this.compos[compoName] = compo;
+			});
+		},
+		__defineResolver: function(){
+			var ctr = this.ctr;
+			ctr.getHandler = fn_wrapHandlerGetter(
+				this.getExport, ctr.getHandler
+			);
 		},
 		getEmbeddableNodes: function(){
 			var module = this.module;
@@ -118,11 +172,14 @@ var Module;
 		location: null,
 		exports: null,
 		state: 0,
-		constructor: function(path) {
+		constructor: function(path, ctx, ctr, parent) {
 			this.path = path;
 			this.location = path_getDir(path);
+			this.parent = parent;
+			this.ctx = ctx;
+			this.ctr = ctr;
 		},
-		load: function(){
+		loadModule: function(){
 			if (this.state === 0) {
 				this.state = 1;
 				
@@ -130,10 +187,12 @@ var Module;
 				this
 					._load(this.path)
 					.fail(function(err){
+						self.state = 4;
 						self.reject(self.error = err);
 					})
 					.done(function(mix){
 						self._preproc(mix, function(exports){
+							self.state = 4;
 							self.exports = exports;
 							self.resolve(self);
 						});
@@ -175,7 +234,15 @@ var Module;
 			var fn = __cfg.getFile || file_get;
 			return fn(path);
 		},
-		_handle: function(ast, next){
+		_preproc: function(mix, next) {
+			var ast = typeof mix === 'string'
+				? parser_parse(mix)
+				: mix
+				;
+			
+			if (ast.tagName === 'imports') {
+				ast = ast.nodes;
+			}
 			this.imports = [];
 			this.defines = {};
 			this.exports = [];
@@ -203,7 +270,8 @@ var Module;
 					continue;
 				}
 				if ('import' === name) {
-					imports.push(x.dependency);
+					var dependency = new Dependency(x, this.ctx, this.ctr, this);
+					imports.push(dependency);
 					continue;
 				}
 				
@@ -217,10 +285,14 @@ var Module;
 			}
 			imax = imports.length;
 			i = -1;
+			
+			var self  = this;
 			var count = imports.length;
 			var await = function(){
 				if (--count > 0) 
 					return;
+				
+				self.bindImportsToDefines();
 				next(nodes);
 			};
 			
@@ -230,13 +302,8 @@ var Module;
 			}
 			
 			while( ++i < imax ) {
-				this.imports[i].load(this, await);
+				this.imports[i].loadImport(await);
 			}
-		},
-		_preproc: function(str, next) {
-			this._handle(
-				parser_parse(str), next
-			);
 		},
 		_get: function(name, model, ctr){
 			var node = this.defines[name];
@@ -274,17 +341,29 @@ var Module;
 				, ctr.getHandler
 			);
 		},
-		//getHandler: function(name){
-		//	var imax = this.imports.length,
-		//		i = -1, x;
-		//	while (++i < imax) {
-		//		
-		//		x = this.imports[i].getHandler(name);
-		//		if (x != null) 
-		//			return x;
-		//	}
-		//	return null;
-		//},
+		bindImportsToDefines: function(){
+			var imports = this.imports,
+				defines = this.defines;
+			if (imports.length === 0 || defines.length === 0) {
+				return;
+			}
+			
+			var imax = imports.length,
+				i = -1,
+				define_, import_;
+			
+			for (var key in defines) {
+				define_ = defines[key];
+				i = -1;
+				while( ++i < imax ){
+					import_ = imports[i];
+					define_.prototype.getHandler = fn_wrapHandlerGetter(
+						import_.getExport, define_.prototype.getHandler
+					);
+				}
+			}
+			
+		},
 		type: 'mask',
 		nodes: null,
 		modules: null,
@@ -320,7 +399,11 @@ var Module;
 		return _ScriptModule;
 	}
 	
-	function trav_getLocation(ctx, ctr) {
+	function trav_getLocation(ctx, ctr, module) {
+		if (module != null) {
+			return module.location;
+		}
+		
 		while(ctr != null) {
 			if (ctr.location) {
 				return ctr.location;
@@ -357,6 +440,15 @@ var Module;
 				return next(name);
 			
 			return null;
+		};
+	}
+	function fn_wrapHandlerGetter(fn, next) {
+		if (next == null) {
+			return fn;
+		}
+		return function(name) {
+			var x = fn.call(this, name);
+			return x == null ? next.call(this, name) : x;
 		};
 	}
 }());
