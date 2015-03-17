@@ -153,6 +153,7 @@ var parser_parse,
 							if (transform != null) {
 								var x = transform(current, node);
 								if (x != null) {
+									// make the current node single, to exit this and the transformed node on close
 									current.__single = true;
 									current = x;
 								}

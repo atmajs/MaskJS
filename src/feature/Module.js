@@ -19,12 +19,19 @@ var Module;
 			}
 			return module;
 		},
-		registerModule: function(nodes, path, ctx, ctr) {
+		registerModule: function(mix, path, ctx, ctr) {
 			var module;
 			if (Module.isMask(path)) {
 				module = Module.createModule(path, ctx, ctr)
-				
 				module.state = 1;
+				
+				var nodes = mix;
+				if (is_ArrayLike(nodes)) {
+					if (nodes.length === 1) {
+						nodes = nodes[0];
+					}
+				}
+				
 				module._preproc(nodes, function(){
 					module.state = 4;
 					module.resolve();
@@ -49,7 +56,7 @@ var Module;
 	
 	custom_Tags['module'] = class_create({
 		constructor: function(node, model, ctx, container, ctr) {
-			var path = path_resolveUrl(node.attr.path, trav_getLocation(ctx, ctr));
+			var path  = path_resolveUrl(node.attr.path, trav_getLocation(ctx, ctr));
 			Module.registerModule(node.nodes, path, ctx, ctr);
 		},
 		render: fn_doNothing
@@ -124,7 +131,10 @@ var Module;
 				.fail(cb)
 				.done(function(module){
 					self.eachExport(function(name, alias){
-						self.module.register(self.ctr, name, alias);
+						var compo = self.module.register(self.ctr, name, alias);
+						if (compo != null) {
+							self.compos[alias || name] = compo;
+						}
 					});
 					
 					cb(null, self);
@@ -135,6 +145,7 @@ var Module;
 			this.eachExport(function(name, alias){
 				var compoName = alias || name;
 				var compo = class_create({
+					compoName: compoName,
 					resource: {
 						location: this.module.location
 					},
@@ -330,9 +341,11 @@ var Module;
 			var self = this;
 			var compoName = alias || name;
 			var compo = class_create({
+				compoName: compoName,
 				resource: {
 					location: this.location
 				},
+				getHandler: this.getHandler.bind(this),
 				nodes: this.get(name, null, ctr)
 			});
 			ctr.getHandler = mask_getHandlerDelegate(
@@ -340,29 +353,53 @@ var Module;
 				, compo
 				, ctr.getHandler
 			);
+			return compo;
 		},
 		bindImportsToDefines: function(){
-			var imports = this.imports,
-				defines = this.defines;
-			if (imports.length === 0 || defines.length === 0) {
-				return;
+			var getter = this.getHandler.bind(this),
+				defines = this.defines,
+				key, x;
+			for(key in defines) {
+				x= defines[key];
+				x.prototype.getHandler = fn_wrapHandlerGetter(
+					getter, x.prototype.getHandler
+				);
 			}
-			
-			var imax = imports.length,
-				i = -1,
-				define_, import_;
-			
-			for (var key in defines) {
-				define_ = defines[key];
-				i = -1;
-				while( ++i < imax ){
-					import_ = imports[i];
-					define_.prototype.getHandler = fn_wrapHandlerGetter(
-						import_.getExport, define_.prototype.getHandler
-					);
+		},
+		getHandler: function(name){
+			var Ctr = this.defines[name];
+			if (Ctr) {
+				return Ctr;
+			}
+			var imports = this.imports,
+				i = imports.length,
+				x;
+			while( --i > -1) {
+				x = imports[i];
+				Ctr = x.getExport(name);
+				if (Ctr != null ) {
+					return Ctr;
 				}
 			}
-			
+			return null;
+		},
+		imports_getHandler: null,
+		imports_getHandlerDlg: function(){
+			if (this.imports_getHandler != null) {
+				return this.imports_getHandler;
+			}
+			var imports = this.imports,
+				imax = imports.length,
+				i = -1,
+				fn,
+				x;
+			while( ++i < imax ){
+				x  = imports[i];
+				fn = fn_wrapHandlerGetter(
+					x.getExport, fn
+				);
+			}
+			return (this.imports_getHandler = fn);
 		},
 		type: 'mask',
 		nodes: null,
