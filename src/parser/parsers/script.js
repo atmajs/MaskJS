@@ -3,12 +3,17 @@
 		var start = i, attr, end, body, c;
 		while(i < imax) {
 			c = str.charCodeAt(i);
-			if (c === 123 || c === 59) {
-				//{;
+			if (c === 123 || c === 59 || c === 62) {
+				//{;>
 				break;
 			}
 			i++;
 		}
+		if (c === 62) {
+			// handle single as generic mask node
+			return [ new Dom.Node('script', parent), i, go_tag ];
+		}
+		
 		var hasBody = c === 123 /*{*/;
 		
 		attr = parser_parseAttr(str, start, i);
