@@ -17,6 +17,10 @@
 		var hasBody = c === 123 /*{*/;
 		
 		attr = parser_parseAttr(str, start, i);
+		for (var key in attr) {
+			attr[key] = ensureTemplateFunction(attr[key]);
+		}
+		
 		end = i;
 		if (hasBody) {
 			i++;
@@ -26,6 +30,7 @@
 		
 		var node = new ScriptNode('script', parent);
 		node.attr = attr;
+		
 		if (body != null) {
 			node.nodes = [ new Dom.TextNode(body, node) ];
 		}
