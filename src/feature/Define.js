@@ -20,9 +20,9 @@ var Define;
 				}
 			}
 		};
-		var imax = nodes.length,
+		var imax = nodes == null ? 0 : nodes.length,
 			i = 0, x, name;
-		for(; i<imax; i++) {
+		for(; i < imax; i++) {
 			x = nodes[i];
 			if (x == null) 
 				continue;
