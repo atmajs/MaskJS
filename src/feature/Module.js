@@ -85,7 +85,7 @@ var Module;
 			this.ctr = ctr;
 			this.module = Module.createModule(this.path, ctx, ctr, module);
 			if (ctx._modules) {
-				ctx._modules.add(this.module);
+				ctx._modules.add(this.module, module);
 			}
 		},
 		eachExport: function(fn){
@@ -139,26 +139,6 @@ var Module;
 					
 					cb(null, self);
 				});
-		},
-		__defineComponents: function(){
-			var ctr = this.ctr;
-			this.eachExport(function(name, alias){
-				var compoName = alias || name;
-				var compo = class_create({
-					compoName: compoName,
-					resource: {
-						location: this.module.location
-					},
-					nodes: this.module.get(name, null, ctr)
-				});
-				this.compos[compoName] = compo;
-			});
-		},
-		__defineResolver: function(){
-			var ctr = this.ctr;
-			ctr.getHandler = fn_wrapHandlerGetter(
-				this.getExport, ctr.getHandler
-			);
 		},
 		getEmbeddableNodes: function(){
 			var module = this.module;
@@ -254,21 +234,15 @@ var Module;
 			if (ast.tagName === 'imports') {
 				ast = ast.nodes;
 			}
-			this.imports = [];
-			this.defines = {};
-			this.exports = [];
-			this.nodes = ast;
+			var imports = this.imports = [];
+			var exports = this.exports = {};
+			var nodes   = this.nodes = _nodesToArray(ast);
+			var type    = nodes.type;
 			
-			var imports = this.imports,
-				nodes 	= this.exports,
-				defines = this.defines,
-				type = ast.type,
-				arr = ast;
-				
 			if (type === Dom.FRAGMENT) {
-				arr = ast.nodes;
+				nodes = nodes.nodes;
 			} else if (type != null) {
-				arr = [ ast ];
+				arr = [ nodes ];
 			}
 			
 			var imax = arr.length,
@@ -276,10 +250,6 @@ var Module;
 			while( ++i < imax ){
 				x = arr[i];
 				name = x.tagName;
-				if ('define' === name) {
-					defines[x.name] = Define.create(x);
-					continue;
-				}
 				if ('import' === name) {
 					var dependency = new Dependency(x, this.ctx, this.ctr, this);
 					imports.push(dependency);
@@ -303,6 +273,7 @@ var Module;
 				if (--count > 0) 
 					return;
 				
+				self.createDefines(arr);
 				self.bindImportsToDefines();
 				next(nodes);
 			};
@@ -364,6 +335,16 @@ var Module;
 				x.prototype.getHandler = fn_wrapHandlerGetter(
 					getter, x.prototype.getHandler
 				);
+			}
+		},
+		createDefines: function(nodes){
+			var defines = this.defines,
+				imax = nodes.length,
+				i = -1, x;
+			while ( ++i < imax ) {
+				x = nodes[i];
+				if (x.tagName === 'define') 
+					defines[x.name] = Define.create(x, null, this);
 			}
 		},
 		getHandler: function(name){

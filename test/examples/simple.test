@@ -3,7 +3,7 @@ UTest({
 		
 		return UTest
 			.server
-			.request('/examples/simple-run.html')
+			.request('/examples/simple.html')
 			.done(function(doc, win){
 				
 				$(doc.body)

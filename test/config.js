@@ -1,7 +1,7 @@
 module.exports = {
 	suites: {
 		
-		'mask.dom': {
+		'dom': {
 			exec: 'dom',
 			env: [
 				'lib/mask.js::mask',
@@ -23,13 +23,13 @@ module.exports = {
 			tests: 'test/dom/**.test'
 		},
 		 
-		'mask.node': {
+		'node': {
 			exec: 'node',
 			env: ['lib/mask.js::Mask'],
 			tests: 'test/node/**.test'
 		},
 		 
-		'mask.examples': {
+		'examples': {
 			exec: 'dom',
 			tests: 'test/examples/**.test'
 		}

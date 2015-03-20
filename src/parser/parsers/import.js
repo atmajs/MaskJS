@@ -150,7 +150,31 @@
 				}
 			}
 			return mask_stringify(arr);
-		}
+		},
+		
+		getHandler: function(name){
+			var arr = this.imports_,
+				imax = arr.length,
+				i = -1, x;
+			while ( ++i < imax ){
+				x = arr[i].getHandler(name);
+				if (x != null) {
+					return x;
+				}
+			}
+			return null;
+		},
+		getHandlers: function(){
+			var handlers = {};
+			var arr = this.imports_,
+				imax = arr.length,
+				i = -1, x;
+			while ( ++i < imax ){
+				x = arr[i].getHandlers();
+				obj_extend(handlers, x);
+			}
+			return handlers;
+		},
 	});
 	
 }());

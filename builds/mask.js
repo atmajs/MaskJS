@@ -23,7 +23,7 @@
 	// import feature/run
 	// import feature/merge
 	// import feature/optimize
-	// import feature/Module
+	// import feature/modules/
 	// import feature/Define
 	// import feature/TreeWalker
 	

@@ -81,7 +81,7 @@ UTest({
 				tagName: 'section'
 			});
 		},
-		'!modules with nested imports' () {
+		'modules with nested imports' () {
 			var fragment = mask.parse(`
 				module path='a.mask' {
 					import from 'b.mask';
@@ -141,7 +141,7 @@ UTest({
 		}
 	},
 	'render': {
-		'all' (done) {
+		'get all' (done) {
 			mask
 				.renderAsync(`
 					import * as foo1 from '/test/tmpl/modules/h4.mask';
@@ -152,7 +152,7 @@ UTest({
 					done();
 				}));
 		},
-		'selector' (done) {
+		'get mask node' (done) {
 			mask
 				.renderAsync(`
 					import header as foo2 from '/test/tmpl/modules/header_content.mask';
@@ -254,8 +254,7 @@ UTest({
 					Bar;
 				`)
 				.done(assert.await(function(dom) {
-					UTest
-						.domtest(dom, `
+					UTest.domtest(dom, `
 							filter('h4') > text Baz;
 						`)
 						.always(done);
