@@ -31,7 +31,7 @@ UTest({
 		TestRunner({
 			template: `
 				section.foo {
-					style scoped{
+					style scoped {
 						span {
 							line-height: 10px;
 						}
@@ -175,7 +175,9 @@ UTest({
 					}
 				}
 		`;
+		
 		var str = mask.stringify(mask.parse(tmpl), 4);
+		
 		eq_(tmpl.replace(/\s/g, ''), str.replace(/\s/g, ''));
 	}
 })
@@ -199,15 +201,15 @@ function TestRunner(test, additionalFn) {
 	if (count !== 0) {
 		var node = style.get(0);
 		is_(node.content, isInterpolated ? 'Function' : 'String');
+		
+		if (contains != null) {
+			contains.forEach(expect => has_(node.content, expect));
+		}
 	}
 	
-	if (contains != null) {
-		contains.forEach(expect => has_(node.content, expect));
-	}
 	
 	
 	var $root = $(mask.render(template, model)).appendTo('body');
-	
 	if (attributes) {
 		var $style = $root.find('style');
 		for(var key in attributes) {
