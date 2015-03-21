@@ -1,4 +1,5 @@
-var mask_stringify;
+var mask_stringify,
+	mask_stringifyAttr;
 (function() {
 
 	//settings (Number | Object) - Indention Number (0 - for minification)
@@ -22,8 +23,26 @@ var mask_stringify;
 
 		return run(input);
 	};
+	
+	mask_stringifyAttr = function(attr){
+		var str = '',
+			key, x, part;
+		for (key in attr) {
+			x = getString(attr[key]);
+			
+			if (str.length !== 0) {
+				str += ' ';
+			}
+			str += key;
+			
+			if (x === key) {
+				str += "=" + wrapString(x);
+			} 
+		}
+		return str;
+	};
 
-
+	
 	var _minimize,
 		_indent;
 
@@ -191,16 +210,17 @@ var mask_stringify;
 	}
 
 	function wrapString(str) {
-		
 		if (str.indexOf("'") === -1) 
 			return "'" + str + "'";
 		
 		if (str.indexOf('"') === -1) 
 			return '"' + str + '"';
 		
-
 		return '"' + str.replace(/"/g, '\\"') + '"';
 	}
 
-
+	function getString(mix) {
+		return is_Function(mix) ? mix() : mix;
+	}
+	
 }());
