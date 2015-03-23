@@ -12,7 +12,7 @@ var _compile;
 			start = i;
 			c = str.charCodeAt(i);
 			optional = false;
-			if (63 === c) {
+			if (63 === c /* ? */) {
 				optional = true;
 				start = ++i;
 				c = str.charCodeAt(i);
@@ -99,7 +99,7 @@ var _compile;
 				orGroup = false;
 			}
 		}
-		if (orGroup === true) {
+		if (0 && orGroup === true) {
 			tokens = [ new token_OrGroup(tokens) ];
 		}
 		

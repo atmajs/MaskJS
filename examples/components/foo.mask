@@ -1,0 +1,8 @@
+import panel from 'panel';
+
+define foo extends panel {
+	@title > 'Foo title'
+	@body {
+		i > tt > 'Content'
+	}
+}

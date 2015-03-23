@@ -33,6 +33,7 @@
 			end = cursor_groupEnd(str, i, imax, 123, 125);
 			body = str.substring(i, end);
 			if (attr.scoped) {
+				attr.scoped = null;
 				body = style_scope(body, parent);
 			}
 			body = style_transformHost(body, parent);

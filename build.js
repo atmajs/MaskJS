@@ -53,6 +53,7 @@ module.exports = {
 			DEBUG: true,
 			SAFE: true,
 			BROWSER: true,
+			NODE: false,
 		}
 	},
 	'build.prod': {
@@ -62,6 +63,7 @@ module.exports = {
 		defines: {
 			DEBUG: false,
 			BROWSER: true,
+			NODE: false
 		}
 	},
 	'import.libs': {

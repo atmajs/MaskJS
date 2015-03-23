@@ -1,4 +1,52 @@
 (function(){
+	customTag_get = function(name, ctr) {
+		var Ctor = custom_Tags[name];
+		if (Ctor == null) {
+			return null;
+		}
+		if (Ctor !== Resolver) {
+			return Ctor;
+		}
+		
+		var ctr_ = ctr;
+		while(ctr_ != null) {
+			if (is_Function(ctr_.getHandler)) {
+				Ctor = ctr_.getHandler(name);
+				if (Ctor != null) {
+					return Ctor;
+				}
+			}
+			ctr_ = ctr_.parent;
+		}
+		return null;
+	};
+	customTag_getAll = function(ctr) {
+		var obj = {},
+			ctr_ = ctr, x;
+		while (ctr_ != null) {
+			x = null;
+			if (is_Function(ctr_.getHandlers)) {
+				x = ctr_.getHandlers();
+			} else {
+				x = ctr_.__handlers__;
+			}
+			if (x != null) {
+				obj = obj_extendDefaults(obj, x);
+			}
+			ctr_ = ctr_.parent;
+		}
+		for (var key in custom_Tags) {
+			x = custom_Tags[key];
+			if (x == null || x === Resolver) {
+				continue;
+			}
+			if (obj[key] == null) {
+				obj[key] = x;
+			}
+		}
+		return obj;
+	};
+	
 	customTag_register = function(name, Handler){		
 		if (is_Object(Handler)) {
 			//> static
@@ -24,20 +72,7 @@
 	var Resolver;
 	(function(){
 		Resolver = function (node, model, ctx, container, ctr) {
-			var name = node.tagName,
-				Mix = null;
-			while(ctr != null) {
-				if (is_Function(ctr.getHandler)) {
-					Mix = ctr.getHandler(name);
-					if (Mix != null) {
-						break;
-					}
-				}
-				ctr = ctr.parent;
-			}
-			if (Mix == null) {
-				Mix = custom_Tags_global[name];
-			}
+			var Mix = customTag_get(node.tagName, ctr);
 			if (Mix != null) {
 				if (is_Function(Mix) === false)	{
 					return obj_create(Mix);

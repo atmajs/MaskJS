@@ -6,10 +6,12 @@ var Define;
 		}
 	};
 	
-	function compo_prototype(nodes, owner) {
+	function compo_prototype(tagName, attr, nodes, owner) {
 		var arr = [];
 		var Proto = {
+			tagName: tagName,
 			template: arr,
+			attr: attr,
 			location: trav_location(owner),
 			meta: {
 				template: 'merge'
@@ -86,9 +88,19 @@ var Define;
 		return custom_Tags[compoName];
 	}
 	function compo_fromNode(node, model, ctr) {
+		var extends_ = node['extends'],
+			as_ = node['as'],
+			tagName,
+			attr;
+		if (as_ != null) {
+			var x = parser_parse(as_);
+			tagName = x.tagName;
+			attr = obj_extend(node.attr, x.attr);
+		}
+		
 		var name = node.name,
-			Proto = compo_prototype(node.nodes, ctr),
-			args = compo_extends(node['extends'], model, ctr)
+			Proto = compo_prototype(tagName, attr, node.nodes, ctr),
+			args = compo_extends(extends_, model, ctr)
 			;
 		
 		args.push(Proto);

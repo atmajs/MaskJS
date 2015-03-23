@@ -16,6 +16,9 @@ var token_Const,
 		},
 		consume: cursor_skipWhitespace
 	});
+	
+	// To match the string and continue, otherwise stops current consumer
+	// foo
 	token_Const = create('Const', {
 		constructor: function(str) {
 			this.token = str;
@@ -26,6 +29,8 @@ var token_Const,
 			return  str === this.token ? end : i;
 		}
 	});
+	// consume string (JS syntax) to the variable
+	// $foo
 	token_Var = create('Var', {
 		constructor: function(name){
 			this.token = name;
@@ -40,19 +45,52 @@ var token_Const,
 			return end;
 		}
 	});
+	/* consume string to the variable
+	 * - by Regexp
+	 *     $$foo(\w+)
+	 * - rest of the string
+	 *     $$foo(*)
+	 * - inside a group of chars `()` `[]` `""` `''`, etc
+	 *     $$foo(*())
+	 */
 	token_ExtendedVar = create('ExtendedVar', {
 		constructor: function(name, rgx){
 			this.token = rgx;
 			this.setter = generateSetter(name);
-			if (rgx === '*') {
-				this.consume = this.consumeAll;
-				return;
+			if (rgx.charCodeAt(0) === 42) {
+				// *
+				if (rgx === '*') {
+					this.consume = this.consumeAll;
+					return;
+				}
+				if (rgx.length === 3) {
+					this.consume = this.consumeGroup;
+					return;
+				}
+				throw Error('`*` consumer expected group chars to parse');
 			}
 			this.rgx = new RegExp(rgx, 'g');
 		},
 		consumeAll: function(str, i, imax, out){
 			this.setter(out, str.substring(i));
 			return imax;
+		},
+		consumeGroup: function(str, i, imax, out){
+			var start = this.token.charCodeAt(1),
+				end   = this.token.charCodeAt(2);
+			if (str.charCodeAt(i) !== start) {
+				return token_Var
+					.prototype
+					.consume
+					.call(this, str, i, imax, out);
+			}
+			
+			var end = cursor_groupEnd(str, ++i, imax, start, end);
+			if (end === i) 
+				return i;
+			
+			this.setter(out, str.substring(i, end));
+			return end + 1;
 		},
 		consume: function(str, i, imax, out) {
 			this.rgx.lastIndex = i;
@@ -66,6 +104,7 @@ var token_Const,
 		}
 	});
 	(function(){
+		// Consume string with custom Stop/Continue Function to the variable
 		token_CustomVar = create('CustomVar', {
 			constructor: function(name, consumer) {
 				this.fn = Consumers[consumer];

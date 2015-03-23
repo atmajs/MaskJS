@@ -34,10 +34,36 @@ var path_getDir,
 		var match = rgx_EXT.exec(path);
 		return match == null ? '' : match[1];
 	};
-	path_resolveCurrent = typeof window !== 'undefined' && window.location
-		? path_resolveCurrent_Browser
-		: path_resolveCurrent_Node
-		;
+	
+	(function(){
+		var current_;
+		
+		// if (BROWSER)
+		path_resolveCurrent = function(){
+			if (current_ != null) return current_;
+			
+			var fn = current_ = 'baseURI' in global.document
+					? fromBase
+					: fromLocation;
+			return current_ = path_sliceFilename(fn());
+		};
+		function fromBase() {
+			return global.document.baseURI.replace(global.location.origin, '');
+		}
+		function fromLocation() {
+			return global.location.pathname;
+		}
+		// endif
+		
+		// if (NODE)
+		path_resolveCurrent = function(){
+			if (current_ != null) return current_;
+			current_ = path_win32Normalize(process.cwd())
+		};
+		// endif
+	}());
+	
+	
 	path_normalize = function(path) {
 		var path_ = path
 			.replace(/\\/g, '/')
@@ -130,12 +156,7 @@ var path_getDir,
 		
 		return 'file:///' + path;
 	}
-	function path_resolveCurrent_Browser() {
-		return path_sliceFilename(window.location.pathname);
-	}
-	function path_resolveCurrent_Node() {
-		return path_win32Normalize(process.cwd());
-	}
+	
 	function path_collapse(url) {
 		while (url.indexOf('../') !== -1) {
 			url = url.replace(rgx_SUB_DIR, '');

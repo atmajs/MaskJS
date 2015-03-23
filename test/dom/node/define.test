@@ -20,6 +20,16 @@ UTest({
 			}
 		`);
 	},
+	'should render the wrapper' () {
+		var template = `
+			define foo as section {
+				span;
+			}
+			foo;
+		`;
+		var dom = mask.render(template);
+		$(dom).has_('section > span');
+	},
 	'should merge contents' () {
 		var template = `
 			define foo {

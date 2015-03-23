@@ -10,17 +10,23 @@
 	};
 	var lex_ = ObjectLexer(
 		'$name'
-		, '?( extends $$extends[?("$path")?($$compo<accessor>)](,))'
+		, '?( as $$as(*()))?( extends $$extends[$$compo<accessor>](,))'
 		, '{'
 	);
 	var DefineNode = class_create(Dom.Node, {
 		'name': null,
 		'extends': null,
+		'as': null,
+		
 		stringify: function(indent){
 			var extends_ = this['extends'],
+				as_ = this['as'],
 				str = '';
-			if (extends_ && extends_.length !== 0) {
-				str = ' extends ';
+			if (as_ != null && as_.length !== 0) {
+				str += ' as (' + as_ + ') ';
+			}
+			if (extends_ != null && extends_.length !== 0) {
+				str += ' extends ';
 				var imax = extends_.length,
 					i = -1, x;
 				while( ++i < imax ){

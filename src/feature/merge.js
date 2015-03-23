@@ -12,13 +12,13 @@ var mask_merge;
 	};
 	
 	var tag_ELSE = '@else',
-		tag_IF = '@if',
+		tag_IF   = '@if',
 		tag_EACH = '@each',
 		tag_PLACEHOLDER = '@placeholder',
 		
-		dom_NODE = Dom.NODE,
-		dom_TEXTNODE = Dom.TEXTNODE,
-		dom_FRAGMENT = Dom.FRAGMENT,
+		dom_NODE      = Dom.NODE,
+		dom_TEXTNODE  = Dom.TEXTNODE,
+		dom_FRAGMENT  = Dom.FRAGMENT,
 		dom_STATEMENT = Dom.STATEMENT,
 		dom_COMPONENT = Dom.COMPONENT
 		;
@@ -216,7 +216,20 @@ var mask_merge;
 			case 'function':
 			case 'var':
 			case 'import':
+			case 'script':
+			case 'style':
+			case 'slot':
+			case 'event':
 				return node;
+			default:
+				var handler = customTag_get(tagName, tmplNode);
+				if (handler !== null) {
+					var proto = handler.prototype;
+					if (proto && proto.meta != null && proto.meta.template === 'merge') {
+						return node;
+					}
+				}
+				break;
 		}
 		
 		var outnode = {

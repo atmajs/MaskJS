@@ -85,6 +85,10 @@ var Dependency = class_create({
 		}
 		var Mix = null;
 		this.withExport(name, function(originalName){
+			if (module.error != null) {
+				Mix = module.erroredExport_('Component not loaded:' + originalName);
+				return;
+			}
 			Mix = module.exports[originalName];
 			if (Mix == null) {
 				Mix = module.getIntern(originalName);

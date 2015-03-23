@@ -9,17 +9,19 @@ var _consume;
 			start = index;
 			index = token.consume(str, index, length, out);
 			if (index === start) {
-				if (token.optional === false) {
-					if (isOptional !== true) {
-						var msg = 'Token of type `' + token.name + '`';
-						if (token.token) {
-							msg += ' Did you mean: `' + token.token + '`?';
-						}
-						parser_error(msg, str, index);
-					}
+				if (token.optional === true) {
+					continue;
+				}
+				if (isOptional === true) {
 					return index_;
 				}
-				return index;
+				// global require is also not optional: throw error
+				var msg = 'Token of type `' + token.name + '`';
+				if (token.token) {
+					msg += ' Did you mean: `' + token.token + '`?';
+				}
+				parser_error(msg, str, index);
+				return index_;
 			}
 		}
 		return index;
