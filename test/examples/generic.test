@@ -126,7 +126,7 @@ UTest({
 					.eq_('val', 'Lorem')
 					;
 				$status
-					.eq_('length, 1')
+					.eq_('length', 1)
 					.eq_('text', '')
 					;
 				

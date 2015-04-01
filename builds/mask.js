@@ -1,7 +1,6 @@
 // import:base /src/
 // import:extension js
 
-// import license.txt
 // import umd-head
 
 	// import /ref-utils/lib/utils.embed.js

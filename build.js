@@ -1,37 +1,11 @@
 /**
- *	Build: Run Atma.js Toolkit
- *  ``` > npm install atma ```
- *	``` > atma```
- **/
-
-/**
- *	mask
- *
- *	```/lib/mask.js```
- *	Mask with DOM Based Builder
- **/
-
-
-/**
- *	plugin.reload
- *
- *	```/lib/plugin.reload.js```
- *	Reload plugin to use in includejs environment.
- *	Each component will be reinitialized on file-change
- **/
-
-/**
- *	formatter
- *
- *	```/lib/formatter.js```
- *	[[Formatter]] for Mask to
- *
- * + convert HTML to Mask
- * + stringify [[MaskDOM]]
- * + beautify Mask Markup
- **/
-
-
+ * $ npm install -g atma
+ * 
+ * Build:
+ * 		$ atma
+ * Develop Filechange build
+ * 		$ atma run watch
+ */
 
 module.exports = {
 	'settings': {
@@ -41,11 +15,7 @@ module.exports = {
 			}
 		}
 	},
-	'add-handlers': {
-		action: 'custom',
-		script: 'tools/license-handler.js'
-	},
-	'build mask': {
+	'build_mask': {
 		action: 'import',
 		files: 'builds/**',
 		output: 'lib/',
@@ -56,21 +26,11 @@ module.exports = {
 			NODE: false,
 		}
 	},
-	'build.prod': {
-		action: 'import',
-		files: 'builds/mask.js',
-		output: 'lib/mask.prod.js',
-		defines: {
-			DEBUG: false,
-			BROWSER: true,
-			NODE: false
-		}
-	},
-	'import.libs': {
+	'import_libraries': {
 		action: 'copy',
 		files: {
-			'/../mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
-			'/../mask-node/lib/mask.node.js': '/lib/mask.node.js'
+			'/ref-mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
+			'/ref-mask-node/lib/mask.node.js': '/lib/mask.node.js'
 		}
 	},
 	'jshint': {
@@ -101,10 +61,19 @@ module.exports = {
 
 	'watch': {
 		files: 'src/**',
-		config: '#[build mask]'
+		config: [
+			'#[license_handler]',
+			'#[build_mask]'
+		]
 	},
 	
-	'defaults': ['add-handlers', 'build mask', 'import libraries', 'jshint', 'uglify']
+	'defaults': [
+		'license_handler',
+		'build_mask',
+		'import_libraries',
+		'jshint',
+		'uglify'
+	]
 };
 
 
@@ -184,7 +153,28 @@ function JSHint() {
 			"onevar": false,
 			"passfail": false,
 			"white": false,
-			"predef": ["global", "define", "atma", "io", "net", "mask", "include", "ruta", "ruqq", "Class", "logger", "app", "UTest", "assert", "eq_", "notEq_", "deepEq_", "notDeepEq_", "has_", "hasNot_"]
+			"predef": [
+				"global",
+				"define",
+				"atma",
+				"io",
+				"net",
+				"mask",
+				"include",
+				"ruta",
+				"ruqq",
+				"Class",
+				"logger",
+				"app",
+				"UTest",
+				"assert",
+				"eq_",
+				"notEq_",
+				"deepEq_",
+				"notDeepEq_",
+				"has_",
+				"hasNot_"
+			]
 		}
 	return {
 		options: options,

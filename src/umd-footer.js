@@ -1,7 +1,7 @@
 	Mask.Compo = Compo;
 	Mask.jmask = jmask;
 	
-	Mask.version = /*# import VERSION */;
+	Mask.version = '%IMPORT(version)%';
 	
 	//> make fast properties
 	custom_optimize();

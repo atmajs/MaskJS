@@ -48,6 +48,10 @@ Resources:
 ----
 
 - [Quick Start](#quick-start)
+- [Contribute](#contribute)
+	- [Build](#build)
+	- [Test](#test)
+- [Changelog](#changelog)
 
 ----
 
@@ -258,7 +262,21 @@ Most simple MaskJS sample to show where you could start from:
 </html>
 ```
 
-###Changelog
+### Contribute
+#### Build
+```bash
+$ git submodule init && git submodule update
+$ npm install
+$ npm run build
+```
+
+#### Test
+```bash
+$ npm install
+$ npm test
+```
+
+### Changelog
 ------------
 - 0.12.2
 	- `slot` and `event` javascript handlers ([handler](/test/dom/compo/handler.test))

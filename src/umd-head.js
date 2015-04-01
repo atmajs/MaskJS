@@ -1,3 +1,13 @@
+/*!
+ * MaskJS v%IMPORT(version)%
+ * Part of the Atma.js Project
+ * http://atmajs.com/
+ *
+ * MIT license
+ * http://opensource.org/licenses/MIT
+ *
+ * (c) 2012, %IMPORT(year)% Atma.js and other contributors
+ */
 (function (root, factory) {
     'use strict';
     

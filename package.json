@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.12.11",
+    "version": "0.12.13",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -26,7 +26,9 @@
         "atma-loader-traceur": ">=1.0.19"
     },
     "scripts": {
-        "test": "atma test"
+        "test" : "atma test",
+        "build": "atma",
+        "examples": "atma server"
     },
     "keywords": [],
     "engines": {
