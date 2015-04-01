@@ -42,7 +42,7 @@ var path_getDir,
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
 			
-			var fn = current_ = 'baseURI' in global.document
+			var fn = 'baseURI' in global.document
 					? fromBase
 					: fromLocation;
 			return current_ = path_sliceFilename(fn());
@@ -72,7 +72,7 @@ var path_getDir,
 			// './xx' to relative string
 			.replace(/^\.\//, '')
 			// join 'xx/./xx'
-			.replace(/\/\.\//g, '')
+			.replace(/\/\.\//g, '/')
 			;
 		return path_collapse(path_);
 	};
