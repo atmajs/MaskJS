@@ -67,10 +67,10 @@ var build_compo;
 			compo.renderStart(model, ctx, container);
 		
 		
-		controller_pushCompo(ctr, compo);
+		builder_pushCompo(ctr, compo);
 		
 		if (compo.async === true) {
-			var resume = build_resumeDelegate(
+			var resume = builder_resumeDelegate(
 				compo
 				, model
 				, ctx
@@ -128,11 +128,12 @@ var build_compo;
 			}
 		}
 		
-		if (is_Function(clone.renderStart)) 
+		if (is_Function(clone.renderStart)) {
 			clone.renderStart(model, ctx, container, ctr, children);
+		}
 		
 		clone.ID = ++builder_componentID;
-		controller_pushCompo(ctr, clone);
+		builder_pushCompo(ctr, clone);
 		
 		var i = ctr.components.length - 1;
 		if (is_Function(clone.render)){
@@ -149,18 +150,13 @@ var build_compo;
 			}
 		}
 		
-		return wasRendered
-			? null
-			: clone
-			;
-	
+		return wasRendered === true ? null : clone;
 	}
-	
 	
 	function build_NodeAsCompo(node, model, ctx, container, ctr, childs){
 		node.ID = ++builder_componentID;
 		
-		controller_pushCompo(ctr, node);
+		builder_pushCompo(ctr, node);
 		
 		if (node.model == null) 
 			node.model = model;
@@ -172,9 +168,9 @@ var build_compo;
 			builder_build(node.nodes, node.model, ctx, container, node, els);
 		}
 		
-		if (childs != null && els.length !== 0)
+		if (childs != null && els.length !== 0) {
 			arr_pushMany(childs, els);
-
+		}
 		return null;
 	}
 	

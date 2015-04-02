@@ -23,11 +23,6 @@ var build_node;
 		
 		var key, mix, val, fn;
 		for(key in attr) {
-			/* if !SAFE
-			if (_Object_hasOwnProp.call(attr, key) === false) {
-				continue;
-			}
-			*/
 			mix = attr[key];
 			if (is_Function(mix)) {
 				var result = mix('attr', model, ctx, el, ctr, key);

@@ -58,7 +58,7 @@ var path_getDir,
 		// if (NODE)
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
-			current_ = path_win32Normalize(process.cwd())
+			return current_ = path_win32Normalize(process.cwd())
 		};
 		// endif
 	}());

@@ -1,14 +1,22 @@
-var build_resumeDelegate;
-
+var builder_resumeDelegate,
+	builder_pushCompo;
+	
 (function(){
 
-	build_resumeDelegate = function (ctr, model, ctx, container, children, finilize){
-		var anchor = document.createComment('');
-		
+	builder_resumeDelegate = function (ctr, model, ctx, container, children, finilizeFn){
+		var anchor = document.createComment('');		
 		container.appendChild(anchor);
 		return function(){
-			return _resume(ctr, model, ctx, anchor, children, finilize);
+			return _resume(ctr, model, ctx, anchor, children, finilizeFn);
 		};
+	};
+	builder_pushCompo = function (ctr, compo) {
+		var compos = ctr.components;
+		if (compos == null) {
+			ctr.components = [ compo ];
+			return;
+		}
+		compos.push(compo);
 	};
 	
 	// == private

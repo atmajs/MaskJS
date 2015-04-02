@@ -72,7 +72,7 @@ UTest({
 			.server
 			.request('/examples/interpolation.html')
 			.done(function(doc, win){
-				
+				debugger
 				var $dom = $(doc.body);
 				
 				$dom
