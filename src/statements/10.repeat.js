@@ -1,7 +1,7 @@
 (function(){
 	custom_Statements['repeat'] = {
 		render: function(node, model, ctx, container, ctr, children){
-			var run = ExpressionUtil.eval,
+			var run = expression_eval,
 				str = node.expression,
 				repeat = str.split('..'),
 				index = + run(repeat[0] || '', model, ctx, ctr),

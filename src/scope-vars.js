@@ -7,6 +7,13 @@ var __rgxEscapedChar = {
 	},
 	
 	__cfg = {
-		// Relevant to node.js only. Disable compo caching
-		allowCache: true
+		// Relevant to NodeJS only. Disables compo caching
+		allowCache: true,
+		preprocessor: {
+			style : null,
+			script: null
+		},
+		base: null,
+		getFile: null,
+		getScript: null,
 	};

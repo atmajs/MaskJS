@@ -321,26 +321,28 @@ var Mask;
 		},
 		
 		cfg: function(){
-			var args = arguments;
-			if (args.length === 0) {
+			var args = arguments,
+				len = args.length
+			if (len === 0) {
 				return __cfg;
 			}
-			
-			var key, value;
-			
-			if (args.length === 2) {
-				key = args[0];
-				
-				__cfg[key] = args[1];
-				return;
-			}
-			
-			var obj = args[0];
-			if (typeof obj === 'object') {
-				
-				for (key in obj) {
-					__cfg[key] = obj[key]
+			if (len === 1) {
+				var x = args[0]
+				if (is_Object(x)) {
+					obj_extend(__cfg, x);
+					return;
 				}
+				if (is_String(x)) {
+					return obj_getProperty(__cfg, x);
+				}
+			}
+			if (len === 2) {
+				var prop = args[0];
+				if (obj_hasProperty(__cfg, prop) === false) {
+					log_warn('Unknown configuration property', prop);
+				}
+				obj_setProperty(__cfg, prop, args[1]);
+				return;
 			}
 		},
 		// For the consistence with the NodeJS

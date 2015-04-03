@@ -1,6 +1,6 @@
 (function() {
 	Mask.registerHandler(':html', {
-		$meta: {
+		meta: {
 			mode: 'server:all'
 		},
 		render: function(model, ctx, container) {

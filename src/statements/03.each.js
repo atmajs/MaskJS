@@ -3,7 +3,7 @@
 	custom_Statements['each'] = {		
 		render: function(node, model, ctx, container, ctr, children){
 			
-			var array = ExpressionUtil.eval(node.expression, model, ctx, ctr);
+			var array = expression_eval(node.expression, model, ctx, ctr);
 			if (array == null) 
 				return;
 			

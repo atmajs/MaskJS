@@ -42,7 +42,7 @@
 
 	function processParsedDelegate(fn) {
 		return function(expr, model, ctx, el, ctr) {
-			var args = ExpressionUtil.evalStatements(
+			var args = expression_evalStatements(
 				expr, model, ctx, ctr
 			);
 			return fn.apply(null, args);

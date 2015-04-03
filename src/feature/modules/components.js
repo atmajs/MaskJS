@@ -10,7 +10,7 @@
 		render: fn_doNothing
 	});
 	custom_Tags['import:base'] = function(node, model, ctx, el, ctr){
-		var base = path_normalize(ExpressionUtil.eval(node.expression, model, ctx, ctr));
+		var base = path_normalize(expression_eval(node.expression, model, ctx, ctr));
 		if (base != null && base[base.length - 1] !== '/') {
 			base += '/';
 		}

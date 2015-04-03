@@ -3,8 +3,5 @@
 // import ./03.each.js
 // import ./04.with.js
 // import ./05.switch.js
-// import ./06.include.js
-// import ./07.import.js
-// import ./08.var.js
 // import ./09.visible.js
 // import ./10.repeat.js

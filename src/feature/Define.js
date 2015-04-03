@@ -65,7 +65,7 @@ var Define;
 					continue;
 				}
 				
-				var obj = ExpressionUtil.eval(x.compo, model, null, ctr);
+				var obj = expression_eval(x.compo, model, null, ctr);
 				if (obj != null) {
 					args.unshift(obj);
 					continue;

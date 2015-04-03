@@ -34,5 +34,30 @@ UTest({
 		`;
 		var str = mask.stringify(mask.parse(tmpl), 4);
 		eq_(str.replace(/\s/g, ''), tmpl.replace(/\s/g, ''));
+	},
+	'should preprocess script' () {
+		var tmpl = `
+			define foo {
+				slot change () {
+					this.$.text('B');
+				}
+				button x-tap = change > 'A'
+			}
+			foo;
+		`;
+		
+		mask.cfg('preprocessor.script', function(body){
+			return body.replace('B', 'C');
+		});
+		return UTest
+			.domtest(mask.render(tmpl), `
+				find (button) {
+					text A;
+					do click;
+					text C;
+				}
+			`)
+			.always(() => mask.cfg('preprocessor.script', null))
+			;
 	}
 });

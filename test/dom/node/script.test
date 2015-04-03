@@ -15,7 +15,7 @@ UTest({
 	},
 	'should serialize script node': {
 		'single' () {
-			var template = "section>script src=foo.js;";
+			var template = "section>script src='foo.js';";
 			var ast = mask.parse(template);
 			var str = mask.stringify(ast);
 			eq_(str, template);

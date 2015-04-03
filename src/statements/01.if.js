@@ -2,7 +2,7 @@
 	
 	function getNodes(node, model, ctx, ctr){
 		function evaluate(expr){
-			return ExpressionUtil.eval(expr, model, ctx, ctr);
+			return expression_eval(expr, model, ctx, ctr);
 		}
 		
 		if (evaluate(node.expression)) 

@@ -72,32 +72,30 @@
 		meta: {
 			mode: 'server'
 		},
-		body: null,
+		body : null,
+		
 		constructor: function(node, model, ctx, el, ctr){
 			this.attr = node.attr;
 			this.body = is_Function(node.content)
 				? node.content('node', model, ctx, el, ctr)
 				: node.content
 				;
-		},
-		
+		},		
 		render: function(model, ctx, container, ctr) {
 			var el = document.createElement('style');
-			el.textContent = this.body; //this.getStyle_(model, ctx, el, ctr);
-			var key, val
+			container.appendChild(el);
+			style_preprocess(this, model, ctx, el);
+		},
+		append_: function(body, el){
+			var key, val;
+				
+			el.textContent = body; 
 			for(key in this.attr) {
 				val = this.attr[key];
 				if (val != null) {
 					el.setAttribute(key, val);
 				}
 			}
-			container.appendChild(el);
-		},
-		
-		getStyle_: function(model, ctx, el, ctr){
-			return is_Function(this.body)
-				? this.body('node', model, ctx, el, ctr)
-				: this.body;
 		}
 	});
 	
@@ -151,5 +149,32 @@
 			}
 			return '#' + id;
 		}
+	}());
+	
+	var style_preprocess;
+	(function(){
+		style_preprocess = function(compo, model, ctx, el){
+			var fn = __cfg.preprocessor.style;
+			if (fn == null) {
+				compo.append_(compo.body, el);
+				return;
+			}
+			
+			var resume = Compo.pause(compo, ctx);
+			fn(compo.body, null, function(error, body){
+				if (error != null) {
+					log_error('Style preprocessor', error);
+					
+					var nodes = log_errorNode('Style preprocessor failed: ' + String(error));
+					var frag  = mask.render(nodes);
+					el.parentNode.insertBefore(frag, el);
+					resume();
+					return;
+				}
+				compo.cache = body;
+				compo.append_(body, el);
+				resume();
+			});
+		};
 	}());
 }());

@@ -166,19 +166,59 @@ UTest({
 			isInterpolated: true
 		});
 	},
-	'check serialization' () {
-		var tmpl = `
-			section >
-				style {
-					body {
-						border: ~[width]px;
+	'check preprocessor' () {
+		mask.cfg('preprocessor.style', function(body){
+			return body.replace('red', 'green');
+		});
+		var template = `
+			div {
+				style scoped {
+					:host {
+						background: red;
 					}
 				}
+			}
 		`;
-		
-		var str = mask.stringify(mask.parse(tmpl), 4);
-		
-		eq_(tmpl.replace(/\s/g, ''), str.replace(/\s/g, ''));
+		return mask
+			.renderAsync(template)
+			.pipe(function(div){
+				
+				var str = div.querySelector('style').textContent;
+				hasNot_(str, 'red');
+				has_   (str, 'green');
+				
+				mask.cfg('preprocessor.style', null);
+			});
+	},
+	'check serialization': {
+		'simple' () {
+			var tmpl = `
+				section >
+					style {
+						body {
+							border: ~[width]px;
+						}
+					}
+			`;
+			var str = mask.stringify(mask.parse(tmpl), 4);
+			eq_(
+				tmpl.replace(/\s/g, ''),
+				str .replace(/\s/g, '')
+			);
+		},
+		'attributes and comments' () {
+			var tmpl = `
+				section >
+					style id='foo' enabled {
+						/* comment */
+					}
+			`;
+			var str = mask.stringify(mask.parse(tmpl), 4);
+			eq_(
+				tmpl.replace(/\s+/g, ''),
+				str .replace(/\s+/g, '')
+			);
+		}
 	}
 })
 

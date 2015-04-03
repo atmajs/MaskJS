@@ -489,7 +489,7 @@ var mask_merge;
 		if (tmplNode != null) {
 			placeholders.attr = tmplNode.attr;
 		}
-		return ExpressionUtil.eval(expr, placeholders, null, placeholders);
+		return expression_eval(expr, placeholders, null, placeholders);
 	}
 	function Placeholders(parent, nodes){
 		var $root = null;

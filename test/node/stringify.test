@@ -29,7 +29,7 @@ function process(filename, indent) {
 			
 			var [ mask, expect ] = parts;
 			var str = M.stringify(mask, indent);
-			eq_(str.length, expect.length);
-			eq_(str, expect);
+			
+			eq_(str, expect.replace(/[\r\n]+/g, '\n'));
 		});
 }

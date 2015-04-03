@@ -69,6 +69,25 @@
 		custom_Tags[name] = Resolver;
 	};
 	
+	customTag_Base = {
+		async: false,
+		attr: null,
+		await: null,
+		compoName: null,
+		components: null,
+		expression: null,
+		ID: null,
+		meta: null,
+		model: null,
+		nodes: null,
+		parent: null,
+		render: null,
+		renderEnd: null,
+		renderStart: null,
+		tagName: null,
+		type: null,
+	};
+	
 	var Resolver;
 	(function(){
 		Resolver = function (node, model, ctx, container, ctr) {

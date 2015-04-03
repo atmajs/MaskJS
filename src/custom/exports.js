@@ -17,6 +17,7 @@ var custom_Utils,
 	customTag_getAll,
 	customTag_register,
 	customTag_registerResolver,
+	customTag_Base,
 	
 	custom_optimize
 	;
@@ -96,7 +97,7 @@ var custom_Utils,
 	
 	custom_Utils = {
 		expression: function(value, model, ctx, element, ctr){
-			return ExpressionUtil.eval(value, model, ctx, ctr);
+			return expression_eval(value, model, ctx, ctr);
 		},
 	};
 	custom_Optimizers   = {};

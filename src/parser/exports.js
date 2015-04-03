@@ -25,11 +25,10 @@ var parser_parse,
 	// import ./function
 	// import ./object/ObjectLexer
 	// import ./parsers/var
-	// import ./parsers/style
-	// import ./parsers/script
+	// import ./parsers/content
 	// import ./parsers/import
 	// import ./parsers/define
-	// import ./parsers/handlers
+	// import ./parsers/methods
 	
 	var go_tag = 2,
 		state_tag = 3,

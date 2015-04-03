@@ -35,7 +35,7 @@ var mask_stringify,
 			}
 			str += key;
 			
-			if (x === key) {
+			if (x !== key) {
 				str += "=" + wrapString(x);
 			} 
 		}

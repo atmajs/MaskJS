@@ -1,7 +1,7 @@
 (function(){
 	custom_Statements['log'] = {
 		render: function(node, model, ctx, container, controller){
-			var arr = ExpressionUtil.evalStatements(node.expression, model, ctx, controller);
+			var arr = expression_evalStatements(node.expression, model, ctx, controller);
 			arr.unshift('Mask::Log');
 			console.log.apply(console, arr);
 		}

@@ -36,13 +36,13 @@
 		};
 
 	Mask.templates = helper_;
-	Mask.registerHandler(':template', {
+	customTag_register(':template', {
 		render: function() {
 			helper_.register(this.attr.id, this.nodes);
 		}
 	});
 
-	Mask.registerHandler(':import', {
+	customTag_register(':import', {
 		renderStart: function() {
 			var id = this.attr.id;
 			if (id == null) {

@@ -1,9 +1,5 @@
 (function(){
 	custom_Parsers['define'] = function(str, i, imax, parent){
-		var obj = {
-			'name': null,
-			'extends': null
-		};
 		var node = new DefineNode('define', parent);
 		var end = lex_(str, i, imax, node);
 		return [ node,  end, go_tag ];
@@ -43,19 +39,6 @@
 				+ '}'
 				;
 		},
-	});
-	
-	custom_Tags['define'] = class_create({
-		meta: {
-			serializeNodes: true
-		},
-		constructor: function(node, model, ctx, el, ctr) {
-			var Ctor = Define.create(node, model, ctr);
-			customTag_register(
-				node.name, Ctor
-			);
-		},
-		render: fn_doNothing
 	});
 	
 }());

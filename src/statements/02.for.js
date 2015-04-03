@@ -9,7 +9,7 @@
 			
 			parse_For(node.expression);
 			
-			var value = ExpressionUtil.eval(__ForDirective[3], model, ctx, ctr);
+			var value = expression_eval(__ForDirective[3], model, ctx, ctr);
 			if (value == null) 
 				return;
 			
