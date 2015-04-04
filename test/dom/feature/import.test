@@ -304,8 +304,6 @@ UTest({
 						}
 						find ('.foo') {
 							text Baz;
-							await(1000) >
-								css background-color red;
 						}
 					`));
 			}

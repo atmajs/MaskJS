@@ -47,8 +47,10 @@ var Module;
 				});
 				return module;
 			}
-			// assume javascript
+			// assume javascript and is loaded
+			module.state   = 4;
 			module.exports = mix;
+			module.resolve();
 			return module;
 		},
 		createDependency: function(data, ctx, ctr, module){
