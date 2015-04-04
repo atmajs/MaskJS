@@ -1,16 +1,16 @@
 UTest({
 	
 	'minify' () {
-		process('min');
+		test('min');
 	},
 	
 	'beautify' () {
-		process('format', 2);
+		test('format', 2);
 	}
 	
 })
 
-function process(filename, indent) {
+function test(filename, indent) {
 	var M = Mask
 	
 	io

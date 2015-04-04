@@ -99,7 +99,7 @@
 				return new Mix(node, model, ctx, container, ctr);
 			}
 			
-			log_error('Component not found:', name);
+			log_error('Component not found:', node.tagName);
 			return null;
 		};
 	}());

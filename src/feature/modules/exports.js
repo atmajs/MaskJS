@@ -1,6 +1,6 @@
 var Module;
 (function(){
-	
+	Module = {};
 	var _cache = {},
 		_base;
 	
@@ -10,8 +10,10 @@ var Module;
 	// import ModuleMask
 	// import ModuleScript
 	// import components
+	// import tools/dependencies
+	// import tools/build
 	
-	Module = {
+	obj_extend(Module, {
 		createModule: function(path, ctx, ctr, parent) {
 			if ('' === path_getExtension(path)) {
 				path += '.mask';
@@ -28,11 +30,10 @@ var Module;
 			return module;
 		},
 		registerModule: function(mix, path, ctx, ctr) {
-			var module;
+			var module = null;
+			module = Module.createModule(path, ctx, ctr);
+			module.state = 1;
 			if (Module.isMask(path)) {
-				module = Module.createModule(path, ctx, ctr)
-				module.state = 1;
-				
 				var nodes = mix;
 				if (is_ArrayLike(nodes)) {
 					if (nodes.length === 1) {
@@ -44,9 +45,11 @@ var Module;
 					module.state = 4;
 					module.resolve();
 				});
+				return module;
 			}
-			
-			_cache[path] = module;
+			// assume javascript
+			module.exports = mix;
+			return module;
 		},
 		createDependency: function(data, ctx, ctr, module){
 			return  new Dependency(data, ctx, ctr, module);
@@ -63,6 +66,7 @@ var Module;
 			}
 		},
 		resolveLocation: u_resolveLocation,
-		
-	};
+		getDependencies: tools_getDependencies,
+		build: tools_build,
+	});
 }());

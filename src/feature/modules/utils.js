@@ -1,6 +1,5 @@
 var u_resolveLocation,
-	u_handler_getDelegate,
-	u_handler_wrap;
+	u_handler_getDelegate;
 	
 (function(){
 
@@ -52,14 +51,5 @@ var u_resolveLocation,
 		};
 	};
 	
-	u_handler_wrap = function(fn, next) {
-		if (next == null) {
-			return fn;
-		}
-		return function(name) {
-			var x = fn.call(this, name);
-			return x == null ? next.call(this, name) : x;
-		};
-	};
 	
 }());

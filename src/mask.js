@@ -266,7 +266,7 @@ var Mask;
 		},
 		Dom: Dom,
 		TreeWalker: mask_TreeWalker,
-		
+		Module: Module,
 		plugin: function(source){
 			//if DEBUG
 			eval(source);

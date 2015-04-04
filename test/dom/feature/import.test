@@ -293,6 +293,21 @@ UTest({
 						`)
 						.always(done);
 				}));
+			},
+			
+			'load model' () {
+				return mask
+					.renderAsync('import from "/test/tmpl/modules/model"')
+					.pipe((dom) => UTest.domtest(dom, `
+						find ('h4') {
+							text a;
+						}
+						find ('.foo') {
+							text Baz;
+							await(1000) >
+								css background-color red;
+						}
+					`));
 			}
 		}
 		

@@ -2,23 +2,23 @@ var mask_stringify,
 	mask_stringifyAttr;
 (function() {
 
-	//settings (Number | Object) - Indention Number (0 - for minification)
-	mask_stringify = function(input, settings) {
+	//opts (Number | Object) - Indention Number (0 - for minification)
+	mask_stringify = function(input, opts) {
 		if (input == null) 
 			return '';
 		
 		if (typeof input === 'string') 
 			input = mask.parse(input);
 		
-		if (settings == null) {
+		if (opts == null) {
 			_indent = 0;
 			_minimize = true;
-		} else  if (typeof settings === 'number'){
-			_indent = settings;
+		} else  if (typeof opts === 'number'){
+			_indent = opts;
 			_minimize = _indent === 0;
 		} else{
-			_indent = settings && settings.indent || 4;
-			_minimize = _indent === 0 || settings && settings.minimizeAttributes;
+			_indent = opts && opts.indent || 4;
+			_minimize = _indent === 0 || opts && opts.minimizeAttributes;
 		}
 
 		return run(input);
@@ -199,7 +199,16 @@ var mask_stringify,
 	}
 
 	function isSingle(node) {
-		return node.nodes && (node.nodes instanceof Array === false || node.nodes.length === 1);
+		var arr = node.nodes;
+		if (arr == null) {
+			return true;
+		}
+		var isArray = typeof arr.length === 'number';
+		if (isArray && arr.length > 1) {
+			return false;
+		}
+		var x = isArray ? arr[0] : arr;
+		return x.stringify == null;
 	}
 
 	function getSingle(node) {

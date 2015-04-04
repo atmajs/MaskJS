@@ -1,0 +1,149 @@
+UTest({
+	'getting dependencies': {
+		'should get javascript and style dependencies' () {
+			var template = `
+				import X from '/foo.js';
+				link href='bar.css' rel='stylesheet';
+			`;
+			var path = '/mask/test.mask';
+			return mask
+				.Module
+				.getDependencies(template, path)
+				.done(list => deepEq_(list, {
+						mask: [],
+						js:  [ '/foo.js' ],
+						css: [ '/mask/bar.css' ]
+					})
+				);
+		},
+		'should get mask dependencies' () {
+			var template = `
+				div {
+					import X from '/test/tmpl/modules/nest';
+				}
+			`;
+			var path = '/mask/test.mask';
+			return mask
+				.Module
+				.getDependencies(template, path)
+				.done(list => deepEq_(list, {
+					mask: [{
+						path: '/test/tmpl/modules/nest.mask',
+						dependencies: {
+							js: [],
+							css: [],
+							mask: [
+								{
+									path: '/test/tmpl/modules/nest-a.mask',
+									dependencies: {
+										js: [],
+										css: [],
+										mask: [
+											{
+												path: '/test/tmpl/modules/nest-b.mask',
+												dependencies: {
+													mask: [],
+													css: [],
+													js: []
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}],
+					js: [],
+					css: []
+				}));
+		},
+		'should get flatterned dependencies' () {
+			var template = `
+				div {
+					import X from '/test/tmpl/modules/nest';
+				}
+			`;
+			var path = '/mask/test.mask';
+			var opts = { flattern: true };
+			return mask
+				.Module
+				.getDependencies(template, path, opts)
+				.done(list => deepEq_(list, {
+					mask: [
+						'/test/tmpl/modules/nest-b.mask',
+						'/test/tmpl/modules/nest-a.mask',
+						'/test/tmpl/modules/nest.mask',
+					],
+					js: [],
+					css: []
+				}));
+		},
+		'should return an error: Not Found' (done) {
+			var template = `
+				import X from '/test/tmpl/modules/FAKE';
+			`;
+			mask
+				.Module
+				.getDependencies(template, '/')
+				.fail(error => {
+					eq_(error.status, 404);
+					done();
+				})
+				.done(assert.avoid());
+		}
+	},
+	'combine resources': {
+		'nested' () {
+			var template = `
+				import X from '/test/tmpl/modules/nest';
+			`;
+			return mask
+				.Module
+				.build(template, '/')
+				.done(pckg => {
+					has_(pckg.mask, 'B Module');
+					has_(pckg.mask, 'a_nest');
+					has_(pckg.mask, 'b_nest');
+				});
+		},
+		'resources' () {
+			var template = `
+				import from '/test/tmpl/modules/model';
+			`;
+			return mask
+				.Module
+				.build(template, '/')
+				.done(pckg => {
+					has_(pckg.mask, template.trim());
+					has_(pckg.mask, "'a'");
+					
+					has_(pckg.js, "'Baz'");
+					has_(pckg.css, "background: red");
+				});
+		}
+	},
+	'!combine and render' () {
+		var template = `
+			import * as Foo from '/test/tmpl/modules/model';
+			
+			Foo;
+		`;
+		return mask
+			.Module
+			.build(template, '/')
+			.pipe(pckg => {
+				eval(pckg.js);
+				$('<style>').text(pckg.css).appendTo('body');
+				
+				var dom = mask.render(pckg.mask);
+				debugger
+				return UTest.domtest(dom, `
+					find ('.foo') {
+						css background-color red;
+						text Baz;
+					}
+				`)
+				
+			});
+	}
+});

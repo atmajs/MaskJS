@@ -9,6 +9,11 @@ var Dependency = class_create({
 				if (compoName !== '*') 
 					customTag_registerResolver(compoName);
 			});
+		} else {
+			// if DEBUG
+			if (this.exports == null && this.alias == null) 
+				throw Error('Embeding ("import from") is allowed only for mask imports');
+			// endif
 		}
 		
 		this.ctx = ctx;
@@ -82,6 +87,9 @@ var Dependency = class_create({
 		var module = this.module;
 		if (module == null) {
 			return;
+		}
+		if (this.exports == null && this.alias == null) {
+			return this.module.getHandler(name);
 		}
 		var Mix = null;
 		this.withExport(name, function(originalName){

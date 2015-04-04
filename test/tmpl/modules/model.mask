@@ -1,0 +1,8 @@
+import foo from 'data.js';
+import * as title from 'h4';
+link href='style.css' rel='stylesheet';
+
+with (foo) {
+	title;
+	.foo > '~[name]'
+}

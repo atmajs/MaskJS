@@ -14,6 +14,10 @@ var __rgxEscapedChar = {
 			script: null
 		},
 		base: null,
+		
 		getFile: null,
 		getScript: null,
+		
+		buildStyle: null,
+		buildScript: null,
 	};

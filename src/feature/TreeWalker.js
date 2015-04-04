@@ -144,11 +144,19 @@ var mask_TreeWalker;
 		};
 		Modifier.prototype = {
 			deep: true,
+			remove: false,
 			replace: null,
 			process: function(step){
 				if (this.replace != null) {
 					this.deep = false;
 					step.parent.nodes[step.index] = this.replace;
+					return;
+				}
+				if (this.remove === true) {
+					this.deep = false;
+					var arr = step.parent.nodes,
+						i = step.index;
+					_Array_splice.call(arr, i, 1);
 					return;
 				}
 			}
