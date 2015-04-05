@@ -3,7 +3,7 @@ UTest({
 		'should get javascript and style dependencies' () {
 			var template = `
 				import X from '/foo.js';
-				link href='bar.css' rel='stylesheet';
+				import from 'bar.css';
 			`;
 			var path = '/mask/test.mask';
 			return mask
@@ -11,8 +11,9 @@ UTest({
 				.getDependencies(template, path)
 				.done(list => deepEq_(list, {
 						mask: [],
-						js:  [ '/foo.js' ],
-						css: [ '/mask/bar.css' ]
+						data: [],
+						script: [ '/foo.js' ],
+						style:  [ '/mask/bar.css' ]
 					})
 				);
 		},
@@ -30,21 +31,24 @@ UTest({
 					mask: [{
 						path: '/test/tmpl/modules/nest.mask',
 						dependencies: {
-							js: [],
-							css: [],
+							script: [],
+							style: [],
+							data: [],
 							mask: [
 								{
 									path: '/test/tmpl/modules/nest-a.mask',
 									dependencies: {
-										js: [],
-										css: [],
+										script: [],
+										style: [],
+										data: [],
 										mask: [
 											{
 												path: '/test/tmpl/modules/nest-b.mask',
 												dependencies: {
 													mask: [],
-													css: [],
-													js: []
+													data: [],
+													style: [],
+													script: []
 												}
 											}
 										]
@@ -53,8 +57,9 @@ UTest({
 							]
 						}
 					}],
-					js: [],
-					css: []
+					script: [],
+					style: [],
+					data: [],
 				}));
 		},
 		'should get flatterned dependencies' () {
@@ -74,8 +79,9 @@ UTest({
 						'/test/tmpl/modules/nest-a.mask',
 						'/test/tmpl/modules/nest.mask',
 					],
-					js: [],
-					css: []
+					script: [],
+					style: [],
+					data: [],
 				}));
 		},
 		'should return an error: Not Found' (done) {
@@ -117,26 +123,26 @@ UTest({
 					has_(pckg.mask, template.trim());
 					has_(pckg.mask, "'a'");
 					
-					has_(pckg.js, "'Baz'");
-					has_(pckg.css, "background: red");
+					has_(pckg.script, "'Foo'");
+					has_(pckg.style, "background: red");
 				});
 		}
 	},
-	'combine and render' () {
+	'!combine and render' () {
 		var template = `
 			import * as Foo from '/test/tmpl/modules/model';
 			Foo;
-		`;
+		`;		
 		return mask
 			.Module
 			.build(template, '/')
 			.pipe(pckg => {
-				eval(pckg.js);
-				$('<style>').text(pckg.css).appendTo('body');
+				eval(pckg.script);
+				$('<style>').text(pckg.style).appendTo('body');
 				var dom = mask.render(pckg.mask);
 				return UTest.domtest(dom, `
 					find ('.foo') {
-						text Baz;
+						text Foo;
 					}
 				`)
 				

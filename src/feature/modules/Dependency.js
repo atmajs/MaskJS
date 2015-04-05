@@ -1,25 +1,20 @@
 var Dependency = class_create({
 	constructor: function(data, ctx, ctr, module){
 		this.path = data.path;
-		this.exports = data.exports;
 		this.alias = data.alias;
-		
+		this.exports = data.exports;
+
 		if (Module.isMask(this.path) === true) {
 			this.eachExport(function(compoName){
 				if (compoName !== '*') 
 					customTag_registerResolver(compoName);
 			});
-		} else {
-			// if DEBUG
-			if (this.exports == null && this.alias == null) 
-				throw Error('Embeding ("import from") is allowed only for mask imports');
-			// endif
 		}
 		
 		this.ctx = ctx;
 		this.ctr = ctr;
 		this.module = Module.createModule(this.path, ctx, ctr, module);
-		if (ctx._modules) {
+		if (ctx._modules != null) {
 			ctx._modules.add(this.module, module);
 		}
 	},
@@ -111,12 +106,21 @@ var Dependency = class_create({
 			.loadModule()
 			.fail(cb)
 			.done(function(module){
-				self.eachExport(function(exportName, name, alias){
-					self.module.register(self.ctr, name, alias);
-				});
+				self.registerExports(self.ctr);
 				cb(null, self);
 			});
 	},
+	
+	registerExports: function(ctr){
+		this.eachExport(function(exportName, name, alias){
+			this.module.register(ctr, name, alias);
+		}, this);
+		
+		this.module.imports && this.module.imports.forEach(function(x){
+			x.registerExports(ctr);
+		});
+	},
+	
 	getEmbeddableNodes: function(){
 		var module = this.module;
 		if (module == null || module.type !== 'mask') {

@@ -2,6 +2,9 @@ var Module;
 (function(){
 	Module = {};
 	var _cache = {},
+		_extensions_script = ' js es6 test coffee ',
+		_extensions_style  = ' css sass scss less ',
+		_extensions_data   = ' json ',
 		_base;
 	
 	// import utils
@@ -9,12 +12,15 @@ var Module;
 	// import Module
 	// import ModuleMask
 	// import ModuleScript
+	// import ModuleStyle
+	// import ModuleData
 	// import components
 	// import tools/dependencies
 	// import tools/build
 	
 	obj_extend(Module, {
 		createModule: function(path, ctx, ctr, parent) {
+			//debugger;
 			if ('' === path_getExtension(path)) {
 				path += '.mask';
 			}
@@ -31,7 +37,7 @@ var Module;
 		},
 		registerModule: function(mix, path, ctx, ctr) {
 			var module = null;
-			module = Module.createModule(path, ctx, ctr);
+			module = Module.createModule(path, ctx, ctr, false);
 			module.state = 1;
 			if (Module.isMask(path)) {
 				var nodes = mix;
@@ -47,7 +53,7 @@ var Module;
 				});
 				return module;
 			}
-			// assume javascript and is loaded
+			// assume others and is loaded
 			module.state   = 4;
 			module.exports = mix;
 			module.resolve();
@@ -59,6 +65,19 @@ var Module;
 		isMask: function(path){
 			var ext = path_getExtension(path);
 			return ext === '' || ext === 'mask';
+		},
+		getType: function(path) {
+			var ext = path_getExtension(path);
+			
+			if (ext === '' || ext === 'mask')
+				return 'mask';
+			var search = ' ' + ext + ' ';
+			if (_extensions_style.indexOf(search) !== -1)
+				return 'style';
+			if (_extensions_data.indexOf(search) !== -1)
+				return 'data';
+			// assume is javascript
+			return 'script';
 		},
 		cfg: function(name, val){
 			switch (name) {

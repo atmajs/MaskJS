@@ -15,7 +15,7 @@ function test(filename, indent) {
 	
 	io
 		.File
-		.read(`test/tmpl/stringify.${filename}.mask`)
+		.read(`test/tmpl/stringify/${filename}.mask`)
 		.split(/^===$/gm)
 		.map(function(test){
 			

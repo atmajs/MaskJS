@@ -141,168 +141,190 @@ UTest({
 		}
 	},
 	'render': {
-		'get all' (done) {
-			mask
+		'get all' () {
+			return mask
 				.renderAsync(`
 					import * as foo1 from '/test/tmpl/modules/h4.mask';
 					foo1;
 				`)
-				.done(assert.await(function(dom){
+				.done(dom => {
 					$(dom).has_('h4');
-					done();
-				}));
+				});
 		},
-		'get mask node' (done) {
-			mask
+		'get mask node' () {
+			return mask
 				.renderAsync(`
 					import header as foo2 from '/test/tmpl/modules/header_content.mask';
 					foo2;
 				`)
-				.done(assert.await(function(dom){
+				.done(dom => {
 					$(dom).has_('header');
 					$(dom).hasNot_('.content');
-					done();
-				}))
+				})
 		},
-		'deep nesting' (done) {
-			mask
+		'deep nesting' () {
+			return mask
 				.renderAsync(`
 					import * as :nest from '/test/tmpl/modules/nest.mask';
 					:nest;
 				`)
-				.done(assert.await(function(dom){
+				.done(dom => {
 					$(dom)
 						.has_('section.a')
 						.has_('h4.b');
-					done();
-				}))
+				});
 		},
-		'include' (done) {
-			mask
+		'include' () {
+			return mask
 				.renderAsync(`
 					import from '/test/tmpl/modules/h4.mask';
 				`)
-				.done(assert.await(function(dom){
-					
+				.done(dom => {
 					$(dom)
 						.has_('h4')
 						.eq_('text', 'a');
-					done();
-				}))
+				});
 		},
-		'errored' (done) {
-			mask
+		'errored' () {
+			return mask
 				.renderAsync(`
 					import from '/none.mask';
 				`)
-				.done(assert.await(function(dom){
-					$(dom)
-						.has_('text', 'Resource: /none.mask; Status: 404');
-					done();
-				}))
+				.done(dom => {
+					$(dom).has_('text', 'Resource: /none.mask; Status: 404');
+				});
 		},
-		'defines' (done) {
-			mask
+		'defines' () {
+			return mask
 				.renderAsync(`
 					import :menu, :footer from '/test/tmpl/modules/defines';
 					
 					h4 > :menu;
 					div > :footer;
 				`)
-				.done(assert.await(function(dom){
-					UTest
-						.domtest(dom, `
-							filter('h4') > text Home;
-							filter('div') > text Copyright;
-						`)
-						.done(done);
-				}));
+				.done(dom => {
+					return UTest.domtest(dom, `
+						filter('h4') > text Home;
+						filter('div') > text Copyright;
+					`);
+				});
 		},
 		'scripts': {
-			'load property' (done) {
-				mask.renderAsync(`
-					import foo from '/test/tmpl/modules/data.js';
-					h4 > '~[foo.name]';
-				`)
-				.done(assert.await(function(dom) {
-					UTest
-							.domtest(dom, `
-								filter('h4') > text Baz;
-							`)
-							.always(done);
-				}));
+			'load property' () {
+				return mask
+					.renderAsync(`
+						import foo from '/test/tmpl/modules/data_foo.js';
+						h4 > '~[foo.name]';
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Foo;
+						`);
+					});
 			},
-			'load full' (done) {
-				mask.renderAsync(`
-					import * as x from '/test/tmpl/modules/data.js';
-					h4 > '~[x.foo.name]';
-				`)
-				.done(assert.await(function(dom) {
-					UTest
-							.domtest(dom, `
-								filter('h4') > text Baz;
-							`)
-							.always(done);
-				}));
+			'load full' () {
+				return mask
+					.renderAsync(`
+						import * as x from '/test/tmpl/modules/data_foo.js';
+						h4 > '~[x.foo.name]';
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Foo;
+						`);
+					});
 			},
-			'extending `define`' (done) {
-				mask.renderAsync(`
-					import * as X from '/test/tmpl/modules/data.js';
-					define Bar extends X {
-						h4 > '~[:$c.foo.name]'
-					}
-					Bar;
-				`)
-				.done(assert.await(function(dom) {
-					UTest.domtest(dom, `
+			'extending `define`' () {
+				return mask
+					.renderAsync(`
+						import * as X from '/test/tmpl/modules/data_foo.js';
+						define Bar extends X {
+							h4 > '~[:$c.foo.name]'
+						}
+						Bar;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Foo;
+						`);
+					});
+			},
+			'extending `define` with imported handler' () {
+				return mask
+					.renderAsync(`
+						import * as X from '/test/tmpl/modules/data_foo.js';
+						define Bar extends X.foo {
+							h4 > '~[:$c.name]'
+						}
+						Bar;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Foo;
+						`);
+					});
+			},
+		},
+		
+		'data':{
+			'load json properties' () {
+				return mask
+					.renderAsync(`
+						import baz from '/test/tmpl/modules/data_baz.json';
+						h4 > '~[baz.name]';
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
 							filter('h4') > text Baz;
-						`)
-						.always(done);
-				}));
+						`);
+					});
 			},
-			'extending `define` with imported handler' (done) {
-				mask.renderAsync(`
-					import * as X from '/test/tmpl/modules/data.js';
-					define Bar extends X.foo {
-						h4 > '~[:$c.name]'
-					}
-					Bar;
-				`)
-				.done(assert.await(function(dom) {
-					UTest
-						.domtest(dom, `
-							filter('h4') > text Baz;
-						`)
-						.always(done);
-				}));
-			},
-			
-			'load package with embedded modules' (done) {
-				mask.renderAsync(`
-					import * as Y from '/test/tmpl/modules/package';
-					
-					p > Y;
-				`, { name: 'Baz' })
-				.done(assert.await(function(dom) {
-					UTest
-						.domtest(dom, `
+		},
+		
+		'packages': {
+			'load package with embedded modules' () {
+				return mask
+					.renderAsync(`
+						import * as Y from '/test/tmpl/modules/package';
+						
+						p > Y;
+					`, { name: 'Foo' })
+					.pipe(dom => {
+						return UTest.domtest(dom, `
 							filter('p') {
 								has h4;
-								text Baz;
+								text Foo;
 							}
-						`)
-						.always(done);
-				}));
+						`);
+					});
 			},
 			
 			'load model' () {
 				return mask
 					.renderAsync('import from "/test/tmpl/modules/model"')
-					.pipe((dom) => UTest.domtest(dom, `
+					.pipe(dom => UTest.domtest(dom, `
 						find ('h4') {
 							text a;
 						}
 						find ('.foo') {
+							text Foo;
+						}
+						find ('.baz') {
+							text Baz;
+						}
+					`));
+			},
+			'repeat load model' () {
+				return mask
+					.renderAsync('import from "/test/tmpl/modules/model"')
+					.pipe(dom => UTest.domtest(dom, `
+						find ('h4') {
+							text a;
+						}
+						find ('.foo') {
+							text Foo;
+						}
+						find ('.baz') {
 							text Baz;
 						}
 					`));

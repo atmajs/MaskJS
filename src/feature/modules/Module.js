@@ -12,8 +12,9 @@ var IModule = class_create(class_Dfr, {
 		this.ctr = ctr;
 	},
 	loadModule: function(){
-		if (this.state !== 0)
+		if (this.state !== 0) {
 			return this;
+		}
 		
 		this.state = 1;
 		var self = this;
@@ -41,9 +42,9 @@ var IModule = class_create(class_Dfr, {
 		
 		return this.get_(name, model, ctr);
 	},
-	getHandler: null,
+	getHandler: function(){},
 	getIntern: null,
-	register: null,
+	register: function(){},
 	
 	preproc_: function(mix, next){
 		next(mix);
@@ -61,6 +62,13 @@ var IModule = class_create(class_Dfr, {
 		var ext = path_getExtension(path);
 		if (ext === 'mask') {
 			return ModuleMask;
+		}
+		var search = ' ' + ext + ' ';
+		if (_extensions_style.indexOf(search) !== -1) {
+			return ModuleStyle;
+		}
+		if (_extensions_data.indexOf(search)  !== -1) {
+			return ModuleData;
 		}
 		// assume script, as anything else is not supported yet
 		return ModuleScript;

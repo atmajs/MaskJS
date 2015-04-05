@@ -1,4 +1,4 @@
-do ("Hello" ) type
+do ("Hello") type
 ---
 do type("Hello");
 ===

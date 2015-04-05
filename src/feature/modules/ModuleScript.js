@@ -1,5 +1,5 @@
 var ModuleScript = class_create(IModule, {
-	type: 'js',
+	type: 'script',
 	
 	load_: function(path){
 		var fn = __cfg.getScript || file_getScript;

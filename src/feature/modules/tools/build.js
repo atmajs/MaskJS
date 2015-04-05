@@ -21,14 +21,18 @@ var tools_build;
 	};
 	
 	function build(deps, opts, resolve, reject) {
-		var types = ['mask', 'js', 'css'];
+		var types = ['mask', 'script', 'style', 'data'];
 		var out = {
 			mask: '',
-			css: '',
-			js: '',
+			data: '',
+			style: '',
+			script: '',
 		};
 		function next(){
 			if (types.length === 0) {
+				if (out.data) {
+					out.script = out.data + '\n' + out.script;
+				}
 				return resolve(out);
 			}
 			var type = types.shift();
@@ -86,11 +90,14 @@ var tools_build;
 					});
 			});
 		},
-		js: function(path, opts){
+		script: function(path, opts){
 			return (__cfg.buildScript || build_script)(path, opts);
 		},
-		css: function(path, opts) {
+		style: function(path, opts) {
 			return (__cfg.buildStyle || build_style)(path, opts);
+		},
+		data: function(path, opts) {
+			return (__cfg.buildData || build_data)(path, opts);
 		}
 	}
 	
@@ -99,7 +106,7 @@ var tools_build;
 			(__cfg.getFile || file_get)(path)
 				.fail(reject)
 				.done(function(str){
-					var script = 'if (typeof module === "undefined") module = { exports: null }\n';
+					var script = 'module = { exports: null }\n';
 					script += str + ';\n';
 					script += 'mask.Module.registerModule(module.exports, "' + path + '")';
 					resolve(script);
@@ -108,5 +115,27 @@ var tools_build;
 	}
 	function build_style(path, opts, done) {
 		return (__cfg.getFile || file_get)(path, done);
+	}
+	function build_data(path, opts, done) {
+		return class_Dfr.run(function(resolve, reject){
+			(__cfg.getFile || file_get)(path)
+				.fail(reject)
+				.done(function(mix){
+					var json;
+					try {
+						json = typeof mix === 'string'
+							? JSON.parse(mix)
+							: mix;
+					} catch (error) {
+						reject(error);
+						return;
+					}
+					var str = JSON.stringify(json, null, opts.minify ? 4 : void 0);
+					var script = 'module = { exports: ' + str + ' }\n'
+						+ 'mask.Module.registerModule(module.exports, "' + path + '")';
+						
+					resolve(script);
+				});	
+		});
 	}
 }());

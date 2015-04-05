@@ -193,12 +193,13 @@ UTest({
 	'check serialization': {
 		'simple' () {
 			var tmpl = `
-				section >
+				section {
 					style {
 						body {
 							border: ~[width]px;
 						}
 					}
+				}
 			`;
 			var str = mask.stringify(mask.parse(tmpl), 4);
 			eq_(
@@ -208,10 +209,11 @@ UTest({
 		},
 		'attributes and comments' () {
 			var tmpl = `
-				section >
+				section {
 					style id='foo' enabled {
 						/* comment */
 					}
+				}
 			`;
 			var str = mask.stringify(mask.parse(tmpl), 4);
 			eq_(

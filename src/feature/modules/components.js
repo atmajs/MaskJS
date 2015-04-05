@@ -76,6 +76,7 @@
 			this.start_(model, ctx);
 		},
 		serializeNodes: function(){
+			// NodeJS
 			var arr = [],
 				i = this.nodes.length, x;
 			while( --i > -1 ){

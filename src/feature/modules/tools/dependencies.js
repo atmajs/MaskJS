@@ -34,44 +34,35 @@ var tools_getDependencies;
 		var location = path_getDir(path);
 		var dependency = {
 			mask: [],
-			css: [],
-			js: [],
+			data: [],
+			style: [],
+			script: [],
 		};
 		
 		mask_TreeWalker.walkAsync(ast, visit, complete);
 		
 		function visit (node, next){
-			if ('link' === node.tagName) {
-				if (node.attr.href) {
-					var path = path_resolveUrl(node.attr.href, location);
-					dependency.css.push(path);
-				}
-				next();
-				return;
+			if (node.tagName !== 'import') {
+				return next();
 			}
-			if ('import' === node.tagName) {
-				var path = resolvePath(node.path, location);
-				if (Module.isMask(path)) {
-					if (opts.deep === false) {
-						dependency.mask.push(path);
-						next();
-						return;
+			var path = resolvePath(node.path, location);
+			var type = Module.getType(path);
+			if (opts.deep === false) {
+				dependency[type].push(path);
+				return next();
+			}
+			if ('mask' === type) {
+				getMask(path, opts, function(error, dep){
+					if (error) {
+						return done(error);
 					}
-					getMask(path, opts, function(error, dep){
-						if (error) {
-							return done(error);
-						}
-						dependency.mask.push(dep);
-						next();
-					});
-					return;
-				}
-				// assume js
-				dependency.js.push(path);
-				next();
+					dependency.mask.push(dep);
+					next();
+				});
 				return;
 			}
 			
+			dependency[type].push(path);
 			next();
 		}
 		function complete() {
@@ -114,8 +105,9 @@ var tools_getDependencies;
 		flattern = function (deps) {
 			return {
 				mask: resolve(deps, 'mask'),
-				css: resolve(deps, 'css'),
-				js: resolve(deps, 'js'),
+				data: resolve(deps, 'data'),
+				style: resolve(deps, 'style'),
+				script: resolve(deps, 'script'),
 			};
 		};
 		

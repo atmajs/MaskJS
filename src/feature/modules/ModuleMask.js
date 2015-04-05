@@ -19,7 +19,7 @@ var ModuleMask;
 				imax = arr.length,
 				i = -1,
 				x;
-				
+			
 			while( ++i < imax ){
 				x = arr[i];
 				switch (x.tagName) {
@@ -43,7 +43,6 @@ var ModuleMask;
 				next(_createExports(arr, null, this));
 			}, this);
 		},
-		
 		// get mask node(s)
 		get_: function(name, model, ctr){
 			var Ctor = this.exports[name];
@@ -103,23 +102,34 @@ var ModuleMask;
 		type: 'mask',
 		nodes: null,
 		modules: null,
-		exports: null
+		exports: null,
+		imports: null
 	});
 	
+	// Also flattern all `imports` tags
 	function _nodesToArray (mix) {
 		var type = mix.type;
-		if (type === Dom.FRAGMENT) {
-			return mix.nodes;
-		}
 		if (type === Dom.NODE && mix.tagName === 'imports') {
 			return mix.nodes;
 		}
-		if (type != null) {
-			// is any node
+		if (type !== Dom.FRAGMENT && type != null) {
 			return [ mix ];
 		}
+		var arr = mix;
+		if (type === Dom.FRAGMENT) {
+			arr = mix.nodes;
+		}
+		var imax = arr.length,
+			i = -1, x;
+		while ( ++i < imax ){
+			x = arr[i];
+			if (x.tagName === 'imports') {
+				arr.splice.apply(arr, [i, 1].concat(x.nodes));
+				i--;
+			}
+		}
 		
-		return mix;
+		return arr;
 	}
 	function _nodesFilter(nodes, tagName) {
 		var arr = [],
@@ -139,16 +149,17 @@ var ModuleMask;
 			getHandler = module.getHandler.bind(module)
 			;
 		var imax = nodes.length,
-			i = -1;
+			i = -1, tagName;
 		while ( ++i < imax ) {
 			var node = nodes[i];
-			if (node.tagName !== 'define')
+			var tagName = node.tagName;
+			if (tagName === 'define') {
+				var Ctor = Define.create(node, model, module);
+				Ctor.prototype.getHandler = getHandler;
+				
+				exports[node.name] = Ctor;
 				continue;
-			
-			var Ctor = Define.create(node, model, module);
-			Ctor.prototype.getHandler = getHandler;
-			
-			exports[node.name] = Ctor;
+			}
 		}
 		return exports;
 	}
@@ -165,7 +176,6 @@ var ModuleMask;
 		if (count === 0) {
 			return done.call(module);
 		}
-		
 		var imax = count,
 			i = -1;
 		while( ++i < imax ) {
