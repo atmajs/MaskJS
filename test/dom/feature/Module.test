@@ -128,7 +128,7 @@ UTest({
 				});
 		}
 	},
-	'!combine and render' () {
+	'combine and render' () {
 		var template = `
 			import * as Foo from '/test/tmpl/modules/model';
 			Foo;

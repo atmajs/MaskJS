@@ -1,109 +1,86 @@
 var ModuleMask;
 (function(){
 	ModuleMask = class_create(IModule, {
+		type: 'mask',
+		scope: null,
+		source: null,
+		modules: null,
+		exports: null,
+		imports: null,
+		
 		load_: function(path){
-			var fn = __cfg.getFile || file_get;
-			return fn(path);
+			return (__cfg.getFile || file_get)(path);
 		},
-		preproc_: function(mix, next) {
+		preprocessError_: function(error, next) {
+			var msg = 'Load error: ' + this.path;
+			if (error && error.status) {
+				msg += '; Status: ' + error.status;
+			}
+
+			this.source = log_errorNode(msg);
+			next.call(this, error);
+		},
+		preprocess_: function(mix, next) {
 			var ast = typeof mix === 'string'
 				? parser_parse(mix)
 				: mix
 				;
 			
-			var imports = this.imports = [],
-				exports = this.exports = {
-					'__nodes__': []
-				},
-				arr  = this.nodes = _nodesToArray(ast),
+			this.scope = {};
+			this.source = ast;
+			this.imports = [];
+			this.exports = {
+				'__nodes__': []
+			};
+			
+			var arr  = _nodesToArray(ast),
 				imax = arr.length,
 				i = -1,
 				x;
-			
 			while( ++i < imax ){
 				x = arr[i];
 				switch (x.tagName) {
 					case 'import':
-						imports.push(new Dependency(
-							x, this.ctx, this.ctr, this
+						this.imports.push(IImport.create(
+							u_resolvePath(x.path, null, null, this)
+							, x.alias
+							, x.exports
+							, this
 						));
 						break;
 					case 'module':
 						Module.registerModule(
-							x.nodes, path_resolveUrl(x.attr.path, this.location)
+							x.nodes, u_resolvePath(x.attr.path, null, null, this)
 						);
 						break;
 					default:
-						exports.__nodes__.push(x);
+						this.exports.__nodes__.push(x);
 						break;
 				}
 			}
 			
-			_loadImports(imports, function(){
-				next(_createExports(arr, null, this));
+			_loadImports(this.imports, function(){
+				next.call(this, null, _createExports(arr, null, this));
 			}, this);
-		},
-		// get mask node(s)
-		get_: function(name, model, ctr){
-			var Ctor = this.exports[name];
-			if (Ctor != null) {
-				return new Dom.Component(name, ctr, Ctor);
-			}
-			var nodes = _nodesFilter(this.exports.__nodes__, name);
-			if (nodes != null) {
-				return nodes;
-			}
-			
-			log_error('Export not found', name);
-			return log_errorNode(
-				'Error: Export not found; ' + name
-			);
-		},
-		erroredExport_: function(message){
-			var msg = (message || '') + '; Resource: ' + this.path;
-			if (this.error) {
-				msg += '; Status: ' + this.error.status;
-			}
-			return log_errorNode(msg);
-		},
-		register: function(ctr, name, alias){
-			//var self = this;
-			//var compoName = alias || name;
-			//var compo = class_create({
-			//	compoName: compoName,
-			//	resource: {
-			//		location: this.location
-			//	},
-			//	getHandler: this.getHandler.bind(this),
-			//	nodes: this.get(name, null, ctr)
-			//});
-			//ctr.getHandler = mask_getHandlerDelegate(
-			//	compoName
-			//	, compo
-			//	, ctr.getHandler
-			//);
-			//return compo;
 		},
 		
 		getHandler: function(name){
 			return _module_getHandler(this, name);
 		},
-		getIntern: function(selector){
-			var nodes = this.exports.__nodes__;
-			if (selector != null && selector !== '*') {
-				nodes = _nodesFilter(nodes, selector);
+		queryHandler: function(selector) {
+			if (this.error) {
+				return _createHandlerForNodes(this.source, this);
 			}
 			
+			var nodes = this.exports.__nodes__;
+			if (selector !== '*') {
+				nodes = _nodesFilter(nodes, selector);
+			}
 			return nodes != null && nodes.length !== 0
 				? _createHandlerForNodes(nodes, this)
 				: null
 				;
 		},
-		type: 'mask',
-		nodes: null,
-		modules: null,
-		exports: null,
-		imports: null
 	});
 	
 	// Also flattern all `imports` tags
@@ -144,30 +121,48 @@ var ModuleMask;
 		return arr;
 	}
 	function _createExports(nodes, model, module) {
-		var imports = module.imports,
-			exports = module.exports,
-			getHandler = module.getHandler.bind(module)
-			;
-		var imax = nodes.length,
-			i = -1, tagName;
+		var exports = module.exports,
+			scope   = module.scope,
+			getHandler = _module_getHandlerDelegate(module),
+			imax = nodes.length,
+			i = -1;
 		while ( ++i < imax ) {
 			var node = nodes[i];
-			var tagName = node.tagName;
-			if (tagName === 'define') {
+			if (node.tagName === 'define') {
 				var Ctor = Define.create(node, model, module);
-				Ctor.prototype.getHandler = getHandler;
+				obj_extend(Ctor.prototype, {
+					getHandler: getHandler,
+					location: module.location,
+					scope: scope
+				});
 				
 				exports[node.name] = Ctor;
-				continue;
+			}
+		}
+		exports['*'] = class_create(customTag_Base, {
+			getHandler: getHandler,
+			location: module.location,
+			nodes: exports.__nodes__,
+			scope: scope
+		});
+		
+		var imports = module.imports,
+			imax = imports.length,
+			i = -1;
+		while ( ++i < imax ) {
+			var x = imports[i];
+			if (x.registerScope) {
+				x.registerScope(module);
 			}
 		}
 		return exports;
 	}
 	function _createHandlerForNodes(nodes, module) {
 		return class_create({
+			scope: module.scope,
 			location: module.location,
 			nodes: nodes,
-			getHandler: module.getHandler.bind(module)
+			getHandler: _module_getHandlerDelegate(module)
 		});
 	}
 	
@@ -198,13 +193,12 @@ var ModuleMask;
 		if (Ctor != null) {
 			return Ctor;
 		}
-		var imports = module.imports,
-			i = imports.length,
+		var arr = module.imports,
+			i = arr.length,
 			x;
 		while( --i > -1) {
-			x = imports[i];
-			Ctor = x.getHandler(name);
-			if (Ctor != null ) {
+			x = arr[i];
+			if (x.type === 'mask' && (Ctor = x.getHandler(name)) != null) {
 				return Ctor;
 			}
 		}

@@ -1,4 +1,5 @@
 var u_resolveLocation,
+	u_resolvePath,
 	u_handler_getDelegate;
 	
 (function(){
@@ -39,6 +40,17 @@ var u_resolveLocation,
 		return _base;
 	};
 	
+	u_resolvePath = function(path, ctx, ctr, module){
+		if ('' === path_getExtension(path)) {
+			path += '.mask';
+		}
+		if (path_isRelative(path) === false) {
+			return path;
+		}
+		return path_normalize(path_combine(
+			u_resolveLocation(ctx, ctr, module), path
+		));
+	};
 	
 	u_handler_getDelegate = function(compoName, compo, next) {
 		return function(name) {

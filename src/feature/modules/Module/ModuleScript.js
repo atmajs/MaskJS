@@ -5,24 +5,25 @@ var ModuleScript = class_create(IModule, {
 		var fn = __cfg.getScript || file_getScript;
 		return fn(path);
 	},
-	getIntern: function(property) {
-		var obj = this.exports || {};
-		return property !== '*'
+	getExport_: function(property) {
+		var obj = this.exports;
+		var x = property !== '*'
 			? obj_getProperty(obj, property)
 			: obj
 			;
+		if (x == null) {
+			log_error('Exported value is undefined', name);
+		}
+		return x;
 	},
 	
 	register: function(ctr, name, alias) {
 		var prop = alias || name;
-		var obj = this.getIntern(name);
-		if (obj == null) {
-			log_error('Property is undefined', name);
-			return;
-		}
+		var obj = this.getExport_(name);
 		if (ctr.scope == null) {
 			ctr.scope = {};
 		}
 		obj_setProperty(ctr.scope, prop, obj);
-	}
+	},
+	
 });

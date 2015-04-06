@@ -174,7 +174,7 @@ UTest({
 						.has_('h4.b');
 				});
 		},
-		'include' () {
+		'embed' () {
 			return mask
 				.renderAsync(`
 					import from '/test/tmpl/modules/h4.mask';
@@ -190,8 +190,8 @@ UTest({
 				.renderAsync(`
 					import from '/none.mask';
 				`)
-				.done(dom => {
-					$(dom).has_('text', 'Resource: /none.mask; Status: 404');
+				.pipe(dom => {
+					$(dom).has_('text', 'Load error: /none.mask; Status: 404');
 				});
 		},
 		'defines' () {
@@ -202,7 +202,7 @@ UTest({
 					h4 > :menu;
 					div > :footer;
 				`)
-				.done(dom => {
+				.pipe(dom => {
 					return UTest.domtest(dom, `
 						filter('h4') > text Home;
 						filter('div') > text Copyright;
@@ -299,7 +299,7 @@ UTest({
 					});
 			},
 			
-			'load model' () {
+			'embed model template' () {
 				return mask
 					.renderAsync('import from "/test/tmpl/modules/model"')
 					.pipe(dom => UTest.domtest(dom, `
@@ -314,7 +314,7 @@ UTest({
 						}
 					`));
 			},
-			'repeat load model' () {
+			'repeat embedding' () {
 				return mask
 					.renderAsync('import from "/test/tmpl/modules/model"')
 					.pipe(dom => UTest.domtest(dom, `
@@ -328,9 +328,23 @@ UTest({
 							text Baz;
 						}
 					`));
+			},
+			'load model template' () {
+				return mask
+					.renderAsync('import * as X from "/test/tmpl/modules/model"; X;')
+					.pipe(dom => UTest.domtest(dom, `
+						find ('h4') {
+							text a;
+						}
+						find ('.foo') {
+							text Foo;
+						}
+						find ('.baz') {
+							text Baz;
+						}
+					`));
 			}
-		}
-		
-	}
+		} //< packages
+	} //< render
 	
 })

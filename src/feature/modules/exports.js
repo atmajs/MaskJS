@@ -8,46 +8,38 @@ var Module;
 		_base;
 	
 	// import utils
-	// import Dependency
-	// import Module
-	// import ModuleMask
-	// import ModuleScript
-	// import ModuleStyle
-	// import ModuleData
+
+	// import Import/Import
+	// import Import/ImportMask
+	// import Import/ImportScript
+	// import Import/ImportStyle
+	// import Import/ImportData
+	
+	// import Module/Module
+	// import Module/ModuleMask
+	// import Module/ModuleScript
+	// import Module/ModuleStyle
+	// import Module/ModuleData
+	
 	// import components
 	// import tools/dependencies
 	// import tools/build
 	
 	obj_extend(Module, {
-		createModule: function(path, ctx, ctr, parent) {
-			//debugger;
-			if ('' === path_getExtension(path)) {
-				path += '.mask';
-			}
-			if (path_isRelative(path)) {
-				path = path_combine(u_resolveLocation(ctx, ctr, parent), path);
-			}
-			path = path_normalize(path);
-			
+		createModule: function(path_, ctx, ctr, parent) {			
+			var path   = u_resolvePath(path_, ctx, ctr, parent);
 			var module = _cache[path];
 			if (module == null) {
-				module = _cache[path] = IModule.create(path, ctx, ctr, parent);
+				module = _cache[path] = IModule.create(path, parent);
 			}
 			return module;
 		},
-		registerModule: function(mix, path, ctx, ctr) {
-			var module = null;
-			module = Module.createModule(path, ctx, ctr, false);
+		registerModule: function(mix, path_, ctx, ctr, parent) {
+			var path = u_resolvePath(path_, ctx, ctr, parent);
+			var module = Module.createModule(path, ctx, ctr, false);
 			module.state = 1;
 			if (Module.isMask(path)) {
-				var nodes = mix;
-				if (is_ArrayLike(nodes)) {
-					if (nodes.length === 1) {
-						nodes = nodes[0];
-					}
-				}
-				
-				module.preproc_(nodes, function(){
+				module.preprocess_(mix, function(){
 					module.state = 4;
 					module.resolve();
 				});
@@ -59,8 +51,11 @@ var Module;
 			module.resolve();
 			return module;
 		},
-		createDependency: function(data, ctx, ctr, module){
-			return  new Dependency(data, ctx, ctr, module);
+		createImport: function(data, ctx, ctr, module){
+			var path = u_resolvePath(data.path, ctx, ctr, module),
+				alias = data.alias,
+				exports = data.exports;
+			return IImport.create(path, alias, exports, module);
 		},
 		isMask: function(path){
 			var ext = path_getExtension(path);

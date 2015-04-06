@@ -21,18 +21,26 @@
 			serializeNodes: true
 		},
 		constructor: function(node, model, ctx, el, ctr) {
-			this.dependency = Module.createDependency(node, ctx, this);
+			if (node.alias == null && node.exports == null && Module.isMask(node.path)) {
+				// embedding
+				this.module = Module.createModule(node.path, ctx, ctr);
+			}
 		},
 		renderStart: function(model, ctx){
-			if (this.dependency.isEmbeddable() === false) 
+			if (this.module == null) {
 				return;
-			
+			}
 			var resume = Compo.pause(this, ctx);
 			var self   = this;
-			this.dependency.loadImport(function(){
-				self.nodes = self.dependency.getEmbeddableNodes();
-				resume();
-			});
+			this
+				.module
+				.loadModule()
+				.always(function(){
+					self.scope = self.module.scope;
+					self.nodes = self.module.source;
+					self.getHandler = self.module.getHandler.bind(self.module);
+					resume();
+				});
 		}
 	});
 	
@@ -40,12 +48,18 @@
 		imports_: null,
 		load_: function(ctx, cb){
 			var arr = this.imports_,
+				self = this,
 				imax = arr.length,
 				await = imax,
 				i = -1, x;
 			
-			function done() {
-				if (--await === 0) cb();
+			function done(error, import_) {
+				if (error == null && import_.registerScope) {
+					import_.registerScope(self);
+				}
+				if (--await === 0) {
+					cb();
+				}
 			}
 			while( ++i < imax ){
 				x = arr[i];
@@ -61,7 +75,7 @@
 			var arr = this.imports_ = [];
 			while( ++i < imax ){
 				if (nodes[i].tagName === IMPORT) {
-					arr.push(Module.createDependency(nodes[i], ctx, this));
+					arr.push(Module.createImport(nodes[i], ctx, this));
 				}
 			}
 			this.load_(ctx, resume);
@@ -91,9 +105,13 @@
 		getHandler: function(name){
 			var arr = this.imports_,
 				imax = arr.length,
-				i = -1, x;
+				i = -1, import_, x;
 			while ( ++i < imax ){
-				x = arr[i].getHandler(name);
+				import_ = arr[i];
+				if (import_.type !== 'mask') {
+					continue;
+				}
+				x = import_.getHandler(name);
 				if (x != null) {
 					return x;
 				}
@@ -104,9 +122,13 @@
 			var handlers = {};
 			var arr = this.imports_,
 				imax = arr.length,
-				i = -1, x;
+				i = -1, import_, x;
 			while ( ++i < imax ){
-				x = arr[i].getHandlers();
+				import_ = arr[i];
+				if (import_ !== 'mask') {
+					continue;
+				}
+				x = import_.getHandlers();
 				obj_extend(handlers, x);
 			}
 			return handlers;
