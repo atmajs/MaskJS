@@ -5,9 +5,9 @@ var IImport = class_create({
 		this.alias = alias;
 		this.exports = exports;
 		this.module = Module.createModule(path, module);
-		//if (ctx._modules != null) {
-		//	ctx._modules.add(this.module, module);
-		//}
+		////if (ctx._modules != null) {
+		////	ctx._modules.add(this.module, module);
+		////}
 	},
 	eachExport: function(fn){
 		var alias = this.alias;

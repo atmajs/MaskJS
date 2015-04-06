@@ -54,8 +54,13 @@
 				i = -1, x;
 			
 			function done(error, import_) {
-				if (error == null && import_.registerScope) {
-					import_.registerScope(self);
+				if (error == null) {
+					if (import_.registerScope) {
+						import_.registerScope(self);
+					}
+					if (ctx._modules != null) {
+						ctx._modules.add(import_.module);
+					}
 				}
 				if (--await === 0) {
 					cb();
