@@ -85,9 +85,20 @@
 			body : null,
 			
 			constructor: function(node, model, ctx, el, ctr){
-				this.body = is_Function(node.content)
-					? node.content('node', model, ctx, el, ctr)
-					: node.content
+				var content = node.content;
+				if (content == null && node.nodes) {
+					var x = node.nodes[0];
+					if (x.type === Dom.TEXTNODE) {
+						content = x.content;
+					} else {
+						//@OBSOLETE. allow only textnodes
+						content = jmask(x.nodes).text();
+					}
+				}
+				
+				this.body = is_Function(content)
+					? content('node', model, ctx, el, ctr)
+					: content
 					;
 			},		
 			render: function(model, ctx, container) {

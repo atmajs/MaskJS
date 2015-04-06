@@ -27,6 +27,13 @@ UTest({
 			eq_(str, template);
 		}
 	},
+	'should render via :html node' () {
+		var template = `
+			script > :html > "var a = 10;"
+		`;
+		var dom = mask.render(template);
+		eq_(dom.textContent, "var a = 10;");
+	},
 	'should interpolate script sources' () {
 		var template = "each (scripts) > script src='~[.]'"
 		var model = { scripts : [ '1.js', '2.js', '3.js' ] };
