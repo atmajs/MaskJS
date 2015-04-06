@@ -85,7 +85,6 @@
 			body : null,
 			
 			constructor: function(node, model, ctx, el, ctr){
-				this.attr = node.attr;
 				this.body = is_Function(node.content)
 					? node.content('node', model, ctx, el, ctr)
 					: node.content

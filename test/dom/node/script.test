@@ -26,5 +26,17 @@ UTest({
 			var str = mask.stringify(ast);
 			eq_(str, template);
 		}
+	},
+	'should interpolate script sources' () {
+		var template = "each (scripts) > script src='~[.]'"
+		var model = { scripts : [ '1.js', '2.js', '3.js' ] };
+		return UTest.domtest(mask.render(template, model), `
+			find (script) {
+				length 3;
+				eq(0) > attr('src', '1.js');
+				eq(1) > attr('src', '2.js');
+				eq(2) > attr('src', '3.js');
+			}
+		`);
 	}
 })
