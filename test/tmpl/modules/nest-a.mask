@@ -1,5 +1,0 @@
-import h4 as b_nest from 'nest-b';
-
-section .a {
-	b_nest;
-}
