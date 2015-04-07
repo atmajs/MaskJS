@@ -32,10 +32,22 @@ div{span;'Hello'}
 ---
 input checked disabled>:dualbind expression=user.name;
 ===
-module path = "foo.mask" {
-	define foo {
-		h4 > "Foo"
+module path = "baz.mask" {
+	define baz {
+		h4 > "Baz"
 	}
 };
 ---
-module path=foo.mask{define foo{h4>'Foo'}}
+module path=baz.mask{define baz{h4>'Baz'}}
+===
+module path = "foo.mask" {
+	define foo {
+		a;
+	}
+};
+import from './foo.mask';
+
+import a as X from 'foo';
+a;
+---
+module path=foo.mask{define foo{a;}}import from './foo.mask';import a as X from 'foo';a;

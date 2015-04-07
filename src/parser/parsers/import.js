@@ -28,8 +28,8 @@
 	);
 	
 	var ImportsNode = class_create(Dom.Node, {
-		stringify: function (opts) {
-			return mask_stringify(this.nodes, opts)
+		stringify: function (stream) {
+			stream.process(this.nodes);
 		}
 	});
 	

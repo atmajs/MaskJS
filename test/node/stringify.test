@@ -1,26 +1,68 @@
 UTest({
 	
-	'minify' () {
-		test('min');
+	'literals': {
+		'format' () {
+			test('literals', 2);
+		},
+		'minify' () {
+			test('literals.min');
+		},
 	},
-	
-	'beautify' () {
-		test('format', 2);
+	'node head': {
+		'format' () {
+			test('node_head', 2);
+		},
+		'minify' () {
+			test('node_head.min');
+		},
+	},
+	'single child': {
+		'format' () {
+			test('node_single', 2);
+		},
+		'minify' () {
+			test('node_single.min');
+		},
+	},
+	'children': {
+		'format' () {
+			test('node_many', 2);
+		},
+		'minify' () {
+			test('node_many.min');
+		},
+	},
+	'content': {
+		'format' () {
+			test('content', 2);
+		},
+		'minify' () {
+			test('content.min');
+		},
+	},
+	'misc': {
+		'format' () {
+			test('misc', 2);
+		},
+		'minify' () {
+			test('misc.min');
+		}
 	}
 	
 })
 
-function test(filename, indent) {
+function test(filename, opts) {
 	var M = Mask
 	
 	io
 		.File
 		.read(`test/tmpl/stringify/${filename}.mask`)
-		.split(/^===$/gm)
+		.split(/^[=]{3,}$/gm)
 		.map(function(test){
 			
 			return test
-				.split(/^---$/gm)
+				.replace(/\r\n/g, '\n')
+				.split(/^[\-]{3,}$/gm)
 				.map(x => x.trim());
 		})
 		.forEach(function(parts){
@@ -28,8 +70,8 @@ function test(filename, indent) {
 				return;
 			
 			var [ mask, expect ] = parts;
-			var str = M.stringify(mask, indent);
+			var str = M.stringify(mask, opts);
 			
-			eq_(str, expect.replace(/[\r\n]+/g, '\n'));
+			eq_(str, expect.replace(/\r\n/g, '\n'));
 		});
 }

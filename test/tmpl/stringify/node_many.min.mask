@@ -1,0 +1,21 @@
+div {
+	em > 'Foo'
+	bar > 'Bar'
+}
+---
+div{em>'Foo'bar>'Bar'}
+
+===================================
+
+div {
+	em { 'Foo' }
+	bar > 'Bar'
+}
+span; section > div {
+	'A'
+	"B"
+}
+---
+div{em>'Foo'bar>'Bar'}span;section>div{'A''B'}
+  
+=====================================

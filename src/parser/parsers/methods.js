@@ -50,16 +50,17 @@
 			this.parent = parent;
 			this.fn = compileFn(args, body);
 		},
-		stringify: function(){
-			return this.tagName
+		stringify: function(stream){
+			var head = this.tagName
 				+ ' '
 				+ this.name
 				+ '('
 				+ this.args.join(',')
-				+ ') {'
-				+ this.body
-				+ '}'
-				;
+				+ ')';
+			stream.write(head);
+			stream.openBlock('{');
+			stream.print(this.body);
+			stream.closeBlock('}');
 		}
 	});
 	

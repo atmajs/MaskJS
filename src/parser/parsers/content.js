@@ -11,16 +11,22 @@
 	var ContentNode = class_create(Dom.Node, {
 		content: null,
 		
-		stringify: function () {
-			var str = this.tagName + ' ' + mask_stringifyAttr(this.attr);
+		stringify: function (stream) {
+			stream.processHead(this);
+			
 			var body = this.content;
 			if (body == null) {
-				return str + ';';
+				stream.print(';');
+				return;
 			}
 			if (is_Function(body)) {
 				body = body();
 			}
-			return str + '{' + body + '}';
+			
+			stream.openBlock('{');
+			stream.print(body);
+			stream.closeBlock('}');
+			return;
 		}
 	});
 	

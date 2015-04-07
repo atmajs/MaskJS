@@ -8,7 +8,7 @@ var mask_stringify,
 			return '';
 		
 		if (typeof input === 'string') 
-			input = mask.parse(input);
+			input = parser_parse(input);
 		
 		if (opts == null) {
 			_indent = 0;
@@ -195,7 +195,7 @@ var mask_stringify,
 
 
 	function isEmpty(node) {
-		return node.nodes == null || (node.nodes instanceof Array && node.nodes.length === 0);
+		return node.nodes == null || (is_ArrayLike(node.nodes) && node.nodes.length === 0);
 	}
 
 	function isSingle(node) {
@@ -212,7 +212,7 @@ var mask_stringify,
 	}
 
 	function getSingle(node) {
-		if (node.nodes instanceof Array) 
+		if (is_ArrayLike(node.nodes)) 
 			return node.nodes[0];
 		
 		return node.nodes;

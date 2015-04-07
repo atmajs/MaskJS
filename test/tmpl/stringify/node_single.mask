@@ -1,0 +1,27 @@
+
+div { 'Lorem ipsum doler' };
+---
+div >
+  'Lorem ipsum doler'
+  
+==================================
+
+ul {
+	li > span > em > '~[name]'
+}
+---
+ul >
+  li >
+    span >
+      em >
+        '~[name]'
+
+==================================
+
+if () {
+	div > 'Baz'
+}
+---
+if () >
+  div >
+    'Baz'

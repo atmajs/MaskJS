@@ -14,12 +14,12 @@
 		'extends': null,
 		'as': null,
 		
-		stringify: function(indent){
+		stringify: function(stream){
 			var extends_ = this['extends'],
 				as_ = this['as'],
 				str = '';
 			if (as_ != null && as_.length !== 0) {
-				str += ' as (' + as_ + ') ';
+				str += ' as (' + as_ + ')';
 			}
 			if (extends_ != null && extends_.length !== 0) {
 				str += ' extends ';
@@ -31,13 +31,12 @@
 						str += ', ';
 				}
 			}
-			return 'define '
-				+ this.name
-				+ str
-				+ '{'
-				+ mask_stringify(this.nodes, indent)
-				+ '}'
-				;
+			
+			var head = 'define ' + this.name + str;
+			stream.write(head)
+			stream.openBlock('{');
+			stream.process(this.nodes);
+			stream.closeBlock('}');
 		},
 	});
 	

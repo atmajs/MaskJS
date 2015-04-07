@@ -1,0 +1,47 @@
+"Lorem ipsum"
+---
+'Lorem ipsum'
+
+=====================
+
+"Lorem \" ipsum"
+---
+'Lorem " ipsum'
+
+=====================
+
+"Lorem ' ipsum"
+---
+"Lorem ' ipsum"
+
+=====================
+
+"Lorem ~[bind: foo + baz] ipsum"
+---
+'Lorem ~[bind: foo + baz] ipsum'
+
+=====================
+
+"Lorem ~[bind: 'foo' + 'baz'] ipsum"
+---
+"Lorem ~[bind: 'foo' + 'baz'] ipsum"
+
+=====================
+
+"a"
+'b'
+"'c'"
+---
+'a'
+'b'
+"'c'"
+
+=====================
+
+"
+ 123456789123456789
+  "
+---
+'
+ 123456789123456789
+  '

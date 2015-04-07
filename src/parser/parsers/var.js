@@ -1,10 +1,9 @@
 (function(){
 	custom_Parsers['var'] = function(str, index, length, parent){
-		var node = new Node('var', parent),
+		var node = new VarNode('var', parent),
 			start,
 			c;
 		
-		node.stringify = stingify;
 		var go_varName = 1,
 			go_assign = 2,
 			go_value = 3,
@@ -87,15 +86,17 @@
 		return [node, index, 0];
 	};
 	
-	function stingify(){
-		var attr = this.attr;
-		var str = 'var ';
-		for(var key in attr){
-			if (str !== 'var ') 
-				str += ',';
-			
-			str += key + '=' + attr[key];
+	var VarNode = class_create(Dom.Node, {
+		stringify: function() {
+			var attr = this.attr;
+			var str = 'var ';
+			for(var key in attr){
+				if (str !== 'var ') 
+					str += ',';
+				
+				str += key + '=' + attr[key];
+			}
+			return str + ';';
 		}
-		return str + ';';
-	}
+	});
 }());

@@ -1,0 +1,45 @@
+div {
+  script disabled {
+    var a = 10;
+  }
+}
+----
+div {
+  script disabled {
+
+    var a = 10;
+  
+  }
+}
+=================
+div {
+  style scoped{
+    span {}
+  }
+}
+----
+#scoped__css__1 {
+  style {
+
+    #scoped__css__1 span {}
+  
+  }
+}
+=================
+define foo {
+  slot change(event) {
+    var a = 10;
+  }
+}
+-----
+define foo {
+  slot change(event) {
+
+    var a = 10;
+  
+  }
+}
+=================
+var pages = [ '1', '2' ];
+-----
+var pages=[ '1', '2' ];

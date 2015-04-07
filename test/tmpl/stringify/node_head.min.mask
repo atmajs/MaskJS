@@ -1,0 +1,36 @@
+div checked data-id = "id";
+---
+div checked data-id=id;
+
+==============================
+
+div.foo id = "baz" name='~[bind: foo + "baz"]';
+---
+#baz.foo name='~[bind: foo + "baz"]';
+
+==============================
+
+section
+	.foo.~[klass] id ="baz"
+	name='test ~[name]';
+---
+section#baz.foo.~[klass] name='test ~[name]';
+
+
+==============================
+
+if   (test);
+---
+if(test);
+
+==============================
+
++if (test) ;
+---
++if(test);
+
+==============================
+
++if (test) x-mode='server';
+---
++if x-mode=server(test);

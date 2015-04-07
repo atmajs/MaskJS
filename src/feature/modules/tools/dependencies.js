@@ -6,7 +6,7 @@ var tools_getDependencies;
 		var opts = obj_extendDefaults(opts_, defaultOptions);
 		var dfr = new class_Dfr;
 		var ast = typeof template === 'string'
-			? mask.parse(template)
+			? parser_parse(template)
 			: template
 			;
 		
