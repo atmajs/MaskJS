@@ -43,7 +43,7 @@ UTest({
 	'misc': {
 		'format' () {
 			test('misc', 2);
-		},
+		},	
 		'minify' () {
 			test('misc.min');
 		}

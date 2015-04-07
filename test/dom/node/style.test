@@ -210,7 +210,7 @@ UTest({
 		'attributes and comments' () {
 			var tmpl = `
 				section {
-					style id='foo' enabled {
+					style#foo enabled {
 						/* comment */
 					}
 				}
