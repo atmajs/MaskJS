@@ -281,6 +281,21 @@ UTest({
 			},
 		},
 		
+		'html': {
+			'load html template' () {
+				return mask
+					.renderAsync(`
+						import * as MyHeader from '/test/tmpl/modules/html/header.html';
+						MyHeader;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('header') > text Foo;
+						`);
+					});
+			}
+		},
+		
 		'packages': {
 			'load package with embedded modules' () {
 				return mask

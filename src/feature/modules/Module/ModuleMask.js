@@ -195,10 +195,11 @@ var ModuleMask;
 		}
 		var arr = module.imports,
 			i = arr.length,
-			x;
+			x, type;
 		while( --i > -1) {
 			x = arr[i];
-			if (x.type === 'mask' && (Ctor = x.getHandler(name)) != null) {
+			type = x.type;
+			if (type === 'mask' && (Ctor = x.getHandler(name)) != null) {
 				return Ctor;
 			}
 		}

@@ -14,12 +14,14 @@ var Module;
 	// import Import/ImportScript
 	// import Import/ImportStyle
 	// import Import/ImportData
+	// import Import/ImportHtml
 	
 	// import Module/Module
 	// import Module/ModuleMask
 	// import Module/ModuleScript
 	// import Module/ModuleStyle
 	// import Module/ModuleData
+	// import Module/ModuleHtml
 	
 	// import components
 	// import tools/dependencies
@@ -59,7 +61,7 @@ var Module;
 		},
 		isMask: function(path){
 			var ext = path_getExtension(path);
-			return ext === '' || ext === 'mask';
+			return ext === '' || ext === 'mask' || ext === 'html';
 		},
 		getType: function(path) {
 			var ext = path_getExtension(path);

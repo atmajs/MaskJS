@@ -42,9 +42,7 @@
 					nodes.splice(nodes.length - 1, 1);
 					current = current.parent;
 					if (mix.type === Dom.FRAGMENT) {
-						arr_each(x.nodes, function(x){
-							current.appendChild(x)
-						});
+						_appendMany(current, mix.nodes);
 					} else {
 						current.appendChild(mix);
 					}
@@ -206,6 +204,7 @@
 			if (lim === 0) {
 				return null;
 			}
+			var c = char_(str, i);
 			if (c === 59 /*;*/) {
 				break;
 			}
@@ -309,7 +308,7 @@
 			x = x.parent;
 		}
 		if (x == null) {
-			parser_warn('Unmatched closing tag', TOKEN);
+			parser_warn('Unmatched closing tag', name);
 			return current;
 		}
 		return x.parent || x;
@@ -341,5 +340,11 @@
 			node.expression = obj.expression;
 			node.type = Dom.STATEMENT;
 		}
+	}
+	
+	function _appendMany(node, nodes) {
+		arr_each(nodes, function(x){
+			node.appendChild(x)
+		});
 	}
 }());

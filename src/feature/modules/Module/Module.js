@@ -72,6 +72,9 @@ var IModule = class_create(class_Dfr, {
 		if (_extensions_data.indexOf(search)  !== -1) {
 			return ModuleData;
 		}
+		if (ext === 'html') {
+			return ModuleHtml;
+		}
 		// assume script, as anything else is not supported yet
 		return ModuleScript;
 	}

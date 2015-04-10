@@ -73,6 +73,9 @@ var IImport = class_create({
 		if (ext === 'mask') {
 			return ImportMask;
 		}
+		if (ext === 'html') {
+			return ImportHtml;
+		}
 		var search = ' ' + ext + ' ';
 		if (_extensions_style.indexOf(search) !== -1) {
 			return ImportStyle;
