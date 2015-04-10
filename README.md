@@ -96,9 +96,10 @@ import :customComponent from './foo'
 
 There is no difference if you use `html` or `mask` syntax. Both parsers are extremely performant, work in NodeJS and create same `Mask AST`.
 Default parser is `Mask`. In what cases you might want to use `html`:
-- When writing text with little tags
-- When html templates already exist
-```mask
+- when writing text with little tags
+- when html templates already exist
+
+```html
 <h4>~[name]</h4>
 <dialog>
 	<div>Hello Foo</div>
