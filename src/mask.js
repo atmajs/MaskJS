@@ -1,5 +1,4 @@
 var Mask;
-
 (function(){
 	Mask = {	
 		/**
@@ -64,6 +63,7 @@ var Mask;
 		 * Create MaskDOM from Mask markup
 		 **/
 		parse: parser_parse,
+		parseHtml: parser_parseHtml,
 		stringify: mask_stringify,
 		build: builder_build,
 		

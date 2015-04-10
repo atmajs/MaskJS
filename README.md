@@ -35,7 +35,9 @@ Resources:
 
 ----
 
-- [Syntax](#syntax)
+- [Markup](#markup)
+	- [Mask](#mask-syntax)
+	- [HTML](#html-syntax)
 - [Components Lib](#components-library)
 - [Bindings Lib](#bindings-library)
 - [jMask](#jmask-library)
@@ -55,13 +57,13 @@ Resources:
 
 ----
 
-##### Syntax
+#### Markup
 
-
+##### Mask Syntax
 - Component and element-based markup
 - Statements, Expressions, Interpolations
 - Performance. _No precompilation is required_
-- Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-minify).
+- Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-optimize).
 - DOM Builder
 	`[Template → Mask DOM → Shadow DOM → Live DOM]`
 - HTML Builder (_nodejs_)
@@ -90,11 +92,28 @@ import :customComponent from './foo'
 }
 ```
 
+##### HTML Syntax
+
+There is no difference if you use `html` or `mask` syntax. Both parsers are extremely performant, work in NodeJS and create same `Mask AST`.
+Default parser is `Mask`. In what cases you might want to use `html`:
+- When writing text with little tags
+- When html templates already exist
+```mask
+<h4>~[name]</h4>
+<dialog>
+	<div>Hello Foo</div>
+</dialog>
+```
+```javascript
+var ast = mask.parseHtml(html);
+var dom = mask.render(ast);
+```
+
 > MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**. 
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
-##### Components Library
+#### Components Library
 
 [Documentation](https://github.com/atmajs/mask-compo)
 
@@ -128,7 +147,7 @@ mask.registerHandler(':customComponent', mask.Compo({
 })
 ```
 
-##### Bindings Library
+#### Bindings Library
 
 [Documentation](https://github.com/atmajs/mask-binding) _(IE9+)_
 
@@ -152,14 +171,14 @@ input type=number >
  */
 ```
 
-##### jMask Library
+#### jMask Library
 
 [Documentation](https://github.com/atmajs/mask-j)
 
 jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations. 
 
 
-##### jQuery
+#### jQuery
 
 MaskJS is loosely coupled with the DOM Library, like jQuery-Zepto-Kimbo. It means, that it does not depend on any DOM library, but it is highly recommended to use one. Additionally there are some extensions, like
 ```javascript
@@ -174,7 +193,7 @@ $('.foo').appendMask('h4 > "~[title]"', { title: 'Hello' });
 ```
 _So you would never need to use the HTML._
 
-##### Performance
+#### Performance
 
 We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
 
@@ -185,7 +204,7 @@ Some benchmarks:
 - Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/8)
 - Mask Expressions vs Eval - [:jsperf](http://jsperf.com/mask-expression-vs-function-vs-eval/2)
 
-##### Node.JS
+#### Node.JS
 
 MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([server](https://github.com/atmajs/atma-server))
 
@@ -201,7 +220,7 @@ MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([serve
 
 - IE7+
 	
-##### Plugins
+#### Plugins
 There are already many plugins, components and useful utilities. Some of them worth checking out:
 - [Formatter Util](https://github.com/atmajs/util-format)
 - [Localization](https://github.com/atmajs/i18n)
@@ -222,15 +241,13 @@ Most simple MaskJS sample to show where you could start from:
 			<script type='text/mask' data-run='true'>
 				ul {
 					for(page of pages) {
-						log('>> Log current:', page);
+						log('Rendering item:', page);
 						li > a
 							href='/~[page].html'
-							x-signal='click: fooAction' > '~[page]'
+							x-tap='fooAction' > '~[page]'
 					}
 					// nested components
 					:bazCompo > :quxCompo;
-					
-					debugger;
 				}
 			</script>
 		</header>

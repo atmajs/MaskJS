@@ -62,7 +62,7 @@
 			
 			if (hasBody) {
 				i++;
-				end = cursor_groupEnd(str, i, imax, 123, 125);
+				end = cursor_groupEnd(str, i, imax, 123, 125); //{}
 				body = str.substring(i, end);
 				
 				if (transform != null) {

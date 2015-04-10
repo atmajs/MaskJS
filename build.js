@@ -57,6 +57,7 @@ module.exports = {
 	'watch': {
 		files: 'src/**',
 		config: [
+			'#[settings]',
 			'#[build_mask]'
 		]
 	},
