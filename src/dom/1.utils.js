@@ -5,8 +5,13 @@ function _appendChild(el){
 		return;
 	}
 	
-	nodes.push(el);
-	var prev = nodes[nodes.length - 2];
+	var length = nodes.length;
+	if (length !== 0) {
+		var prev = nodes[length - 1];
+		if (prev != null) {
+			prev.nextSibling = el;
+		}
+	}
 	
-	prev.nextSibling = el;
+	nodes.push(el);
 }
