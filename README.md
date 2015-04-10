@@ -63,11 +63,11 @@ Resources:
 - Component and element-based markup
 - Statements, Expressions, Interpolations
 - Performance. _No precompilation is required_
-- Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [mask-minify](https://github.com/atmajs/mask-optimize).
+- Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [Optimizer](https://github.com/atmajs/mask-optimizer).
 - DOM Builder
-	`[Template → Mask DOM → Shadow DOM → Live DOM]`
+	`[Template → Mask AST → Shadow DOM → Live DOM]`
 - HTML Builder (_nodejs_)
-	`[Template → Mask DOM → HTML]`
+	`[Template → Mask AST → HTML]`
 
 ```mask
 import :customComponent from './foo'
