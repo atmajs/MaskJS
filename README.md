@@ -17,7 +17,7 @@
 		</a>
 	</p>
 
-[MaskJS](http://atmajs.com/mask' target='_blank'>mask.js) — is a markup | template | **HMVC** engine for
+MaskJS — is a markup | template | **HMVC** engine for
 modern and fast web(_Browser_), server(_NodeJS_) or mobile(_PhoneGap_) applications. Component-based architecture
 simplifies defining, implementing and composing loosely coupled independent elements into a single application.
 
