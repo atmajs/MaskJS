@@ -35,31 +35,30 @@ Resources:
 
 ----
 
-- [Markup](#markup)
-	- [Mask](#mask-syntax)
-	- [HTML](#html-syntax)
-- [Components Lib](#components-library)
-- [Bindings Lib](#bindings-library)
-- [jMask](#jmask-library)
-- [jQuery](#jquery)
-- [Performance](#performance)
-- [NodeJS](#nodejs)
-- [Browser Support](#browser-support)
-- [Plugins](#plugins)
+##### &#9776;
+
+- `1` [Markup](#1-markup)
+	- `1.1` [Mask](#11-mask-syntax)
+	- `1.2` [HTML](#12-html-syntax)
+- `2` [Components Lib](#2-components-library)
+- `3` [Bindings Lib](#3-bindings-library)
+- `4` [jMask](#4-jmask-library)
+- `5` [jQuery](#5-jquery)
+- `6` [Performance](#6-performance)
+- `7` [NodeJS](#7-nodejs)
+- `8` [Browser Support](#8-browser-support)
+- `9` [Plugins](#9-plugins)
+- `10` [Quick Start](#10-quick-start)
+- `11` [Contribute](#11-contribute)
+	- `11.1` [Build](#111-build)
+	- `11.2` [Test](#112-test)
+- `12` [Changelog](#12-changelog)
 
 ----
 
-- [Quick Start](#quick-start)
-- [Contribute](#contribute)
-	- [Build](#build)
-	- [Test](#test)
-- [Changelog](#changelog)
+# `1` Markup
 
-----
-
-#### Markup
-
-##### Mask Syntax
+##### `1.1` Mask Syntax
 - Component and element-based markup
 - Statements, Expressions, Interpolations
 - Performance. _No precompilation is required_
@@ -92,7 +91,7 @@ import :customComponent from './foo'
 }
 ```
 
-##### HTML Syntax
+##### `1.2` HTML Syntax
 
 There is no difference if you use `html` or `mask` syntax. Both parsers are extremely performant, work in NodeJS and create same `Mask AST`.
 Default parser is `Mask`. In what cases you might want to use `html`:
@@ -114,7 +113,7 @@ var dom = mask.render(ast);
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
-#### Components Library
+# `2` Components Library
 
 [Documentation](https://github.com/atmajs/mask-compo)
 
@@ -148,7 +147,7 @@ mask.registerHandler(':customComponent', mask.Compo({
 })
 ```
 
-#### Bindings Library
+# `3` Bindings Library
 
 [Documentation](https://github.com/atmajs/mask-binding) _(IE9+)_
 
@@ -172,14 +171,14 @@ input type=number >
  */
 ```
 
-#### jMask Library
+# `4` jMask Library
 
 [Documentation](https://github.com/atmajs/mask-j)
 
 jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations. 
 
 
-#### jQuery
+# `5` jQuery
 
 MaskJS is loosely coupled with the DOM Library, like jQuery-Zepto-Kimbo. It means, that it does not depend on any DOM library, but it is highly recommended to use one. Additionally there are some extensions, like
 ```javascript
@@ -194,7 +193,7 @@ $('.foo').appendMask('h4 > "~[title]"', { title: 'Hello' });
 ```
 _So you would never need to use the HTML._
 
-#### Performance
+# `6` Performance
 
 We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
 
@@ -205,7 +204,7 @@ Some benchmarks:
 - Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/8)
 - Mask Expressions vs Eval - [:jsperf](http://jsperf.com/mask-expression-vs-function-vs-eval/2)
 
-#### Node.JS
+# `7` Node.JS
 
 MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([server](https://github.com/atmajs/atma-server))
 
@@ -217,11 +216,11 @@ MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([serve
 - SEO
 
 
-##### Browser Support
+# `8` Browser Support
 
 - IE7+
 	
-#### Plugins
+# `9` Plugins
 There are already many plugins, components and useful utilities. Some of them worth checking out:
 - [Formatter Util](https://github.com/atmajs/util-format)
 - [Localization](https://github.com/atmajs/i18n)
@@ -229,7 +228,7 @@ There are already many plugins, components and useful utilities. Some of them wo
 - [Components](https://github.com/atmajs/Compos)
 
 
-#### Quick Start
+# `10` Quick Start
 
 #### Quick start and examples
 Most simple MaskJS sample to show where you could start from:
@@ -280,21 +279,21 @@ Most simple MaskJS sample to show where you could start from:
 </html>
 ```
 
-### Contribute
-#### Build
+# `11` Contribute
+### `11.1` Build
 ```bash
 $ git submodule init && git submodule update
 $ npm install
 $ npm run build
 ```
 
-#### Test
+### `11.2` Test
 ```bash
 $ npm install
 $ npm test
 ```
 
-### Changelog
+# `12` Changelog
 ------------
 - 0.12.2
 	- `slot` and `event` javascript handlers ([handler](/test/dom/compo/handler.test))
