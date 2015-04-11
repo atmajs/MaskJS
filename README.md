@@ -40,19 +40,20 @@ Resources:
 - `1` [Markup](#1-markup)
 	- `1.1` [Mask](#11-mask-syntax)
 	- `1.2` [HTML](#12-html-syntax)
-- `2` [Components](#2-components-module)
-- `3` [Bindings](#3-bindings-module)
-- `4` [jMask](#4-jmask-library)
-- `5` [jQuery](#5-jquery)
-- `6` [Performance](#6-performance)
-- `7` [NodeJS](#7-nodejs)
-- `8` [Browser Support](#8-browser-support)
-- `9` [Plugins](#9-plugins)
-- `10` [Quick Start](#10-quick-start)
-- `11` [Contribute](#11-contribute)
-	- `11.1` [Build](#111-build)
-	- `11.2` [Test](#112-test)
-- `12` [Changelog](#12-changelog)
+- `2` [Libraries](#2-libraries)
+	- `2.1` [Components](#21-components)
+	- `2.2` [Bindings](#22-bindings)
+	- `2.3` [jMask](#23-jmask)
+	- `2.4` [jQuery](#24-jquery)
+- `3` [Performance](#6-performance)
+- `4` [NodeJS](#7-nodejs)
+- `5` [Browser Support](#8-browser-support)
+- `6` [Plugins](#9-plugins)
+- `7` [Quick Start](#10-quick-start)
+- `8` [Contribute](#11-contribute)
+	- `8.1` [Build](#111-build)
+	- `8.2` [Test](#112-test)
+- `9` [Changelog](#12-changelog)
 
 ----
 
@@ -113,7 +114,11 @@ var dom = mask.render(ast);
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
-# `2` Components module
+# `2` Libaries
+
+> :package: All packages are already embedded into MaskJS sources.
+
+## `2.1` Components
 
 :orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-compo)
 
@@ -147,7 +152,7 @@ mask.registerHandler(':customComponent', mask.Compo({
 })
 ```
 
-# `3` Bindings module
+# `2.2` Bindings
 
 :orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-binding) _`IE9+`_
 
@@ -171,14 +176,14 @@ input type=number >
 \*/
 ```
 
-# `4` jMask Library
+# `2.3` jMask
 
 :orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-j)
 
 jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations. 
 
 
-# `5` jQuery
+# `2.4` jQuery
 
 MaskJS is loosely coupled with the DOM Library, like jQuery-Zepto-Kimbo. It means, that it does not depend on any DOM library, but it is highly recommended to use one. Additionally there are some extensions, like
 ```javascript
@@ -193,7 +198,7 @@ $('.foo').appendMask('h4 > "~[title]"', { title: 'Hello' });
 ```
 _So you would never need to use the HTML._
 
-# `6` Performance
+# `3` Performance
 
 We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
 
@@ -204,7 +209,7 @@ Some benchmarks:
 - Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/8)
 - Mask Expressions vs Eval - [:jsperf](http://jsperf.com/mask-expression-vs-function-vs-eval/2)
 
-# `7` Node.JS
+# `4` Node.JS
 
 MaskJS on the server
 
@@ -218,11 +223,11 @@ MaskJS on the server
 - SEO
 
 
-# `8` Browser Support
+# `5` Browser Support
 
 - IE7+
 	
-# `9` Plugins
+# `6` Plugins
 There are already many plugins, components and useful utilities. Some of them worth to checking out:
 - [Formatter Util](https://github.com/atmajs/util-format)
 - [Localization](https://github.com/atmajs/i18n)
@@ -230,7 +235,7 @@ There are already many plugins, components and useful utilities. Some of them wo
 - [Components](https://github.com/atmajs/Compos)
 
 
-# `10` Quick Start
+# `7` Quick Start
 
 Most simple MaskJS sample to show where you could start from:
 ```html
@@ -280,134 +285,40 @@ Most simple MaskJS sample to show where you could start from:
 </html>
 ```
 
-# `11` Contribute
-### `11.1` Build
+# `8` Contribute
+### `8.1` Build
 ```bash
 $ git submodule init && git submodule update
 $ npm install
 $ npm run build
 ```
 
-### `11.2` Test
+### `8.2` Test
 ```bash
 $ npm install
 $ npm test
 ```
 
-# `12` Changelog
+# `9` Changelog
 ------------
-- 0.12.2
-	- `slot` and `event` javascript handlers ([handler](/test/dom/compo/handler.test))
-	- `style` node syntax support with ([style](/test/dom/compo/style.test))
-		- `:host`, `:host()` support
-		- scoped css support (IE6+)
-		```mask
-		section {
-			style scoped {
-				span {
-					color: red;
-				}
-			}
-			span > 'Hello World'
-		}
-		```
-		
-- 0.9.6
-	- Merge feature for better encapsulation, e.g:
-	```mask
-		define :dialog {
-			.wrapper > .modal {
-				.modal-header {
-					@title;
-					.close;
-				}
-				.modal-content > @body;
-			}
-		}
-		// ..
-		:dialog {
-			@title > 'Hello'
-			@body  > 'World!'
-		}
-	```
-- 0.9.1
-	- Expressions:
-		- Accessors with Bracket notation: ```~[foo[bar]]```,```~[foo["key"]]```
-	- VarStatement:
+
+:bookmark: [Read complete list...**&crarr;**](CHANGELOG.md)
+
+_`@latest`_
+
+- 0.12.19
+	- **Modules** of different types
 	
 		```mask
-			ul {
-				var list = ['foo', 'bar'];
-				for(key of list){
-					li > '~[key]'
-				}
-			}
-			/* renders to:
-			 * <ul><li>foo</li><li>bar</li></ul>
-			 */
+		import qux from 'baz';
+		import * as Foo  from './bar.mask'
+		import * as Bic  from 'script.js';
+		import from 'app.css';
+		import * as AboutBlock from 'about.html';
 		```
-- 0.9.0 
-	- Syntax: (statements)
-		- ```if (expression) { ... } else if (expr) {} else {} ```
-		- ```for (el of array) { ... } ```
-		- ```for ((el,index) of array) { ... } ```
-		- ```for (key in object) { ... } ```
-		- ```for ((key, value) in object) { ... } ```
-		- ```each (array) { ... } ```
-		- ```with (obj.property.value) { ... } ```
-		- ```switch (value) { case (expression) { ... } /*...*/ } ```
-	- Controllers scoped model
-	- IncludeJS integration
-	```mask
-		include ("./UserTemplate.mask") { 
-			for(user in users) {
-				import('UserTemplate');
-			}
-		}
-	```
-- 0.8.1
-	
-	- To get components/context property values use special symbols:
-			
-		- ``` '~[$c.compoName]' // component's property sample```
-		- ``` '~[$a.id]' // component attribute's property sample```
-		- ``` '~[$ctx.page.id]' // context's property sample ```
-	
-- 0.8.0 
-	- Async components. If a components needs to accomplish any async task, it can be done in
-		``` renderStart/onRenderStart ``` function using
-		``` Compo.pause(this, ctx) / Compo.resume(this, ctx)  ```
-		``` javascript
-			mask.registerHandler(':asyncCompo', mask.Compo({
-				onRenderStart: function(model, ctx){
-					var resume = Compo.pause(this, ctx);
-					
-					someAsyncJob(function(){
-						resume();
-					});
-				}
-			}));
-		```
-- 0.7.5 
-	- Binded Percent Handler - `if`, `each
-			
-- 0.7.0 
-	- Expressions parser. Samples:
-		- ``` ~[:controllerFunction(userName.toUpperCase()) + ';'] ```
-		- ``` ~[:user && user.id || "Log in"] ```
-	
-	- Variables/Functions look up <i>(deprecated)</i> <b>upd: removed</b>:
-		
-		1. model 
-		2. ctx 
-		3. controller
-		4. up in controllers tree 
-	
-	
-- 0.6.95
-	- Use `~[]` for string interpolation instead of `#{}`, as mask templates are already overloaded with '#','{' and '}' usage
-	
-		``` mask.setInterpolationQuotes('#{','}') ``` - for fallback (or any other start/end, caution - start should be of 2 chars and the end of 1
+	- **HTML** Parser
+
+		Use also `html` for the templates
 	
 ----
 :copyright: MIT - 2015 Atma.js Project
