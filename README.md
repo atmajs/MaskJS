@@ -23,15 +23,17 @@ simplifies defining, implementing and composing loosely coupled independent elem
 
 Resources:
 
-- [maskFiddle](http://atmajs.com/mask-try)
-- [Documentation](http://atmajs.com/mask)
+- :link: [Atma.js](http://atmajs.com/mask)
+- :link: [MaskFiddle](http://atmajs.com/mask-try)
+- :books: [Wiki](https://github.com/atmajs/maskjs/wiki)
+
 - **Examples**
-	- [Samples](/examples)
-	- [TodoMVC app](http://todomvc.com/examples/atmajs/)
+	- :link: [Samples](/examples)
+	- :link: [TodoMVC app](http://todomvc.com/examples/atmajs/)
 - **Tools**
-	- [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
-	- [Sublime Package](https://github.com/tenbits/sublime-mask)
-	- [Atom Package](https://github.com/tenbits/package-atom)
+	- :link: [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
+	- :link: [Sublime Package](https://github.com/tenbits/sublime-mask)
+	- :link: [Atom Package](https://github.com/tenbits/package-atom)
 
 ----
 
