@@ -40,8 +40,8 @@ Resources:
 - `1` [Markup](#1-markup)
 	- `1.1` [Mask](#11-mask-syntax)
 	- `1.2` [HTML](#12-html-syntax)
-- `2` [Components Lib](#2-components-library)
-- `3` [Bindings Lib](#3-bindings-library)
+- `2` [Components](#2-components-module)
+- `3` [Bindings](#3-bindings-module)
 - `4` [jMask](#4-jmask-library)
 - `5` [jQuery](#5-jquery)
 - `6` [Performance](#6-performance)
@@ -113,9 +113,9 @@ var dom = mask.render(ast);
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
-# `2` Components Library
+# `2` Components module
 
-[Documentation](https://github.com/atmajs/mask-compo)
+:orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-compo)
 
 Core of the HMVC engine. Simple compo sample:
 
@@ -147,11 +147,11 @@ mask.registerHandler(':customComponent', mask.Compo({
 })
 ```
 
-# `3` Bindings Library
+# `3` Bindings module
 
-[Documentation](https://github.com/atmajs/mask-binding) _(IE9+)_
+:orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-binding) _`IE9+`_
 
-MaskJS itself supports simple interpolations. It means the models are only accessed while render, but with this library you can define single or dual bindings. As MaskJS is a DOM based engine, the bindings are instant.
+MaskJS itself supports simple interpolations. It means the models are only accessed while render, but with this feature you can define single or dual bindings. As MaskJS is a DOM based engine, the bindings are instant.
 
 Simple bindings sample:
 
@@ -168,12 +168,12 @@ input type=number >
 /*
  * `ageChanged` is emitted in this sample each time `barAge` changes
  * `:dualbind` component also supports much more properties and configurations
- */
+\*/
 ```
 
 # `4` jMask Library
 
-[Documentation](https://github.com/atmajs/mask-j)
+:orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-j)
 
 jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations. 
 
@@ -206,12 +206,14 @@ Some benchmarks:
 
 # `7` Node.JS
 
-MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([server](https://github.com/atmajs/atma-server))
+MaskJS on the server
+
+:orange_book: [Mask.Node **&crarr;**](https://github.com/atmajs/mask-node) [Server.Lib **&crarr;**](https://github.com/atmajs/atma-server)
 
 - HMVC benefits
 - Models serialization/de-serialization
-- Components render mode - Server, Client, Both
-- HTML rendered output with the Bootstrapping on the client, so that the components are initialized, all events and bindings are attached
+- Components render mode - `server`, `client` or `both`
+- HTML rendered output with further bootstrapping on the client, so that the components are initialized, all events and bindings are attached
 - Application start performance: browser receives ready html for rendering. 
 - SEO
 
@@ -221,7 +223,7 @@ MaskJS on the server - [mask.node](https://github.com/atmajs/mask-node). ([serve
 - IE7+
 	
 # `9` Plugins
-There are already many plugins, components and useful utilities. Some of them worth checking out:
+There are already many plugins, components and useful utilities. Some of them worth to checking out:
 - [Formatter Util](https://github.com/atmajs/util-format)
 - [Localization](https://github.com/atmajs/i18n)
 - [Animations](https://github.com/atmajs/mask-animation)
@@ -230,7 +232,6 @@ There are already many plugins, components and useful utilities. Some of them wo
 
 # `10` Quick Start
 
-#### Quick start and examples
 Most simple MaskJS sample to show where you could start from:
 ```html
 <!DOCTYPE html>
