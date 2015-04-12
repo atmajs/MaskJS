@@ -75,8 +75,7 @@ var mask_TreeWalker;
 				}
 				if (nodes != null && goDeep !== false && nodes.length !== 0) {
 					if (nodes[0] == null) {
-						logger.log(node.tagName);
-						throw Error('IS NULL');
+						throw Error('Node is null');
 					}
 					return this.push(
 						nodes[0],

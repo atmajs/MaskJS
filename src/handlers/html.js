@@ -12,12 +12,11 @@
 			}
 			if (container.ownerDocument) {
 				var div = document.createElement('div'),
-					frag = document.createDocumentFragment(),
 					child;
 				div.innerHTML = this.html;
 				child = div.firstChild;
 				while (child != null) {
-					frag.appendChild(child);
+					container.appendChild(child);
 					child = child.nextSibling;
 				}
 			}

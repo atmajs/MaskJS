@@ -304,7 +304,7 @@ $ npm test
 # `9` Changelog
 ------------
 
-:bookmark: [Read complete list...**&crarr;**](CHANGELOG.md)
+:bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 
 _`@latest`_
 

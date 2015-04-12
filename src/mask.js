@@ -40,7 +40,7 @@ var Mask;
 			if (ctx == null || ctx.constructor !== builder_Ctx)
 				ctx = new builder_Ctx(ctx);
 			
-			var dom = mask.render(template, model, ctx, container, ctr),
+			var dom = this.render(template, model, ctx, container, ctr),
 				dfr = new class_Dfr;
 			
 			if (ctx.async === true) {
@@ -361,13 +361,13 @@ var Mask;
 				}
 			}
 			if ((mode === 'client' && is_NODE) || (mode === 'server' && is_DOM) ) {
-				mask.registerHandler(compoName, {
+				customTag_register(compoName, {
 					meta: { mode: mode }
 				});
 				return;
 			}
 			factory(global, Compo.config.getDOMLibrary(), function(compo){
-				mask.registerHandler(compoName, compo);
+				customTag_register(compoName, compo);
 			});
 		}
 	};
