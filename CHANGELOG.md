@@ -2,6 +2,7 @@
 
 - 0.12.19
 	- **Modules** of different types
+	
 		```mask
 		import qux from 'baz';
 		import * as Foo  from './bar.mask'
