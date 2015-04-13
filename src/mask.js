@@ -290,7 +290,8 @@ var Mask;
 		
 		'class': {
 			create: class_create,
-			Deferred: class_Dfr
+			Deferred: class_Dfr,
+			EventEmitter: class_EventEmitter
 		},
 		
 		parser: {
