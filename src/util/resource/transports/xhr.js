@@ -6,17 +6,17 @@ var xhr_get;
 			if (xhr.readyState !== 4)
 				return;
 			
-			var res = xhr.responseText, err;
-			if (xhr.status !== 200) {
+			var res = xhr.responseText,
+				status = xhr.status, err;
+			if (status !== 0 && status !== 200) {
 				err = {
-					status: xhr.status,
+					status: status,
 					content: res
 				};
-				log_warn('File error', path, xhr.status);
+				log_warn('File error', path, status);
 			}
 			cb(err, res);
 		};
-
 		xhr.open('GET', path, true);
 		xhr.send();
 	};
