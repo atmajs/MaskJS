@@ -26,11 +26,17 @@ module.exports = {
 			NODE: false,
 		}
 	},
+	'copy_files': {
+		action: 'copy',
+		files: {
+			'/src/parser/html/html_entities.js': '/lib/'
+		}
+	},
 	'import_libraries': {
 		action: 'copy',
 		files: {
-			'/ref-mask-node/lib/mask.bootstrap.js': '/lib/mask.bootstrap.js',
-			'/ref-mask-node/lib/mask.node.js': '/lib/mask.node.js'
+			'/ref-mask-node/lib/mask.bootstrap.js': '/lib/',
+			'/ref-mask-node/lib/mask.node.js': '/lib/'
 		}
 	},
 	'jshint': {
