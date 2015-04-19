@@ -13,3 +13,6 @@
 [submodule "ref-utils"]
 	path = ref-utils
 	url = https://github.com/atmajs/utils
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/atmajs/MaskJS.wiki.git
