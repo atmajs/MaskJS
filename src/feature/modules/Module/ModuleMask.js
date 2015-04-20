@@ -41,11 +41,8 @@ var ModuleMask;
 				x = arr[i];
 				switch (x.tagName) {
 					case 'import':
-						this.imports.push(IImport.create(
-							u_resolvePath(x.path, null, null, this)
-							, x.alias
-							, x.exports
-							, this
+						this.imports.push(Module.createImport(
+							x, null, null, this
 						));
 						break;
 					case 'module':

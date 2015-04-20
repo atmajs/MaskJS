@@ -5,9 +5,7 @@ var IImport = class_create({
 		this.alias = alias;
 		this.exports = exports;
 		this.module = Module.createModule(path, module);
-		////if (ctx._modules != null) {
-		////	ctx._modules.add(this.module, module);
-		////}
+		this.parent = module;
 	},
 	eachExport: function(fn){
 		var alias = this.alias;
@@ -60,7 +58,14 @@ var IImport = class_create({
 			});
 	},
 	
-	registerScope: null
+	registerScope: null,
+	
+	logError_: function(msg){
+		var str = '\n(Module) ' + (this.parent || {path: 'root'}).path
+		str += '\n  (Import) ' + this.path
+		str += '\n    ' + msg;
+		log_error(str);
+	}
 });
 
 
