@@ -122,10 +122,21 @@ var ModuleMask;
 	}
 	function _createExports(nodes, model, module) {
 		var exports = module.exports,
+			imports = module.imports,
 			scope   = module.scope,
-			getHandler = _module_getHandlerDelegate(module),
-			imax = nodes.length,
-			i = -1;
+			getHandler = _module_getHandlerDelegate(module);
+		
+		var i = -1,
+			imax = imports.length;
+		while ( ++i < imax ) {
+			var x = imports[i];
+			if (x.registerScope) {
+				x.registerScope(module);
+			}
+		}
+		
+		var i = -1,
+			imax = nodes.length;
 		while ( ++i < imax ) {
 			var node = nodes[i];
 			if (node.tagName === 'define') {
@@ -146,15 +157,6 @@ var ModuleMask;
 			scope: scope
 		});
 		
-		var imports = module.imports,
-			imax = imports.length,
-			i = -1;
-		while ( ++i < imax ) {
-			var x = imports[i];
-			if (x.registerScope) {
-				x.registerScope(module);
-			}
-		}
 		return exports;
 	}
 	function _createHandlerForNodes(nodes, module) {
