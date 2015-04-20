@@ -8,7 +8,7 @@ var ImportMask = class_create(IImport, {
 	},
 	getHandler: function(name){
 		var module = this.module;
-		if (module == null) {
+		if (module == null || module.error != null) {
 			return;
 		}
 		var orig = this.getOriginal(name);
