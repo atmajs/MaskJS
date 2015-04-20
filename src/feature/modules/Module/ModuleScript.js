@@ -12,7 +12,7 @@ var ModuleScript = class_create(IModule, {
 			: obj
 			;
 		if (x == null) {
-			log_error('Exported value is undefined', name);
+			log_error('Exported value is undefined: ', property);
 		}
 		return x;
 	},
