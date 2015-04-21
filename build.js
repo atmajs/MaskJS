@@ -97,7 +97,7 @@ function JSHint() {
 		"quotmark": false,
 		"undef": true,
 		"unused": false,
-		"strict": true,
+		"strict": false,
 		"trailing": false,
 		"maxparams": false,
 		"maxdepth": false,

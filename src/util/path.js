@@ -45,7 +45,7 @@ var path_getDir,
 			var fn = 'baseURI' in global.document
 					? fromBase
 					: fromLocation;
-			return current_ = path_sliceFilename(fn());
+			return (current_ = path_sliceFilename(fn()));
 		};
 		function fromBase() {
 			var base = global.document.baseURI;
@@ -62,7 +62,7 @@ var path_getDir,
 		// if (NODE)
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
-			return current_ = path_win32Normalize(process.cwd())
+			return (current_ = path_win32Normalize(process.cwd()));
 		};
 		// endif
 	}());
