@@ -47,29 +47,26 @@
 		return obj;
 	};
 	
-	customTag_register = function(mix, Handler){
-		if (is_Object(Handler)) {
-			//> static
-			Handler.__Ctor = wrapStatic(Handler);
-		}
+	customTag_register = function(mix, Handler){		
 		if (typeof mix !== 'string' && arguments.length === 3) {
+			debugger;
 			customTag_registerScoped.apply(this, arguments);
 			return;
 		}
 		
-		custom_Tags[name] = Handler;
+		custom_Tags[mix] = compo_ensureCtor(Handler);
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};
 	
-	customTag_registerScoped = function(Mix, name, Handler) {
+	customTag_registerScoped = function(Ctx, name, Handler) {
 		customTag_registerResolver(name);
-		var obj = is_Function(Mix) ? Mix.prototype : Mix;
+		var obj = is_Function(Ctx) ? Ctx.prototype : Ctx;
 		var map = obj.__handlers__;
 		if (map == null) {
 			map = obj.__handlers__ = {};
 		}
-		map[name] = Handler;
+		map[name] = compo_ensureCtor(Handler);
 		
 		if (obj.getHandler == null) {
 			obj.getHandler = compo_getHandlerDelegate;
@@ -143,6 +140,14 @@
 	function compo_getHandlerDelegate(name) {
 		var map = this.__handlers__;
 		return map == null ? null : map[name];
+	}
+	
+	function compo_ensureCtor(Handler) {
+		if (is_Object(Handler)) {
+			//> static
+			Handler.__Ctor = wrapStatic(Handler);
+		}
+		return Handler;
 	}
 	
 }());
