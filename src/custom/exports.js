@@ -16,6 +16,7 @@ var custom_Utils,
 	customTag_get,
 	customTag_getAll,
 	customTag_register,
+	customTag_registerScoped,
 	customTag_registerResolver,
 	customTag_Base,
 	

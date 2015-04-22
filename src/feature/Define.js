@@ -3,10 +3,22 @@ var Define;
 	Define = {
 		create: function(node, model, ctr){
 			return compo_fromNode(node, model, ctr);
+		},
+		registerGlobal: function(node, model, ctr) {
+			var Ctor = Define.create(node, model, ctr);
+			customTag_register(
+				node.name, Ctor
+			);
+		},
+		registerScoped: function(node, model, ctr) {
+			var Ctor = Define.create(node, model, ctr);
+			customTag_registerScoped(
+				node.name, Ctor, ctr
+			);
 		}
 	};
 	
-	function compo_prototype(tagName, attr, nodes, owner) {
+	function compo_prototype(tagName, attr, nodes, owner, model) {
 		var arr = [];
 		var Proto = {
 			tagName: tagName,
@@ -42,6 +54,13 @@ var Define;
 					fns = Proto[type] = {};
 				}
 				fns[x.name] = x.fn;
+				continue;
+			}
+			if ('define' === name || 'let' === name) {
+				var fn = name === 'define'
+					? Define.registerGlobal
+					: Define.registerScoped;
+				fn(x, model, owner);
 				continue;
 			}
 			arr.push(x);
@@ -99,7 +118,7 @@ var Define;
 		}
 		
 		var name = node.name,
-			Proto = compo_prototype(tagName, attr, node.nodes, ctr),
+			Proto = compo_prototype(tagName, attr, node.nodes, ctr, model),
 			args = compo_extends(extends_, model, ctr)
 			;
 		

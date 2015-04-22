@@ -47,15 +47,34 @@
 		return obj;
 	};
 	
-	customTag_register = function(name, Handler){		
+	customTag_register = function(name, Handler, ctr){
 		if (is_Object(Handler)) {
 			//> static
 			Handler.__Ctor = wrapStatic(Handler);
 		}
+		if (ctr != null && (is_Function(ctr) || is_Object(ctr))) {
+			customTag_registerScoped(name, Handler, ctr);
+			return;
+		}
+		
 		custom_Tags[name] = Handler;
 		
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
+	};
+	
+	customTag_registerScoped = function(name, Handler, ctr) {
+		customTag_registerResolver(name);
+		var obj = is_Function(ctr) ? ctr.prototype : ctr;
+		var map = obj.__handlers__;
+		if (map == null) {
+			map = obj.__handlers__ = {};
+		}
+		map[name] = Handler;
+		
+		if (obj.getHandler == null) {
+			obj.getHandler = compo_getHandlerDelegate;
+		}
 	};
 	
 	customTag_registerResolver = function(name){
@@ -67,6 +86,9 @@
 			custom_Tags_global[name] = Ctor;
 		
 		custom_Tags[name] = Resolver;
+		
+		//> make fast properties
+		obj_toFastProps(custom_Tags);
 	};
 	
 	customTag_Base = {
@@ -117,6 +139,11 @@
 		}
 		Ctor.prototype = proto;
 		return Ctor;
+	}
+	
+	function compo_getHandlerDelegate(name) {
+		var map = this.__handlers__;
+		return map == null ? null : map[name];
 	}
 	
 }());

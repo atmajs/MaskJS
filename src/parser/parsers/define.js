@@ -1,9 +1,14 @@
 (function(){
-	custom_Parsers['define'] = function(str, i, imax, parent){
-		var node = new DefineNode('define', parent);
-		var end = lex_(str, i, imax, node);
-		return [ node,  end, go_tag ];
-	};
+	createParser('define');
+	createParser('let');
+	
+	function createParser (tagName) {
+		custom_Parsers[tagName] = function(str, i, imax, parent){
+			var node = new DefineNode(tagName, parent);
+			var end = lex_(str, i, imax, node);
+			return [ node,  end, go_tag ];
+		};
+	}
 	var lex_ = ObjectLexer(
 		'$name'
 		, '?( as $$as(*()))?( extends $$extends[$$compo<accessor>](,))'
@@ -32,7 +37,7 @@
 				}
 			}
 			
-			var head = 'define ' + this.name + str;
+			var head = this.tagName + ' ' + this.name + str;
 			stream.write(head)
 			stream.openBlock('{');
 			stream.process(this.nodes);
