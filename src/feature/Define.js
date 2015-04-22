@@ -13,7 +13,7 @@ var Define;
 		registerScoped: function(node, model, ctr) {
 			var Ctor = Define.create(node, model, ctr);
 			customTag_registerScoped(
-				node.name, Ctor, ctr
+				ctr, node.name, Ctor
 			);
 		}
 	};

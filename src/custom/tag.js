@@ -47,25 +47,24 @@
 		return obj;
 	};
 	
-	customTag_register = function(name, Handler, ctr){
+	customTag_register = function(mix, Handler){
 		if (is_Object(Handler)) {
 			//> static
 			Handler.__Ctor = wrapStatic(Handler);
 		}
-		if (ctr != null && (is_Function(ctr) || is_Object(ctr))) {
-			customTag_registerScoped(name, Handler, ctr);
+		if (typeof mix !== 'string' && arguments.length === 3) {
+			customTag_registerScoped.apply(this, arguments);
 			return;
 		}
 		
 		custom_Tags[name] = Handler;
-		
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};
 	
-	customTag_registerScoped = function(name, Handler, ctr) {
+	customTag_registerScoped = function(Mix, name, Handler) {
 		customTag_registerResolver(name);
-		var obj = is_Function(ctr) ? ctr.prototype : ctr;
+		var obj = is_Function(Mix) ? Mix.prototype : Mix;
 		var map = obj.__handlers__;
 		if (map == null) {
 			map = obj.__handlers__ = {};
