@@ -146,6 +146,31 @@ UTest({
 				hasNot h3;
 			`);
 		},
+		'should extend and render nested' () {
+			var tmpl = `
+				define Input {
+					include Layout {
+						@header > h1 > '@attr.header'
+					}
+				}
+				define Layout {
+					section {
+						i > @label;
+						
+						@header;
+					}
+				}
+				// render Input with defined '@label' section
+				Input header='MyHeader' {
+					@label > 'MyLabel'
+				}
+			`;
+			var dom = mask.render(tmpl);
+			return UTest.domtest(dom, `
+				find('i') > text MyLabel;
+				find('h1') > text MyHeader;
+			`);
+		}
 	},
 	'scoped (let)': {
 		'should create nested scoped component' () {

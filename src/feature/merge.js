@@ -179,8 +179,10 @@ var mask_merge;
 			wrapperNode.attr.as = null;
 		}
 		
-		if (node.nodes == null) 
+		if (node.nodes == null) {
+			return _merge((wrapperNode || contentNodes), placeholders, tmplNode, clonedParent);
 			return wrapperNode || contentNodes;
+		}
 		
 		var nodes =  _merge(
 			node.nodes
@@ -225,6 +227,30 @@ var mask_merge;
 			case 'slot':
 			case 'event':
 				return node;
+			case 'include':
+				var tagName = node.attr.id;
+				if (tagName == null) {
+					// get the first key
+					for (var key in node.attr) {
+						tagName = key;
+						break;
+					}
+				}
+				tagName = interpolate_str_(tagName, placeholders, tmplNode);
+				
+				var handler = customTag_get(tagName, tmplNode);
+				if (handler !== null) {
+					var proto = handler.prototype;
+					var tmpl  = proto.template || proto.nodes;
+					
+					placeholders = _resolvePlaceholders(
+						node.nodes,
+						node.nodes,
+						new Placeholders(placeholders, node.nodes)
+					);
+					return _merge(tmpl, placeholders, tmplNode, clonedParent);
+				}
+				break;
 			default:
 				var handler = customTag_get(tagName, tmplNode);
 				if (handler !== null) {
