@@ -1,13 +1,13 @@
 var mask_merge;
 (function(){
 	
-	mask_merge = function(a, b, owner){
+	mask_merge = function(a, b, owner, opts){
 		if (typeof a === 'string') 
 			a = parser_parse(a);
 		if (typeof b === 'string') 
 			b = parser_parse(b);
 		
-		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b));
+		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b, opts));
 		return _merge(a, placeholders, owner);
 	};
 	
@@ -154,8 +154,12 @@ var mask_merge;
 			id = tagName.substring(1);
 		
 		var content = placeholders.$getNode(id, node.expression);
-		if (content == null) 
+		if (content == null) {
+			if (placeholders.opts.extending === true) {
+				return node;
+			}
 			return null;
+		}
 		
 		if (content.parent) 
 			_modifyParents(clonedParent, content.parent);
@@ -312,11 +316,15 @@ var mask_merge;
 				fn = isBlockEntry ? eval_ : interpolate_,
 				x = fn(expr, placeholders, node);
 					
-			if (x != null) 
+			if (x != null) {
 				result += x;
+			}
+			else if (placeholders.opts.extending === true) {
+				result += isBlockEntry ? ('@[' + expr + ']') : expr
+			}
 			
 			// tail
-			last = isBlockEntry ? (index + 1): index;
+			last = isBlockEntry ? (index + 1) : index;
 			index = str.indexOf('@', index);
 			if (index === -1) 
 				index = length;
@@ -333,7 +341,7 @@ var mask_merge;
 		var index = path.indexOf('.');
 		if (index === -1) {
 			log_warn('Merge templates. Accessing node', path);
-			return '';
+			return null;
 		}
 		var tagName = path.substring(0, index),
 			id = tagName.substring(1),
@@ -351,8 +359,8 @@ var mask_merge;
 			obj = placeholders.$getNode(id);
 		
 		if (obj == null) {
-			log_error('Merge templates. Node not found', tagName);
-			return '';
+			//- log_error('Merge templates. Node not found', tagName);
+			return null;
 		}
 		return obj_getProperty(obj, property);
 	}
@@ -491,7 +499,7 @@ var mask_merge;
 		}
 		return expression_eval(expr, placeholders, null, placeholders);
 	}
-	function Placeholders(parent, nodes){
+	function Placeholders(parent, nodes, opts){
 		var $root = null;
 		if (nodes != null) {
 			$root = new Dom.Node(tag_PLACEHOLDER);
@@ -500,8 +508,18 @@ var mask_merge;
 		this.scope = this;
 		this.parent = parent;
 		this.$root = $root || (parent && parent.$root);
+		
+		if (opts != null) {
+			this.opts = opts;
+		}
+		else if (parent != null) {
+			this.opts = parent.opts;
+		}
 	}
 	Placeholders.prototype = {
+		opts: {
+			extending: false
+		},
 		parent: null,
 		attr: null,
 		scope: null,

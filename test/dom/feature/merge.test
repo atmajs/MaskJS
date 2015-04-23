@@ -468,6 +468,66 @@ UTest({
 			}
 			hasNot ('span');
 		`);
+	},
+	
+	'options': {
+		'(extending) two step merging. 1.Extend 2.Merge': {
+			'Extend and Merge nodes' () {
+				var a = `
+					h1 > @one;
+					h2 > @two;
+				`;
+				var b = `
+					@one > 'XOne'
+				`;
+				var c = `
+					@two > 'XTwo'
+				`;
+				var tmpl = mask.merge(a, b, null, { extending: true });
+				var dom  = $render(tmpl, c);
+				return UTest.domtest(dom, `
+					find ('h1') > text XOne;
+					find ('h2') > text XTwo;
+				`);	
+			},
+			'Extend and Merge attributes' () {
+				var a = `
+					@one {
+						h1 name='@attr.aone';
+					}
+					@two {
+						h2 name='@attr.atwo';
+					}
+				`;
+				var b = `
+					@one aone='XOne';
+				`;
+				var c = `
+					@two atwo='XTwo';
+				`;
+				var tmpl = mask.merge(a, b, null, { extending: true });
+				var dom  = $render(tmpl, c);
+				return UTest.domtest(dom, `
+					find ('h1') > attr name XOne;
+					find ('h2') > attr name XTwo;
+				`);	
+			},
+			'Extend and Merge owner attributes' () {
+				var a = `
+					h1 name='@attr.aone';
+					h2 name='@attr.atwo';
+				`;
+				var b = '';
+				var c = '';
+				var tmpl1 = mask.merge(a, b, { attr: { aone: 'XOne' } }, { extending: true });
+				var tmpl2 = mask.merge(tmpl1, c, { attr: { atwo: 'XTwo' } });
+				var dom = mask.render(tmpl2);
+				return UTest.domtest(dom, `
+					find ('h1') > attr name XOne;
+					find ('h2') > attr name XTwo;
+				`);	
+			}
+		}
 	}
 });
 
