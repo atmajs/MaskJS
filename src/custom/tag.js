@@ -49,7 +49,6 @@
 	
 	customTag_register = function(mix, Handler){		
 		if (typeof mix !== 'string' && arguments.length === 3) {
-			debugger;
 			customTag_registerScoped.apply(this, arguments);
 			return;
 		}

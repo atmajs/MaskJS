@@ -74,7 +74,7 @@ UTest({
 		var b = '@content > .inner > @title';
 		var c = '@title > "Hello"';
 		
-		var tmpl1 = mask.merge(a, b);
+		var tmpl1 = mask.merge(a, b, null, { extending: true });
 		var dom = $render(tmpl1, c);
 		dom
 			.filter('div.outer')

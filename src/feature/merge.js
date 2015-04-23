@@ -181,7 +181,6 @@ var mask_merge;
 		
 		if (node.nodes == null) {
 			return _merge((wrapperNode || contentNodes), placeholders, tmplNode, clonedParent);
-			return wrapperNode || contentNodes;
 		}
 		
 		var nodes =  _merge(
