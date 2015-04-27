@@ -28,34 +28,36 @@ var Module;
 	// import tools/build
 	
 	obj_extend(Module, {
+		ModuleMask: ModuleMask,
 		createModule: function(path_, ctx, ctr, parent) {			
-			var path   = u_resolvePath(path_, ctx, ctr, parent);
-			var module = _cache[path];
+			var path   = u_resolvePath(path_, ctx, ctr, parent),
+				module = _cache[path];
 			if (module == null) {
 				module = _cache[path] = IModule.create(path, parent);
 			}
 			return module;
 		},
 		registerModule: function(mix, path_, ctx, ctr, parent) {
-			var path = u_resolvePath(path_, ctx, ctr, parent);
-			var module = Module.createModule(path, ctx, ctr, false);
+			var path   = u_resolvePath(path_, ctx, ctr, parent),
+				module = Module.createModule(path, ctx, ctr, parent);
 			module.state = 1;
 			if (Module.isMask(path)) {
 				module.preprocess_(mix, function(){
 					module.state = 4;
-					module.resolve();
+					module.resolve(module);
 				});
 				return module;
 			}
 			// assume others and is loaded
 			module.state   = 4;
 			module.exports = mix;
-			module.resolve();
+			module.resolve(module);
 			return module;
 		},
+		
 		createImport: function(data, ctx, ctr, module){
-			var path = u_resolvePath(data.path, ctx, ctr, module),
-				alias = data.alias,
+			var path    = u_resolvePath(data.path, ctx, ctr, module),
+				alias   = data.alias,
 				exports = data.exports;
 			return IImport.create(path, alias, exports, module);
 		},
@@ -64,15 +66,17 @@ var Module;
 			return ext === '' || ext === 'mask' || ext === 'html';
 		},
 		getType: function(path) {
-			var ext = path_getExtension(path);
-			
-			if (ext === '' || ext === 'mask')
+			var ext = path_getExtension(path);			
+			if (ext === '' || ext === 'mask'){
 				return 'mask';
+			}
 			var search = ' ' + ext + ' ';
-			if (_extensions_style.indexOf(search) !== -1)
+			if (_extensions_style.indexOf(search) !== -1){
 				return 'style';
-			if (_extensions_data.indexOf(search) !== -1)
+			}
+			if (_extensions_data.indexOf(search) !== -1){
 				return 'data';
+			}
 			// assume is javascript
 			return 'script';
 		},

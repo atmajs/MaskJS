@@ -111,6 +111,8 @@ var Mask;
 		 *	mask.render(this.nodes, model, container, ctx);
 		 **/
 		registerHandler: customTag_register,
+		
+		registerFromTemplate: customTag_registerFromTemplate,
 		/**
 		 *	mask.getHandler(tagName) -> Function | Object
 		 * - tagName (String):

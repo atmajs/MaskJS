@@ -17,7 +17,7 @@ var ModuleMask;
 				msg += '; Status: ' + error.status;
 			}
 
-			this.source = log_errorNode(msg);
+			this.source = reporter_createErrorNode(msg);
 			next.call(this, error);
 		},
 		preprocess_: function(mix, next) {
@@ -30,7 +30,8 @@ var ModuleMask;
 			this.source = ast;
 			this.imports = [];
 			this.exports = {
-				'__nodes__': []
+				'__nodes__': [],
+				'__handlers__': {}
 			};
 			
 			var arr  = _nodesToArray(ast),
@@ -50,6 +51,9 @@ var ModuleMask;
 							x.nodes, u_resolvePath(x.attr.path, null, null, this)
 						);
 						break;
+					case 'define':
+					case 'let':
+						continue;
 					default:
 						this.exports.__nodes__.push(x);
 						break;
@@ -62,7 +66,7 @@ var ModuleMask;
 		},
 		
 		getHandler: function(name){
-			return _module_getHandler(this, name);
+			return _module_getHandler.call(this, this, name);
 		},
 		queryHandler: function(selector) {
 			if (this.error) {
@@ -136,15 +140,18 @@ var ModuleMask;
 			imax = nodes.length;
 		while ( ++i < imax ) {
 			var node = nodes[i];
-			if (node.tagName === 'define') {
+			var name = node.tagName;
+			if (name === 'define' || name === 'let') {
 				var Ctor = Define.create(node, model, module);
 				obj_extend(Ctor.prototype, {
 					getHandler: getHandler,
 					location: module.location,
 					scope: scope
 				});
-				
-				exports[node.name] = Ctor;
+				if (name === 'define') {
+					exports[node.name] = Ctor;
+				}
+				exports.__handlers__[node.name] = Ctor;
 			}
 		}
 		exports['*'] = class_create(customTag_Base, {
@@ -184,7 +191,7 @@ var ModuleMask;
 	}
 	function _module_getHandlerDelegate(module) {
 		return function(name) {
-			return _module_getHandler(module, name);
+			return _module_getHandler.call(this, module, name);
 		};
 	}
 	function _module_getHandler(module, name) {
@@ -192,6 +199,13 @@ var ModuleMask;
 		if (Ctor != null) {
 			return Ctor;
 		}
+		
+		// check internal components store
+		var handlers = this.__handlers__;
+		if (handlers != null && (Ctor = handlers[name]) != null) {
+			return Ctor;
+		}
+		
 		var arr = module.imports,
 			i = arr.length,
 			x, type;

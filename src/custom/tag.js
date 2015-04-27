@@ -47,7 +47,7 @@
 		return obj;
 	};
 	
-	customTag_register = function(mix, Handler){		
+	customTag_register = function(mix, Handler){
 		if (typeof mix !== 'string' && arguments.length === 3) {
 			customTag_registerScoped.apply(this, arguments);
 			return;
@@ -56,6 +56,28 @@
 		custom_Tags[mix] = compo_ensureCtor(Handler);
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
+	};
+	
+	customTag_registerFromTemplate = function(mix, Ctr, path){
+		var dfr = new class_Dfr;
+		new Module
+			.ModuleMask(path || '')
+			.preprocess_(mix, function(error, exports){
+				if (error) {
+					return dfr.reject(error);
+				}
+				var store = exports.__handlers__;
+				for (var key in store) {
+					if (exports[key] != null) {
+						// is global
+						customTag_register(key, store[key]);
+						continue;
+					}
+					customTag_registerScoped(Ctr, key, store[key]);
+				}
+			});
+		
+		return dfr;
 	};
 	
 	customTag_registerScoped = function(Ctx, name, Handler) {
@@ -115,8 +137,7 @@
 				}
 				return new Mix(node, model, ctx, container, ctr);
 			}
-			
-			log_error('Component not found:', node.tagName);
+			error_withNode('Component not found: ' + node.tagName, node);
 			return null;
 		};
 	}());
@@ -147,6 +168,18 @@
 			Handler.__Ctor = wrapStatic(Handler);
 		}
 		return Handler;
+	}
+	
+	function compo_registerViaTemplate(tmpl, Ctx) {
+		jmask(tmpl).each(function(x){
+			var name = x.tagName;
+			if (name === 'let' && Ctx == null) {
+				name = 'define';
+			}
+			if ('define' === name) {
+				Define.registerGlobal()
+			}
+		});
 	}
 	
 }());

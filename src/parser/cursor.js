@@ -3,6 +3,7 @@ var cursor_groupEnd,
 	cursor_refEnd,
 	cursor_tokenEnd,
 	cursor_skipWhitespace,
+	cursor_skipWhitespaceBack,
 	cursor_goToWhitespace
 	;
 (function(){
@@ -90,6 +91,13 @@ var cursor_groupEnd,
 	
 	cursor_skipWhitespace = function(str, i, imax) {
 		for(; i < imax; i++) {
+			if (str.charCodeAt(i) > 32) 
+				return i;
+		}
+		return i;
+	};
+	cursor_skipWhitespaceBack = function(str, i) {
+		for(; i > 0; i--) {
 			if (str.charCodeAt(i) > 32) 
 				return i;
 		}

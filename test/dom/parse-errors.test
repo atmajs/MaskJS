@@ -1,33 +1,93 @@
 var errors = [];
+var warns  = [];
+function getLinesOfLast(arr) {
+	var error = (errors.pop() || warns.pop());
+	return error.message.split('\n')
+}
+function getLast(arr) {
+	var error = (errors.pop() || warns.pop());
+	return error.message;
+}
+
 UTest({
 	
-	$before: function(){
+	$before () {
 		mask.on('error', error => errors.push(error));
+		mask.on('warn', warn => warns.push(warn));
 	},
-	$after: function(){
-		
+	$after () {		
 		mask.off('error');
 	},
-	'unexpected tag close' () {
-		mask.parse(`
-			div { span }} span;
-		`);
-		var error = errors.pop();
-		has_(error.message, 'tag closing');
+	$teardown () {
+		errors = [];
+		warns  = [];
 	},
-	'quote not closed' () {
-		mask.parse(`
-			div > 'some
-		`);
-		var error = errors.pop();
-		has_(error.message, 'Literal has no ending');
+	'unexpect tag closing': {
+		'starting' () {
+			mask.parse('} what');
+			var lines = getLinesOfLast(warns);
+			has_(lines, [
+				'1|} what',
+				'  ^'
+			])
+		},
+		'after node' () {
+			mask.parse("div { span }} span;");
+			
+			var lines = getLinesOfLast(warns);
+			
+			deepEq_(lines, [
+				'Unexpected tag closing',
+				'1|div { span }} span;',
+				'              ^'
+			]);
+		},
+		'ending' () {
+			mask.parse(`
+				div {
+						foo;
+					}
+					span;
+				}
+				h4;
+			`);
+			
+			var lines = getLinesOfLast(warns);
+			
+			has_(lines, [
+				'6|\t\t\t\t}'
+			]);
+		},
 	},
-	'unexpect `,` in tagname' () {
-		mask.parse(`
-			div, other;
-		`);
-		var error = errors.pop();
-		has_(error.message, 'Invalid token: `,`');
+
+	'quote not closed': {
+		'in literal' () {
+			mask.parse("div > 'some");
+			var message = getLast(warns);
+			has_(message, 'Literal has no ending');
+		},
+		'in attribute' () {
+			mask.parse("div foo='some");
+			var lines = getLinesOfLast(warns);
+			has_(lines, [
+				'Literal has no ending',
+				"1|div foo='some",
+				"          ^",
+			]);
+		},
+		
+	},
+	'unexpect `,`': {
+		'in a tagname' () {
+			var ast = mask.parse('div, other;');
+			var message = getLast();
+			has_(message, 'Invalid token: `,`');
+		},
+		'in attributes' () {
+			var ast = mask.parse('div , other;');
+			var message = getLast();
+			has_(message, 'Invalid token: `,`');
+		}
 	},
 	'unexpect `,` after block' () {
 		mask.parse(`
@@ -44,7 +104,6 @@ UTest({
 		var error = errors.pop();
 		
 		has_(error.message, 'Invalid token: `<`');
-		has_(error.message, '(1:5)');
 		has_(error.message, 'attribute key');
 		
 		'but should parse everything before'
@@ -57,7 +116,7 @@ UTest({
 		`)
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `#`')
-		has_(error.message, '(2:');
+		
 		
 		var nodes = fragment.nodes;
 		eq_(nodes.length, 2);
@@ -75,7 +134,7 @@ UTest({
 		`)
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `=`');
-		has_(error.message, '(2:');
+		
 	},
 	'invalid tag assignment': function(){
 		var fragment = mask.parse(`
@@ -143,14 +202,12 @@ UTest({
 			var error = errors.pop();
 			
 			has_(error.message, 'Unexpected operator Invalid token: `+`');
-			has_(error.message, '(1:3)');
 		},
 		'unsupported bit shifting': function(){
 			var ast = mask.render('"~[: 64<<1 ]"');
 			var error = errors.pop();
 			
 			has_(error.message, 'Unexpected operator Invalid token: `<`');
-			has_(error.message, '(1:');
 		},
 	}
 })

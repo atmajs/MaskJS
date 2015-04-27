@@ -53,13 +53,15 @@ var parser_parse,
 			length = template.length,
 			classNames,
 			token,
+			tokenIndex,
 			key,
 			value,
 			next,
 			c, // charCode
 			start,
 			nextC;
-
+		
+		fragment.source = template;
 		outer: while (true) {
 			
 			while (index < length && (c = template.charCodeAt(index)) < 33) {
@@ -88,8 +90,6 @@ var parser_parse,
 						// endif
 						index = length;
 					}
-					
-					
 					continue;
 				}
 			}
@@ -149,6 +149,8 @@ var parser_parse,
 							? go_tag
 							: nextState;
 						if (node != null) {
+							node.sourceIndex = tokenIndex;
+							
 							var transform = custom_Parsers_Transform[token];
 							if (transform != null) {
 								var x = transform(current, node);
@@ -176,6 +178,7 @@ var parser_parse,
 					
 					
 					next = new Node(token, current);
+					next.sourceIndex = tokenIndex;
 					
 					current.appendChild(next);
 					current = next;
@@ -218,7 +221,11 @@ var parser_parse,
 				}
 				if (current == null) {
 					current = fragment;
-					parser_warn('Unexpected tag closing', template, index - 1);
+					parser_warn(
+						'Unexpected tag closing'
+						, template
+						, cursor_skipWhitespaceBack(template, index - 1)
+					);
 				}
 				state = go_tag;
 			}
@@ -297,14 +304,16 @@ var parser_parse,
 					}
 				}
 
+				tokenIndex = start;
 				token = template.substring(start, index);
+				
 				if (isEscaped === true) {
 					token = token.replace(__rgxEscapedChar[_char], _char);
 				}
 				
-				if (state !== state_attr || key !== 'class') 
+				if (state !== state_attr || key !== 'class') {
 					token = ensureTemplateFunction(token);
-					
+				}
 				index += isUnescapedBlock ? 3 : 1;
 				continue;
 			}
@@ -315,6 +324,7 @@ var parser_parse,
 				//next_Type = Dom.NODE;
 				
 				if (c === 46 /* . */ || c === 35 /* # */ ) {
+					tokenIndex = index;
 					token = 'div';
 					continue;
 				}
@@ -364,6 +374,7 @@ var parser_parse,
 				else {
 
 					if (key != null) {
+						tokenIndex = index;
 						token = key;
 						continue;
 					}
@@ -399,7 +410,7 @@ var parser_parse,
 				// if DEBUG
 				if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
 					// '"/<,
-					parser_warn('', template, index, c, state);
+					parser_error('', template, index, c, state);
 					break outer;
 				}
 				// endif
@@ -427,6 +438,7 @@ var parser_parse,
 			}
 
 			token = template.substring(start, index);
+			tokenIndex = start;
 			if (token === '') {
 				parser_warn('String expected', template, index, c, state);
 				break;

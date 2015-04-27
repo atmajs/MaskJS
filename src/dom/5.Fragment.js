@@ -1,8 +1,6 @@
-function Fragment(){}
-
-Fragment.prototype = {
-	constructor: Fragment,
+var Fragment = class_create({
 	type: dom_FRAGMENT,
 	nodes: null,
-	appendChild: _appendChild
-};
+	appendChild: _appendChild,
+	source: ''
+});

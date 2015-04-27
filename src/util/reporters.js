@@ -1,92 +1,123 @@
 var throw_,
 	parser_error,
 	parser_warn,
+	error_,
+	error_withSource,
+	error_withNode,
+	warn_,
+	warn_withSource,
+	warn_withNode,
+	
 	log,
 	log_warn,
 	log_error,
-	log_errorNode;
+	reporter_createErrorNode;
 	
 (function(){
+	(function () {
+		
+		if (typeof console === 'undefined') {
+			log = log_warn = log_error = function(){};
+			return;
+		}		
+		var bind  = Function.prototype.bind;
+		log       = bind.call(console.warn , console);		
+		log_warn  = bind.call(console.warn , console, 'MaskJS [Warn] :');
+		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
+	}());
 	
+	var MaskError = error_createClass('MaskError', {});
+	var MaskWarn  = error_createClass('MaskWarn',  {});
 	
+		
 	throw_ = function(error){
 		log_error(error);
 		listeners_emit('error', error);
 	};
 	
-	parser_error = function(msg, str, i, token, state, file){
-		var error = createMsg('error', msg, str, i, token, state, file);
-		if (listeners_emit('error', error))
-			return;
-		log_error(error.message);
-		log_warn('\n' + error.stack);
-	};
-	parser_warn = function(msg, str, i, token, state, file){
-		var error = createMsg('warn', msg, str, i, token, state, file);
-		if (listeners_emit('error', error))
-			return;
-		log_warn(error.message);
-		log('\n' + error.stack);
-	};
+	error_withSource = delegate_withSource(MaskError, 'error');
+	error_withNode   = delegate_withNode  (MaskError, 'error');
 	
-	log_errorNode = function(message){
+	warn_withSource = delegate_withSource(MaskWarn, 'warn');
+	warn_withNode   = delegate_withNode  (MaskWarn, 'warn');
+	
+	parser_error = delegate_parserReporter(MaskError, 'error');
+	parser_warn = delegate_parserReporter(MaskWarn, 'warn');
+	
+	reporter_createErrorNode = function(message){
 		return parser_parse(
-			'div style="background:red;color:white;">tt>"' + message + '"'
+			'div style="background:red;color:white;">tt>"""' + message + '"""'
 		);
 	};
 	
-	if (typeof console === 'undefined') {
-		log = log_warn = log_error = function(){};
+	function delegate_parserReporter(Ctor, type) {
+		return function(str, source, index, token, state, file) {
+			var error = new Ctor(str);
+			var tokenMsg = formatToken(token);
+			if (tokenMsg) {
+				error.message += tokenMsg;
+			}
+			var stateMsg = formatState(state);
+			if (stateMsg) {
+				error.message += stateMsg;
+			}
+			var cursorMsg = error_formatSource(source, index, file);
+			if (cursorMsg) {
+				error.message += '\n' + cursorMsg;
+			}
+			report(error, 'error');
+		};
 	}
-	else {
-		var bind  = Function.prototype.bind;
-		log       = bind.call(console.warn , console);
-		log_warn  = bind.call(console.warn , console, 'MaskJS [Warn] :');
-		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
+	function delegate_withSource(Ctor, type){
+		return function(str, source, index, file){
+			var error = new Ctor(str);
+			error.message = '\n' + error_formatSource(source, index, file);
+			report(error, type);
+		};
 	}
-	
-	var ParserError = createError('Error'),
-		ParserWarn  = createError('Warning');
-	
-	function createError(type) {
-		function ParserError(msg, orig, index){
-			this.type = 'Parser' + type;
-			this.message = msg;
-			this.original = orig;
-			this.index = index;
-			this.stack = prepairStack();
-		}
-		inherit(ParserError, Error);
-		return ParserError;
-	}
-	
-	function prepairStack(){
-		var stack = new Error().stack;
-		if (stack == null) 
-			return null;
-		
-		return stack
-			.split('\n')
-			.slice(6, 8)
-			.join('\n');
-	}
-	function inherit(Ctor, Base){
-		Ctor.prototype = obj_create(Base.prototype);
-	}
-	function createMsg(type, msg, str, index, token, state, filename){
-		msg += formatToken(token)
-			+ formatFilename(str, index, filename)
-			+ '\nParser '
-			+ formatState(state)
-			+ formatStopped(type, str, index)
-			;
-		
-		var Ctor = type === 'error'
-			? ParserError
-			: ParserWarn;
+	function delegate_withNode(Ctor, type){
+		return function(str, node){
+			var error = new Ctor(str);
+			error.message = error.message
+				+ '\n'
+				+ _getNodeStack(node);
 			
-		return new Ctor(msg, str, index);
+			report(error, type);
+		};
 	}
+	
+	function _getNodeStack(node){
+		var stack = [ node ];
+		
+		var parent = node.parent;
+		while (parent != null) {
+			stack.unshift(parent);
+			parent = parent.parent;
+		}
+		var str = '';
+		var root = stack[0];
+		if (root !== node && is_String(root.source) && node.sourceIndex > -1) {
+			str += error_formatSource(root.source, node.sourceIndex, root.filename) + '\n';
+		}
+		
+		str += '  at ' + stack
+			.map(function(x){
+				return x.tagName;
+			})
+			.join(' > ');
+			
+		return str;
+	}
+	
+	function report(error, type) {
+		if (listeners_emit(type, error)) {
+			return;
+		}
+		var fn = type === 'error' ? log_error : log_warn;
+		fn(error.message);
+		fn('\n' + error.stack);
+	}
+	
 	function formatToken(token){
 		if (token == null) 
 			return '';
@@ -96,17 +127,7 @@ var throw_,
 			
 		return ' Invalid token: `'+ token + '`';
 	}
-	function formatFilename(str, index, filename) {
-		if (index == null || !filename) 
-			return '';
-		
-		var lines = splitLines(str, index),
-			line = lines[1],
-			row  = lines[2];
-		return ' at '
-			+ (filename || '')
-			+ '(' + line + ':' + row + ')';
-	}
+	
 	function formatState(state){
 		var states = {
 			'2': 'tag',
@@ -120,82 +141,7 @@ var throw_,
 		if (state == null || states[state] == null) 
 			return '';
 		
-		return ' on "' + states[state] + '"';
-	}
-	function formatStopped(type, str, index){
-		if (index == null) 
-			return '';
-		
-		var data = splitLines(str, index),
-			lines = data[0],
-			line  = data[1],
-			row   = data[2];
-			
-		return index == null
-			? ''
-			: ' at ('
-				+ line
-				+ ':'
-				+ row
-				+ ') \n'
-				+ formatCursor(lines, line, row)
-			;
+		return ' in `' + states[state] + '`';
 	}
 	
-	var formatCursor;
-	(function(){
-		formatCursor = function(lines, line, row) {
-			var BEFORE = 3,
-				AFTER  = 2,
-				i = (line - 1) - BEFORE,
-				imax   = i + BEFORE + AFTER,
-				str  = '';
-			
-			if (i < 0) i = 0;
-			if (imax > lines.length) imax = lines.length;
-			
-			var lineNumberLength = String(imax).length,
-				lineNumber;
-			
-			for(; i < imax; i++) {
-				if (str)  str += '\n';
-				
-				lineNumber = ensureLength(i + 1, lineNumberLength);
-				str += lineNumber + '|' + lines[i];
-				
-				if (i + 1 === line) {
-					str += '\n' + repeat(' ', lineNumberLength + 1);
-					str += lines[i].substring(0, row - 1).replace(/[^\s]/g, ' ');
-					str += '^';
-				}
-			}
-			return str;
-		};
-		
-		function ensureLength(num, count) {
-			var str = String(num);
-			while(str.length < count) {
-				str += ' ';
-			}
-			return str;
-		}
-		function repeat(char_, count) {
-			var str = '';
-			while(--count > -1) {
-				str += char_;
-			}
-			return str;
-		}
-	}());
-	
-	function splitLines(str, index) {
-		var lines = str.substring(0, index).split('\n'),
-			line = lines.length,
-			row = index + 1 - lines.slice(0, line - 1).join('\n').length;
-		if (line > 1) {
-			// remote trailing newline
-			row -= 1;
-		}
-		return [str.split('\n'), line, row];
-	}
 }());
