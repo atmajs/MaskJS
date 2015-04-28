@@ -72,7 +72,7 @@ Resources:
 	`[Template → Mask AST → HTML]`
 
 ```mask
-import :customComponent from './foo'
+import CustomComponent from 'foo'
 
 .container {
     h4 > 'Title'
@@ -83,7 +83,7 @@ import :customComponent from './foo'
             em > 'Admin'
         }
     }
-    :customComponent {
+    CustomComponent {
         button x-tap='changeName' >
             '~[bind: name]'
             
@@ -127,7 +127,7 @@ var dom = mask.render(ast);
 Core of the HMVC engine. Simple compo sample:
 
 ```javascript
-mask.registerHandler(':customComponent', mask.Compo({
+mask.registerHandler('CustomComponent', mask.Compo({
 	slots: {
 		refreshDate: function(){
 			this.model.date = new Date();
@@ -255,7 +255,7 @@ Most simple MaskJS sample to show where you could start from:
 							x-tap='fooAction' > '~[page]'
 					}
 					// nested components
-					:bazCompo > :quxCompo;
+					BazCompo > QuxCompo;
 				}
 			</script>
 		</header>
@@ -279,8 +279,8 @@ Most simple MaskJS sample to show where you could start from:
 					}
 				}
 			});
-			mask.registerHandler(':bazCompo', mask.Compo({/*implement*/}));
-			mask.registerHandler(':quxCompo', mask.Compo({/*implement*/}));
+			mask.registerHandler('BazCompo', mask.Compo({/*implement*/}));
+			mask.registerHandler('QuxCompo', mask.Compo({/*implement*/}));
 			mask.run(App);
 		</script>
 	</body>
