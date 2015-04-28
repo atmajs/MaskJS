@@ -113,10 +113,12 @@ var mask_merge;
 		}
 		
 		if (tag_EACH === tagName) {
-			var arr = placeholders[node.expression],
+			var arr = placeholders.$getNode(node.expression),
 				x;
 			if (arr == null) {
-				log_error('No template node: @' + node.expression);
+				if (node.attr.optional == null) {
+					error_withNode('No template node: @' + node.expression, node);
+				}
 				return null;
 			}
 			if (is_Array(arr) === false) {
@@ -374,8 +376,12 @@ var mask_merge;
 			obj = null;
 		
 		if (node != null) {
-			if (tagName === '@attr')
-				obj = node.attr;
+			if (tagName === '@attr') {
+				return interpolate_getAttr_(node, placeholders, property);
+			}
+			else if (tagName === '@counter') {
+				return interpolate_getCounter_(property);
+			}
 			else if (tagName === node.tagName) 
 				obj = node;
 		}
@@ -389,6 +395,25 @@ var mask_merge;
 		}
 		return obj_getProperty(obj, property);
 	}
+	
+	function interpolate_getAttr_(node, placeholders, prop) {
+		var x = node.attr && node.attr[prop];
+		var el = placeholders;
+		while (x == null && el != null) {
+			x = el.attr && el.attr[prop];
+			el = el.parent;
+		}
+		return x;
+	}
+	
+	var interpolate_getCounter_;
+	(function(){
+		var _counters = {};
+		interpolate_getCounter_ = function(prop) {
+			var i = _counters[prop] || 0;
+			return (_counters[prop] = ++i);
+		};
+	}());
 	
 	function appendAny(node, mix){
 		if (mix == null) 

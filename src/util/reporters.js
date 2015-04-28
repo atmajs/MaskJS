@@ -26,8 +26,9 @@ var throw_,
 		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
 	}());
 	
-	var MaskError = error_createClass('MaskError', {});
-	var MaskWarn  = error_createClass('MaskWarn',  {});
+	var STACK_SLICE = 4;
+	var MaskError = error_createClass('MaskError', {}, STACK_SLICE);
+	var MaskWarn  = error_createClass('MaskWarn',  {}, STACK_SLICE);
 	
 		
 	throw_ = function(error){
