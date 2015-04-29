@@ -34,7 +34,7 @@ UTest({
 		'should merge contents' () {
 			var template = `
 				define foo {
-					h4 > '~[: $a.text]'
+					h4 > '~[: $.attr.text]'
 					section > @xContent;
 				}
 				div > foo text='FooText' {

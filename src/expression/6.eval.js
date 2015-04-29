@@ -113,7 +113,6 @@ function expression_evaluate(mix, model, ctx, controller) {
 		if (ast.next == null) 
 			return result;
 		
-		//debugger;
 		return util_resolveRef(ast.next, result);
 	}
 

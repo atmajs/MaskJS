@@ -203,6 +203,7 @@ var Mask;
 		getUtil: customUtil_get,
 		
 		$utils: customUtil_$utils,
+		_     : customUtil_$utils,
 		
 		registerUtility: function (utilityName, fn) {
 			// if DEBUG

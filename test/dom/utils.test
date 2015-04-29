@@ -1,9 +1,6 @@
-
-
 UTest({
     
-    'parsed-arguments': function(){
-                
+    'parsed-arguments' () {                
         mask.registerUtil('test', {
             arguments: 'parsed',
             process: function(foo, str, bar){
@@ -11,18 +8,20 @@ UTest({
             }
         });
         
-        $render('div > "~[test: foo, \'test\', bar.bar]"', { foo: 2, bar: { bar: 3 } })
-            .eq_('text', '2test3')
-            ;
+        var tmpl = ` div > "~[test: foo, 'test', bar.bar]" `;
+        var model = { foo: 2, bar: { bar: 3 } };
+        var dom = mask.render(tmpl, model);        
+        eq_($(dom).text(), '2test3');
         
         
-        eq(typeof mask.$utils.test, 'function');
-        eq(mask.$utils.test(2, 'test', 8), '2test8');
+        is_(mask._.test, 'Function');
+        eq_(mask._.test(2, 'test', 8), '2test8');
         
         
-        $render('div > "~[: \'foo\' + $u.test(a,2,3) ]"', {a : 10})
-            .eq_('text', 'foo15')
-            ;
+        var tmpl = ` div > "~[: 'foo' + _.test(a,2,3) ]" `;
+        var model = { a : 10 };
+        var dom = mask.render(tmpl, model);        
+        eq_($(dom).text(), 'foo15');
     }
     
 })

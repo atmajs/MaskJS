@@ -11,7 +11,8 @@ var throw_,
 	log,
 	log_warn,
 	log_error,
-	reporter_createErrorNode;
+	reporter_createErrorNode,
+	reporter_deprecated;
 	
 (function(){
 	(function () {
@@ -50,6 +51,17 @@ var throw_,
 			'div style="background:red;color:white;">tt>"""' + message + '"""'
 		);
 	};
+	
+	(function(){
+		reporter_deprecated = function(id, message){
+			if (_notified[id] !== void 0) {
+				return;
+			}
+			_notified[id] = 1;
+			log_warn('[deprecated]', message);
+		};
+		var _notified = {};
+	}());
 	
 	function delegate_parserReporter(Ctor, type) {
 		return function(str, source, index, token, state, file) {

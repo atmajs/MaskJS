@@ -2,6 +2,10 @@ var mask_TreeWalker;
 (function(){
 	mask_TreeWalker = {
 		walk: function(root, fn) {
+			if (typeof root === 'object' && root.type === Dom.CONTROLLER) {
+				new SyncWalkerCompos(root, fn);
+				return root;
+			}
 			root = prepairRoot(root);
 			new SyncWalker(root, fn);
 			return root;
@@ -12,34 +16,65 @@ var mask_TreeWalker;
 		}
 	};
 	
-	var SyncWalker;
+	var SyncWalker,
+		SyncWalkerCompos;
 	(function(){
 		SyncWalker = function(root, fn){
 			walk(root, fn);
 		};
+		SyncWalkerCompos = function(root, fn){
+			walkCompos(root, fn, root);
+		};
 		function walk(node, fn, parent, index) {
 			if (node == null) 
-				return;
+				return null;
 			
-			var deep = true, mod;
+			var deep = true, break_ = false, mod;
 			if (isFragment(node) !== true) {
 				mod = fn(node);
 			}
 			if (mod !== void 0) {
 				mod = new Modifier(mod);
 				mod.process(new Step(node, parent, index));
-				deep = mod.deep;
-			}
-			
+				deep   = mod.deep;
+				break_ = mod['break'];
+			}			
 			var nodes = safe_getNodes(node);
-			if (nodes == null || deep === false) {
-				return;
+			if (nodes == null || deep === false || break_ === true) {
+				return mod;
 			}
 			var imax = nodes.length,
 				i = 0, x;
 			for(; i < imax; i++) {
 				x = nodes[i];
-				walk(x, fn, node, i);
+				mod = walk(x, fn, node, i);
+				if (mod != null && mod['break'] === true) {
+					return mod;
+				}
+			}
+		}
+		function walkCompos(compo, fn, parent, index) {
+			if (compo == null) 
+				return;
+			
+			var mod = fn(compo, index);
+			if (mod !== void 0) {
+				if (mod.deep === false || mod['break'] === true) {
+					return mod;
+				}
+			}
+			var compos = compo.components;
+			if (compos == null) {
+				return null;
+			}
+			var imax = compos.length,
+				i = 0, x;
+			for(; i < imax; i++) {
+				x = compos[i];
+				mod = walkCompos(x, fn, compo, i);
+				if (mod != null && mod['break'] === true) {
+					return mod;
+				}
 			}
 		}
 	}());
@@ -103,15 +138,16 @@ var mask_TreeWalker;
 				return null;
 			},
 			process: function(mod){
-				var deep = true;
+				var deep = true, break_ = false;
 				
 				if (mod !== void 0) {
 					mod = new Modifier(mod);
 					mod.process(this.current());
-					deep = mod.deep;
+					deep   = mod.deep;
+					break_ = mod['break'];
 				}
 				
-				var next = this.getNext(deep);
+				var next = break_ === true ? null : this.getNext(deep);
 				if (next == null) {
 					this.done(this.root);
 					return;
@@ -142,6 +178,7 @@ var mask_TreeWalker;
 			}
 		};
 		Modifier.prototype = {
+			'break': false,
 			deep: true,
 			remove: false,
 			replace: null,

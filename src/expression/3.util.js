@@ -12,8 +12,9 @@ var util_resolveRef,
 		);
 	};
 	
-	util_resolveRef = function(astRef, model, ctx, controller) {
-		var current = astRef,
+	util_resolveRef = function(astRef, model, ctx, ctr) {
+		var controller = ctr,
+			current = astRef,
 			key = astRef.body,
 			object,
 			value,
@@ -23,14 +24,31 @@ var util_resolveRef,
 			;
 		
 		if ('$c' === key) {
+			reporter_deprecated(
+				'accessor.compo', "Use `$` instead of `$c`."
+			);
+			key = '$';
+		}
+		if ('$u' === key) {
+			reporter_deprecated(
+				'accessor.util', "Use `_` instead of `$u`"
+			);
+			key = '_';
+		}
+		if ('$a' === key) {
+			reporter_deprecated(
+				'accessor.attr', "Use `$.attr` instead of `$a`"
+			);
+		}
+		
+		if ('$' === key) {
 			value = controller;
 			
 			var next = current.next,
 				nextBody = next != null && next.body;
 			if (nextBody != null && value[nextBody] == null){
 					
-				if (next.type === type_FunctionRef
-						&& typeof Compo.prototype[nextBody] === 'function') {
+				if (next.type === type_FunctionRef && is_Function(Compo.prototype[nextBody])) {
 					// use fn from prototype if possible, like `closest`
 					object = controller;
 					value = Compo.prototype[nextBody];
@@ -54,22 +72,44 @@ var util_resolveRef,
 				
 				if (value == null) {
 					// prepair for warn message
-					key = '$c.' + nextBody;
+					key = '$.' + nextBody;
 					current = next;
 				}
 			}
 			
 		}
 		
-		else if ('$a' === key) 
+		else if ('$a' === key) {
 			value = controller && controller.attr;
+		}
 		
-		else if ('$u' === key) 
+		else if ('_' === key) {
 			value = customUtil_$utils;
+		}
 		
 		
-		else if ('$ctx' === key) 
+		else if ('$ctx' === key) {
 			value = ctx;
+		}
+		
+		else if ('$scope' === key) {
+			var next = current.next,
+				nextBody = next != null && next.body;
+			
+			if (nextBody != null) {
+				while (controller != null) {
+					object = controller.scope;				
+					if (object != null) {
+						value = object[nextBody];
+					}
+					if (value != null) {
+						break;
+					}
+					controller = controller.parent;
+				}
+				current = next;
+			}
+		}
 		
 		else {
 			// scope resolver
@@ -110,14 +150,21 @@ var util_resolveRef,
 				i = -1;
 				imax = current.arguments.length;
 				
-				while( ++i < imax )
-					args[i] = expression_evaluate(current.arguments[i], model, ctx, controller);
+				while( ++i < imax ) {
+					args[i] = expression_evaluate(
+						current.arguments[i]
+						, model
+						, ctx
+						, controller
+					);
+				}
 				
 				value = value.apply(object, args);
 			}
 
-			if (value == null || current.next == null) 
+			if (value == null || current.next == null) {
 				break;
+			}
 			
 			current = current.next;
 			key = current.type === type_AccessorExpr
@@ -135,5 +182,7 @@ var util_resolveRef,
 		
 		return value;
 	};
+	
+	
 }());
 

@@ -34,8 +34,8 @@ UTest({
 		"'' + 5 + 'hello'", "'' + 5 + 'h' + 'e' + \"l\" + 'l' + 'o'", "'' + ('5' + 'h' + 'e') + (\"l\" + 'l' + 'o')", //
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
-		"5 + $c.parent.fn2()", 
-		"5 + $c.closest(':test').value",
+		"5 + $.parent.fn2()", 
+		"5 + $.closest(':test').value",
 		"5 + var_", //
 		"1 + 2*2 + var_"], '5hello', {
 			var_: "hello",
@@ -299,10 +299,10 @@ UTest({
 	
 	'predefined accessors': function(){
 		expression([ 
-		'$c.three * 3 - 5',
+		'$.three * 3 - 5',
 		'$ctx.number.two - two + 4',
-		'0 + $a.four - 0',
-		'$c.attr.four + two - $c.three + 1'
+		'0 + $.attr.four - 0',
+		'$.attr.four + two - $.three + 1'
 		], 4, {
 			two: 2
 		}, {
@@ -317,11 +317,13 @@ UTest({
 		});
 	},
 	
-	'controller scope accessors': function(){
+	'controller`s scope accessors': function(){
 		
 		expression(
 			[
-				'a + b.sub'
+				'a + b.sub',
+				'$scope.a + b.sub',
+				'$scope.a + $scope.b.sub',
 			],
 			5,
 			null,
