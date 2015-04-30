@@ -1,5 +1,9 @@
 (function(){
 	customTag_get = function(name, ctr) {
+		if (arguments.length === 0) {
+			reporter_deprecated('getHandler.all', 'Use `mask.getHandlers` to get all components (also scoped)');
+			return customTag_getAll();
+		}
 		var Ctor = custom_Tags[name];
 		if (Ctor == null) {
 			return null;

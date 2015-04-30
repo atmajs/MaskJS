@@ -120,6 +120,7 @@ var Mask;
 		 *	Get Registered Handler
 		 **/
 		getHandler: customTag_get,
+		getHandlers: customTag_getAll,
 		
 		registerStatement: function(name, handler){
 			//@TODO should it be not allowed to override system statements, if, switch?
