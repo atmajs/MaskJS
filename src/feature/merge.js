@@ -2,14 +2,14 @@ var mask_merge;
 (function(){
 	
 	mask_merge = function(a, b, owner, opts){
-		if (a == null || (is_ArrayLike(a) && a.length === 0)) {
-			return b;
-		}
 		if (typeof a === 'string') {
 			a = parser_parse(a);
 		}
 		if (typeof b === 'string') {
 			b = parser_parse(b);
+		}
+		if (a == null || (is_ArrayLike(a) && a.length === 0)) {
+			return b;
 		}
 		
 		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b, opts));

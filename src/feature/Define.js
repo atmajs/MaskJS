@@ -18,7 +18,7 @@ var Define;
 		}
 	};
 	
-	function compo_prototype(tagName, attr, nodes, owner, model) {
+	function compo_prototype(tagName, attr, nodes, owner, model, Ctor) {
 		var arr = [];
 		var Proto = {
 			tagName: tagName,
@@ -60,7 +60,7 @@ var Define;
 				var fn = name === 'define'
 					? Define.registerGlobal
 					: Define.registerScoped;
-				fn(x, model, owner);
+				fn(x, model, Proto);
 				continue;
 			}
 			arr.push(x);

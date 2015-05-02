@@ -173,7 +173,7 @@ UTest({
 		}
 	},
 	'scoped (let)': {
-		'should create nested scoped component' () {
+		'!should create nested scoped component' () {
 			var tmpl = `
 				define Foo {
 					let Bar {
@@ -183,13 +183,16 @@ UTest({
 				Foo {
 					Bar;
 				}
+				
 				Bar;
 			`;
+			mask.on('error', assert.await(err => has_(String(err), 'Bar')));
 			$(mask.render(tmpl))
 				.eq_('length', 1)
 				.eq_('prop', 'tagName', 'SPAN')
 				.eq_('text', 'Bar')
 				;
+			mask.off('error');
 		}
 	}
 })
