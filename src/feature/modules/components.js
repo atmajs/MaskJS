@@ -75,12 +75,19 @@
 			var resume = Compo.pause(this, ctx),
 				nodes = this.nodes,
 				imax = nodes.length,
-				i = -1
+				i = -1, x
 				;
 			var arr = this.imports_ = [];
 			while( ++i < imax ){
-				if (nodes[i].tagName === IMPORT) {
-					arr.push(Module.createImport(nodes[i], ctx, this));
+				x = nodes[i];
+				if (x.tagName === IMPORT) {
+					if (x.path.indexOf('~') !== -1) {
+						var fn = parser_ensureTemplateFunction(x.path);
+						if (is_Function(fn)) {
+							x.path = fn('attr', model, ctx, null, this);
+						}
+					}
+					arr.push(Module.createImport(x, ctx, this));
 				}
 			}
 			this.load_(ctx, resume);

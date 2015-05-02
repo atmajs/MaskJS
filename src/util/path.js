@@ -52,7 +52,7 @@ var path_getDir,
 			if (base.substring(0, 5) === 'file:') {
 				return base;
 			}
-			return global.document.baseURI.replace(global.location.origin, '');
+			return base.replace(global.location.origin, '');
 		}
 		function fromLocation() {
 			return global.location.pathname;
@@ -148,7 +148,7 @@ var path_getDir,
 	
 	var rgx_PROTOCOL = /^(file|https?):/i,
 		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//,
-		rgx_FILENAME = /\/[^\/]+\.\w+$/,
+		rgx_FILENAME = /\/[^\/]+\.\w+(\?.*)?(#.*)?$/,
 		rgx_EXT      = /\.(\w+)$/,
 		rgx_win32Drive = /(^\/?\w{1}:)(\/|$)/
 		;
