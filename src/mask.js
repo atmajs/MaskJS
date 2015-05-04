@@ -289,8 +289,9 @@ var Mask;
 		
 		'class': {
 			create: class_create,
+			createError: error_createClass,
 			Deferred: class_Dfr,
-			EventEmitter: class_EventEmitter
+			EventEmitter: class_EventEmitter,
 		},
 		
 		parser: {
