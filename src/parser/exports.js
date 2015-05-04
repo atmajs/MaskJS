@@ -409,6 +409,7 @@ var parser_parse,
 				if (c === 64 && template.charCodeAt(index + 1) === 91) {
 					//@[
 					index = cursor_groupEnd(template, index + 2, length, 91, 93) + 1;
+					c = template.charCodeAt(index);
 				}
 
 				// if DEBUG
