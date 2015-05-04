@@ -406,6 +406,10 @@ var parser_parse,
 					}
 					while (c !== interp_code_CLOSE && index < length);
 				}
+				if (c === 64 && template.charCodeAt(index + 1) === 91) {
+					//@[
+					index = cursor_groupEnd(template, index + 2, length, 91, 93) + 1;
+				}
 
 				// if DEBUG
 				if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {

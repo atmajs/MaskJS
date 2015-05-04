@@ -7,11 +7,18 @@ var xhr_get;
 				return;
 			
 			var res = xhr.responseText,
-				status = xhr.status, err;
+				status = xhr.status,
+				err, errMsg;
 			if (status !== 0 && status !== 200) {
+				errMsg = res || xhr.statusText;
+			}
+			if (status === 0 && res === '') {
+				errMsg = res || xhr.statusText || 'File is not accessable';
+			}
+			if (errMsg != null) {
 				err = {
 					status: status,
-					content: res
+					content: errMsg
 				};
 				log_warn('File error', path, status);
 			}
