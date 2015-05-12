@@ -29,6 +29,25 @@ var IImport = class_create({
 		}
 	},
 	
+	hasExport: function(name) {
+		if (this.alias === name) {
+			return true;
+		}
+		var exports = this.exports
+		if (exports != null) {
+			var imax = exports.length,
+				i = -1;
+			while(++i < imax) {
+				var x = exports[i];
+				var expName = x.alias == null ? x.name : x.alias;
+				if (expName === name) {
+					return true;
+				}
+			}
+		}
+		return false;
+	},
+	
 	getOriginal: function(alias){
 		if (this.alias === alias) {
 			return '*';

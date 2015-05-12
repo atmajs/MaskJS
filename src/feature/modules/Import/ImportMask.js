@@ -8,8 +8,15 @@ var ImportMask = class_create(IImport, {
 	},
 	getHandler: function(name){
 		var module = this.module;
-		if (module == null || module.error != null) {
+		if (module == null) {
 			return;
+		}
+		if (module.error != null) {
+			if (this.hasExport(name)) {
+				this.logError_('Resource for the import `' + name + '` not loaded');
+				return this.empty;
+			}
+			return null
 		}
 		var orig = this.getOriginal(name);
 		if (orig == null) {
@@ -17,4 +24,5 @@ var ImportMask = class_create(IImport, {
 		}
 		return module.exports[orig] || module.queryHandler(orig);
 	},
+	empty: function EmptyCompo () {}
 });

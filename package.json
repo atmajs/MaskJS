@@ -32,9 +32,6 @@
         "examples": "atma server"
     },
     "keywords": [],
-    "engines": {
-        "node": "~0.8.9"
-    },
     "atma": {
         "plugins": [
             "atma-loader-traceur"
