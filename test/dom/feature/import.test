@@ -209,6 +209,18 @@ UTest({
 					`);
 				});
 		},
+		'export nodes with iid defines' () {
+			return mask
+				.renderAsync(`
+					import * as IiTest from '/test/tmpl/modules/ImmediateInvokeDefine';
+					IiTest;
+				`)
+				.pipe(dom => {
+					return UTest.domtest(dom, `
+						filter('h4') > text Hello;
+					`);
+				});
+		},
 		'scripts': {
 			'load property' () {
 				return mask

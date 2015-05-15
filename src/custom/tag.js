@@ -22,7 +22,7 @@
 			}
 			ctr_ = ctr_.parent;
 		}
-		return null;
+		return custom_Tags_global[name];
 	};
 	customTag_getAll = function(ctr) {
 		if (ctr == null) {
@@ -60,8 +60,14 @@
 			customTag_registerScoped.apply(this, arguments);
 			return;
 		}
+		var Current = custom_Tags[mix],
+			Ctor = compo_ensureCtor(Handler),
+			Repo = custom_Tags[mix] === Resolver
+				? custom_Tags_global
+				: custom_Tags
+				;
+		Repo[mix] = Ctor;	
 		
-		custom_Tags[mix] = compo_ensureCtor(Handler);
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};

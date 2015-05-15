@@ -150,6 +150,7 @@ var ModuleMask;
 				});
 				if (name === 'define') {
 					exports[node.name] = Ctor;
+					customTag_register(node.name, Ctor);
 				}
 				exports.__handlers__[node.name] = Ctor;
 			}

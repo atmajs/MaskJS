@@ -1,0 +1,5 @@
+define IidSample {
+	h4 > 'Hello'
+}
+
+IidSample;
