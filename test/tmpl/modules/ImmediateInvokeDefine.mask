@@ -1,5 +1,9 @@
+let Greetings {
+	span > 'Hello'
+}
+
 define IidSample {
-	h4 > 'Hello'
+	h4 > Greetings;
 }
 
 IidSample;

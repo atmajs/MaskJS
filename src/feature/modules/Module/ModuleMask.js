@@ -148,11 +148,15 @@ var ModuleMask;
 					location: module.location,
 					scope: scope
 				});
+				var compoName = node.name;
 				if (name === 'define') {
-					exports[node.name] = Ctor;
-					customTag_register(node.name, Ctor);
+					exports[compoName] = Ctor;
+					customTag_register(compoName, Ctor);
 				}
-				exports.__handlers__[node.name] = Ctor;
+				if (name === 'let') {
+					customTag_registerResolver(compoName)
+				}
+				exports.__handlers__[compoName] = Ctor;
 			}
 		}
 		exports['*'] = class_create(customTag_Base, {
