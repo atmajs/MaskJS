@@ -184,16 +184,4 @@
 		return Handler;
 	}
 	
-	function compo_registerViaTemplate(tmpl, Ctx) {
-		jmask(tmpl).each(function(x){
-			var name = x.tagName;
-			if (name === 'let' && Ctx == null) {
-				name = 'define';
-			}
-			if ('define' === name) {
-				Define.registerGlobal()
-			}
-		});
-	}
-	
 }());

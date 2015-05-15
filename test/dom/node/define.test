@@ -175,18 +175,18 @@ UTest({
 	'scoped (let)': {
 		'!should create nested scoped component' () {
 			var tmpl = `
-				define Foo {
-					let Bar {
+				define FooGlobal {
+					let BarLocal {
 						span > 'Bar'
 					}
 				}
-				Foo {
-					Bar;
+				FooGlobal {
+					BarLocal;
 				}
 				
-				Bar;
+				BarLocal;
 			`;
-			mask.on('error', assert.await(err => has_(String(err), 'Bar')));
+			mask.on('error', assert.await(err => has_(String(err), 'BarLocal')));
 			$(mask.render(tmpl))
 				.eq_('length', 1)
 				.eq_('prop', 'tagName', 'SPAN')

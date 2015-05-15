@@ -209,7 +209,7 @@ UTest({
 					`);
 				});
 		},
-		'!export nodes with iid defines' () {
+		'export nodes with iid defines' () {
 			return mask
 				.renderAsync(`
 					import * as IiTest from '/test/tmpl/modules/ImmediateInvokeDefine';

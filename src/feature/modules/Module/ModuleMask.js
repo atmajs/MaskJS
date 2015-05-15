@@ -200,13 +200,16 @@ var ModuleMask;
 		};
 	}
 	function _module_getHandler(module, name) {
-		var Ctor = module.exports[name];
-		if (Ctor != null) {
+		var Ctor;
+		
+		// check public exports
+		var exports = module.exports;
+		if (exports != null && (Ctor = exports[name]) != null) {
 			return Ctor;
 		}
 		
-		// check internal components store
-		var handlers = this.__handlers__;
+		// check private components store
+		var handlers = exports.__handlers__;
 		if (handlers != null && (Ctor = handlers[name]) != null) {
 			return Ctor;
 		}

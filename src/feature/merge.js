@@ -245,7 +245,7 @@ var mask_merge;
 				tagName = interpolate_str_(tagName, placeholders, tmplNode);
 				
 				var handler = customTag_get(tagName, tmplNode);
-				if (handler !== null) {
+				if (handler != null) {
 					var proto = handler.prototype;
 					var tmpl  = proto.template || proto.nodes;
 					
@@ -259,7 +259,7 @@ var mask_merge;
 				break;
 			default:
 				var handler = customTag_get(tagName, tmplNode);
-				if (handler !== null) {
+				if (handler != null) {
 					var proto = handler.prototype;
 					if (proto && proto.meta != null && proto.meta.template === 'merge') {
 						return node;
