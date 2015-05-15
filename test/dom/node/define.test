@@ -173,7 +173,7 @@ UTest({
 		}
 	},
 	'scoped (let)': {
-		'!should create nested scoped component' () {
+		'should create nested scoped component' () {
 			var tmpl = `
 				define FooGlobal {
 					let BarLocal {
