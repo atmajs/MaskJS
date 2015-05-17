@@ -33,22 +33,6 @@
 					});
 				return dfr;
 			};
-			
-			__cfg.getFile = function(path) {
-				var dfr = new class_Dfr;
-				include
-					.instance()
-					.load(path + '::Module')
-					.done(function(resp){
-						var exports = resp.load.Module;
-						if (exports != null) {
-							dfr.resolve(exports);
-							return;
-						}
-						dfr.reject('Export is undefined');
-					});
-				return dfr;
-			};
 		}
 	};
 	
