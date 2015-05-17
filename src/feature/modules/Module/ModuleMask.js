@@ -143,11 +143,12 @@ var ModuleMask;
 			var name = node.tagName;
 			if (name === 'define' || name === 'let') {
 				var Ctor = Define.create(node, model, module);
-				obj_extend(Ctor.prototype, {
-					getHandler: getHandler,
-					location: module.location,
-					scope: scope
-				});
+				var Proto = Ctor.prototype;
+				Proto.getHandler = _fn_wrap(Proto.getHandler, getHandler);
+				Proto.location = module.location;
+				Proto.scope  = obj_extend(Proto.scope, scope);
+				
+				
 				var compoName = node.name;
 				if (name === 'define') {
 					exports[compoName] = Ctor;
@@ -225,5 +226,18 @@ var ModuleMask;
 			}
 		}
 		return null;
+	}
+	
+	function _fn_wrap(baseFn, fn) {
+		if (baseFn == null) {
+			return fn;
+		}
+		return function(){
+			var x = baseFn.apply(this, arguments);
+			if (x != null) {
+				return x;
+			}
+			return fn.apply(this, arguments);
+		}
 	}
 }());

@@ -1,0 +1,12 @@
+import :footer as Footer, :menu as Menu from 'defines';
+
+define FooScoped {
+	
+	let BazInner {
+		h6.inner > 'Inner';
+		:menu;
+	}
+	
+	BazInner;
+	:footer;
+}

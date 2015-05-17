@@ -208,32 +208,48 @@ UTest({
 					$(dom).has_('text', 'Load error: /none.mask; Status: 404');
 				});
 		},
-		'defines' () {
-			return mask
-				.renderAsync(`
-					import :menu, :footer from '/test/tmpl/modules/defines';
-					
-					h4 > :menu;
-					div > :footer;
-				`)
-				.pipe(dom => {
-					return UTest.domtest(dom, `
-						filter('h4') > text Home;
-						filter('div') > text Copyright;
-					`);
-				});
-		},
-		'export nodes with iid defines' () {
-			return mask
-				.renderAsync(`
-					import * as IiTest from '/test/tmpl/modules/ImmediateInvokeDefine';
-					IiTest;
-				`)
-				.pipe(dom => {
-					return UTest.domtest(dom, `
-						filter('h4') > text Hello;
-					`);
-				});
+		'defines': {
+			'should render simple defines' () {
+				return mask
+					.renderAsync(`
+						import :menu, :footer from '/test/tmpl/modules/defines';
+						
+						h4 > :menu;
+						div > :footer;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Home;
+							filter('div') > text Copyright;
+						`);
+					});
+			},
+			'should render define with inner `let` scope' () {
+				return mask
+					.renderAsync(`
+						import FooScoped from '/test/tmpl/modules/defines_scopes';
+						FooScoped;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							find('.inner') > text Inner;
+							find('menu') > text Home;
+							find('footer') > text Copyright;
+						`);
+					});
+			},
+			'export nodes with iid defines' () {
+				return mask
+					.renderAsync(`
+						import * as IiTest from '/test/tmpl/modules/ImmediateInvokeDefine';
+						IiTest;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text Hello;
+						`);
+					});
+			},
 		},
 		'scripts': {
 			'load property' () {
