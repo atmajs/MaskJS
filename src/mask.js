@@ -230,11 +230,11 @@ var Mask;
 		 *	one or all templates from cache
 		 **/
 		clearCache: function(key){
-			if (typeof key === 'string'){
-				delete __templates[key];
-			}else{
+			if (arguments.length === 0) {
 				__templates = {};
+				return;
 			}
+			delete __templates[key];
 		},
 
 		Utils: {
@@ -321,31 +321,9 @@ var Mask;
 			builder_componentID = index;
 		},
 		
-		cfg: function(){
-			var args = arguments,
-				len = args.length
-			if (len === 0) {
-				return __cfg;
-			}
-			if (len === 1) {
-				var x = args[0]
-				if (is_Object(x)) {
-					obj_extend(__cfg, x);
-					return;
-				}
-				if (is_String(x)) {
-					return obj_getProperty(__cfg, x);
-				}
-			}
-			if (len === 2) {
-				var prop = args[0];
-				if (obj_hasProperty(__cfg, prop) === false) {
-					log_warn('Unknown configuration property', prop);
-				}
-				obj_setProperty(__cfg, prop, args[1]);
-				return;
-			}
-		},
+		cfg: mask_config,
+		config: mask_config,
+		
 		// For the consistence with the NodeJS
 		toHtml: function(dom) {
 			return $(dom).outerHtml();

@@ -143,11 +143,11 @@ var path_getDir,
 			}
 			out += x;
 		}
-		return out;
+		return path_collapse(out);
 	};
 	
 	var rgx_PROTOCOL = /^(file|https?):/i,
-		rgx_SUB_DIR  = /([^\/]+\/)?\.\.\//,
+		rgx_SUB_DIR  = /[^\/\.]+\/\.\.\//,
 		rgx_FILENAME = /\/[^\/]+\.\w+(\?.*)?(#.*)?$/,
 		rgx_EXT      = /\.(\w+)$/,
 		rgx_win32Drive = /(^\/?\w{1}:)(\/|$)/
@@ -161,11 +161,12 @@ var path_getDir,
 		return 'file:///' + path;
 	}
 	
-	function path_collapse(url) {
-		while (url.indexOf('../') !== -1) {
+	function path_collapse(url_) {
+		var url = url_;
+		while (rgx_SUB_DIR.test(url)) {
 			url = url.replace(rgx_SUB_DIR, '');
 		}
-		return url.replace(/\/\.\//g, '/');
+		return url;
 	}
 	function path_ensureTrailingSlash(path) {
 		if (path.charCodeAt(path.length - 1) === 47 /* / */)

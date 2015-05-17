@@ -16,6 +16,27 @@ include
 					
 					eq_(path_toRelative(path, anchor), expect);
 				});
+			},
+			'normalize' () {
+				[
+					[ '\\foo\\..\\baz.js', '/baz.js'],
+					[ '.././\\qux\\\\bar.js', '../qux/bar.js'],
+				].forEach(row => {
+					var [ path, expect ] = row;
+					
+					eq_(path_normalize(path), expect);
+				});
+			},
+			'combine' () {
+				[
+					[ 'foo', 'bar.js', 'foo/bar.js' ],
+					[ 'foo/qux', '../bar.js', 'foo/bar.js' ],
+					
+				].forEach(row => {
+					var [ base, path, expect ] = row;
+					
+					eq_(path_combine(base, path), expect);
+				});
 			}
 		})
 		

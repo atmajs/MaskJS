@@ -1,3 +1,6 @@
+// use default module loader
+mask.config('modules', 'default');
+
 UTest({
 	'getting dependencies': {
 		'should get javascript and style dependencies' () {
@@ -53,6 +56,14 @@ UTest({
 											}
 										]
 									}
+								}, {
+									path: '/test/tmpl/a.mask',
+									dependencies: {
+										script: [],
+										style: [],
+										data: [],
+										mask: []
+									}
 								}
 							]
 						}
@@ -75,6 +86,7 @@ UTest({
 				.getDependencies(template, path, opts)
 				.done(list => deepEq_(list, {
 					mask: [
+						'/test/tmpl/a.mask',
 						'/test/tmpl/modules/nest-b.mask',
 						'/test/tmpl/modules/nest-a.mask',
 						'/test/tmpl/modules/nest.mask',

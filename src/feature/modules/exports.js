@@ -27,6 +27,8 @@ var Module;
 	// import tools/dependencies
 	// import tools/build
 	
+	// import loaders
+	
 	obj_extend(Module, {
 		ModuleMask: ModuleMask,
 		createModule: function(path_, ctx, ctr, parent) {			

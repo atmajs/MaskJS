@@ -1,3 +1,6 @@
+// use default module loader
+mask.config('modules', 'default');
+
 UTest({
 	'parser': {
 		'all' () {
@@ -36,6 +39,7 @@ UTest({
 		'generic path' () {
 			var imports = mask.parse(`
 				import foo3 from 'compo/bar';
+				import * as Some from '../compo/a';
 				baz3;
 			`);
 			eq_(imports.tagName, 'imports');
@@ -47,6 +51,13 @@ UTest({
 				exports: [{
 					name: 'foo3'
 				}]
+			});
+			
+			var node = imports.nodes[1];
+			has_(node, {
+				tagName: 'import',
+				path: '../compo/a',
+				alias: 'Some',
 			});
 		},
 		'include' () {
@@ -168,10 +179,13 @@ UTest({
 					import * as :nest from '/test/tmpl/modules/nest.mask';
 					:nest;
 				`)
-				.done(dom => {
-					$(dom)
-						.has_('section.a')
-						.has_('h4.b');
+				.pipe(dom => {
+					
+					return UTest.domtest(dom, `
+						find ('section.a');
+						find ('h4.b');
+						find ('h4.a');
+					`);
 				});
 		},
 		'embed' () {
