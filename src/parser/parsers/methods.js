@@ -4,26 +4,32 @@
 			var start = str.indexOf('{', i) + 1,
 				head = parseHead(
 					tagName, str.substring(i, start - 1)
-				),
-				end = cursor_groupEnd(str, start, imax, 123, 125),
+				);
+			if (head == null) {
+				parser_error('Method head syntax error', str, i);
+			}
+			var end = cursor_groupEnd(str, start, imax, 123, 125),
 				body = str.substring(start, end),
-				node = new MethodNode(tagName, head.shift(), head, body, parent)
+				node = head == null
+					? null
+					: new MethodNode(tagName, head.name, head.args, body, parent)
 				;
 			return [ node, end + 1, 0 ];
 		};
 	}
 	
-	function parseHead(name, head) {
-		var parts = /(\w+)\s*\(([^\)]*)\)/.exec(head);
+	function parseHead(name, str) {
+		var parts = /([^\(\)\n]+)\s*(\(([^\)]*)\))?/.exec(str);
 		if (parts == null) {
-			log_error(name,' has invalid head syntax:', head);
 			return null;
 		}
-		var arr = [ parts[1] ];
-		arr = arr.concat(
-			parts[2].replace(/\s/g, '').split(',')
-		);
-		return arr;
+		var methodName = parts[1].trim();
+		var methodArgs = parts[3].replace(/\s/g, '').split(',');		
+		return new MethodHead(methodName, methodArgs);
+	}
+	function MethodHead(name, args) {
+		this.name = name;
+		this.args = args;
 	}
 	function compileFn(args, body) {
 		var arr = _Array_slice.call(args);

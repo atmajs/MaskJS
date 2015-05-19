@@ -1,10 +1,9 @@
 UTest({
-	'slot test' () {
-		mask.registerHandler(':foo', Compo({}));
-		
+	'slot test' () {		
 		var template = `
+			define Foo {}
 			section {
-				:foo {
+				Foo {
 					slot fooTest (event) {
 						$(event.currentTarget).text('Baz');
 					}
@@ -12,16 +11,17 @@ UTest({
 					button x-signal='click: fooTest' > 'Foo'
 				}
 			}
-		`
+		`;
 		
-		var $dom = $(mask.render(template)).appendTo('body');
-		
-		$dom
-			.find('button')
-			.eq_('text', 'Foo')
-			.click()
-			.eq_('text', 'Baz')
-			.remove();
+		var dom = mask.render(template);		
+		return UTest.domtest(dom, `
+			find ('button') {
+				text Foo;
+				click;
+				text Baz;
+				call remove;
+			}
+		`);
 	},
 	
 	'event test' () {
@@ -34,15 +34,15 @@ UTest({
 					'Foo'
 				}
 			}
-		`
-		
-		var $dom = $(mask.render(template)).appendTo('body');
-		
-		$dom
-			.find('button')
-			.eq_('text', 'Foo')
-			.click()
-			.eq_('text', 'Baz')
-			.remove();
+		`;
+		var dom = mask.render(template);
+		return UTest.domtest(dom, `
+			find ('button') {
+				text Foo;
+				click;
+				text Baz;
+				call remove;
+			}
+		`);
 	}
 })
