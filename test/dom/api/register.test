@@ -45,5 +45,47 @@ UTest({
 				}
 			`);
 		}
+	},
+	'define function': {
+		'Global Template' () {
+			mask.define(`
+				define 1_Y_Define {}
+				let 1_Y_Let {}
+			`);
+			
+			var x = mask.getHandler('1_Y_Define');
+			is_(x, 'Function');
+			
+			var x = mask.getHandler('1_Y_Let');
+			is_(x, 'Function');
+		},
+		'Scoped Template' () {
+			var Foo = Compo({
+				template: '2_Y_Define; 2_Y_Let;'
+			});
+			mask.registerHandler('RTFoo', Foo);
+			mask.define('RTFoo', `
+				define 2_Y_Define {}
+				let 2_Y_Let {}
+			`);
+			
+			'> get from global'
+			var x = mask.getHandler('2_Y_Define');
+			is_(x, 'Function');
+			eq_(x.name, 'CompoBase');
+			
+			'> should be scoped'
+			var x = mask.getHandler('2_Y_Let');
+			eq_(x, null);
+			
+			'> get from scope'
+			var x = mask.getHandler('2_Y_Let', Foo);
+			is_(x, 'Function');
+			eq_(x.name, 'CompoBase');
+			
+			'> render with the children'
+			var foo = Compo.initialize(Foo);
+			is_(foo.find('2_Y_Let'), 'Object');
+		}
 	}
 })

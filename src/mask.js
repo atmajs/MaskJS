@@ -113,6 +113,8 @@ var Mask;
 		registerHandler: customTag_register,
 		
 		registerFromTemplate: customTag_registerFromTemplate,
+		
+		define: customTag_define,
 		/**
 		 *	mask.getHandler(tagName) -> Function | Object
 		 * - tagName (String):

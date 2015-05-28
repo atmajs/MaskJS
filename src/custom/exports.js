@@ -15,12 +15,16 @@ var custom_Utils,
 	
 	customTag_get,
 	customTag_getAll,
+	
 	customTag_register,
 	customTag_registerScoped,
 	customTag_registerFromTemplate,
 	customTag_registerResolver,
-	customTag_Base,
 	
+	// generic fn
+	customTag_define,
+	
+	customTag_Base,
 	custom_optimize
 	;
 	

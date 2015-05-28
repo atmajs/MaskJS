@@ -12,7 +12,7 @@
 			return Ctor;
 		}
 		
-		var ctr_ = ctr;
+		var ctr_ = is_Function(ctr) ? ctr.prototype : ctr;
 		while(ctr_ != null) {
 			if (is_Function(ctr_.getHandler)) {
 				Ctor = ctr_.getHandler(name);
@@ -95,6 +95,11 @@
 	};
 	
 	customTag_registerScoped = function(Ctx, name, Handler) {
+		if (Ctx == null) {
+			// Use global
+			customTag_register(name, Handler);
+			return;
+		}
 		customTag_registerResolver(name);
 		var obj = is_Function(Ctx) ? Ctx.prototype : Ctx;
 		var map = obj.__handlers__;
@@ -106,6 +111,65 @@
 		if (obj.getHandler == null) {
 			obj.getHandler = compo_getHandlerDelegate;
 		}
+	};
+	
+	/** Variations:
+	 * - 1. (template)
+	 * - 2. (scopedCompoName, template)
+	 * - 3. (scopedCtr, template)
+	 * - 4. (name, Ctor)
+	 * - 5. (scopedCtr, name, Ctor)
+	 * - 6. (scopedCompoName, name, Ctor)
+	 */
+	customTag_define = function (a1, a2, a3) {
+		var l = arguments.length;
+		if (1 === l) {
+			// 1
+			var type = typeof a1;
+			if (type !== 'string') {
+				log_error('API. Define expects string for 1 argument');
+				return;
+			}
+			customTag_registerFromTemplate(a1);
+			return;
+		}
+		if (2 === l) {
+			var t1 = typeof a1;
+			var t2 = typeof a2;
+			if (is_String(t1) && t1 === t2) {
+				// 2
+				var ctr = customTag_get(a1);
+				customTag_registerFromTemplate(a2, ctr);
+				return;
+			}
+			if (is_Object(t1) && is_String(t2)) {
+				// 3
+				customTag_registerFromTemplate(a1, a2);
+				return;
+			}
+			if (is_String(t1) && is_Function(t2)) {
+				// 4
+				customTag_register(a1, a2);
+				return;
+			}
+		}
+		if (3 === l) {
+			var t1 = typeof a1;
+			var t2 = typeof a2;
+			var t3 = typeof a3;
+			if (is_Object(t1) && is_String(t2) && is_Function(t3)) {
+				// 5
+				customTag_registerScoped(a1, a2, a3);
+				return;
+			}
+			if (is_String(t1) && is_String(t2) && is_Function(t3)) {
+				// 6
+				var ctr = customTag_get(a1);
+				customTag_registerScoped(ctr, a2, a3);
+				return;
+			}
+		}
+		log_error('Api::Define. Unsupported combination');
 	};
 	
 	customTag_registerResolver = function(name){
