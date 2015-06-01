@@ -165,12 +165,16 @@ var mask_stringify,
 					if (val === key) {
 						continue;
 					}
-					if (typeof val === 'function') {
+					var type = typeof val;					
+					if ('function' === type) {
 						val = val();
 					}
-					if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
-						val = wrapString(val);
+					if ('string' === type) {
+						if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
+							val = wrapString(val);
+						}
 					}
+					
 					str += '=' + val;
 				}
 			}
