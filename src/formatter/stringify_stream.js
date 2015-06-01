@@ -165,11 +165,11 @@ var mask_stringify,
 					if (val === key) {
 						continue;
 					}
-					var type = typeof val;					
-					if ('function' === type) {
+					
+					if (is_Function(val)) {
 						val = val();
 					}
-					if ('string' === type) {
+					if (is_String(val)) {
 						if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
 							val = wrapString(val);
 						}
