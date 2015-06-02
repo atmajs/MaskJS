@@ -146,6 +146,7 @@ var build_compo;
 				if (compo != null) {
 					// overriden
 					ctr.components[i] = compo;
+					compo.components  = ctr.components.splice(i + 1);
 				}
 			}
 		}
