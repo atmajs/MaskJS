@@ -76,7 +76,7 @@ var tools_getDependencies;
 			dependencies: null
 		};
 		
-		(__cfg.getFile || file_get)(path)
+		_file_get(path)
 			.done(function(template){
 				walk(parser_parse(template), path, opts, function(error, deps){
 					if (error) {

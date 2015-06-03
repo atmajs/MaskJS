@@ -27,17 +27,17 @@ var u_resolveLocation,
 			}
 		}
 		
-		if (_base == null) {
-			_base = path_resolveCurrent();
+		if (_opts.base == null) {
+			_opts.base = path_resolveCurrent();
 		}
 		
 		if (path != null) {
 			if (path_isRelative(path) === false) {
 				return path;
 			}
-			return path_combine(_base, path);
+			return path_combine(_opts.base, path);
 		}
-		return _base;
+		return _opts.base;
 	};
 	
 	u_resolvePath = function(path, ctx, ctr, module){

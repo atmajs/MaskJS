@@ -401,7 +401,25 @@ UTest({
 						}
 					`));
 			}
-		} //< packages
-	} //< render
+		}, //< packages
+		
+		'version' () {
+			mask.Module.cfg('version', 'fooVer');
+			var spy = sinon.spy(XMLHttpRequest.prototype, 'open');
+			return mask
+					.renderAsync('import from "/test/tmpl/modules/versioned";')
+					.pipe(dom => {
+						$(dom).has_('section');
+						
+						eq_(spy.callCount, 1);
+						var args = spy.args[0];
+						var url = args[1];
+						
+						has_(url, 'v=fooVer');
+						XMLHttpRequest.prototype.open.restore();
+						mask.Module.cfg('version', null);
+					});
+		}
+	}, //< render
 	
 })

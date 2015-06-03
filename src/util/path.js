@@ -6,7 +6,8 @@ var path_getDir,
 	path_resolveUrl,
 	path_combine,
 	path_isRelative,
-	path_toRelative
+	path_toRelative,
+	path_appendQuery
 	;
 (function(){
 	var isWeb = true;
@@ -33,6 +34,11 @@ var path_getDir,
 		}
 		var match = rgx_EXT.exec(path);
 		return match == null ? '' : match[1];
+	};
+	
+	path_appendQuery = function(path, key, val){
+		var conjunctor = path.indexOf('?') === -1 ? '?' : '&';
+		return path + conjunctor + key + '=' + val;
 	};
 	
 	(function(){

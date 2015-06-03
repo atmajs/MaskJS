@@ -1,4 +1,23 @@
+var _file_get,
+	_file_getScript,
+	_file_getStyle,
+	_file_getJson;
+	
 (function(){
+	
+	_file_get = createTransport(function(){
+		return __cfg.getFile || file_get;
+	});
+	_file_getScript = createTransport(function(){
+		return __cfg.getScript || file_getScript;
+	});
+	_file_getStyle = createTransport(function(){
+		return __cfg.getStyle || file_getStyle;
+	});
+	_file_getJson = createTransport(function(){
+		return __cfg.getData || file_getJson;
+	});
+	
 	
 	listeners_on('config', function (config) {
 		var modules = config.modules;
@@ -12,6 +31,18 @@
 		}
 		fn();
 	});
+	
+	function createTransport(loaderFactoryFn) {
+		return function(path_){
+			var fn = loaderFactoryFn(),
+				path = path_,
+				v = _opts.version;
+			if (v != null) {
+				path = path_appendQuery(path, 'v', v);
+			}
+			return fn(path);
+		};
+	}
 	
 	var Loaders = {
 		'default': function () {

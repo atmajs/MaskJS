@@ -1,10 +1,7 @@
 var ModuleScript = class_create(IModule, {
 	type: 'script',
 	
-	load_: function(path){
-		var fn = __cfg.getScript || file_getScript;
-		return fn(path);
-	},
+	load_: _file_getScript,
 	getExport_: function(property) {
 		var obj = this.exports;
 		return property !== '*'

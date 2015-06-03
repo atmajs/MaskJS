@@ -70,7 +70,7 @@ var tools_build;
 	var Single = {
 		mask: function(path, opts, done){
 			return class_Dfr.run(function(resolve, reject) {
-				(__cfg.getFile || file_get)(path)
+				_file_get(path)
 					.fail(reject)
 					.done(function(str) {
 						// remove all remote styles
@@ -103,7 +103,7 @@ var tools_build;
 	
 	function build_script(path, opts, done) {
 		return class_Dfr.run(function(resolve, reject){
-			(__cfg.getFile || file_get)(path)
+			_file_get(path)
 				.fail(reject)
 				.done(function(str){
 					var script = 'module = { exports: null }\n';
@@ -114,11 +114,11 @@ var tools_build;
 		});
 	}
 	function build_style(path, opts, done) {
-		return (__cfg.getFile || file_get)(path, done);
+		return _file_get(path, done);
 	}
 	function build_data(path, opts, done) {
 		return class_Dfr.run(function(resolve, reject){
-			(__cfg.getFile || file_get)(path)
+			_file_get(path)
 				.fail(reject)
 				.done(function(mix){
 					var json;

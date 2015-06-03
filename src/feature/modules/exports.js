@@ -5,10 +5,14 @@ var Module;
 		_extensions_script = ' js es6 test coffee ',
 		_extensions_style  = ' css sass scss less ',
 		_extensions_data   = ' json ',
-		_base;
+		_opts = {
+			base: null,
+			version: null
+		};
 	
 	// import utils
-
+	// import loaders
+	
 	// import Import/Import
 	// import Import/ImportMask
 	// import Import/ImportScript
@@ -26,8 +30,6 @@ var Module;
 	// import components
 	// import tools/dependencies
 	// import tools/build
-	
-	// import loaders
 	
 	obj_extend(Module, {
 		ModuleMask: ModuleMask,
@@ -83,11 +85,11 @@ var Module;
 			return 'script';
 		},
 		cfg: function(name, val){
-			switch (name) {
-				case 'base':
-					_base = val;
-					break;
+			if (name in _opts == false) {
+				log_error('Invalid module option: ', name);
+				return;
 			}
+			_opts[name] = val;
 		},
 		resolveLocation: u_resolveLocation,
 		getDependencies: tools_getDependencies,

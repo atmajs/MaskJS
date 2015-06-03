@@ -8,9 +8,7 @@ var ModuleMask;
 		exports: null,
 		imports: null,
 		
-		load_: function(path){
-			return (__cfg.getFile || file_get)(path);
-		},
+		load_: _file_get,
 		preprocessError_: function(error, next) {
 			var msg = 'Load error: ' + this.path;
 			if (error && error.status) {
