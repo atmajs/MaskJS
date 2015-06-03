@@ -1,0 +1,20 @@
+UTest({
+	'content' () {
+		var template = `script {"A"}`;
+		var node = Mask.parse(template);
+		eq_(node.content, '"A"');
+	},
+	'attribute' : {
+		'block' () {
+			var template = `script type='text/mask' {"A"}`;
+			var node = Mask.parse(template);
+			eq_(node.attr.type, 'text/mask');
+		},
+		'literal' () {
+			var template = `script type='text/mask' > '"A"'`;
+			var node = Mask.parse(template);
+			eq_(node.nodes[0].content, '"A"');
+			eq_(node.attr.type, 'text/mask');
+		}
+	}
+})
