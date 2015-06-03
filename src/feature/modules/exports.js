@@ -85,7 +85,7 @@ var Module;
 			return 'script';
 		},
 		cfg: function(name, val){
-			if (name in _opts == false) {
+			if (name in _opts === false) {
 				log_error('Invalid module option: ', name);
 				return;
 			}
