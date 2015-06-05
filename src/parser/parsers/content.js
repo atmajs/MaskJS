@@ -53,21 +53,25 @@
 				attr[key] = ensureTemplateFunction(attr[key]);
 			}
 			
-			if (c === 62) {
-				var node = new Dom.Node(name, parent);
-				node.attr = attr;
-				// `>` handle single as generic mask node
-				return [ node, i, go_tag ];
-			}
-			
-			
 			end = i;
-			hasBody = c === 123;
+			hasBody = c === 123 || c === 62;
 			
 			if (hasBody) {
 				i++;
-				end = cursor_groupEnd(str, i, imax, 123, 125); //{}
-				body = str.substring(i, end);
+				if (c === 123) {
+					end = cursor_groupEnd(str, i, imax, 123, 125); //{}
+					body = str.substring(i, end);
+				}
+				if (c === 62) {
+					var tuple = parser_parseLiteral(str, i, imax);
+					if (tuple == null) {
+						return null;
+					}
+					end = tuple[1];
+					body = tuple[0];
+					// move cursor one back to be consistance with the group
+					end -= 1;
+				}
 				
 				if (transform != null) {
 					body = transform(body, attr, parent);
@@ -77,7 +81,9 @@
 				}
 				
 				body = preprocess(name, body);
-				body = ensureTemplateFunction(body);
+				if (name !== 'script') {
+					body = ensureTemplateFunction(body);
+				}
 			}
 			
 			var node = new ContentNode(name, parent);

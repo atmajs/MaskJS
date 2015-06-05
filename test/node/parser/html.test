@@ -49,7 +49,7 @@ UTest({
 			eq_(node.tagName, 'span');
 			eq_(node.nodes[0].content, 'Foo');
 		},
-		'!nodes' () {
+		'nodes' () {
 			var template = `
 				<section>
 					Lorem <li>ipsum</li> doler
@@ -91,7 +91,7 @@ UTest({
 		eq_(node.nodes[0].content, 'Hello')
 	},
 	'parsers': {
-		'!method' () {
+		'method' () {
 			var template = `
 				<mask>
 				function foo() {

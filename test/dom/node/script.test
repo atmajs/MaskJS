@@ -27,9 +27,9 @@ UTest({
 			eq_(str, template);
 		}
 	},
-	'should render via :html node' () {
+	'should render via literal' () {
 		var template = `
-			script > :html > "var a = 10;"
+			script > "var a = 10;"
 		`;
 		var dom = mask.render(template);
 		eq_(dom.textContent, "var a = 10;");

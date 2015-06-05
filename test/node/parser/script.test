@@ -8,13 +8,16 @@ UTest({
 		'block' () {
 			var template = `script type='text/mask' {"A"}`;
 			var node = Mask.parse(template);
+			eq_(node.content, '"A"');
 			eq_(node.attr.type, 'text/mask');
 		},
 		'literal' () {
-			var template = `script type='text/mask' > '"A"'`;
-			var node = Mask.parse(template);
-			eq_(node.nodes[0].content, '"A"');
-			eq_(node.attr.type, 'text/mask');
+			var template = `script type='text/mask' > '<A>'baz`;
+			var nodes = Mask.parse(template).nodes;
+			eq_(nodes[0].content, '<A>');
+			eq_(nodes[0].attr.type, 'text/mask');
+			
+			eq_(nodes[1].tagName, 'baz');
 		}
 	}
 })
