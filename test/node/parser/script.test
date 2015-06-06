@@ -1,8 +1,17 @@
 UTest({
-	'content' () {
-		var template = `script {"A"}`;
-		var node = Mask.parse(template);
-		eq_(node.content, '"A"');
+	'content':{
+		'block' () {
+			var template = `script {"A"}`;
+			var node = Mask.parse(template);
+			eq_(node.content, '"A"');
+		},
+		'nodes' () {
+			var template = `script > :html {"A"}`;
+			var node = Mask.parse(template);
+			eq_(node.nodes[0].tagName, ':html');
+			var txt = jmask(node).text();
+			eq_(txt, 'A');
+		},
 	},
 	'attribute' : {
 		'block' () {
