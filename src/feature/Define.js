@@ -69,9 +69,18 @@ var Define;
 				continue;
 			}
 			if ('var' === name) {
-				var obj = x.getObject(model, null, owner);
-				for (var key in obj) {
-					Proto[key] = obj_extend(Proto[key], obj[key]);
+				var obj = x.getObject(model, null, owner),
+					key, val;
+				for(key in obj) {
+					val = obj[key];
+					if (key === 'meta' || key === 'model' || key === 'attr') {
+						Proto[key] = obj_extend(Proto[key], val);	
+					}
+					var scope = Proto.scope;
+					if (scope == null) {
+						Proto.scope = scope = {};
+					}
+					scope[key] = val;
 				}
 				continue;
 			}
