@@ -13,7 +13,15 @@ var mask_merge;
 		}
 		
 		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b, opts));
-		return _merge(a, placeholders, owner);
+		var out = _merge(a, placeholders, owner);
+		var extra = placeholders.$extra;
+		if (extra != null && extra.length !== 0) {
+			if (is_Array(out)) {
+				return out.concat(extra);
+			}
+			return [ out ].concat(extra);
+		}
+		return out;
 	};
 	
 	var tag_ELSE = '@else',
@@ -115,6 +123,7 @@ var mask_merge;
 				}
 			}
 			id = '$root';
+			placeholders.$extra = null;
 		}
 		
 		if (tag_EACH === tagName) {
@@ -449,7 +458,7 @@ var mask_merge;
 	}
 	
 	var RESERVED = ' else placeholder each attr if parent scope'
-	function _resolvePlaceholders(b, node, placeholders) {
+	function _resolvePlaceholders(root, node, placeholders) {
 		if (node == null) 
 			return placeholders;
 		
@@ -457,7 +466,7 @@ var mask_merge;
 			var imax = node.length,
 				i = -1;
 			while( ++i < imax ){
-				_resolvePlaceholders(node === b ? node[i] : b, node[i], placeholders);
+				_resolvePlaceholders(node === root ? node[i] : root, node[i], placeholders);
 			}
 			return placeholders;
 		}
@@ -470,6 +479,7 @@ var mask_merge;
 			var tagName = node.tagName;
 			if (tagName != null && tagName.charCodeAt(0) === 64) {
 				// @
+				placeholders.$count++;
 				var id = tagName.substring(1);
 				// if DEBUG
 				if (RESERVED.indexOf(' ' + id + ' ') !== -1) 
@@ -477,7 +487,7 @@ var mask_merge;
 				// endif
 				var x = {
 					tagName: node.tagName,
-					parent: _getParentModifiers(b, node),
+					parent: _getParentModifiers(root, node),
 					nodes: node.nodes,
 					attr: node.attr,
 					expression: node.expression
@@ -496,7 +506,13 @@ var mask_merge;
 				return placeholders;
 			}
 		}
-		return _resolvePlaceholders(b, node.nodes, placeholders);
+		
+		var count = placeholders.$count;
+		var out = _resolvePlaceholders(root, node.nodes, placeholders);
+		if (root === node && count === placeholders.$count) {
+			placeholders.$extra.push(root);
+		}
+		return out;
 	}
 	function _getParentModifiers(root, node) {
 		if (node === root) 
@@ -563,6 +579,7 @@ var mask_merge;
 		this.scope = this;
 		this.parent = parent;
 		this.$root = $root || (parent && parent.$root);
+		this.$extra = [];
 		
 		if (opts != null) {
 			this.opts = opts;
@@ -579,6 +596,8 @@ var mask_merge;
 		attr: null,
 		scope: null,
 		$root: null,
+		$extra: null,
+		$count: 0,
 		$getNode: function(id, filter){
 			var ctx = this, node;
 			while(ctx != null){

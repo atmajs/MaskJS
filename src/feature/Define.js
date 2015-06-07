@@ -48,6 +48,11 @@ var Define;
 				continue;
 			}
 			if ('slot' === name || 'event' === name) {
+				if ('event' === name && Proto.tagName != null) {
+					// bind the event later via the component
+					arr.push(x);
+					continue;
+				}
 				var type = name + 's';
 				var fns = Proto[type];
 				if (fns == null) {
@@ -61,6 +66,13 @@ var Define;
 					? Define.registerGlobal
 					: Define.registerScoped;
 				fn(x, model, Proto);
+				continue;
+			}
+			if ('var' === name) {
+				var obj = x.getObject(model, null, owner);
+				for (var key in obj) {
+					Proto[key] = obj_extend(Proto[key], obj[key]);
+				}
 				continue;
 			}
 			arr.push(x);

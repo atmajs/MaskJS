@@ -97,6 +97,15 @@
 				str += key + '=' + attr[key];
 			}
 			return str + ';';
+		},
+		getObject: function(model, ctx, ctr){
+			var obj = {},
+				attr = this.attr,
+				key;
+			for(key in attr) {
+				obj[key] = expression_eval(attr[key], model, ctx, ctr);
+			}
+			return obj;
 		}
 	});
 }());
