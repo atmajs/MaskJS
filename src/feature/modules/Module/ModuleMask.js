@@ -140,10 +140,12 @@ var ModuleMask;
 			var node = nodes[i];
 			var name = node.tagName;
 			if (name === 'define' || name === 'let') {
-				var Ctor = Define.create(node, model, module);
+				var Base = {
+					getHandler: _fn_wrap(customTag_Compo_getHandler, getHandler),
+					location: module.location
+				};
+				var Ctor = Define.create(node, model, module, Base);
 				var Proto = Ctor.prototype;
-				Proto.getHandler = _fn_wrap(Proto.getHandler, getHandler);
-				Proto.location = module.location;
 				Proto.scope  = obj_extend(Proto.scope, scope);
 				
 				

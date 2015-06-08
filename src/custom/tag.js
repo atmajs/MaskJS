@@ -89,6 +89,7 @@
 					}
 					customTag_registerScoped(Ctr, key, store[key]);
 				}
+				dfr.resolve(exports.__handlers__);
 			});
 		
 		return dfr;
@@ -109,7 +110,7 @@
 		map[name] = compo_ensureCtor(Handler);
 		
 		if (obj.getHandler == null) {
-			obj.getHandler = compo_getHandlerDelegate;
+			obj.getHandler = customTag_Compo_getHandler;
 		}
 	};
 	
@@ -130,43 +131,32 @@
 				log_error('API. Define expects string for 1 argument');
 				return;
 			}
-			customTag_registerFromTemplate(a1);
-			return;
+			return customTag_registerFromTemplate(a1);
 		}
 		if (2 === l) {
-			var t1 = typeof a1;
-			var t2 = typeof a2;
-			if (is_String(t1) && t1 === t2) {
+			if (is_String(a1) && is_String(a2)) {
 				// 2
 				var ctr = customTag_get(a1);
-				customTag_registerFromTemplate(a2, ctr);
-				return;
+				return customTag_registerFromTemplate(a2, ctr);
 			}
-			if (is_Object(t1) && is_String(t2)) {
+			if (is_Object(a1) && is_String(a2)) {
 				// 3
-				customTag_registerFromTemplate(a1, a2);
-				return;
+				return customTag_registerFromTemplate(a1, a2);
 			}
-			if (is_String(t1) && is_Function(t2)) {
+			if (is_String(a1) && is_Function(a2)) {
 				// 4
-				customTag_register(a1, a2);
-				return;
+				return customTag_register(a1, a2);
 			}
 		}
 		if (3 === l) {
-			var t1 = typeof a1;
-			var t2 = typeof a2;
-			var t3 = typeof a3;
-			if (is_Object(t1) && is_String(t2) && is_Function(t3)) {
+			if (is_Object(a1) && is_String(a2) && is_Function(a3)) {
 				// 5
-				customTag_registerScoped(a1, a2, a3);
-				return;
+				return customTag_registerScoped(a1, a2, a3);
 			}
-			if (is_String(t1) && is_String(t2) && is_Function(t3)) {
+			if (is_String(a1) && is_String(a2) && is_Function(a3)) {
 				// 6
 				var ctr = customTag_get(a1);
-				customTag_registerScoped(ctr, a2, a3);
-				return;
+				return customTag_registerScoped(ctr, a2, a3);
 			}
 		}
 		log_error('Api::Define. Unsupported combination');
@@ -184,6 +174,11 @@
 		
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
+	};
+	
+	customTag_Compo_getHandler = function (name) {
+		var map = this.__handlers__;
+		return map == null ? null : map[name];
 	};
 	
 	customTag_Base = {
@@ -207,7 +202,7 @@
 	
 	var Resolver;
 	(function(){
-		Resolver = function (node, model, ctx, container, ctr) {
+		customTag_Resolver = Resolver = function (node, model, ctx, container, ctr) {
 			var Mix = customTag_get(node.tagName, ctr);
 			if (Mix != null) {
 				if (is_Function(Mix) === false)	{
@@ -235,10 +230,7 @@
 		return Ctor;
 	}
 	
-	function compo_getHandlerDelegate(name) {
-		var map = this.__handlers__;
-		return map == null ? null : map[name];
-	}
+	
 	
 	function compo_ensureCtor(Handler) {
 		if (is_Object(Handler)) {

@@ -20,6 +20,8 @@ var custom_Utils,
 	customTag_registerScoped,
 	customTag_registerFromTemplate,
 	customTag_registerResolver,
+	customTag_Resolver,
+	customTag_Compo_getHandler,
 	
 	// generic fn
 	customTag_define,

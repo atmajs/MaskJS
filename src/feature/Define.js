@@ -1,27 +1,28 @@
 var Define;
 (function(){
 	Define = {
-		create: function(node, model, ctr){
-			return compo_fromNode(node, model, ctr);
+		create: function(node, model, ctr, Base){
+			return compo_fromNode(node, model, ctr, Base);
 		},
-		registerGlobal: function(node, model, ctr) {
-			var Ctor = Define.create(node, model, ctr);
+		registerGlobal: function(node, model, ctr, Base) {
+			var Ctor = Define.create(node, model, ctr, Base);
 			customTag_register(
 				node.name, Ctor
 			);
 		},
-		registerScoped: function(node, model, ctr) {
-			var Ctor = Define.create(node, model, ctr);
+		registerScoped: function(node, model, ctr, Base) {
+			var Ctor = Define.create(node, model, ctr, Base);
 			customTag_registerScoped(
 				ctr, node.name, Ctor
 			);
 		}
 	};
 	
-	function compo_prototype(tagName, attr, nodes, owner, model, Ctor) {
+	function compo_prototype(compoName, tagName, attr, nodes, owner, model, Base) {
 		var arr = [];
-		var Proto = {
+		var Proto = obj_extend({
 			tagName: tagName,
+			compoName: compoName,
 			template: arr,
 			attr: attr,
 			location: trav_location(owner),
@@ -35,7 +36,8 @@ var Define;
 				}
 			},
 			getHandler: null
-		};
+		}, Base);
+		
 		var imax = nodes == null ? 0 : nodes.length,
 			i = 0, x, name;
 		for(; i < imax; i++) {
@@ -127,7 +129,7 @@ var Define;
 		}
 		return custom_Tags[compoName];
 	}
-	function compo_fromNode(node, model, ctr) {
+	function compo_fromNode(node, model, ctr, Base) {
 		var extends_ = node['extends'],
 			as_ = node['as'],
 			tagName,
@@ -139,7 +141,7 @@ var Define;
 		}
 		
 		var name = node.name,
-			Proto = compo_prototype(tagName, attr, node.nodes, ctr, model),
+			Proto = compo_prototype(name, tagName, attr, node.nodes, ctr, model, Base),
 			args = compo_extends(extends_, model, ctr)
 			;
 		
