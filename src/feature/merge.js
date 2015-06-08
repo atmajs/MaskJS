@@ -67,6 +67,9 @@ var mask_merge;
 		return null;
 	}
 	function _mergeArray(nodes, placeholders, tmplNode, clonedParent){
+		if (nodes == null) {
+			return null;
+		}
 		var fragment = [],
 			imax = nodes.length,
 			i = -1,

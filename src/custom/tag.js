@@ -141,7 +141,7 @@
 			}
 			if ((is_Object(a1) || is_Function(a1)) && is_String(a2)) {
 				// 3
-				return customTag_registerFromTemplate(a1, a2);
+				return customTag_registerFromTemplate(a2, a1);
 			}
 			if (is_String(a1) && is_Function(a2)) {
 				// 4
