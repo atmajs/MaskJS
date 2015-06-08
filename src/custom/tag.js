@@ -139,7 +139,7 @@
 				var ctr = customTag_get(a1);
 				return customTag_registerFromTemplate(a2, ctr);
 			}
-			if (is_Object(a1) && is_String(a2)) {
+			if ((is_Object(a1) || is_Function(a1)) && is_String(a2)) {
 				// 3
 				return customTag_registerFromTemplate(a1, a2);
 			}
@@ -149,7 +149,7 @@
 			}
 		}
 		if (3 === l) {
-			if (is_Object(a1) && is_String(a2) && is_Function(a3)) {
+			if ((is_Object(a1) || is_Function(a1)) && is_String(a2) && is_Function(a3)) {
 				// 5
 				return customTag_registerScoped(a1, a2, a3);
 			}
