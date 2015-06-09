@@ -122,45 +122,46 @@
 	 * - 5. (scopedCtr, name, Ctor)
 	 * - 6. (scopedCompoName, name, Ctor)
 	 */
-	customTag_define = function (a1, a2, a3) {
-		var l = arguments.length;
-		if (1 === l) {
-			// 1
-			var type = typeof a1;
-			if (type !== 'string') {
-				log_error('API. Define expects string for 1 argument');
-				return;
+	
+	function is_Compo(val) {
+		return is_Object(val) || is_Function(val);
+	}
+	
+	customTag_define = fn_patternDelegate([{
+			pattern: [is_String],
+			handler: function(template) {
+				return customTag_registerFromTemplate(template);
 			}
-			return customTag_registerFromTemplate(a1);
+		}, {
+			pattern: [is_String, is_String],
+			handler: function(name, template) {
+				var Scope = customTag_get(name);
+				return customTag_registerFromTemplate(template, Scope);
+			}
+		}, {
+			pattern: [is_Compo, is_String],
+			handler: function(Scope, template) {
+				return customTag_registerFromTemplate(template, Scope);
+			}
+		}, {
+			pattern: [is_String, is_Compo],
+			handler: function(name, Ctor) {
+				return customTag_register(name, Ctor);
+			}
+		}, {
+			pattern: [is_Compo, is_String, is_Compo],
+			handler: function(Scope, name, Ctor) {
+				customTag_registerScoped(Scope, name, Ctor);
+			}
+		}, {
+			pattern: [is_String, is_String, is_Compo],
+			handler: function(scopeName, name, Ctor) {
+				var Scope = customTag_get(scopeName);
+				return customTag_registerScoped(Scope, name, Ctor);
+			}
 		}
-		if (2 === l) {
-			if (is_String(a1) && is_String(a2)) {
-				// 2
-				var ctr = customTag_get(a1);
-				return customTag_registerFromTemplate(a2, ctr);
-			}
-			if ((is_Object(a1) || is_Function(a1)) && is_String(a2)) {
-				// 3
-				return customTag_registerFromTemplate(a2, a1);
-			}
-			if (is_String(a1) && is_Function(a2)) {
-				// 4
-				return customTag_register(a1, a2);
-			}
-		}
-		if (3 === l) {
-			if ((is_Object(a1) || is_Function(a1)) && is_String(a2) && is_Function(a3)) {
-				// 5
-				return customTag_registerScoped(a1, a2, a3);
-			}
-			if (is_String(a1) && is_String(a2) && is_Function(a3)) {
-				// 6
-				var ctr = customTag_get(a1);
-				return customTag_registerScoped(ctr, a2, a3);
-			}
-		}
-		log_error('Api::Define. Unsupported combination');
-	};
+	]);
+	
 	
 	customTag_registerResolver = function(name){
 		var Ctor = custom_Tags[name];
