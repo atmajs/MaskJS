@@ -1,5 +1,16 @@
 # Changelog
 
+- 0.51
+	- Better debugging for `slot` `function` `event` handlers
+	- `event` handler: accept additional parameters, e.g.:
+	
+		```mask
+		event press: enter (e)  {
+			
+		}
+		```
+	- Better component scoping with `let` directive
+
 - 0.12.19
 	- **Modules** of different types
 	
