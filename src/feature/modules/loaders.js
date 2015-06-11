@@ -49,21 +49,26 @@ var _file_get,
 			__cfg.getScript = __cfg.getFile = null;
 		},
 		'include': function () {
-			__cfg.getScript = function(path) {
-				var dfr = new class_Dfr;
-				include
-					.instance()
-					.js(path + '::Module')
-					.done(function(resp){
-						var exports = resp.Module;
-						if (exports != null) {
-							dfr.resolve(exports);
-							return;
-						}
-						dfr.reject('Export is undefined');
+			__cfg.getScript = getter('js');
+			__cfg.getFile   = getter('load');
+			
+			var lib = include;
+			function getter(name) {
+				return function(path){
+					return class_Dfr.run(function(resolve, reject){
+						lib.instance('/')[name](path + '::Module').done(function(resp){
+							var exports = name === 'js'
+								? resp.Module
+								: resp[name].Module;
+							if (exports != null) {
+								resolve(exports);
+								return;
+							}
+							reject('Export is undefined');
+						});
 					});
-				return dfr;
-			};
+				}
+			}
 		}
 	};
 	

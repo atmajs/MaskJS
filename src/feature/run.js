@@ -2,6 +2,9 @@ var mask_run;
 
 (function(){
 	mask_run = function(){
+		if (_state === 0) {
+			_state = _state_All
+		}
 		var args = _Array_slice.call(arguments),
 			container,
 			model,
@@ -50,10 +53,22 @@ var mask_run;
 		i = -1;
 		while( ++i < imax ){
 			script = scripts[i];
-			if (script.getAttribute('type') !== 'text/mask') 
+			
+			var scriptType = script.getAttribute('type');
+			if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask') 
 				continue;
-			if (script.getAttribute('data-run') !== 'true') 
-				continue;
+			
+			var dataRun = script.getAttribute('data-run');
+			if (dataRun === 'auto') {
+				if (isCurrent(_state_Auto) === false) {
+					continue;
+				}
+			}
+			if (dataRun === 'true') { 
+				if (isCurrent(_state_Manual) === false) {
+					continue;
+				}
+			}
 			
 			found = true;
 			var ctx = new builder_Ctx;
@@ -92,5 +107,24 @@ var mask_run;
 			script.parentNode.insertBefore(fragment, script);
 			done();
 		};
+	}
+	
+	if (document != null && document.addEventListener) {
+		document.addEventListener("DOMContentLoaded", function(event) {
+			if (_state !== 0)  return;
+
+			_state = _state_Auto;
+			global.app = mask_run();
+			_state = _state_Manual;
+		});
+	}
+	
+	var _state_Auto = 2,
+		_state_Manual = 4,
+		_state_All = _state_Auto | _state_Manual,
+		_state = 0;
+	
+	function isCurrent(state) {
+		return (_state & state) === state;
 	}
 }());
