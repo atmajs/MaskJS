@@ -76,7 +76,14 @@ var Define;
 				for(key in obj) {
 					val = obj[key];
 					if (key === 'meta' || key === 'model' || key === 'attr') {
-						Proto[key] = obj_extend(Proto[key], val);	
+						Proto[key] = obj_extend(Proto[key], val);
+						continue;
+					}
+					if (key === 'scope') {
+						if (is_Object(val)) {
+							Proto.scope = obj_extend(Proto.scope, val);
+							continue;
+						}
 					}
 					var scope = Proto.scope;
 					if (scope == null) {
