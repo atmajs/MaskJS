@@ -83,7 +83,7 @@ var mask_run;
 			script.parentNode.insertBefore(fragment, script);
 		}
 		ready = true;
-		if (found === false) {
+		if (_state !== _state_Auto && found === false) {
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
 		if (await === 0) {
