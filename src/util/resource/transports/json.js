@@ -2,13 +2,18 @@ var json_get;
 (function(){
 	json_get = function(path, cb){
 		xhr_get(path, function(error, str){
-			if (error) return cb(error);
+			if (error) {
+				cb(error);
+				return;
+			}
+			var json;
 			try {
-				var x = JSON.parse(str);
-				cb(null, x);
+				json = JSON.parse(str);
 			} catch (error) {
 				cb('JSON error: ' + String(error));
+				return;
 			}
+			cb(null, json);
 		})
 	};
 }());
