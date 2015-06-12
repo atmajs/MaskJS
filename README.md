@@ -207,8 +207,8 @@ We thoroughly pay attention to the performance, especially on the mobile CPU. _T
 Some benchmarks:
 - Mask vs raw HTML Template Engines - [:jsperf](http://jsperf.com/dom-vs-innerhtml-based-templating/711)
 - Mask vs Angular - [:jsperf](http://jsperf.com/mask-vs-angular/6)
-- MaskDOM AST vs JSON parse - [:jsperf](http://jsperf.com/maskjs-vs-json/11)
-- Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/8)
+- MaskDOM AST vs JSON parse - [:jsperf](http://jsperf.com/maskjs-vs-json/13)
+- Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/9)
 - Mask Expressions vs Eval - [:jsperf](http://jsperf.com/mask-expression-vs-function-vs-eval/2)
 
 # `4` Node.JS
