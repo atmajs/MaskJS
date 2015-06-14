@@ -1,5 +1,5 @@
 (function() {
-	Mask.registerHandler(':html', {
+	var Compo = {
 		meta: {
 			mode: 'server:all'
 		},
@@ -25,5 +25,7 @@
 			return this.html || '';
 		},
 		html: null
-	});
+	};	
+	customTag_register(':html', Compo);
+	customTag_register('html', Compo);
 }());
