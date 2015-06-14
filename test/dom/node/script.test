@@ -45,5 +45,14 @@ UTest({
 				eq(2) > attr('src', '3.js');
 			}
 		`);
+	},
+	'should interpolate script content' () {
+		var template = "script > :html > '''~[foo]''' "
+		var model = { foo : "var foo;" };
+		var dom = mask.render(template, model);
+		var script = dom.querySelector('script');
+		notEq_(script, null);
+		eq_(script.tagName, 'SCRIPT');
+		eq_(script.textContent, "var foo;");
 	}
 })
