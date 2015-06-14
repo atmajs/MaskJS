@@ -119,8 +119,7 @@
 					if (x.type === Dom.TEXTNODE) {
 						content = x.content;
 					} else {
-						//@OBSOLETE. allow only textnodes
-						content = jmask(x.nodes).text();
+						content = jmask(x.nodes).text(model, ctr);
 					}
 				}
 				
