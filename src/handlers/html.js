@@ -27,5 +27,4 @@
 		html: null
 	};	
 	customTag_register(':html', Compo);
-	customTag_register('html', Compo);
 }());
