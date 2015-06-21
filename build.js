@@ -71,6 +71,7 @@ module.exports = {
 	'defaults': [
 		'build_mask',
 		'import_libraries',
+		'copy_files',
 		'jshint',
 		'uglify'
 	]
