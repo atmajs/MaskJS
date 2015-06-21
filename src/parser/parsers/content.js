@@ -50,7 +50,7 @@
 			
 			attr = parser_parseAttr(str, start, i);
 			for (var key in attr) {
-				attr[key] = ensureTemplateFunction(attr[key]);
+				attr[key] = parser_ensureTemplateFunction(attr[key]);
 			}
 			
 			if (c === 62) {
@@ -94,7 +94,7 @@
 				
 				body = preprocess(name, body);
 				if (name !== 'script') {
-					body = ensureTemplateFunction(body);
+					body = parser_ensureTemplateFunction(body);
 				}
 			}
 			

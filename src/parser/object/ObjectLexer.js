@@ -5,7 +5,7 @@ var ObjectLexer;
 	// import ./consume.js
 	// import ./tokens.js
 	
-	ObjectLexer = function(pattern){
+	parser_ObjectLexer = ObjectLexer = function(pattern){
 		if (arguments.length === 1 && typeof pattern === 'string') {
 			return ObjectLexer_single(pattern);
 		}

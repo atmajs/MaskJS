@@ -135,7 +135,7 @@
 			}
 			token += str.substring(start, i);
 			if (token !== '') {
-				token = ensureTemplateFunction(token);
+				token = parser_ensureTemplateFunction(token);
 				current.appendChild(new TextNode(token, current));
 			}
 		}
@@ -336,7 +336,7 @@
 		for(key in obj) {
 			val = obj[key];
 			if (val != null && val !== key) {
-				obj[key] = ensureTemplateFunction(val);
+				obj[key] = parser_ensureTemplateFunction(val);
 			}
 		}
 		if (obj.expression != null) {
