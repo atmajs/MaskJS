@@ -59,6 +59,9 @@ var mask_run;
 				continue;
 			
 			var dataRun = script.getAttribute('data-run');
+			if (dataRun == null) {
+				continue;
+			}
 			if (dataRun === 'auto') {
 				if (isCurrent(_state_Auto) === false) {
 					continue;
