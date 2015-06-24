@@ -348,21 +348,30 @@
 	
 			/* TOKEN */
 	
-			var isInterpolated = null;
+			var isInterpolated = false;
 	
 			start = index;
 			while (index < length) {
 	
 				c = template.charCodeAt(index);
 	
-				if (c === interp_code_START && template.charCodeAt(index + 1) === interp_code_OPEN) {
-					isInterpolated = true;
-					++index;
-					do {
-						// goto end of template declaration
-						c = template.charCodeAt(++index);
+				if (c === interp_code_START) {
+					var nextC = template.charCodeAt(index + 1);
+					if (nextC === interp_code_OPEN) {
+						isInterpolated = true;
+						index = 1 + cursor_groupEnd(
+							template
+							, index + 2
+							, length
+							, interp_code_START
+							, interp_code_CLOSE
+						);
+						c = template.charCodeAt(index);
 					}
-					while (c !== interp_code_CLOSE && index < length);
+					else if ((nextC >= 65 && nextC <= 122) || nextC === 36 || nextC === 95) {
+						//A-z$_
+						isInterpolated = true;
+					}
 				}
 				if (c === 64 && template.charCodeAt(index + 1) === 91) {
 					//@[
@@ -373,7 +382,7 @@
 				// if DEBUG
 				if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
 					// '"/<,
-					parser_error('', template, index, c, state);
+					parser_error('Unexpected char', template, index, c, state);
 					break outer;
 				}
 				// endif
@@ -395,8 +404,6 @@
 					// =>;({}
 					break;
 				}
-	
-	
 				index++;
 			}
 	

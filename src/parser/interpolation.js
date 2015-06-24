@@ -1,84 +1,18 @@
 (function(){
 
 	parser_ensureTemplateFunction = function (template) {
-		var index = -1;	
-		/*
-		 * - single char indexOf is much faster then '~[' search
-		 * - function is divided in 2 parts: interpolation start lookup + interpolation parse
-		 * for better performance
-		 */
-		while ((index = template.indexOf(interp_START, index)) !== -1) {
-			if (template.charCodeAt(index + 1) === interp_code_OPEN) 
-				break;
-			
-			index++;
-		}
-	
-		if (index === -1) 
+		var mix = _split(template);
+		if (mix == null) {
 			return template;
-		
-		var length = template.length,
-			array = [],
-			lastIndex = 0,
-			i = 0,
-			end;
-	
-	
-		while (true) {
-			end = cursor_groupEnd(
-				template
-				, index + 2
-				, length
-				, interp_code_OPEN
-				, interp_code_CLOSE
-			);
-			if (end === -1) 
-				break;
-			
-			array[i++] = lastIndex === index
-				? ''
-				: template.substring(lastIndex, index);
-			array[i++] = template.substring(index + 2, end);
-	
-			lastIndex = index = end + 1;
-	
-			while ((index = template.indexOf(interp_START, index)) !== -1) {
-				if (template.charCodeAt(index + 1) === interp_code_OPEN) 
-					break;
-				
-				index++;
-			}
-			if (index === -1) 
-				break;
 		}
-	
-		if (lastIndex < length) 
-			array[i] = template.substring(lastIndex);
-		
-	
-		template = null;
+		if (typeof mix === 'string') {
+			return mix;
+		}
+		var array = mix;
 		return function(type, model, ctx, element, ctr, name) {
 			if (type === void 0) {
-				// http://jsperf.com/arguments-length-vs-null-check
-				// this should be used to stringify parsed MaskDOM
-				var string = '',
-					imax = array.length,
-					i = -1,
-					x;
-				while ( ++i < imax) {
-					x = array[i];
-					
-					string += i % 2 === 1
-						? interp_START
-							+ interp_OPEN
-							+ x
-							+ interp_CLOSE
-						: x
-						;
-				}
-				return string;
+				return template;
 			}
-	
 			return _interpolate(
 				array
 				, type
@@ -89,7 +23,7 @@
 				, name
 			);
 		};
-	}	
+	};
 	
 	
 	parser_setInterpolationQuotes = function(start, end) {
@@ -110,8 +44,176 @@
 		interp_OPEN = start[1];
 		interp_CLOSE = end;
 	};
+	
+	
+	function _split (template) {
+		var index = -1,
+			wasEscaped = false,
+			nextC, nextI;
+		/*
+		 * - single char indexOf is much faster then '~[' search
+		 * - function is divided in 2 parts: interpolation start lookup + interpolation parse
+		 * for better performance
+		 */
+		while ((index = template.indexOf(interp_START, index)) !== -1) {
+			nextC = template.charCodeAt(index + 1);
+			var escaped = _char_isEscaped(template, index);
+			if (escaped === true) {
+				wasEscaped = true;
+			}
+			if (escaped === false)  {
+				if (nextC === interp_code_OPEN) 
+					break;
+				if (_char_isSimpleInterp(nextC)) {
+					break;
+				}
+			}
+			index++;
+		}
+	
+		if (index === -1) {
+			if (wasEscaped === true) {
+				return _escape(template);
+			}
+			return null;
+		}
 		
+		var length = template.length,
+			array = [],
+			lastIndex = 0,
+			i = 0,
+			end;
+	
+		var propAccessor = false;
+		while (true) {
+			
+			array[i++] = lastIndex === index
+				? ''
+				: _slice(template, lastIndex, index);
+			
+			
+			nextI = index + 1;
+			nextC = template.charCodeAt(nextI);
+			if (nextC === interp_code_OPEN) {
+				propAccessor = false;
+				end = cursor_groupEnd(
+					template
+					, nextI + 1
+					, length
+					, interp_code_OPEN
+					, interp_code_CLOSE
+				);
+				var str = template.substring(index + 2, end);
+				array[i++] = new InterpolationModel(null, str);
+				lastIndex = index = end + 1;
+			}
+			
+			else if (_char_isSimpleInterp(nextC)) {
+				propAccessor = true;
+				end = _cursor_propertyAccessorEnd(template, nextI, length);
+				
+				var str = template.substring(index + 1, end);
+				array[i++] = new InterpolationModel(str, null);
+				lastIndex = index = end;		
+			}
+			else {
+				array[i] += template[nextI];
+				lastIndex = nextI;
+			}
+			
+			while ((index = template.indexOf(interp_START, index)) !== -1) {
+				nextC = template.charCodeAt(index + 1);
+				var escaped = _char_isEscaped(template, index);
+				if (escaped === true) {
+					wasEscaped = true;
+				}
+				if (escaped === false)  {
+					if (nextC === interp_code_OPEN) 
+						break;
+					if (_char_isSimpleInterp(nextC)) {
+						break;
+					}
+				}
+				index++;
+			}
+			if (index === -1) {
+				break;
+			}
+		}	
+		if (lastIndex < length) {
+			array[i] = wasEscaped === true
+				? _slice(template, lastIndex, length)
+				: template.substring(lastIndex)
+				;
+		}
+		return array;
+	}
+	
+	function _char_isSimpleInterp (c) {
+		//A-z$_
+		return (c >= 65 && c <= 122) || c === 36 || c === 95;
+	}
+	function _char_isEscaped (str, i) {
+		if (i === 0) {
+			return false;
+		}		
+		var c = str.charCodeAt(--i);
+		if (c === 92) {
+			if (_char_isEscaped(str, c))
+				return false;			
+			return true;
+		}
+		return false;
+	}
+	
+	function _slice(string, start, end) {
+		var str = string.substring(start, end);
+		var i = str.indexOf(interp_START)
+		if (i === -1) {
+			return str;
+		}
+		return _escape(str);
+	}
+	
+	function _escape(str) {
+		return str.replace(/\\~/g, '~');
+	}
+	
+	function InterpolationModel(prop, expr){
+		this.prop = prop;
+		this.expr = expr;
+	}
+	InterpolationModel.prototype.process = function(model, ctx, el, ctr, name, type){
+		if (this.prop != null) {
+			return obj_getPropertyEx(this.prop, model, ctx, ctr);
+		}
+		var expr = this.expr,
+			index = expr.indexOf(':'),
+			util;
+		if (index !== -1) {
+			if (index === 0) {
+				expr = expr.substring(index + 1);
+			}
+			else {
+				var match = rgx_UTIL.exec(expr);
+				if (match != null) {
+					util = match[1];
+					expr = expr.substring(index + 1);
+				}
+			}
+		}
+		if (util == null || util === '') {
+			util = 'expression';
+		}
 		
+		var fn = custom_Utils[util];
+		if (fn == null) {
+			log_error('Undefined custom util `%s`', utility);
+			return null;
+		}
+		return fn(expr, model, ctx, el, ctr, name, type);
+	};
+	
 	/**
 	 * - arr (Array) - array that was prepaired by parser -
 	 *  every even index holds interpolate value that was in #{some value}
@@ -136,18 +238,12 @@
 	 *
 	 */
 	
-	function _interpolate(arr, type, model, ctx, element, ctr, name) {
+	function _interpolate(arr, type, model, ctx, el, ctr, name) {
 		var imax = arr.length,
 			i = -1,
 			array = null,
 			string = '',
-			even = true,
-			
-			utility,
-			value,
-			index,
-			key,
-			handler;
+			even = true;
 	
 		while ( ++i < imax ) {
 			if (even === true) {
@@ -157,44 +253,18 @@
 					array.push(arr[i]);
 				}
 			} else {
-				key = arr[i];
-				value = null;
-				index = key.indexOf(':');
-	
-				if (index === -1) {
-					value = obj_getPropertyEx(key,  model, ctx, ctr);
-					
-				} else {
-					utility = index > 0
-						? key.substring(0, index).trim()
-						: '';
-						
-					if (utility === '') {
-						utility = 'expression';
-					}
-	
-					key = key.substring(index + 1);
-					handler = custom_Utils[utility];
-					
-					if (handler == null) {
-						log_error('Undefined custom util `%s`', utility);
-						continue;
-					}
-					
-					value = handler(key, model, ctx, element, ctr, name, type);
+				var interp = arr[i],
+					mix = interp.process(model, ctx, el, ctr, name, type);
+				if (mix == null) {
+					continue;
 				}
-	
-				if (value != null){
-	
-					if (typeof value === 'object' && array == null){
-						array = [ string ];
-					}
-	
-					if (array == null){
-						string += value;
-					} else {
-						array.push(value);
-					}
+				if (typeof mix === 'object' && array == null){
+					array = [ string ];
+				}
+				if (array == null){
+					string += mix;
+				} else {
+					array.push(mix);
 				}
 			}
 			even = !even;
@@ -205,4 +275,26 @@
 			: array
 			;
 	}
+	
+	function _cursor_propertyAccessorEnd(str, i, imax) {
+		var c;
+		while (i < imax){
+			c = str.charCodeAt(i);
+			if (c === 36 || c === 95 || c === 46) {
+				// $ _ .
+				i++;
+				continue;
+			}
+			if ((48 <= c && c <= 57) ||		// 0-9
+				(65 <= c && c <= 90) ||		// A-Z
+				(97 <= c && c <= 122)) {	// a-z
+				i++;
+				continue;
+			}
+			break;
+		}
+		return i;
+	}
+	
+	var rgx_UTIL = /\s*(\w+):/;
 }());
