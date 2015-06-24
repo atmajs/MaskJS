@@ -208,7 +208,7 @@
 		
 		var fn = custom_Utils[util];
 		if (fn == null) {
-			log_error('Undefined custom util `%s`', utility);
+			log_error('Undefined custom util:', util);
 			return null;
 		}
 		return fn(expr, model, ctx, el, ctr, name, type);
@@ -244,7 +244,6 @@
 			array = null,
 			string = '',
 			even = true;
-	
 		while ( ++i < imax ) {
 			if (even === true) {
 				if (array == null){
@@ -255,16 +254,15 @@
 			} else {
 				var interp = arr[i],
 					mix = interp.process(model, ctx, el, ctr, name, type);
-				if (mix == null) {
-					continue;
-				}
-				if (typeof mix === 'object' && array == null){
-					array = [ string ];
-				}
-				if (array == null){
-					string += mix;
-				} else {
-					array.push(mix);
+				if (mix != null) {					
+					if (typeof mix === 'object' && array == null){
+						array = [ string ];
+					}
+					if (array == null){
+						string += mix;
+					} else {
+						array.push(mix);
+					}
 				}
 			}
 			even = !even;
