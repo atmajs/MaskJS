@@ -115,6 +115,36 @@ UTest({
 			var txt = fn('attr', { baz: 'zbaz'});
 			eq_(txt, 'zbaz');
 		}
+	},
+	'serialization': {
+		'property': {
+			'attribute' () {
+				var tmpl = `div name='~foo';`;
+				var node = Mask.parse(tmpl);
+				var str  = Mask.stringify(node);
+				eq_(str, tmpl);
+			},
+			'string' () {
+				var tmpl = `div>'~foo'`;
+				var node = Mask.parse(tmpl);
+				var str  = Mask.stringify(node);
+				eq_(str, tmpl);
+			}
+		},
+		'expression': {
+			'attribute' () {
+				var tmpl = `div name='~[foo ? 1 : 0]';`;
+				var node = Mask.parse(tmpl);
+				var str  = Mask.stringify(node);
+				eq_(str, tmpl);
+			},
+			'string' () {
+				var tmpl = `div>'~[foo.baz - 2]'`;
+				var node = Mask.parse(tmpl);
+				var str  = Mask.stringify(node);
+				eq_(str, tmpl);
+			}
+		}
 	}
 })
 

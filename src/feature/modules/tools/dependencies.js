@@ -45,8 +45,8 @@ var tools_getDependencies;
 			if (node.tagName !== 'import') {
 				return next();
 			}
-			var path = resolvePath(node.path, location);
-			var type = Module.getType(path);
+			var path = resolvePath(node, location);
+			var type = Module.getType(node);
 			if (opts.deep === false) {
 				dependency[type].push(path);
 				return next();
@@ -89,9 +89,10 @@ var tools_getDependencies;
 			})
 			.fail(done);
 	}		
-	function resolvePath(path_, location) {
-		var path = path_;
-		if ('' === path_getExtension(path)) {
+	function resolvePath(node, location) {
+		var path = node.path,
+			type = node.contentType;
+		if ((type == null || type === 'mask') && path_getExtension(path) === '') {
 			path += '.mask';
 		}
 		if (path_isRelative(path)) {

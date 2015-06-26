@@ -1,5 +1,6 @@
 var ImportMask = class_create(IImport, {
 	type: 'mask',
+	contentType: 'mask',
 	constructor: function(){
 		this.eachExport(function(compoName){
 			if (compoName !== '*') 

@@ -21,9 +21,9 @@
 	};
 	
 	var lex_ = ObjectLexer(
-		[ 'from "$path"'
-		, '* as $alias from "$path"'
-		, '$$exports[$name?( as $alias)](,) from "$path"'
+		[ 'from "$path"?( is $contentType)'
+		, '* as $alias from "$path"?( is $contentType)'
+		, '$$exports[$name?( as $alias)](,) from "$path"?( is $contentType)'
 		]
 	);
 	
@@ -45,11 +45,18 @@
 			this.path = data.path;
 			this.alias = data.alias;
 			this.exports = data.exports;
-			
+			this.contentType = data.contentType;
 			this.parent = parent;
 		},
 		stringify: function(){
-			var from = " from '" + this.path + "';";
+			var from = " from '" + this.path + "'";
+			
+			var type = this.contentType;
+			if (type != null) {
+				from += ' is ' + type;
+			}
+			from += ';';
+			
 			if (this.alias != null) {
 				return IMPORT + " * as " + this.alias + from;
 			}

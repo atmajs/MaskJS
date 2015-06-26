@@ -4,16 +4,17 @@ var IModule = class_create(class_Dfr, {
 	location: null,
 	exports: null,
 	state: 0,
-	constructor: function(path, parent) {
+	constructor: function(path, parent) {		
 		this.path = path;
 		this.parent = parent;
 		this.exports = {};
 		this.location = path_getDir(path);
+		this.complete_ = this.complete_.bind(this);
 	},
 	loadModule: function(){
 		if (this.state !== 0) 
 			return this;
-		
+
 		this.state = 1;
 		var self = this;
 		this
@@ -57,11 +58,12 @@ var IModule = class_create(class_Dfr, {
 });
 
 (function(){
-	IModule.create = function(path, parent){
-		return new (Factory(path))(path, parent);
+	IModule.create = function(endpoint, parent, contentType){
+		return new (Factory(endpoint))(endpoint.path, parent);
 	};
-	function Factory(path) {
-		var ext = path_getExtension(path);
+	function Factory(endpoint) {
+		var type = endpoint.contentType;
+		var ext = type || path_getExtension(endpoint.path);
 		if (ext === 'mask') {
 			return ModuleMask;
 		}

@@ -1,10 +1,13 @@
 var IImport = class_create({
 	type: null,
+	contentType: null,
 	constructor: function(path, alias, exports, module){
 		this.path = path;
 		this.alias = alias;
 		this.exports = exports;
-		this.module = Module.createModule(path, module);
+		
+		var endpoint = new Endpoint(path, this.contentType);
+		this.module = Module.createModule(endpoint, module);
 		this.parent = module;
 	},
 	eachExport: function(fn){
@@ -89,11 +92,12 @@ var IImport = class_create({
 
 
 (function(){
-	IImport.create = function(path, alias, exports, parent){
-		return new (Factory(path))(path, alias, exports, parent);
+	IImport.create = function(endpoint, alias, exports, parent){
+		return new (Factory(endpoint))(endpoint.path, alias, exports, parent);
 	};
-	function Factory(path) {
-		var ext = path_getExtension(path);
+	function Factory(endpoint) {
+		var type = endpoint.contentType;
+		var ext = type || path_getExtension(endpoint.path);
 		if (ext === 'mask') {
 			return ImportMask;
 		}

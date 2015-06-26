@@ -419,6 +419,23 @@ UTest({
 						XMLHttpRequest.prototype.open.restore();
 						mask.Module.cfg('version', null);
 					});
+		},
+		
+		'resources without extensions' () {
+			return mask
+					.renderAsync(`
+						import * as data from '/test/tmpl/modules/ext-less/myinfo' is json;
+						import meta from '/test/tmpl/modules/ext-less/mymeta' is js; 						
+						.json > '~[$scope.data.name]'
+						.js > '~[$scope.meta.name]'
+						
+					`, { name: 'Foo' })
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							find('.json') > text myinfo;
+							find('.js')   > text mymeta;
+						`);
+					});
 		}
 	}, //< render
 	

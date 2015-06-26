@@ -13,6 +13,7 @@ var Module;
 	// import utils
 	// import loaders
 	
+	// import class/Endpoint
 	// import Import/Import
 	// import Import/ImportMask
 	// import Import/ImportScript
@@ -33,19 +34,22 @@ var Module;
 	
 	obj_extend(Module, {
 		ModuleMask: ModuleMask,
-		createModule: function(path_, ctx, ctr, parent) {			
-			var path   = u_resolvePath(path_, ctx, ctr, parent),
+		Endpoint: Endpoint,		
+		createModule: function(node, ctx, ctr, parent) {			
+			var path   = u_resolvePathFromImport(node, ctx, ctr, parent),
 				module = _cache[path];
 			if (module == null) {
-				module = _cache[path] = IModule.create(path, parent);
+				var endpoint = new Endpoint(path, node.contentType);
+				module = _cache[path] = IModule.create(endpoint, parent);
 			}
 			return module;
 		},
-		registerModule: function(mix, path_, ctx, ctr, parent) {
-			var path   = u_resolvePath(path_, ctx, ctr, parent),
-				module = Module.createModule(path, ctx, ctr, parent);
+		registerModule: function(mix, endpoint, ctx, ctr, parent) {
+			endpoint.path = u_resolvePath(endpoint.path, ctx, ctr, parent);
+			
+			var module = Module.createModule(endpoint, ctx, ctr, parent);
 			module.state = 1;
-			if (Module.isMask(path)) {
+			if (Module.isMask(endpoint)) {
 				module.preprocess_(mix, function(){
 					module.state = 4;
 					module.resolve(module);
@@ -59,17 +63,24 @@ var Module;
 			return module;
 		},
 		
-		createImport: function(data, ctx, ctr, module){
-			var path    = u_resolvePath(data.path, ctx, ctr, module),
-				alias   = data.alias,
-				exports = data.exports;
-			return IImport.create(path, alias, exports, module);
+		createImport: function(node, ctx, ctr, module){
+			var path    = u_resolvePathFromImport(node, ctx, ctr, module),
+				alias   = node.alias,
+				exports = node.exports,
+				endpoint = new Endpoint(path, node.contentType);
+			return IImport.create(endpoint, alias, exports, module);
 		},
-		isMask: function(path){
-			var ext = path_getExtension(path);
+		isMask: function(endpoint){
+			var type = endpoint.contentType,
+				ext = type || path_getExtension(endpoint.path);
 			return ext === '' || ext === 'mask' || ext === 'html';
 		},
-		getType: function(path) {
+		getType: function(endpoint) {
+			var type = endpoint.contentType,
+				path = endpoint.path;
+			if (type != null) {
+				return type;
+			}
 			var ext = path_getExtension(path);			
 			if (ext === '' || ext === 'mask'){
 				return 'mask';

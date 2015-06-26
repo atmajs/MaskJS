@@ -1,3 +1,4 @@
 var ImportHtml = class_create(ImportMask, {
-	type: 'mask'
+	type: 'mask',
+	contentType: 'html'
 });

@@ -57,9 +57,10 @@ var script_get;
 			if (res.state !== 0) 
 				return;
 			
-			res
-				.load()
-				.always(process);
+			res.load().always(function(){
+				_stack.shift();
+				process();
+			});
 		}
 	})();
 	

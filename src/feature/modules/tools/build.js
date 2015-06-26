@@ -108,7 +108,7 @@ var tools_build;
 				.done(function(str){
 					var script = 'module = { exports: null }\n';
 					script += str + ';\n';
-					script += 'mask.Module.registerModule(module.exports, "' + path + '")';
+					script += 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "script"))';
 					resolve(script);
 				});	
 		});
@@ -132,7 +132,7 @@ var tools_build;
 					}
 					var str = JSON.stringify(json, null, opts.minify ? 4 : void 0);
 					var script = 'module = { exports: ' + str + ' }\n'
-						+ 'mask.Module.registerModule(module.exports, "' + path + '")';
+						+ 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "json"))';
 						
 					resolve(script);
 				});	

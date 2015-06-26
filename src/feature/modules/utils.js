@@ -1,5 +1,6 @@
 var u_resolveLocation,
 	u_resolvePath,
+	u_resolvePathFromImport,
 	u_handler_getDelegate;
 	
 (function(){
@@ -51,6 +52,23 @@ var u_resolveLocation,
 			u_resolveLocation(ctx, ctr, module), path
 		));
 	};
+	
+	u_resolvePathFromImport = function(node, ctx, ctr, module){
+		var path = node.path;
+		if ('' === path_getExtension(path)) {
+			var type = node.contentType;
+			if (type == null || type === 'mask' ) {
+				path += '.mask';
+			}
+		}
+		if (path_isRelative(path) === false) {
+			return path;
+		}
+		return path_normalize(path_combine(
+			u_resolveLocation(ctx, ctr, module), path
+		));
+	};
+	
 	
 	u_handler_getDelegate = function(compoName, compo, next) {
 		return function(name) {

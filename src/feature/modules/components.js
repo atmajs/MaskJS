@@ -4,8 +4,10 @@
 		
 	custom_Tags['module'] = class_create({
 		constructor: function(node, model, ctx, container, ctr) {
-			var path  = path_resolveUrl(node.attr.path, u_resolveLocation(ctx, ctr));
-			Module.registerModule(node.nodes, path, ctx, ctr);
+			var path = path_resolveUrl(node.attr.path, u_resolveLocation(ctx, ctr)),
+				type = node.attr.type,
+				endpoint = new Module.Endpoint(path, type);
+			Module.registerModule(node.nodes, endpoint, ctx, ctr);
 		},
 		render: fn_doNothing
 	});
@@ -21,9 +23,9 @@
 			serializeNodes: true
 		},
 		constructor: function(node, model, ctx, el, ctr) {
-			if (node.alias == null && node.exports == null && Module.isMask(node.path)) {
+			if (node.alias == null && node.exports == null && Module.isMask(node)) {
 				// embedding
-				this.module = Module.createModule(node.path, ctx, ctr);
+				this.module = Module.createModule(node, ctx, ctr);
 			}
 		},
 		renderStart: function(model, ctx){

@@ -22,5 +22,8 @@ var ModuleScript = class_create(IModule, {
 		obj_setProperty(ctr.scope, prop, obj);
 		return obj;
 	},
-	
+	preprocessError_: function(error, next) {
+		log_error('Resource ' + this.path + ' thrown an Exception: ' + error);
+		next(error);
+	}
 });

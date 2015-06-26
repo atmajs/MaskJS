@@ -45,9 +45,11 @@ var ModuleMask;
 						));
 						break;
 					case 'module':
-						Module.registerModule(
-							x.nodes, u_resolvePath(x.attr.path, null, null, this)
-						);
+						var path = u_resolvePath(x.attr.path, null, null, this),
+							type = x.attr.contentType,
+							endpoint = new Module.Endpoint(path, type)
+							;
+						Module.registerModule(x.nodes, endpoint);
 						break;
 					case 'define':
 					case 'let':
@@ -182,7 +184,7 @@ var ModuleMask;
 		var count = imports.length;
 		if (count === 0) {
 			return done.call(module);
-		}
+		}	
 		var imax = count,
 			i = -1;
 		while( ++i < imax ) {
