@@ -6,51 +6,52 @@ var mask_run;
 			_state = _state_All
 		}
 		var args = _Array_slice.call(arguments),
-			container,
-			model,
-			Ctr,
-			imax,
-			i,
-			mix;
+			model, ctx, el, Ctor;
 		
-		imax = args.length;
-		i = -1;
+		var imax = args.length,
+			i = -1,
+			mix;
 		while ( ++i < imax ) {
 			mix = args[i];
 			if (mix instanceof Node) {
-				container = mix;
+				el = mix;
 				continue;
 			}
 			if (is_Function(mix)) {
-				Ctr = mix;
+				Ctor = mix;
 				continue;
 			}
 			if (is_Object(mix)) {
-				model = mix;
-				continue;
+				if (model == null) {
+					model = mix;
+					continue;
+				}
+				ctx = mix;
 			}
 		}
 		
-		if (container == null) 
-			container = document.body;
-			
-		var ctr = is_Function(Ctr)
-			? new Ctr
-			: new Compo
-			;
+		if (el == null) 
+			el = document.body;		
+		if (Ctor == null)
+			Ctor = Compo;
+		if (model == null) {
+			model = {};
+		}
+		
+		var ctr = new Ctor(null, model, ctx, el);
+		return _run(model, ctx, el, ctr);
+	};
+	
+	function _run (model, ctx, container, ctr) {
 		ctr.ID = ++builder_componentID;
 		
-		if (model == null) 
-			model = ctr.model || {};
-		
 		var scripts = _Array_slice.call(document.getElementsByTagName('script')),
-			script,
+			script = null,
 			found = false,
 			ready = false,
-			await = 0;
-			
-		imax = scripts.length;
-		i = -1;
+			await = 0,
+			imax = scripts.length,
+			i = -1;
 		while( ++i < imax ){
 			script = scripts[i];
 			
@@ -80,15 +81,20 @@ var mask_run;
 			);
 			if (ctx.async === true) {
 				await++;
-				ctx.done(insertDelegate(fragment, script, resumer));
+				ctx.done(_insertDelegate(fragment, script, resumer));
 				continue;
 			}
 			script.parentNode.insertBefore(fragment, script);
 		}
-		ready = true;
-		if (_state !== _state_Auto && found === false) {
+		
+		if (found === false) {
+			if (_state === _state_Auto) {
+				return null;
+			}
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
+		
+		ready = true;		
 		if (await === 0) {
 			flush();
 		}
@@ -104,8 +110,9 @@ var mask_run;
 		}
 		
 		return ctr;
-	};
-	function insertDelegate(fragment, script, done) {
+	}
+	
+	function _insertDelegate(fragment, script, done) {
 		return function(){
 			script.parentNode.insertBefore(fragment, script);
 			done();
@@ -115,10 +122,26 @@ var mask_run;
 	if (document != null && document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			if (_state !== 0)  return;
-
-			_state = _state_Auto;
-			global.app = mask_run();
+			var _app;
+			_state = _state_Auto;			
+			_app = mask_run();
 			_state = _state_Manual;
+			
+			if (_app == null) return;
+			if (global.app == null) {
+				global.app = _app;
+				return;
+			}
+			var source = _app.components
+			if (source == null || source.length === 0) {
+				return;
+			}
+			var target = global.app.components
+			if (target == null || target.length === 0) {
+				global.app.components = source;
+				return;
+			}
+			target.push.apply(target, source);
 		});
 	}
 	

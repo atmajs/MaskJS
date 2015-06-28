@@ -7,7 +7,8 @@ var path_getDir,
 	path_combine,
 	path_isRelative,
 	path_toRelative,
-	path_appendQuery
+	path_appendQuery,
+	path_toLocalFile
 	;
 (function(){
 	var isWeb = true;
@@ -151,6 +152,32 @@ var path_getDir,
 		}
 		return path_collapse(out);
 	};
+
+	// if NODE
+	(function(){
+		path_toLocalFile = function(path){
+			path = path_normalize(path);
+			if (path_isRelative(path)) {
+				path = '/' + path;
+			}
+			if (path.charCodeAt(0) === 47 /*/*/) {
+				return path_combine(cwd(), path);
+			}
+			if (path.indexOf('file://') === 0) {
+				path = path.replace('file://', '');
+			}
+			if (/^\/\w+:\//.test(path)) {
+				path = path.substring(1);
+			}
+			return path;
+		};
+		
+		var _cwd;
+		function cwd() {
+			return _cwd || (_cwd = path_normalize(process.cwd()));
+		}
+	}());
+	// endif
 	
 	var rgx_PROTOCOL = /^(file|https?):/i,
 		rgx_SUB_DIR  = /[^\/\.]+\/\.\.\//,
