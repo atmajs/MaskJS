@@ -108,7 +108,7 @@ var Define;
 		while( ++i < imax ){
 			x = extends_[i];
 			if (x.compo) {
-				var compo = resolveCompo(x.compo, ctr);
+				var compo = customTag_get(x.compo, ctr);
 				if (compo != null) {
 					args.unshift(compo);
 					continue;
@@ -125,17 +125,7 @@ var Define;
 		}
 		return args;
 	}
-	function resolveCompo(compoName, ctr) {
-		while (ctr != null) {
-			if (ctr.getHandler) {
-				var x = ctr.getHandler(compoName);
-				if (x != null) 
-					return x;
-			}
-			ctr = ctr.parent;
-		}
-		return custom_Tags[compoName];
-	}
+	
 	function compo_fromNode(node, model, ctr, Base) {
 		var extends_ = node['extends'],
 			as_ = node['as'],
