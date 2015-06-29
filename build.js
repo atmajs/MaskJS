@@ -39,6 +39,17 @@ module.exports = {
 			'/ref-mask-node/lib/mask.node.js': '/lib/'
 		}
 	},
+	'beforeRelease': {
+		action: 'shell',
+		command: [
+			{
+				command: 'git pull origin master',
+				cwd: 'ref-mask-node'
+			}
+			, 'git add ref-mask-node'
+			, 'git commit -m "update MaskNode"'
+		]
+	},
 	'jshint': {
 		files: ['lib/mask.js', 'lib/formatter.js'],
 		jshint: JSHint()
