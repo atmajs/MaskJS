@@ -79,9 +79,9 @@ var mask_run;
 			var fragment = builder_build(
 				parser_parse(script.textContent), model, ctx_, null, ctr
 			);
-			if (ctx.async === true) {
+			if (ctx_.async === true) {
 				await++;
-				ctx.done(_insertDelegate(fragment, script, resumer));
+				ctx_.done(_insertDelegate(fragment, script, resumer));
 				continue;
 			}
 			script.parentNode.insertBefore(fragment, script);
