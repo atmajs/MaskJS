@@ -75,9 +75,9 @@ var mask_run;
 			}
 			
 			found = true;
-			var ctx = new builder_Ctx;
+			var ctx_ = new builder_Ctx(ctx);
 			var fragment = builder_build(
-				parser_parse(script.textContent), model, ctx, null, ctr
+				parser_parse(script.textContent), model, ctx_, null, ctr
 			);
 			if (ctx.async === true) {
 				await++;
