@@ -9,7 +9,7 @@ var style_get;
 	var embedStyle;
 	(function(){
 		embedStyle = function (url, callback) {
-			var tag = document.createElement('style');
+			var tag = document.createElement('link');
 			tag.rel = 'stylesheet';
 			tag.href = url;
 			if ('onreadystatechange' in tag) {
