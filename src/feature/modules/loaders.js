@@ -60,11 +60,8 @@ var _file_get,
 							var exports = name === 'js'
 								? resp.Module
 								: resp[name].Module;
-							if (exports != null) {
-								resolve(exports);
-								return;
-							}
-							reject('Export is undefined');
+							
+							resolve(exports);
 						});
 					});
 				}
