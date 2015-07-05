@@ -127,7 +127,7 @@
 		return is_Object(val) || is_Function(val);
 	}
 	
-	customTag_define = fn_patternDelegate([{
+	customTag_define = fn_createByPattern([{
 			pattern: [is_String],
 			handler: function(template) {
 				return customTag_registerFromTemplate(template);

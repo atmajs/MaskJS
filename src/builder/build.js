@@ -6,8 +6,7 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 	var type = node.type,
 		elements,
 		key,
-		value,
-		j, jmax;
+		value;
 	
 	if (ctr == null) 
 		ctr = new Dom.Component();
@@ -26,27 +25,14 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		}
 	}
 	
-	if (type === 1 && custom_Tags[node.tagName] != null) {
-		// check if custom ctr exists
-		type = 4;
-	}
-
-	if (container == null && type !== 1) 
+	if (container == null && type !== 1) {
 		container = document.createDocumentFragment();
-	
-	
-	// Dom.TEXTNODE
-	if (type === 2) {			
-		build_textNode(node, model, ctx, container, ctr);
-		return container;
 	}
 	
 	// Dom.SET
 	if (type === 10) {
-		
-		j = 0;
-		jmax = node.length;
-		
+		var j = 0,
+			jmax = node.length;
 		for(; j < jmax; j++) {
 			builder_build(node[j], model, ctx, container, ctr, children);
 		}
@@ -56,7 +42,22 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 	var tagName = node.tagName;
 	if (tagName === 'else') 
 		return container;
+
+	if (type === 1 && custom_Tags[tagName] != null) {
+		// check if custom ctr exists
+		type = 4;
+	}
+	if (type === 1 && custom_Statements[tagName] != null) {
+		// check if custom statement exists
+		type = 15;
+	}
 	
+	// Dom.TEXTNODE
+	if (type === 2) {			
+		build_textNode(node, model, ctx, container, ctr);
+		return container;
+	}	
+
 	// Dom.STATEMENT
 	if (type === 15) {
 		var Handler = custom_Statements[tagName];

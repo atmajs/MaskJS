@@ -28,7 +28,7 @@
 			},
 			register: function(id, nodes){
 				if (id == null) {
-					log_warn('`:template` must be define via id attr.');
+					log_warn('`:template` must define the `id` attr');
 					return;
 				}
 				templates_[id] = nodes;
@@ -52,4 +52,26 @@
 			this.nodes = helper_.resolve(this, id);
 		}
 	});
+	
+	custom_Statements['include'] = {
+		render: function (node, model, ctx, container, ctr, els) {
+			var name = attr_first(node.attr);
+			var Compo = customTag_get(name, ctr);
+			var template;
+			
+			if (Compo != null) {
+				template = Compo.prototype.template || Compo.prototype.nodes;
+				if (template != null) {
+					template = mask_merge(template, node.nodes);
+				}
+			}
+			else {
+				template = helper_.get(name);
+			}
+			if (template != null) {
+				builder_build(template, model, ctx, container, ctr, els);
+			}
+		}
+	};	
+	
 }());
