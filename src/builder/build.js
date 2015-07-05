@@ -25,19 +25,6 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		}
 	}
 	
-	if (container == null && type !== 1) {
-		container = document.createDocumentFragment();
-	}
-	
-	// Dom.SET
-	if (type === 10) {
-		var j = 0,
-			jmax = node.length;
-		for(; j < jmax; j++) {
-			builder_build(node[j], model, ctx, container, ctr, children);
-		}
-		return container;
-	}
 	
 	var tagName = node.tagName;
 	if (tagName === 'else') 
@@ -52,11 +39,25 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		type = 15;
 	}
 	
+	if (container == null && type !== 1) {
+		container = document.createDocumentFragment();
+	}
+	
 	// Dom.TEXTNODE
 	if (type === 2) {			
 		build_textNode(node, model, ctx, container, ctr);
 		return container;
-	}	
+	}
+	
+	// Dom.SET
+	if (type === 10) {
+		var j = 0,
+			jmax = node.length;
+		for(; j < jmax; j++) {
+			builder_build(node[j], model, ctx, container, ctr, children);
+		}
+		return container;
+	}
 
 	// Dom.STATEMENT
 	if (type === 15) {

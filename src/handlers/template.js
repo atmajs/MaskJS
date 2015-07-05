@@ -74,4 +74,19 @@
 		}
 	};	
 	
+	customTag_register('layout:master', {
+		render: function () {
+			var name = this.attr.id || attr_first(this.attr);
+			helper_.register(name, this.nodes);
+		}
+	});
+	
+	customTag_register('layout:view', {
+		render: function (model, ctx, container, els) {
+			var nodes = helper_.get(this.attr.master);
+			var template = mask_merge(nodes, this.nodes);
+			builder_build(template, model, ctx, container, ctr, els);
+		}
+	});
+	
 }());
