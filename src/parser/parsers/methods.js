@@ -23,8 +23,9 @@
 		if (parts == null) {
 			return null;
 		}
-		var methodName = parts[1].trim();
-		var methodArgs = parts[3].replace(/\s/g, '').split(',');		
+		var methodName = parts[1].trim();		
+		var str = parts[3],
+			methodArgs = str == null ? [] : str.replace(/\s/g, '').split(',');
 		return new MethodHead(methodName, methodArgs);
 	}
 	function MethodHead(name, args) {
