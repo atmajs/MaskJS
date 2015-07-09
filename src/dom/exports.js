@@ -17,7 +17,11 @@ var Dom;
 	// import 4.Component.js
 	// import 5.Fragment.js
 	
-	
+	/**
+	 * Dom
+	 * @type {object}
+	 * @memberOf mask
+	 */
 	Dom = {
 		NODE: dom_NODE,
 		TEXTNODE: dom_TEXTNODE,
@@ -32,4 +36,10 @@ var Dom;
 		Fragment: Fragment,
 		Component: Component
 	};
+	/**
+	 * @interface
+	 * @typedef IMaskNode
+	 * @type {class}
+	 * @property {number} type
+	 */
 }());

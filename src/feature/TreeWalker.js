@@ -1,6 +1,17 @@
 var mask_TreeWalker;
 (function(){
+	/**
+	 * TreeWalker
+	 * @memberOf mask
+	 * @name TreeWalker
+	 */
 	mask_TreeWalker = {
+		/**
+		 * Visit each mask node
+		 * @param {MaskNode} root
+		 * @param {TreeWalker~SyncVisitior} visitor
+		 * @memberOf mask.TreeWalker
+		 */
 		walk: function(root, fn) {
 			if (typeof root === 'object' && root.type === Dom.CONTROLLER) {
 				new SyncWalkerCompos(root, fn);
@@ -10,6 +21,13 @@ var mask_TreeWalker;
 			new SyncWalker(root, fn);
 			return root;
 		},
+		/**
+		 * Asynchronous visit each mask node
+		 * @param {MaskNode} root
+		 * @param {TreeWalker~AsyncVisitior} visitor
+		 * @param {function} done
+		 * @memberOf mask.TreeWalker
+		 */
 		walkAsync: function(root, fn, done){
 			root = prepairRoot(root);
 			new AsyncWalker(root, fn, done);
@@ -172,15 +190,31 @@ var mask_TreeWalker;
 	
 	var Modifier;
 	(function(){
+		/**
+		 * @name IModifier
+		 * @memberOf TreeWalker
+		 */
 		Modifier = function (mod, step) {
 			for (var key in mod) {
 				this[key] = mod[key];
 			}
 		};
 		Modifier.prototype = {
+			/**
+			 * On `true` stops the walker			 
+			 */
 			'break': false,
+			/**
+			 * On `false` doesn't visit the subnodes
+			 */
 			deep: true,
+			/**
+			 * On `true` removes current node
+			 */
 			remove: false,
+			/**
+			 * On not `null`, replaces the current node with value
+			 */
 			replace: null,
 			process: function(step){
 				if (this.replace != null) {
@@ -242,4 +276,18 @@ var mask_TreeWalker;
 		}
 		return root;
 	}
+	
+	/**
+	 * Is called on each node
+	 * @callback TreeWalker~SyncVisitor
+	 * @param {MaskNode} node 
+	 * @returns {Modifier|void}
+	 */
+	/**
+	 * Is called on each node
+	 * @callback TreeWalker~AsyncVisitor
+	 * @param {MaskNode} node 
+	 * @param {function} done - Optional pass @see{@link TreeWalker.IModifier} to the callback
+	 * @returns {void}
+	 */
 }());

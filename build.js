@@ -51,7 +51,7 @@ module.exports = {
 		]
 	},
 	'jshint': {
-		files: ['lib/mask.js', 'lib/formatter.js'],
+		files: ['lib/mask.js'],
 		jshint: JSHint()
 	},
 	'uglify': {
@@ -77,6 +77,11 @@ module.exports = {
 			'#[settings]',
 			'#[build_mask]'
 		]
+	},
+
+	'api-docs': {
+		action: 'shell',
+		command: 'node tools/jsdoc'
 	},
 	
 	'defaults': [

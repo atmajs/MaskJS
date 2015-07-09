@@ -2,7 +2,6 @@ var mask_stringify,
 	mask_stringifyAttr;
 (function() {
 
-	//opts (Number | Object) - Indention Number (0 - for minification)
 	mask_stringify = function(input, opts) {
 		if (input == null) 
 			return '';

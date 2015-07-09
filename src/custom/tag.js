@@ -1,4 +1,12 @@
-(function(){
+(function(){	
+	/**
+	 * Get Components constructor from the global repository or the scope
+	 * @param {string} name
+	 * @param {object} [component] - pass a component to look in its scope
+	 * @returns {IComponent}
+	 * @memberOf mask
+	 * @method getHandler
+	 */
 	customTag_get = function(name, ctr) {
 		if (arguments.length === 0) {
 			reporter_deprecated('getHandler.all', 'Use `mask.getHandlers` to get all components (also scoped)');
@@ -23,7 +31,14 @@
 			ctr_ = ctr_.parent;
 		}
 		return custom_Tags_global[name];
-	};
+	};	
+	/**
+	 * Get all components constructors from the global repository and/or the scope
+	 * @param {object} [component] - pass a component to look also in its scope
+	 * @returns {object} All components in an object `{name: Ctor}`
+	 * @memberOf mask
+	 * @method getHandlers
+	 */
 	customTag_getAll = function(ctr) {
 		if (ctr == null) {
 			return custom_Tags;
@@ -54,7 +69,16 @@
 		}
 		return obj;
 	};
-	
+	/**
+	 * Register a component
+	 * @param {string} name
+	 * @param {object|IComponent} component
+	 * @param {object} component - Component static definition
+	 * @param {IComponent} component - Components constructor
+	 * @returns {void}
+	 * @memberOf mask
+	 * @method registerHandler
+	 */
 	customTag_register = function(mix, Handler){
 		if (typeof mix !== 'string' && arguments.length === 3) {
 			customTag_registerScoped.apply(this, arguments);
@@ -71,7 +95,15 @@
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};
-	
+	/**
+	 * Register components from a template
+	 * @param {string} template - Mask template
+	 * @param {object|IComponent} [component] - Register in the components scope
+	 * @param {string} [path] - Optionally define the path for the template
+	 * @returns {Promise} - Fullfills when all submodules are resolved and components are registerd
+	 * @memberOf mask
+	 * @method registerFromTemplate
+	 */
 	customTag_registerFromTemplate = function(mix, Ctr, path){
 		var dfr = new class_Dfr;
 		new Module
@@ -94,7 +126,15 @@
 		
 		return dfr;
 	};
-	
+	/**
+	 * Register a component
+	 * @param {object|IComponent} scopedComponent - Use components scope
+	 * @param {string} name - Name of the component
+	 * @param {object|IComponent} component - Components definition
+	 * @returns {void}
+	 * @memberOf mask
+	 * @method registerScoped
+	 */
 	customTag_registerScoped = function(Ctx, name, Handler) {
 		if (Ctx == null) {
 			// Use global
@@ -127,6 +167,18 @@
 		return is_Object(val) || is_Function(val);
 	}
 	
+	/**
+	 * Universal component definition, which covers all the cases: simple, scoped, template
+	 * - 1. (template)
+	 * - 2. (scopedCompoName, template)
+	 * - 3. (scopedCtr, template)
+	 * - 4. (name, Ctor)
+	 * - 5. (scopedCtr, name, Ctor)
+	 * - 6. (scopedCompoName, name, Ctor)
+	 * @returns {void|Promise}
+	 * @memberOf mask
+	 * @method define
+	 */
 	customTag_define = fn_createByPattern([{
 			pattern: [is_String],
 			handler: function(template) {

@@ -1,6 +1,16 @@
 var mask_merge;
 (function(){
-	
+	/**
+	 * Join two Mask templates or DOM trees
+	 * @param {(string|MaskNode)} a - first template
+	 * @param {(string|MaskNode)} b - second template
+	 * @param {(MaskNode|Component)} [owner]
+	 * @param {object} [opts]
+	 * @param {bool} [opts.extending=false] - Clean the merged tree from all unused placeholders
+	 * @returns {MaskNode} New joined Mask DOM tree
+	 * @memberOf mask
+	 * @method merge
+	 */
 	mask_merge = function(a, b, owner, opts){
 		if (typeof a === 'string') {
 			a = parser_parse(a);
@@ -248,11 +258,7 @@ var mask_merge;
 			case 'include':
 				var tagName = node.attr.id;
 				if (tagName == null) {
-					// get the first key
-					for (var key in node.attr) {
-						tagName = key;
-						break;
-					}
+					tagName = attr_first(node.attr);
 				}
 				tagName = interpolate_str_(tagName, placeholders, tmplNode);
 				

@@ -1,3 +1,12 @@
+/**
+ * Get or Set configuration settings
+ * - 1 `(name)`
+ * - 2 `(name, value)`
+ * - 3 `(object)`
+ * @see @{link MaskOptions} for all options
+ * @memberOf mask
+ * @method config
+ */
 function mask_config () {
 	var args = arguments,
 		length = args.length

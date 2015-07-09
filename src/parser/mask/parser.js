@@ -1,7 +1,12 @@
 (function(){
 	
-	
-	/** @out : nodes */
+	/**
+	 * Parse **Mask** template to the AST tree
+	 * @param {string} template - Mask Template
+	 * @returns {MaskNode}
+	 * @memberOf mask
+	 * @method parse
+	 */
 	parser_parse = function(template) {
 		var current = new Fragment(),
 			fragment = current,
