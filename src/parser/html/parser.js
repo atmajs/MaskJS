@@ -1,6 +1,13 @@
 (function () {
 	var state_closeTag = 21;
 	
+	/**
+	 * Parse **Html** template to the AST tree
+	 * @param {string} template - Html Template
+	 * @returns {MaskNode}
+	 * @memberOf mask
+	 * @method parseHtml
+	 */	
 	parser_parseHtml = function(str) {
 		var current = new Fragment(),
 			fragment = current,

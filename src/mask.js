@@ -1,17 +1,20 @@
+/**
+ * @namespace mask
+ */
 var Mask;
 (function(){
+	
 	Mask = {	
 		/**
-		 *	mask.render(template[, model, ctx, container = DocumentFragment, controller]) -> container
-		 * - template (String | MaskDOM): Mask String or Mask DOM Json template to render from.
-		 * - model (Object): template values
-		 * - ctx (Object): can store any additional information, that custom handler may need,
-		 * 		this object stays untouched and is passed to all custom handlers
-		 * - container (IAppendChild): container where template is rendered into
-		 * - controller (Object): instance of an controller that own this template
-		 *
-		 *	Create new Document Fragment from template or append rendered template to container
-		 **/
+		 * Render the mask template to document fragment or single html node
+		 * @param {(string|MaskDom)} template - Mask string template or Mask Ast to render from.
+		 * @param {*} [model] - Model Object. 
+		 * @param {Object} [ctx] - Context can store any additional information, that custom handler may need
+		 * @param {IAppendChild} [container]  - Container Html Node where template is rendered into
+		 * @param {Object} [controller] - Component that should own this template
+		 * @returns {(IAppendChild|Node|DocumentFragment)} container
+		 * @memberOf mask
+		 */
 		render: function (mix, model, ctx, container, controller) {
 
 			// if DEBUG
@@ -36,6 +39,13 @@ var Mask;
 			return builder_build(template, model, ctx, container, controller);
 		},
 		
+		/**
+		 * Same to `mask.render` but returns the promise, which is resolved when all async components
+		 * are resolved, or is in resolved state, when all components are synchronous.
+		 * For the parameters doc @see {@link mask.render}
+		 * @returns {Promise}
+		 * @memberOf mask
+		 */
 		renderAsync: function(template, model, ctx, container, ctr) {
 			if (ctx == null || ctx.constructor !== builder_Ctx)
 				ctx = new builder_Ctx(ctx);
@@ -52,45 +62,22 @@ var Mask;
 			}
 			return dfr;
 		},
-
-		/* deprecated, renamed to parse */
-		compile: parser_parse,
-
-		/**
-		 *	mask.parse(template) -> MaskDOM
-		 * - template (String): string to be parsed into MaskDOM
-		 *
-		 * Create MaskDOM from Mask markup
-		 **/
+		
+		// parser/mask/parse.js
 		parse: parser_parse,
+		// parser/html/parse.js
 		parseHtml: parser_parseHtml,
+		// formatter/stringify.js
 		stringify: mask_stringify,
+		// builder/build.js
 		build: builder_build,
-		
-		/*
-		 * - ?model:Object
-		 * - ?Controller: Function
-		 * - ?container: Node (@default: body)
-		 */
+		// feature/run.js
 		run: mask_run,
-		
-		
-		/*
-		 * - aTmpl: Mask Template
-		 * - bTmpl: Mask Template
-		 *
-		 * @returns New joined mask template
-		 */
+		// feature/merge.js
 		merge: mask_merge,
-		
-		/*
-		 * (dom:MaskDom, done:Action<MaskDom>)
-		 */
-		optimize: mask_optimize,
-		
-		registerOptimizer: function(tagName, fn){
-			custom_Optimizers[tagName] = fn;
-		},
+		// feature/optimize.js
+		optimize: mask_optimize,		
+		registerOptimizer: mask_registerOptimizer,
 		
 		/**
 		 * mask.registerHandler(tagName, tagHandler) -> void

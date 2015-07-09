@@ -1,3 +1,14 @@
+/**
+ * @param {MaskNode} node
+ * @param {*} model
+ * @param {object} ctx
+ * @param {IAppendChild} container
+ * @param {object} controller
+ * @param {Array} children - @out
+ * @returns {IAppendChild} container
+ * @memberOf mask
+ * @method build
+ */
 builder_build = function(node, model, ctx, container, ctr, children) {
 	
 	if (node == null) 

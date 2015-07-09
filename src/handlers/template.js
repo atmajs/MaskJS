@@ -84,7 +84,7 @@
 	customTag_register('layout:view', {
 		render: function (model, ctx, container, ctr, els) {
 			var nodes = helper_.get(this.attr.master);
-			var template = mask_merge(nodes, this.nodes);
+			var template = mask_merge(nodes, this.nodes, null, { extending: true });
 			builder_build(template, model, ctx, container, ctr, els);
 		}
 	});

@@ -23,7 +23,8 @@
     ],
     "devDependencies": {
         "atma": ">0.9.26",
-        "atma-loader-traceur": ">=1.0.19"
+        "atma-loader-traceur": ">=1.0.19",
+        "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
     },
     "scripts": {
         "test" : "atma test",

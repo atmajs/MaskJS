@@ -8,7 +8,17 @@ var mask_stringify,
 		indentChar: ' '
 	};
 	
-	//opts (Number | Object) - Indention Number (0 - for minification)
+	/**
+	 * Serialize Mask AST to the Mask string (@analog to `JSON.stringify`)
+	 * @param {MaskNode} node - MaskNode
+	 * @param {(object|number)} [opts] - Indent count option or an object with options
+	 * @param {number} [opts.indent=0] - Indent count, `0` for minimization
+	 * @param {bool} [opts.minify=true] 
+	 * @param {bool} [opts.minimizeAttributes=true] - Remove quotes when possible
+	 * @returns {string}
+	 * @memberOf mask
+	 * @method stringify
+	 */
 	mask_stringify = function(input, opts) {
 		if (input == null) 
 			return '';

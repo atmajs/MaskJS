@@ -78,6 +78,11 @@ module.exports = {
 			'#[build_mask]'
 		]
 	},
+
+	'api-docs': {
+		action: 'shell',
+		command: 'node tools/jsdoc'
+	},
 	
 	'defaults': [
 		'build_mask',

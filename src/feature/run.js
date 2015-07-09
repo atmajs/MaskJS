@@ -1,6 +1,15 @@
 var mask_run;
-
 (function(){
+	/**
+	 * Find all `<script type="text/mask" data-run='true'>` blocks in the page
+	 * and render each block into the parents container.
+	 *
+	 * The function is automatically renders the blocks
+	 * `<script type="text/mask" data-run='auto'>` on `DOMContentLoaded` event
+	 * @returns {object} Root component
+	 * @memberOf mask
+	 * @method run
+	*/
 	mask_run = function(){
 		if (_state === 0) {
 			_state = _state_All
