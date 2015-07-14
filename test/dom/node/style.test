@@ -275,3 +275,5 @@ function TestRunner(test, additionalFn) {
 	$root.remove();
 	
 }
+
+// vim: set ft=js:

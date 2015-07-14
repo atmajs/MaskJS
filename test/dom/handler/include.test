@@ -19,3 +19,5 @@ UTest({
 			.has_('div > span');
 	}
 })
+
+// vim: set ft=js:

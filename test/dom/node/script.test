@@ -56,3 +56,5 @@ UTest({
 		eq_(script.textContent, "var foo;");
 	}
 })
+
+// vim: set ft=js:

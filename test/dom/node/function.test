@@ -61,3 +61,5 @@ UTest({
 			;
 	}
 });
+
+// vim: set ft=js:

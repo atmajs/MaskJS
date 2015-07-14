@@ -96,3 +96,5 @@ function Run(walk, args) {
 	eq_(expect.length, 0);
 	return root;
 }
+
+// vim: set ft=js:

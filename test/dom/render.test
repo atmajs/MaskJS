@@ -77,3 +77,5 @@ UTest({
 		eq_(dom.textContent, 'A Sub!');
 	}
 })
+
+// vim: set ft=js:

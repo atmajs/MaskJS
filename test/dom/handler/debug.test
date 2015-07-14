@@ -55,3 +55,5 @@ UTest({
 		stub.restore();
 	}
 })
+
+// vim: set ft=js:

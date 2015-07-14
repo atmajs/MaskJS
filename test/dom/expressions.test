@@ -355,3 +355,5 @@ UTest({
 		deepEq_(x, [2, 4]);
 	}
 });
+
+// vim: set ft=js:

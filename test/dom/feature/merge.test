@@ -538,3 +538,5 @@ function $render(tmplA, tmplB, model) {
 	
 	return $(dom);
 }
+
+// vim: set ft=js:
