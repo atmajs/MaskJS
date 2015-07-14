@@ -1,0 +1,16 @@
+.~[foo];
+---
+.~[foo];
+===
+span .~[foo] .~[baz || quux];
+---
+span.~[foo].~[baz || quux];
+===
+span .foo .@[baz];
+---
+span.foo.@[baz];
+===
+span .foo .@[attr.baz || attr.qux];
+---
+span.foo.@[attr.baz || attr.qux];
+===

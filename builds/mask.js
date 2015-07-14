@@ -13,7 +13,6 @@
 	// import expression/
 	// import dom/
 	// import statements/
-	// import formatter/stringify_stream
 	// import feature/	
 	// import parser/
 	

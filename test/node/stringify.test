@@ -47,6 +47,11 @@ UTest({
 		'minify' () {
 			test('misc.min');
 		}
+	},
+	'interpolation': {
+		'format' () {
+			test('interpolation', 2);
+		}
 	}
 	
 })
@@ -71,7 +76,6 @@ function test(filename, opts) {
 			
 			var [ mask, expect ] = parts;
 			var str = M.stringify(mask, opts);
-			
 			eq_(str, expect.replace(/\r\n/g, '\n'));
 		});
 }

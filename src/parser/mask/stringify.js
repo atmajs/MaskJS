@@ -1,5 +1,3 @@
-var mask_stringify,
-	mask_stringifyAttr;
 (function () {
 	
 	var defaultOptions = {
@@ -141,22 +139,16 @@ var mask_stringify,
 			
 			var attr = node.attr;
 			if (attr != null) {
-				id  = attr.id;
-				cls = attr['class'];
-				if (typeof id === 'function') {
-					id = id();
-				}
+				id  = getString(attr['id']);
+				cls = getString(attr['class']);
 				if (id != null && id.indexOf(' ') !== -1) {
 					id = null;
 				}
 				if (id != null) {
 					str += '#' + id;
 				}
-				if (typeof cls === 'function') {
-					cls = cls();
-				}
 				if (cls != null) {
-					str += '.' + cls.trim().replace(/\s+/g, '.');
+					str += format_Classes(cls);
 				}
 				
 				for(var key in attr) {
@@ -295,7 +287,41 @@ var mask_stringify,
 	}
 
 	function getString(mix) {
-		return is_Function(mix) ? mix() : mix;
+		return mix == null ? null : (is_Function(mix) ? mix() : mix);
 	}
 	
+	var format_Classes;
+	(function() {
+		var C = '[';
+		format_Classes = function(cls){
+			var i = cls.indexOf(C);			
+			if (i === -1) {
+				return raw(cls);
+			}
+			var last = 0,
+				imax = cls.length,
+				str = '';
+			do {
+				i--;
+				if (last < i - 1) {
+					str += raw(cls.substring(last, i));
+				}
+				last = i;
+				i = cursor_groupEnd(cls, i + 2, imax, 91 /*[*/, 93 /*]*/) + 1;
+				str += '.' + cls.substring(last, i);
+				
+				last = i + 1;
+				i = cls.indexOf(C, last);
+			}
+			while (i < imax && i !== -1);
+			
+			if (last < imax - 1) {
+				str += raw(cls.substring(last));
+			}
+			return str;
+		};		
+		function raw(str) {
+			return '.' + str.trim().replace(/\s+/g, '.');
+		}
+	}());
 }());

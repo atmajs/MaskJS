@@ -6,7 +6,9 @@ var parser_parse,
 	parser_ensureTemplateFunction,
 	parser_setInterpolationQuotes,
 	parser_cleanObject,
-	parser_ObjectLexer
+	parser_ObjectLexer,	
+	mask_stringify,
+	mask_stringifyAttr
 	;
 
 (function(Node, TextNode, Fragment, Component) {
@@ -25,6 +27,6 @@ var parser_parse,
 	// import ./mask/parser
 	// import ./mask/partials/attributes
 	// import ./mask/partials/literal
-
+	// import ./mask/stringify
 	
 }(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));
