@@ -2,7 +2,7 @@ var util_resolveRef,
 	util_throw;
 
 (function(){
-	
+
 	util_throw = function(msg, token){
 		return parser_error(msg
 			, template
@@ -11,7 +11,7 @@ var util_resolveRef,
 			, 'expr'
 		);
 	};
-	
+
 	util_resolveRef = function(astRef, model, ctx, ctr) {
 		var controller = ctr,
 			current = astRef,
@@ -22,7 +22,7 @@ var util_resolveRef,
 			i,
 			imax
 			;
-		
+
 		if ('$c' === key) {
 			reporter_deprecated(
 				'accessor.compo', "Use `$` instead of `$c`."
@@ -40,14 +40,14 @@ var util_resolveRef,
 				'accessor.attr', "Use `$.attr` instead of `$a`"
 			);
 		}
-		
+
 		if ('$' === key) {
 			value = controller;
-			
+
 			var next = current.next,
 				nextBody = next != null && next.body;
 			if (nextBody != null && value[nextBody] == null){
-					
+
 				if (next.type === type_FunctionRef && is_Function(Compo.prototype[nextBody])) {
 					// use fn from prototype if possible, like `closest`
 					object = controller;
@@ -57,48 +57,48 @@ var util_resolveRef,
 					// find the closest controller, which has the property
 					while (true) {
 						value = value.parent;
-						if (value == null) 
+						if (value == null)
 							break;
-						
-						if (value[nextBody] == null) 
+
+						if (value[nextBody] == null)
 							continue;
-						
+
 						object = value;
 						value = value[nextBody];
 						current = next;
 						break;
 					}
 				}
-				
+
 				if (value == null) {
 					// prepair for warn message
 					key = '$.' + nextBody;
 					current = next;
 				}
 			}
-			
+
 		}
-		
+
 		else if ('$a' === key) {
 			value = controller && controller.attr;
 		}
-		
+
 		else if ('_' === key) {
 			value = customUtil_$utils;
 		}
-		
-		
+
+
 		else if ('$ctx' === key) {
 			value = ctx;
 		}
-		
+
 		else if ('$scope' === key) {
 			var next = current.next,
 				nextBody = next != null && next.body;
-			
+
 			if (nextBody != null) {
 				while (controller != null) {
-					object = controller.scope;				
+					object = controller.scope;
 					if (object != null) {
 						value = object[nextBody];
 					}
@@ -110,47 +110,51 @@ var util_resolveRef,
 				current = next;
 			}
 		}
-		
+
 		else {
 			// scope resolver
-			
+
 			if (model != null) {
 				object = model;
 				value = model[key];
 			}
-			
+
 			if (value == null) {
-				
+
 				while (controller != null) {
 					object = controller.scope;
-					
-					if (object != null) 
+
+					if (object != null)
 						value = object[key];
-					
-					if (value != null) 
+
+					if (value != null)
 						break;
-					
+
 					controller = controller.parent;
-				} 
+				}
 			}
 		}
-		
+
 		do {
-			
+
 			if (value == null) {
 				if (current == null || current.next != null){
 					// notify that value is not in model, ctx, controller;
-					log_warn('<mask:expression> Accessor error:', key);
+					log_warn(
+						'<mask:expression> Accessor error:'
+						, key
+						, ' in expression `' + astRef.toString() + '`'
+					);
 				}
 				return null;
 			}
 
 			if (current.type === type_FunctionRef) {
-				
+
 				args = [];
 				i = -1;
 				imax = current.arguments.length;
-				
+
 				while( ++i < imax ) {
 					args[i] = expression_evaluate(
 						current.arguments[i]
@@ -159,28 +163,25 @@ var util_resolveRef,
 						, controller
 					);
 				}
-				
+
 				value = value.apply(object, args);
 			}
 
 			if (value == null || current.next == null) {
 				break;
 			}
-			
+
 			current = current.next;
 			key = current.type === type_AccessorExpr
 				? expression_evaluate(current.body, model, ctx, controller)
 				: current.body
 				;
-			
+
 			object = value;
 			value = value[key];
-			
+
 		} while (true);
-		
+
 		return value;
 	};
-	
-	
 }());
-

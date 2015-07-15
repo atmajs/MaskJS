@@ -2,8 +2,6 @@ var ast_handlePrecedence,
 	ast_append;
 	
 (function(){
-	
-		
 	ast_append = function(current, next) {
 		switch(current.type) {
 			case type_Body:
@@ -27,8 +25,6 @@ var ast_handlePrecedence,
 		
 		return util_throw('Invalid expression');
 	};
-	
-	
 	ast_handlePrecedence = function(ast) {
 		if (ast.type !== type_Body){
 			
@@ -47,20 +43,17 @@ var ast_handlePrecedence,
 			ast_handlePrecedence(body[i]);
 		}
 	
-	
 		for(i = 1; i < length; i++){
 			x = body[i];
 			prev = body[i-1];
 	
 			if (precedence[prev.join] > precedence[x.join])
 				break;
-			
 		}
 	
 		if (i === length)
 			return;
 		
-	
 		array = [body[0]];
 		for(i = 1; i < length; i++){
 			x = body[i];
@@ -88,12 +81,9 @@ var ast_handlePrecedence,
 				x = ast_join(arr);
 				ast_handlePrecedence(x);
 			}
-	
 			array.push(x);
-		}
-	
-		ast.body = array;
-	
+		}	
+		ast.body = array;	
 	};
 
 	// = private
@@ -102,13 +92,10 @@ var ast_handlePrecedence,
 		if (bodyArr.length === 0)
 			return null;
 		
-		var body = new Ast_Body(bodyArr[0].parent);
-	
+		var body = new Ast_Body(bodyArr[0].parent);	
 		body.join = bodyArr[bodyArr.length - 1].join;
 		body.body = bodyArr;
 	
 		return body;
 	}
-
-	
 }());

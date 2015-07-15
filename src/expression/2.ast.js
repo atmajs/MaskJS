@@ -10,117 +10,155 @@ var Ast_Body,
 	Ast_UnaryPrefix,
 	Ast_TernaryStatement
 	;
-	
 
 (function(){
-	
-	Ast_Body = function(parent) {
-		this.parent = parent;
-		this.type = type_Body;
-		this.body = [];
-		this.join = null;
-	};
-	
-	Ast_Statement = function(parent) {
-		this.parent = parent;
-	};
-	
-	Ast_Statement.prototype = {
-		constructor: Ast_Statement,
+
+	Ast_Body = class_create({
+		constructor: function Ast_Body (parent) {
+			this.parent = parent;
+			this.type = type_Body;
+			this.body = [];
+			this.join = null;
+		},
+		toString: function(){
+			return this
+				.body
+				.map(function(x){
+					return x.toString()
+				})
+				.join(', ');
+		}
+	});
+
+	Ast_Statement = class_create({
+		constructor: function Ast_Statement (parent) {
+			this.parent = parent;
+		},
 		type: type_Statement,
 		join: null,
-		body: null
-	};
-	
-	Ast_Value = function(value) {
-		this.type = type_Value;
-		this.body = value;
-		this.join = null;
-	};
-	
-	Ast_Array = function(parent){
-		this.type = type_Array;
-		this.parent = parent;
-		this.body = new Ast_Body(this);
-	};
-	
-	Ast_Object = function(parent){
-		this.type = type_Object;
-		this.parent = parent;
-		this.props = {};
-	}
-	Ast_Object.prototype = {
+		body: null,
+		toString: function(){
+			return this.body && this.body.toString() || '';
+		}
+	});
+
+	Ast_Value = class_create({
+		constructor: function Ast_Value (value) {
+			this.type = type_Value;
+			this.body = value;
+			this.join = null;
+		},
+		toString: function(){
+			if (is_String(this.body)) {
+				return "'" + this.body.replace(/'/g, "\\'") + "'";
+			}
+			return this.body;
+		}
+	});
+
+	Ast_Array = class_create({
+		constructor: function Ast_Array (parent){
+			this.type = type_Array;
+			this.parent = parent;
+			this.body = new Ast_Body(this);
+		},
+		toString: function(){
+			return '[' + this.body.toString() + ']';
+		}
+	});
+
+	Ast_Object = class_create({
+		constructor: function Ast_Object (parent){
+			this.type = type_Object;
+			this.parent = parent;
+			this.props = {};
+		},
 		nextProp: function(prop){
 			var body = new Ast_Statement(this);
 			this.props[prop] = body;
 			return body;
 		},
-	};
-	
-	Ast_FunctionRef = function(parent, ref) {
-		this.parent = parent;
-		this.type = type_FunctionRef;
-		this.body = ref;
-		this.arguments = [];
-		this.next = null;
-	}
-	Ast_FunctionRef.prototype = {
-		constructor: Ast_FunctionRef,
+	});
+
+	Ast_FunctionRef = class_create({
+		constructor: function Ast_FunctionRef (parent, ref) {
+			this.parent = parent;
+			this.type = type_FunctionRef;
+			this.body = ref;
+			this.arguments = [];
+			this.next = null;
+		},
 		newArgument: function() {
 			var body = new Ast_Body(this);
 			this.arguments.push(body);
-	
 			return body;
+		},
+		toString: function(){
+			var args = this
+				.arguments
+				.map(function(x) {
+					return x.toString()
+				})
+				.join(', ');
+
+			return this.body + '(' + args + ')';
 		}
-	};
-	
-	Ast_SymbolRef = function(parent, ref) {
-		this.type = type_SymbolRef;
-		this.parent = parent;
-		this.body = ref;
-		this.next = null;
-	};
-	Ast_Accessor = function(parent, ref) {
-		this.type = type_Accessor;
-		this.parent = parent;
-		this.body = ref;
-		this.next = null;
-	};
-	Ast_AccessorExpr = function(parent){
-		this.parent = parent;
-		this.body = new Ast_Statement(this);
-		this.body.body = new Ast_Body(this.body);
-		this.next = null;
-	};
-	Ast_AccessorExpr.prototype  = {
+	});
+
+	Ast_SymbolRef = class_create({
+		constructor: function(parent, ref) {
+			this.type = type_SymbolRef;
+			this.parent = parent;
+			this.body = ref;
+			this.next = null;
+		},
+		toString: function(){
+			return this.body + (this.next == null ? '' : ('.' + this.next.toString()));
+		}
+	});
+	Ast_Accessor = class_create({
+		constructor: function(parent, ref) {
+			this.type = type_Accessor;
+			this.parent = parent;
+			this.body = ref;
+			this.next = null;
+		},
+		toString: function(){
+			return this.body + (this.next == null ? '' : ('.' + this.next.toString()));
+		}
+	});
+	Ast_AccessorExpr = class_create({
+		constructor: function(parent){
+			this.parent = parent;
+			this.body = new Ast_Statement(this);
+			this.body.body = new Ast_Body(this.body);
+			this.next = null;
+		},
 		type: type_AccessorExpr,
 		getBody: function(){
 			return this.body.body;
 		}
-	};
-	
-	
-	Ast_UnaryPrefix = function(parent, prefix) {
-		this.parent = parent;
-		this.prefix = prefix;
-	};
-	Ast_UnaryPrefix.prototype = {
-		constructor: Ast_UnaryPrefix,
+	});
+
+	Ast_UnaryPrefix = class_create({
+		constructor: function Ast_UnaryPrefix (parent, prefix) {
+			this.parent = parent;
+			this.prefix = prefix;
+		},
 		type: type_UnaryPrefix,
 		body: null
-	};
-	
-	
-	Ast_TernaryStatement = function(assertions){
-		this.body = assertions;
-		this.case1 = new Ast_Body(this);
-		this.case2 = new Ast_Body(this);
-	};
-	Ast_TernaryStatement.prototype = {
-		constructor: Ast_TernaryStatement,
+	});
+
+
+	Ast_TernaryStatement = class_create({
+		constructor: function Ast_TernaryStatement (assertions){
+			this.body = assertions;
+			this.case1 = new Ast_Body(this);
+			this.case2 = new Ast_Body(this);
+		},
 		type: type_Ternary,
 		case1: null,
 		case2: null
-	};
+	});
 
 }());
