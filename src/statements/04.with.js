@@ -6,6 +6,9 @@ custom_Statements['with'] = {
 			, ctx
 			, ctr
 		);
+		if (obj == null) {
+			warn_withNode('Value is undefined', node);
+		}
 		builder_build(
 			node.nodes
 			, obj
