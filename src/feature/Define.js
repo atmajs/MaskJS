@@ -75,7 +75,7 @@ var Define;
 					key, val;
 				for(key in obj) {
 					val = obj[key];
-					if (key === 'meta' || key === 'model' || key === 'attr') {
+					if (key === 'meta' || key === 'model' || key === 'attr' || key === 'compos') {
 						Proto[key] = obj_extend(Proto[key], val);
 						continue;
 					}
