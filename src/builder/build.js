@@ -10,18 +10,18 @@
  * @method build
  */
 builder_build = function(node, model, ctx, container, ctr, children) {
-	
+
 	if (node == null) 
 		return container;
-	
+
 	var type = node.type,
 		elements,
 		key,
 		value;
-	
+
 	if (ctr == null) 
 		ctr = new Dom.Component();
-		
+
 	if (type == null){
 		// in case if node was added manually, but type was not set			
 		if (is_ArrayLike(node)) {
@@ -35,8 +35,8 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 			type = 2;
 		}
 	}
-	
-	
+
+
 	var tagName = node.tagName;
 	if (tagName === 'else') 
 		return container;
@@ -49,17 +49,17 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		// check if custom statement exists
 		type = 15;
 	}
-	
+
 	if (container == null && type !== 1) {
 		container = document.createDocumentFragment();
 	}
-	
+
 	// Dom.TEXTNODE
 	if (type === 2) {			
 		build_textNode(node, model, ctx, container, ctr);
 		return container;
 	}
-	
+
 	// Dom.SET
 	if (type === 10) {
 		var j = 0,
@@ -102,7 +102,7 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		}
 		elements = [];
 		node = ctr;
-		
+
 		if (ctr.model !== model && ctr.model != null) {
 			model = ctr.model;
 		}
@@ -120,13 +120,13 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 				builder_build(nodes[i], model, ctx, container, ctr, elements);
 			}
 		} else {
-			
+
 			builder_build(nodes, model, ctx, container, ctr, elements);
 		}
 	}
 
 	if (type === 4) {
-		
+
 		// use or override custom attr handlers
 		// in Compo.handlers.attr object
 		// but only on a component, not a tag ctr
@@ -135,33 +135,33 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 				attrFn,
 				val,
 				key;
-				
+
 			for (key in node.attr) {
-				
+
 				val = node.attr[key];
-				
+
 				if (val == null) 
 					continue;
-				
+
 				attrFn = null;
-				
+
 				if (attrHandlers != null && is_Function(attrHandlers[key])) 
 					attrFn = attrHandlers[key];
-				
+
 				if (attrFn == null && custom_Attributes[key] != null) 
 					attrFn = custom_Attributes[key];
-				
+
 				if (attrFn != null) 
 					attrFn(node, val, model, ctx, elements[0], ctr);
 			}
 		}
-		
+
 		if (is_Function(node.renderEnd)) 
 			node.renderEnd(elements, model, ctx, container);
 	}
 
 	if (children != null && elements != null && children !== elements)
 		arr_pushMany(children, elements);
-	
+
 	return container;
 };

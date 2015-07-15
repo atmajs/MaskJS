@@ -21,7 +21,7 @@ var mask_optimize,
 			, done
 		);
 	};
-	
+
 	/**
 	 * Register custom optimizer for a node name
 	 * @param {string} tagName - Node name
@@ -30,15 +30,15 @@ var mask_optimize,
 	mask_registerOptimizer = function(tagName, fn){
 		custom_Optimizers[tagName] = fn;
 	};
-	
+
 	function getOptimizer(node) {
 		if (node.type !== Dom.NODE) 
 			return null;
-		
+
 		return custom_Optimizers[node.tagName];
 	}
-	
-	
+
+
 	/**
 	 * Returns optimized mask tree
 	 * @callback mask.optimize~onComplete

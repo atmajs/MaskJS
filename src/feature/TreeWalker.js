@@ -33,7 +33,7 @@ var mask_TreeWalker;
 			new AsyncWalker(root, fn, done);
 		}
 	};
-	
+
 	var SyncWalker,
 		SyncWalkerCompos;
 	(function(){
@@ -46,7 +46,7 @@ var mask_TreeWalker;
 		function walk(node, fn, parent, index) {
 			if (node == null) 
 				return null;
-			
+
 			var deep = true, break_ = false, mod;
 			if (isFragment(node) !== true) {
 				mod = fn(node);
@@ -74,7 +74,7 @@ var mask_TreeWalker;
 		function walkCompos(compo, fn, parent, index) {
 			if (compo == null) 
 				return;
-			
+
 			var mod = fn(compo, index);
 			if (mod !== void 0) {
 				if (mod.deep === false || mod['break'] === true) {
@@ -103,7 +103,7 @@ var mask_TreeWalker;
 			this.done = done;
 			this.root = root;
 			this.fn = fn;
-			
+
 			this.process = this.process.bind(this);
 			this.visit(this.push(root));
 		};
@@ -157,14 +157,14 @@ var mask_TreeWalker;
 			},
 			process: function(mod){
 				var deep = true, break_ = false;
-				
+
 				if (mod !== void 0) {
 					mod = new Modifier(mod);
 					mod.process(this.current());
 					deep   = mod.deep;
 					break_ = mod['break'];
 				}
-				
+
 				var next = break_ === true ? null : this.getNext(deep);
 				if (next == null) {
 					this.done(this.root);
@@ -172,7 +172,7 @@ var mask_TreeWalker;
 				}
 				this.visit(next);
 			},
-			
+
 			visit: function(step){
 				var node = step.node;
 				if (isFragment(node) === false) {
@@ -181,13 +181,13 @@ var mask_TreeWalker;
 				}
 				this.process();
 			},
-			
+
 			fn: null,
 			done: null,
 			stack: null
 		};
 	}());
-	
+
 	var Modifier;
 	(function(){
 		/**
@@ -232,15 +232,15 @@ var mask_TreeWalker;
 			}
 		};	
 	}());
-	
+
 	var Step = function (node, parent, index) {
 		this.node = node;
 		this.index = index;
 		this.parent = parent;
 	};
-	
+
 	/* UTILS */
-	
+
 	function isFragment(node) {
 		return Dom.FRAGMENT === safe_getType(node);
 	}
@@ -248,7 +248,7 @@ var mask_TreeWalker;
 		var nodes = node.nodes;
 		if (nodes == null) 
 			return null;
-		
+
 		return is_Array(nodes)
 			? (nodes)
 			: (node.nodes = [ nodes ]);
@@ -257,11 +257,11 @@ var mask_TreeWalker;
 		var type = node.type;
 		if (type != null)
 			return type;
-	
+
 		if (is_Array(node)) return Dom.FRAGMENT;
 		if (node.tagName != null) return Dom.NODE;
 		if (node.content != null) return Dom.TEXTNODE;
-	
+
 		return Dom.NODE;
 	}
 	function prepairRoot(root){
@@ -271,12 +271,12 @@ var mask_TreeWalker;
 		if (isFragment(root) === false) {
 			var fragment = new Dom.Fragment;
 			fragment.appendChild(root);
-			
+
 			root = fragment;
 		}
 		return root;
 	}
-	
+
 	/**
 	 * Is called on each node
 	 * @callback TreeWalker~SyncVisitor

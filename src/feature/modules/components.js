@@ -1,7 +1,7 @@
 (function() {
 	var IMPORT  = 'import',
 		IMPORTS = 'imports';
-		
+
 	custom_Tags['module'] = class_create({
 		constructor: function(node, model, ctx, container, ctr) {
 			var path = path_resolveUrl(node.attr.path, u_resolveLocation(ctx, ctr)),
@@ -45,7 +45,7 @@
 				});
 		}
 	});
-	
+
 	custom_Tags[IMPORTS] = class_create({
 		imports_: null,
 		load_: function(ctx, cb){
@@ -54,7 +54,7 @@
 				imax = arr.length,
 				await = imax,
 				i = -1, x;
-			
+
 			function done(error, import_) {
 				if (error == null) {
 					if (import_.registerScope) {
@@ -115,7 +115,7 @@
 			}
 			return mask_stringify(arr);
 		},
-		
+
 		getHandler: function(name){
 			var arr = this.imports_,
 				imax = arr.length,
@@ -149,5 +149,5 @@
 		},
 	});
 
-	
+
 }());

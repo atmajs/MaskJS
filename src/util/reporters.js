@@ -7,16 +7,16 @@ var throw_,
 	warn_,
 	warn_withSource,
 	warn_withNode,
-	
+
 	log,
 	log_warn,
 	log_error,
 	reporter_createErrorNode,
 	reporter_deprecated;
-	
+
 (function(){
 	(function () {
-		
+
 		if (typeof console === 'undefined') {
 			log = log_warn = log_error = function(){};
 			return;
@@ -26,32 +26,32 @@ var throw_,
 		log_warn  = bind.call(console.warn , console, 'MaskJS [Warn] :');
 		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
 	}());
-	
+
 	var STACK_SLICE = 4;
 	var MaskError = error_createClass('MaskError', {}, STACK_SLICE);
 	var MaskWarn  = error_createClass('MaskWarn',  {}, STACK_SLICE);
-	
-		
+
+
 	throw_ = function(error){
 		log_error(error);
 		listeners_emit('error', error);
 	};
-	
+
 	error_withSource = delegate_withSource(MaskError, 'error');
 	error_withNode   = delegate_withNode  (MaskError, 'error');
-	
+
 	warn_withSource = delegate_withSource(MaskWarn, 'warn');
 	warn_withNode   = delegate_withNode  (MaskWarn, 'warn');
-	
+
 	parser_error = delegate_parserReporter(MaskError, 'error');
 	parser_warn = delegate_parserReporter(MaskWarn, 'warn');
-	
+
 	reporter_createErrorNode = function(message){
 		return parser_parse(
 			'div style="background:red;color:white;">tt>"""' + message + '"""'
 		);
 	};
-	
+
 	(function(){
 		reporter_deprecated = function(id, message){
 			if (_notified[id] !== void 0) {
@@ -62,7 +62,7 @@ var throw_,
 		};
 		var _notified = {};
 	}());
-	
+
 	function delegate_parserReporter(Ctor, type) {
 		return function(str, source, index, token, state, file) {
 			var error = new Ctor(str);
@@ -94,14 +94,14 @@ var throw_,
 			error.message = error.message
 				+ '\n'
 				+ _getNodeStack(node);
-			
+
 			report(error, type);
 		};
 	}
-	
+
 	function _getNodeStack(node){
 		var stack = [ node ];
-		
+
 		var parent = node.parent;
 		while (parent != null) {
 			stack.unshift(parent);
@@ -112,16 +112,16 @@ var throw_,
 		if (root !== node && is_String(root.source) && node.sourceIndex > -1) {
 			str += error_formatSource(root.source, node.sourceIndex, root.filename) + '\n';
 		}
-		
+
 		str += '  at ' + stack
 			.map(function(x){
 				return x.tagName;
 			})
 			.join(' > ');
-			
+
 		return str;
 	}
-	
+
 	function report(error, type) {
 		if (listeners_emit(type, error)) {
 			return;
@@ -130,17 +130,17 @@ var throw_,
 		fn(error.message);
 		fn('\n' + error.stack);
 	}
-	
+
 	function formatToken(token){
 		if (token == null) 
 			return '';
-		
+
 		if (typeof token === 'number') 
 			token = String.fromCharCode(token);
-			
+
 		return ' Invalid token: `'+ token + '`';
 	}
-	
+
 	function formatState(state){
 		var states = {
 			'2': 'tag',
@@ -153,8 +153,8 @@ var throw_,
 		};
 		if (state == null || states[state] == null) 
 			return '';
-		
+
 		return ' in `' + states[state] + '`';
 	}
-	
+
 }());

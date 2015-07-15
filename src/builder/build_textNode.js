@@ -1,7 +1,7 @@
 var build_textNode;
 (function(){	
 	build_textNode = function build_textNode(node, model, ctx, el, ctr) {
-		
+
 		var content = node.content;
 		if (is_Function(content)) {		
 			var result = content(
@@ -16,10 +16,10 @@ var build_textNode;
 				jmax = result.length,
 				j = 0,
 				x;
-				
+
 			for (; j < jmax; j++) {
 				x = result[j];
-	
+
 				if (typeof x === 'object') {
 					// In this casee result[j] should be any HTMLElement
 					if (text !== '') {
@@ -42,7 +42,7 @@ var build_textNode;
 		}
 		append_textNode(el, content);
 	};
-	
+
 	var append_textNode;
 	(function(doc){
 		append_textNode = function(el, text){

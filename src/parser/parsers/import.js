@@ -1,7 +1,7 @@
 (function(){
 	var IMPORT  = 'import',
 		IMPORTS = 'imports';
-	
+
 	custom_Parsers[IMPORT] = function(str, i, imax, parent){
 		var obj = {
 			exports: null,
@@ -19,28 +19,28 @@
 		current.appendChild(imports);
 		return imports;
 	};
-	
+
 	var lex_ = ObjectLexer(
 		[ 'from "$path"?( is $contentType)'
 		, '* as $alias from "$path"?( is $contentType)'
 		, '$$exports[$name?( as $alias)](,) from "$path"?( is $contentType)'
 		]
 	);
-	
+
 	var ImportsNode = class_create(Dom.Node, {
 		stringify: function (stream) {
 			stream.process(this.nodes);
 		}
 	});
-	
+
 	var ImportNode = class_create({
 		type: Dom.COMPONENT,
 		tagName: IMPORT,
-		
+
 		path: null,
 		exports: null,
 		alias: null,
-		
+
 		constructor: function(parent, data){
 			this.path = data.path;
 			this.alias = data.alias;
@@ -50,13 +50,13 @@
 		},
 		stringify: function(){
 			var from = " from '" + this.path + "'";
-			
+
 			var type = this.contentType;
 			if (type != null) {
 				from += ' is ' + type;
 			}
 			from += ';';
-			
+
 			if (this.alias != null) {
 				return IMPORT + " * as " + this.alias + from;
 			}
@@ -80,5 +80,5 @@
 			return IMPORT + from;
 		}
 	});
-	
+
 }());

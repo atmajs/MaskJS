@@ -1,26 +1,26 @@
 var build_node;
 (function(){
 	build_node = function build_node(node, model, ctx, container, ctr, children){
-		
+
 		var tagName = node.tagName,
 			attr = node.attr;
-		
+
 		var el = el_create(tagName);
 		if (el == null) 
 			return;
-		
+
 		if (children != null){
 			children.push(el);
 			attr['x-compo-id'] = ctr.ID;
 		}
-		
+
 		// ++ insert el into container before setting attributes, so that in any
 		// custom util parentNode is available. This is for mask.node important
 		// http://jsperf.com/setattribute-before-after-dom-insertion/2
 		if (container != null) {
 			container.appendChild(el);
 		}
-		
+
 		var key, mix, val, fn;
 		for(key in attr) {
 			mix = attr[key];
@@ -42,7 +42,7 @@ var build_node;
 			} else {
 				val = mix;
 			}
-			
+
 			if (val != null && val !== '') {
 				fn = custom_Attributes[key];
 				if (fn != null) {
@@ -54,7 +54,7 @@ var build_node;
 		}
 		return el;
 	};
-	
+
 	var el_create;
 	(function(doc){
 		el_create = function(name){			

@@ -5,7 +5,7 @@ var xhr_get;
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState !== 4)
 				return;
-			
+
 			var res = xhr.responseText,
 				status = xhr.status,
 				err, errMsg;

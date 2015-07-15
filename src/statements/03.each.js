@@ -2,11 +2,11 @@
 
 	custom_Statements['each'] = {		
 		render: function(node, model, ctx, container, ctr, children){
-			
+
 			var array = expression_eval(node.expression, model, ctx, ctr);
 			if (array == null) 
 				return;
-			
+
 			builder_build(
 				getNodes(node, array)
 				, array
@@ -17,7 +17,7 @@
 			);
 		}
 	};
-	
+
 	function getNodes(node, array){
 		var imax = array.length,
 			nodes = new Array(imax),

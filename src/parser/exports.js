@@ -28,5 +28,5 @@ var parser_parse,
 	// import ./mask/partials/attributes
 	// import ./mask/partials/literal
 	// import ./mask/stringify
-	
+
 }(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));

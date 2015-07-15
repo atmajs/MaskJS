@@ -17,7 +17,7 @@
 			return [ node, end + 1, 0 ];
 		};
 	}
-	
+
 	function parseHead(name, str) {
 		var parts = /([^\(\)\n]+)\s*(\(([^\)]*)\))?/.exec(str);
 		if (parts == null) {
@@ -44,21 +44,21 @@
 		arr.push(body);			
 		return new (Function.bind.apply(Function, [null].concat(arr)));
 	}
-	
+
 	var MethodNode = class_create(Dom.Component.prototype, {
 		'name': null,
 		'body': null,
 		'args': null,
-		
+
 		'fn': null,
-		
+
 		constructor: function(tagName, name, args, body, parent){
 			this.tagName = tagName;
 			this.name = name;
 			this.args = args;
 			this.body = body;
 			this.parent = parent;
-			
+
 			var sourceUrl = null;
 			//if DEBUG
 			var ownerName = parent.tagName;
@@ -82,7 +82,7 @@
 			stream.closeBlock('}');
 		}
 	});
-	
+
 	var constructSourceUrl;
 	(function(){
 		constructSourceUrl = function (methodType, methodName, owner) {
@@ -119,7 +119,7 @@
 		};
 		var _sourceUrls = {};
 	}());
-	
+
 	custom_Parsers['slot' ]    = create('slot');
 	custom_Parsers['event']    = create('event');
 	custom_Parsers['function'] = create('function');

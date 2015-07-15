@@ -1,7 +1,7 @@
 (function(){
 	createParser('define');
 	createParser('let');
-	
+
 	function createParser (tagName) {
 		custom_Parsers[tagName] = function(str, i, imax, parent){
 			var node = new DefineNode(tagName, parent);
@@ -18,7 +18,7 @@
 		'name': null,
 		'extends': null,
 		'as': null,
-		
+
 		stringify: function(stream){
 			var extends_ = this['extends'],
 				as_ = this['as'],
@@ -36,7 +36,7 @@
 						str += ', ';
 				}
 			}
-			
+
 			var head = this.tagName + ' ' + this.name + str;
 			stream.write(head)
 			stream.openBlock('{');
@@ -44,5 +44,5 @@
 			stream.closeBlock('}');
 		},
 	});
-	
+
 }());

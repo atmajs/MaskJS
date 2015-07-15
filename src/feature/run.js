@@ -16,7 +16,7 @@ var mask_run;
 		}
 		var args = _Array_slice.call(arguments),
 			model, ctx, el, Ctor;
-		
+
 		var imax = args.length,
 			i = -1,
 			mix;
@@ -38,7 +38,7 @@ var mask_run;
 				ctx = mix;
 			}
 		}
-		
+
 		if (el == null) 
 			el = document.body;		
 		if (Ctor == null)
@@ -46,14 +46,14 @@ var mask_run;
 		if (model == null) {
 			model = {};
 		}
-		
+
 		var ctr = new Ctor(null, model, ctx, el);
 		return _run(model, ctx, el, ctr);
 	};
-	
+
 	function _run (model, ctx, container, ctr) {
 		ctr.ID = ++builder_componentID;
-		
+
 		var scripts = _Array_slice.call(document.getElementsByTagName('script')),
 			script = null,
 			found = false,
@@ -63,11 +63,11 @@ var mask_run;
 			i = -1;
 		while( ++i < imax ){
 			script = scripts[i];
-			
+
 			var scriptType = script.getAttribute('type');
 			if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask') 
 				continue;
-			
+
 			var dataRun = script.getAttribute('data-run');
 			if (dataRun == null) {
 				continue;
@@ -82,7 +82,7 @@ var mask_run;
 					continue;
 				}
 			}
-			
+
 			found = true;
 			var ctx_ = new builder_Ctx(ctx);
 			var fragment = builder_build(
@@ -95,14 +95,14 @@ var mask_run;
 			}
 			script.parentNode.insertBefore(fragment, script);
 		}
-		
+
 		if (found === false) {
 			if (_state === _state_Auto) {
 				return null;
 			}
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
-		
+
 		ready = true;		
 		if (await === 0) {
 			flush();
@@ -117,17 +117,17 @@ var mask_run;
 			}
 			Compo.signal.emitIn(ctr, 'domInsert');
 		}
-		
+
 		return ctr;
 	}
-	
+
 	function _insertDelegate(fragment, script, done) {
 		return function(){
 			script.parentNode.insertBefore(fragment, script);
 			done();
 		};
 	}
-	
+
 	if (document != null && document.addEventListener) {
 		document.addEventListener("DOMContentLoaded", function(event) {
 			if (_state !== 0)  return;
@@ -135,7 +135,7 @@ var mask_run;
 			_state = _state_Auto;			
 			_app = mask_run();
 			_state = _state_Manual;
-			
+
 			if (_app == null) return;
 			if (global.app == null) {
 				global.app = _app;
@@ -153,12 +153,12 @@ var mask_run;
 			target.push.apply(target, source);
 		});
 	}
-	
+
 	var _state_Auto = 2,
 		_state_Manual = 4,
 		_state_All = _state_Auto | _state_Manual,
 		_state = 0;
-	
+
 	function isCurrent(state) {
 		return (_state & state) === state;
 	}

@@ -35,7 +35,7 @@
 	customUtil_get = function(name) {
 		return name != null ? custom_Utils[name] : custom_Utils;
 	};
-	
+
 	function createUtil(obj) {
 		if (obj['arguments'] === 'parsed') {
 			return processParsedDelegate(obj.process);

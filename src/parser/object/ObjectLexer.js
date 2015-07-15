@@ -1,17 +1,17 @@
 var ObjectLexer;
 (function(){
-	
+
 	// import ./compile.js
 	// import ./consume.js
 	// import ./tokens.js
-	
+
 	parser_ObjectLexer = ObjectLexer = function(pattern){
 		if (arguments.length === 1 && typeof pattern === 'string') {
 			return ObjectLexer_single(pattern);
 		}
 		return ObjectLexer_sequance(Array.prototype.slice.call(arguments));
 	};
-	
+
 	function ObjectLexer_single (pattern){
 		var tokens = _compile(pattern);
 		return function(str, i, imax, out, optional){
@@ -70,5 +70,5 @@ var ObjectLexer;
 			return mix;
 		}
 	}());
-	
+
 }());

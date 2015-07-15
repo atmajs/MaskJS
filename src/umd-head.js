@@ -10,7 +10,7 @@
  */
 (function (root, factory) {
     'use strict';
-    
+
 	var _env = (typeof window === 'undefined' || window.navigator == null)
 		? 'node'
 		: 'dom';
@@ -24,7 +24,7 @@
     }
 	var _exports = root || _global;
 	var _document = _global.document;
-    
+
     function construct(){
         var mask = factory(_global, _exports, _document);
 		if (_isCommonJs) {
@@ -36,7 +36,7 @@
     if (typeof define === 'function' && define.amd) {
         return define(construct);
     }
-    
+
 	// Browser OR Node
     return construct();
 

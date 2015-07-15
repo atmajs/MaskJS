@@ -21,7 +21,7 @@ var Mask;
 				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
 			}
 			// endif
-			
+
 			var template = mix;
 			if (typeof mix === 'string') {
 				if (_Object_hasOwnProp.call(__templates, mix)){
@@ -34,7 +34,7 @@ var Mask;
 			}
 			if (ctx == null || ctx.constructor !== builder_Ctx)
 				ctx = new builder_Ctx(ctx);
-				
+
 			return builder_build(template, model, ctx, container, controller);
 		},		
 		/**
@@ -47,10 +47,10 @@ var Mask;
 		renderAsync: function(template, model, ctx, container, ctr) {
 			if (ctx == null || ctx.constructor !== builder_Ctx)
 				ctx = new builder_Ctx(ctx);
-			
+
 			var dom = this.render(template, model, ctx, container, ctr),
 				dfr = new class_Dfr;
-			
+
 			if (ctx.async === true) {
 				ctx.done(function(){
 					dfr.resolve(dom);
@@ -146,7 +146,7 @@ var Mask;
 		on: listeners_on,
 		off: listeners_off,
 
-		
+
 		// Stub for the reload.js, which will be used by includejs.autoreload
 		delegateReload: function(){},
 
@@ -158,19 +158,19 @@ var Mask;
 		 * @param {string} end - Must contain 1 Character
 		 **/
 		setInterpolationQuotes: parser_setInterpolationQuotes,
-		
+
 		setCompoIndex: function(index){
 			builder_componentID = index;
 		},
-		
+
 		cfg: mask_config,
 		config: mask_config,
-		
+
 		// For the consistence with the NodeJS
 		toHtml: function(dom) {
 			return $(dom).outerHtml();
 		},
-		
+
 		factory: function(compoName){
 			var params_ = _Array_slice.call(arguments, 1),
 				factory = params_.pop(),
@@ -192,7 +192,7 @@ var Mask;
 			});
 		}
 	};
-	
-	
+
+
 	var __templates = {};
 }());

@@ -69,7 +69,7 @@
 		'required': null,
 		'disabled': null,
 	};
-	
+
 	custom_Utils = {
 		expression: function(value, model, ctx, element, ctr){
 			return expression_eval(value, model, ctx, ctr);
@@ -82,7 +82,7 @@
 	custom_Tags_global 	= obj_extend({}, _HtmlTags);
 	custom_Parsers 		= obj_extend({}, _HtmlTags);
 	custom_Parsers_Transform = obj_extend({}, _HtmlTags);
-	
+
 	// use on server to define reserved tags and its meta info
 	custom_Tags_defs = {};
 }());

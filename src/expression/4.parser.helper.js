@@ -6,7 +6,7 @@ var parser_skipWhitespace,
 	parser_getRef,
 	parser_getDirective
 	;
-	
+
 (function(){
 	parser_skipWhitespace = function() {
 		var c;
@@ -23,7 +23,7 @@ var parser_skipWhitespace,
 			_char = c === 39 ? "'" : '"',
 			start = index,
 			nindex, string;
-	
+
 		while ((nindex = template.indexOf(_char, index)) > -1) {
 			index = nindex;
 			if (template.charCodeAt(nindex - 1) !== 92 /*'\\'*/ ) {
@@ -32,19 +32,19 @@ var parser_skipWhitespace,
 			isEscaped = true;
 			index++;
 		}
-	
+
 		string = template.substring(start, index);
 		if (isEscaped === true) {
 			string = string.replace(__rgxEscapedChar[_char], _char);
 		}
 		return string;
 	};
-	
+
 	parser_getNumber = function() {
 		var start = index,
 			code, isDouble;
 		while (true) {
-	
+
 			code = template.charCodeAt(index);
 			if (code === 46) {
 				// .
@@ -62,13 +62,13 @@ var parser_skipWhitespace,
 		}
 		return +template.substring(start, index);
 	};
-	
-	
+
+
 	parser_getRef = function() {
 		var start = index,
 			c = template.charCodeAt(index),
 			ref;
-	
+
 		if (c === 34 || c === 39) {
 			// ' | "
 			index++;
@@ -76,14 +76,14 @@ var parser_skipWhitespace,
 			index++;
 			return ref;
 		}
-	
+
 		while (true) {
-			
+
 			if (index === length) 
 				break;
-			
+
 			c = template.charCodeAt(index);
-			
+
 			if (c === 36 || c === 95) {
 				// $ _
 				index++;
@@ -100,11 +100,11 @@ var parser_skipWhitespace,
 		}
 		return template.substring(start, index);
 	};
-	
+
 	parser_getDirective = function(code) {
 		if (code == null && index === length) 
 			return null;
-		
+
 		switch (code) {
 			case 40:
 				// (
@@ -148,7 +148,7 @@ var parser_skipWhitespace,
 			case 37:
 				// %
 				return op_Modulo;
-	
+
 			case 61:
 				// =
 				if (template.charCodeAt(++index) !== code) {
@@ -167,13 +167,13 @@ var parser_skipWhitespace,
 				if (template.charCodeAt(index + 1) === 61) {
 					// =
 					index++;
-					
+
 					if (template.charCodeAt(index + 1) === 61) {
 						// =
 						index++;
 						return op_LogicalNotEqual_Strict;
 					}
-					
+
 					return op_LogicalNotEqual;
 				}
 				return op_LogicalNot;
@@ -216,7 +216,7 @@ var parser_skipWhitespace,
 				// :
 				return punc_Colon;
 		}
-	
+
 		if ((code >= 65 && code <= 90) ||
 			(code >= 97 && code <= 122) ||
 			(code === 95) ||
@@ -224,17 +224,17 @@ var parser_skipWhitespace,
 			// A-Z a-z _ $
 			return go_ref;
 		}
-	
+
 		if (code >= 48 && code <= 57) {
 			// 0-9 .
 			return go_number;
 		}
-	
+
 		if (code === 34 || code === 39) {
 			// " '
 			return go_string;
 		}
-	
+
 		util_throw(
 			'Unexpected or unsupported directive', code
 		);

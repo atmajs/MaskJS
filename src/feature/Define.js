@@ -17,7 +17,7 @@ var Define;
 			);
 		}
 	};
-	
+
 	function compo_prototype(compoName, tagName, attr, nodes, owner, model, Base) {
 		var arr = [];
 		var Proto = obj_extend({
@@ -37,7 +37,7 @@ var Define;
 			},
 			getHandler: null
 		}, Base);
-		
+
 		var imax = nodes == null ? 0 : nodes.length,
 			i = 0, x, name;
 		for(; i < imax; i++) {
@@ -101,7 +101,7 @@ var Define;
 		var args = [];
 		if (extends_ == null) 
 			return args;
-		
+
 		var imax = extends_.length,
 			i = -1,
 			await = 0, x;
@@ -113,7 +113,7 @@ var Define;
 					args.unshift(compo);
 					continue;
 				}
-				
+
 				var obj = expression_eval(x.compo, model, null, ctr);
 				if (obj != null) {
 					args.unshift(obj);
@@ -125,7 +125,7 @@ var Define;
 		}
 		return args;
 	}
-	
+
 	function compo_fromNode(node, model, ctr, Base) {
 		var extends_ = node['extends'],
 			as_ = node['as'],
@@ -136,16 +136,16 @@ var Define;
 			tagName = x.tagName;
 			attr = obj_extend(node.attr, x.attr);
 		}
-		
+
 		var name = node.name,
 			Proto = compo_prototype(name, tagName, attr, node.nodes, ctr, model, Base),
 			args = compo_extends(extends_, model, ctr)
 			;
-		
+
 		args.push(Proto);
 		return Compo.apply(null, args);
 	}
-	
+
 	function trav_location(ctr) {
 		while(ctr != null) {
 			if (ctr.location) {

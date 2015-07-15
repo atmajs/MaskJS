@@ -1,11 +1,11 @@
 (function () {
-	
+
 	var defaultOptions = {
 		minify: true,
 		indent: 4,
 		indentChar: ' '
 	};
-	
+
 	/**
 	 * Serialize Mask AST to the Mask string (@analog to `JSON.stringify`)
 	 * @param {MaskNode} node - MaskNode
@@ -20,10 +20,10 @@
 	mask_stringify = function(input, opts) {
 		if (input == null) 
 			return '';
-		
+
 		if (typeof input === 'string') 
 			input = parser_parse(input);
-		
+
 		if (opts == null) {
 			opts = obj_create(defaultOptions);
 		} else  if (typeof opts === 'number'){
@@ -40,28 +40,28 @@
 				opts.indent = 0;
 			}
 		}
-		
+
 		return new Stream(input, opts).toString();
 	};
-	
+
 	mask_stringifyAttr = function(attr){
 		var str = '',
 			key, x, part;
 		for (key in attr) {
 			x = getString(attr[key]);
-			
+
 			if (str.length !== 0) {
 				str += ' ';
 			}
 			str += key;
-			
+
 			if (x !== key) {
 				str += "=" + wrapString(x);
 			} 
 		}
 		return str;
 	};
-	
+
 	var Stream = class_create({
 		string: '',
 		indent: 0,
@@ -113,9 +113,9 @@
 				stream.write(wrapString(node.content()));
 				return;
 			}
-			
+
 			this.processHead(node);
-			
+
 			if (isEmpty(node)) {
 				stream.print(';');
 				return;
@@ -126,7 +126,7 @@
 				stream.closeBlock(null);
 				return;
 			}
-			
+
 			stream.openBlock('{');
 			stream.process(node.nodes);
 			stream.closeBlock('}');
@@ -136,7 +136,7 @@
 				str = '',
 				id, cls, expr
 				;
-			
+
 			var attr = node.attr;
 			if (attr != null) {
 				id  = getString(attr['id']);
@@ -150,7 +150,7 @@
 				if (cls != null) {
 					str += format_Classes(cls);
 				}
-				
+
 				for(var key in attr) {
 					if (key === 'id' && id != null) {
 						continue;
@@ -162,12 +162,12 @@
 					if (val == null) {
 						continue;
 					}
-					
+
 					str += ' ' + key;
 					if (val === key) {
 						continue;
 					}
-					
+
 					if (is_Function(val)) {
 						val = val();
 					}
@@ -176,15 +176,15 @@
 							val = wrapString(val);
 						}
 					}
-					
+
 					str += '=' + val;
 				}
 			}
-			
+
 			if (isTagNameOptional(node, id, cls) === false) {
 				str = node.tagName + str;
 			}
-			
+
 			var expr = node.expression;
 			if (expr != null) {
 				if (typeof expr === 'function') {
@@ -195,13 +195,13 @@
 				}
 				str += '(' + expr + ')';
 			}
-			
+
 			if (this.minify === false) {
 				str = doindent(this.indent, this.indentStr) + str;
 			}
 			stream.print(str);
 		},
-		
+
 		newline: function(){
 			if (this.minify === false) {
 				this.string += '\n';
@@ -234,7 +234,7 @@
 			this.string += str;
 		}
 	});
-	
+
 	function doindent(count, c) {
 		var output = '';
 		while (count--) {
@@ -272,24 +272,24 @@
 	function getSingle(node) {
 		if (is_ArrayLike(node.nodes)) 
 			return node.nodes[0];
-		
+
 		return node.nodes;
 	}
 
 	function wrapString(str) {
 		if (str.indexOf("'") === -1) 
 			return "'" + str + "'";
-		
+
 		if (str.indexOf('"') === -1) 
 			return '"' + str + '"';
-		
+
 		return '"' + str.replace(/"/g, '\\"') + '"';
 	}
 
 	function getString(mix) {
 		return mix == null ? null : (is_Function(mix) ? mix() : mix);
 	}
-	
+
 	var format_Classes;
 	(function() {
 		var C = '[';
@@ -309,12 +309,12 @@
 				last = i;
 				i = cursor_groupEnd(cls, i + 2, imax, 91 /*[*/, 93 /*]*/) + 1;
 				str += '.' + cls.substring(last, i);
-				
+
 				last = i + 1;
 				i = cls.indexOf(C, last);
 			}
 			while (i < imax && i !== -1);
-			
+
 			if (last < imax - 1) {
 				str += raw(cls.substring(last));
 			}

@@ -19,7 +19,7 @@
 		if (Ctor !== Resolver) {
 			return Ctor;
 		}
-		
+
 		var ctr_ = is_Function(ctr) ? ctr.prototype : ctr;
 		while(ctr_ != null) {
 			if (is_Function(ctr_.getHandler)) {
@@ -43,7 +43,7 @@
 		if (ctr == null) {
 			return custom_Tags;
 		}
-		
+
 		var obj = {},
 			ctr_ = ctr, x;
 		while (ctr_ != null) {
@@ -91,7 +91,7 @@
 				: custom_Tags
 				;
 		Repo[mix] = Ctor;	
-		
+
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};
@@ -123,7 +123,7 @@
 				}
 				dfr.resolve(exports.__handlers__);
 			});
-		
+
 		return dfr;
 	};
 	/**
@@ -148,12 +148,12 @@
 			map = obj.__handlers__ = {};
 		}
 		map[name] = compo_ensureCtor(Handler);
-		
+
 		if (obj.getHandler == null) {
 			obj.getHandler = customTag_Compo_getHandler;
 		}
 	};
-	
+
 	/** Variations:
 	 * - 1. (template)
 	 * - 2. (scopedCompoName, template)
@@ -162,11 +162,11 @@
 	 * - 5. (scopedCtr, name, Ctor)
 	 * - 6. (scopedCompoName, name, Ctor)
 	 */
-	
+
 	function is_Compo(val) {
 		return is_Object(val) || is_Function(val);
 	}
-	
+
 	/**
 	 * Universal component definition, which covers all the cases: simple, scoped, template
 	 * - 1. (template)
@@ -213,27 +213,27 @@
 			}
 		}
 	]);
-	
-	
+
+
 	customTag_registerResolver = function(name){
 		var Ctor = custom_Tags[name];
 		if (Ctor === Resolver) 
 			return;
-		
+
 		if (Ctor != null) 
 			custom_Tags_global[name] = Ctor;
-		
+
 		custom_Tags[name] = Resolver;
-		
+
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
 	};
-	
+
 	customTag_Compo_getHandler = function (name) {
 		var map = this.__handlers__;
 		return map == null ? null : map[name];
 	};
-	
+
 	customTag_Base = {
 		async: false,
 		attr: null,
@@ -252,7 +252,7 @@
 		tagName: null,
 		type: null,
 	};
-	
+
 	var Resolver;
 	(function(){
 		customTag_Resolver = Resolver = function (node, model, ctx, container, ctr) {
@@ -267,7 +267,7 @@
 			return null;
 		};
 	}());
-	
+
 	function wrapStatic(proto) {
 		function Ctor(node, parent) {
 			this.ID = null;
@@ -282,9 +282,9 @@
 		Ctor.prototype = proto;
 		return Ctor;
 	}
-	
-	
-	
+
+
+
 	function compo_ensureCtor(Handler) {
 		if (is_Object(Handler)) {
 			//> static
@@ -292,5 +292,5 @@
 		}
 		return Handler;
 	}
-	
+
 }());

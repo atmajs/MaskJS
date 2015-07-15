@@ -1,24 +1,24 @@
 var tools_getDependencies;
 (function() {
-		
+
 	tools_getDependencies = function(template, path, opts_){
-		
+
 		var opts = obj_extendDefaults(opts_, defaultOptions);
 		var dfr = new class_Dfr;
 		var ast = typeof template === 'string'
 			? parser_parse(template)
 			: template
 			;
-		
+
 		return get(ast, path, opts, dfr);
 	};
-	
-	
+
+
 	var defaultOptions = {
 		deep: true,
 		flattern: false
 	};
-	
+
 	function get(ast, path, opts, dfr) {
 		walk(ast, path, opts, function(error, dep){
 			if (error) return dfr.reject(error);
@@ -29,7 +29,7 @@ var tools_getDependencies;
 		});
 		return dfr;
 	}
-	
+
 	function walk(ast, path, opts, done) {
 		var location = path_getDir(path);
 		var dependency = {
@@ -38,9 +38,9 @@ var tools_getDependencies;
 			style: [],
 			script: [],
 		};
-		
+
 		mask_TreeWalker.walkAsync(ast, visit, complete);
-		
+
 		function visit (node, next){
 			if (node.tagName !== 'import') {
 				return next();
@@ -61,7 +61,7 @@ var tools_getDependencies;
 				});
 				return;
 			}
-			
+
 			dependency[type].push(path);
 			next();
 		}
@@ -69,13 +69,13 @@ var tools_getDependencies;
 			done(null, dependency);
 		}
 	}
-	
+
 	function getMask(path, opts, done){
 		var dep = {
 			path: path,
 			dependencies: null
 		};
-		
+
 		_file_get(path)
 			.done(function(template){
 				walk(parser_parse(template), path, opts, function(error, deps){
@@ -100,7 +100,7 @@ var tools_getDependencies;
 		}
 		return path_normalize(path);
 	}
-	
+
 	var flattern;
 	(function () {
 		flattern = function (deps) {
@@ -111,7 +111,7 @@ var tools_getDependencies;
 				script: resolve(deps, 'script'),
 			};
 		};
-		
+
 		function resolve(deps, type) {
 			return distinct(get(deps, type, []));
 		}
@@ -151,5 +151,5 @@ var tools_getDependencies;
 			return stack;
 		}
 	}());
-	
+
 }());

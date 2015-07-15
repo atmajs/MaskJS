@@ -1,5 +1,5 @@
 (function(){
-	
+
 	/**
 	 * Parse **Mask** template to the AST tree
 	 * @param {string} template - Mask Template
@@ -23,14 +23,14 @@
 			c, // charCode
 			start,
 			nextC;
-		
+
 		fragment.source = template;
 		outer: while (true) {
-			
+
 			while (index < length && (c = template.charCodeAt(index)) < 33) {
 				index++;
 			}
-	
+
 			// COMMENTS
 			if (c === 47) {
 				// /
@@ -56,7 +56,7 @@
 					continue;
 				}
 			}
-	
+
 			if (last === state_attr) {
 				if (classNames != null) {
 					current.attr['class'] = parser_ensureTemplateFunction(classNames);
@@ -68,30 +68,30 @@
 					token = null;
 				}
 			}
-	
+
 			if (token != null) {
-	
+
 				if (state === state_attr) {
-	
+
 					if (key == null) {
 						key = token;
 					} else {
 						value = token;
 					}
-	
+
 					if (key != null && value != null) {
 						if (key !== 'class') {
 							current.attr[key] = value;
 						} else {
 							classNames = classNames == null ? value : classNames + ' ' + value;
 						}
-	
+
 						key = null;
 						value = null;
 					}
-	
+
 				} else if (last === state_tag) {
-	
+
 					//next = custom_Tags[token] != null
 					//	? new Component(token, current, custom_Tags[token])
 					//	: new Node(token, current);
@@ -106,14 +106,14 @@
 						);
 						var node = tuple[0],
 							nextState = tuple[2];
-							
+
 						index = tuple[1];
 						state = nextState === 0
 							? go_tag
 							: nextState;
 						if (node != null) {
 							node.sourceIndex = tokenIndex;
-							
+
 							var transform = custom_Parsers_Transform[token];
 							if (transform != null) {
 								var x = transform(current, node);
@@ -123,7 +123,7 @@
 									current = x;
 								}
 							}
-							
+
 							current.appendChild(node);
 							if (nextState !== 0) {
 								current = node;
@@ -138,32 +138,32 @@
 						token = null;
 						continue;
 					}
-					
-					
+
+
 					next = new Node(token, current);
 					next.sourceIndex = tokenIndex;
-					
+
 					current.appendChild(next);
 					current = next;
 					state = state_attr;
-	
+
 				} else if (last === state_literal) {
-	
+
 					next = new TextNode(token, current);
 					current.appendChild(next);
-					
+
 					if (current.__single === true) {
 						do {
 							current = current.parent;
 						} while (current != null && current.__single != null);
 					}
 					state = go_tag;
-	
+
 				}
-	
+
 				token = null;
 			}
-	
+
 			if (index >= length) {
 				if (state === state_attr) {
 					if (classNames != null) {
@@ -176,7 +176,7 @@
 				c = null;
 				break;
 			}
-	
+
 			if (state === go_up) {
 				current = current.parent;
 				while (current != null && current.__single != null) {
@@ -192,7 +192,7 @@
 				}
 				state = go_tag;
 			}
-	
+
 			switch (c) {
 			case 123:
 				// {
@@ -235,13 +235,13 @@
 					last = state = state_literal;
 				}
 				index++;
-	
+
 				var isEscaped = false,
 					isUnescapedBlock = false,
 					_char = c === 39 ? "'" : '"';
-	
+
 				start = index;
-	
+
 				while ((index = template.indexOf(_char, index)) > -1) {
 					if (template.charCodeAt(index - 1) !== 92 /*'\\'*/ ) {
 						break;
@@ -253,7 +253,7 @@
 					parser_warn('Literal has no ending', template, start - 1);
 					index = length;
 				}
-				
+
 				if (index === start) {
 					nextC = template.charCodeAt(index + 1);
 					if (nextC === 124 || nextC === c) {
@@ -261,44 +261,44 @@
 						isUnescapedBlock = true;
 						start = index + 2;
 						index = template.indexOf((nextC === 124 ? '|' : _char) + _char + _char, start);
-	
+
 						if (index === -1) 
 							index = length;
 					}
 				}
-	
+
 				tokenIndex = start;
 				token = template.substring(start, index);
-				
+
 				if (isEscaped === true) {
 					token = token.replace(__rgxEscapedChar[_char], _char);
 				}
-				
+
 				if (state !== state_attr || key !== 'class') {
 					token = parser_ensureTemplateFunction(token);
 				}
 				index += isUnescapedBlock ? 3 : 1;
 				continue;
 			}
-	
+
 			if (state === go_tag) {
 				last = state_tag;
 				state = state_tag;
 				//next_Type = Dom.NODE;
-				
+
 				if (c === 46 /* . */ || c === 35 /* # */ ) {
 					tokenIndex = index;
 					token = 'div';
 					continue;
 				}
-				
+
 				//-if (c === 58 || c === 36 || c === 64 || c === 37) {
 				//	// : /*$ @ %*/
 				//	next_Type = Dom.COMPONENT;
 				//}
-				
+
 			}
-	
+
 			else if (state === state_attr) {
 				if (c === 46) {
 					// .
@@ -306,25 +306,25 @@
 					key = 'class';
 					state = go_attrHeadVal;
 				}
-				
+
 				else if (c === 35) {
 					// #
 					index++;
 					key = 'id';
 					state = go_attrHeadVal;
 				}
-				
+
 				else if (c === 61) {
 					// =;
 					index++;
 					state = go_attrVal;
-					
+
 					if (last === state_tag && key == null) {
 						parser_warn('Unexpected tag assignment', template, index, c, state);
 					}
 					continue;
 				}
-				
+
 				else if (c === 40) {
 					// (
 					start = 1 + index;
@@ -333,9 +333,9 @@
 					current.type = Dom.STATEMENT;
 					continue;
 				}
-				
+
 				else {
-	
+
 					if (key != null) {
 						tokenIndex = index;
 						token = key;
@@ -343,23 +343,23 @@
 					}
 				}
 			}
-	
+
 			if (state === go_attrVal || state === go_attrHeadVal) {
 				last = state;
 				state = state_attr;
 			}
-	
-	
-	
+
+
+
 			/* TOKEN */
-	
+
 			var isInterpolated = false;
-	
+
 			start = index;
 			while (index < length) {
-	
+
 				c = template.charCodeAt(index);
-	
+
 				if (c === interp_code_START) {
 					var nextC = template.charCodeAt(index + 1);
 					if (nextC === interp_code_OPEN) {
@@ -383,7 +383,7 @@
 					index = cursor_groupEnd(template, index + 2, length, 91, 93) + 1;
 					c = template.charCodeAt(index);
 				}
-	
+
 				// if DEBUG
 				if (c === 0x0027 || c === 0x0022 || c === 0x002F || c === 0x003C || c === 0x002C) {
 					// '"/<,
@@ -391,14 +391,14 @@
 					break outer;
 				}
 				// endif
-	
-	
+
+
 				if (last !== go_attrVal && (c === 46 || c === 35)) {
 					// .#
 					// break on .# only if parsing attribute head values
 					break;
 				}
-	
+
 				if (c < 33 ||
 					c === 61 ||
 					c === 62 ||
@@ -411,14 +411,14 @@
 				}
 				index++;
 			}
-	
+
 			token = template.substring(start, index);
 			tokenIndex = start;
 			if (token === '') {
 				parser_warn('String expected', template, index, c, state);
 				break;
 			}
-			
+
 			if (isInterpolated === true) {
 				if (state === state_tag) {
 					parser_warn('Invalid interpolation (in tag name)'
@@ -444,7 +444,7 @@
 				}
 			}
 		}
-	
+
 		if (c !== c) {
 			parser_warn('IndexOverflow'
 				, template
@@ -453,7 +453,7 @@
 				, state
 			);
 		}
-	
+
 		// if DEBUG
 		var parent = current.parent;
 		if (parent != null &&
@@ -464,14 +464,14 @@
 			parser_warn('Tag was not closed: ' + current.tagName, template)
 		}
 		// endif
-	
-		
+
+
 		var nodes = fragment.nodes;
 		return nodes != null && nodes.length === 1
 			? nodes[0]
 			: fragment
 			;
 	};
-	
-	
+
+
 }());

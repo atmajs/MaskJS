@@ -2,7 +2,7 @@ var file_get,
 	file_getScript,
 	file_getStyle,
 	file_getJson;
-	
+
 (function(){
 	file_get = function(path, ctr){
 		return get(xhr_get, path, ctr);
@@ -16,7 +16,7 @@ var file_get,
 	file_getJson = function(path, ctr){
 		return get(json_get, path, ctr);
 	};
-	
+
 	function get(fn, path, ctr) {
 		path = path_resolveUrl(path, ctr);
 
@@ -28,10 +28,10 @@ var file_get,
 		fn(path, dfr.pipeCallback());
 		return dfr;
 	}
-	
+
 	var Cache = {};
-	
-	
+
+
 	// import transports/json
 
 	// if BROWSER

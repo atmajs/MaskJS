@@ -24,8 +24,8 @@
 			);
 		};
 	};
-	
-	
+
+
 	parser_setInterpolationQuotes = function(start, end) {
 		if (!start || start.length !== 2) {
 			log_error('Interpolation Start must contain 2 Characters');
@@ -39,13 +39,13 @@
 		interp_code_START = start.charCodeAt(0);
 		interp_code_OPEN = start.charCodeAt(1);
 		interp_code_CLOSE = end.charCodeAt(0);
-		
+
 		interp_START = start[0];
 		interp_OPEN = start[1];
 		interp_CLOSE = end;
 	};
-	
-	
+
+
 	function _split (template) {
 		var index = -1,
 			wasEscaped = false,
@@ -70,28 +70,28 @@
 			}
 			index++;
 		}
-	
+
 		if (index === -1) {
 			if (wasEscaped === true) {
 				return _escape(template);
 			}
 			return null;
 		}
-		
+
 		var length = template.length,
 			array = [],
 			lastIndex = 0,
 			i = 0,
 			end;
-	
+
 		var propAccessor = false;
 		while (true) {
-			
+
 			array[i++] = lastIndex === index
 				? ''
 				: _slice(template, lastIndex, index);
-			
-			
+
+
 			nextI = index + 1;
 			nextC = template.charCodeAt(nextI);
 			if (nextC === interp_code_OPEN) {
@@ -107,11 +107,11 @@
 				array[i++] = new InterpolationModel(null, str);
 				lastIndex = index = end + 1;
 			}
-			
+
 			else if (_char_isSimpleInterp(nextC)) {
 				propAccessor = true;
 				end = _cursor_propertyAccessorEnd(template, nextI, length);
-				
+
 				var str = template.substring(index + 1, end);
 				array[i++] = new InterpolationModel(str, null);
 				lastIndex = index = end;		
@@ -120,7 +120,7 @@
 				array[i] += template[nextI];
 				lastIndex = nextI;
 			}
-			
+
 			while ((index = template.indexOf(interp_START, index)) !== -1) {
 				nextC = template.charCodeAt(index + 1);
 				var escaped = _char_isEscaped(template, index);
@@ -148,7 +148,7 @@
 		}
 		return array;
 	}
-	
+
 	function _char_isSimpleInterp (c) {
 		//A-z$_
 		return (c >= 65 && c <= 122) || c === 36 || c === 95;
@@ -165,7 +165,7 @@
 		}
 		return false;
 	}
-	
+
 	function _slice(string, start, end) {
 		var str = string.substring(start, end);
 		var i = str.indexOf(interp_START)
@@ -174,11 +174,11 @@
 		}
 		return _escape(str);
 	}
-	
+
 	function _escape(str) {
 		return str.replace(/\\~/g, '~');
 	}
-	
+
 	function InterpolationModel(prop, expr){
 		this.prop = prop;
 		this.expr = expr;
@@ -205,7 +205,7 @@
 		if (util == null || util === '') {
 			util = 'expression';
 		}
-		
+
 		var fn = custom_Utils[util];
 		if (fn == null) {
 			log_error('Undefined custom util:', util);
@@ -213,7 +213,7 @@
 		}
 		return fn(expr, model, ctx, el, ctr, name, type);
 	};
-	
+
 	/**
 	 * If we rendere interpolation in a TextNode, then custom util can return not only string values,
 	 * but also any HTMLElement, then TextNode will be splitted and HTMLElements will be inserted within.
@@ -251,13 +251,13 @@
 			}
 			even = !even;
 		}
-	
+
 		return array == null
 			? string
 			: array
 			;
 	}
-	
+
 	function _cursor_propertyAccessorEnd(str, i, imax) {
 		var c;
 		while (i < imax){
@@ -277,6 +277,6 @@
 		}
 		return i;
 	}
-	
+
 	var rgx_UTIL = /\s*(\w+):/;
 }());

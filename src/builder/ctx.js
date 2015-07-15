@@ -1,5 +1,5 @@
 (function(){
-	
+
 	builder_Ctx = class_create(class_Dfr, {
 		constructor: function(data){
 			obj_extend(this, data);
@@ -8,16 +8,16 @@
 		async: false,
 		// List of busy components
 		defers: null /*Array*/,
-		
+
 		// NodeJS
 		// Track components ID
 		_id: null,
 		// ModelsBuilder for HTML serialization
 		_models: null,
-		
+
 		// ModulesBuilder fot HTML serialization
 		_modules: null,
-		
+
 		_redirect: null,
 		_rewrite: null
 	});

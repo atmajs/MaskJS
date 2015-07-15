@@ -8,10 +8,10 @@ var script_get;
 			.fail(function(err){
 				cb(err);
 			});
-			
+
 		ScriptStack.load(res);
 	};
-	
+
 	var Resource = class_create(class_Dfr, {
 		exports: null,
 		url: null,
@@ -25,7 +25,7 @@ var script_get;
 			}
 			this.state = 1;
 			global.module = {};
-			
+
 			var self = this;
 			embedScript(this.url, function(event){
 				self.state = 4;
@@ -46,24 +46,24 @@ var script_get;
 				process();
 			}
 		};
-		
+
 		var _stack = [];
-		
+
 		function process() {
 			if (_stack.length === 0) 
 				return;
-			
+
 			var res = _stack[0];
 			if (res.state !== 0) 
 				return;
-			
+
 			res.load().always(function(){
 				_stack.shift();
 				process();
 			});
 		}
 	})();
-	
+
 	var embedScript;
 	(function(){
 		embedScript = function (url, callback) {
@@ -84,6 +84,6 @@ var script_get;
 		};
 		var _head;
 	}());
-	
-	
+
+
 }());

@@ -2,9 +2,9 @@ var _file_get,
 	_file_getScript,
 	_file_getStyle,
 	_file_getJson;
-	
+
 (function(){
-	
+
 	_file_get = createTransport(function(){
 		return __cfg.getFile || file_get;
 	});
@@ -17,8 +17,8 @@ var _file_get,
 	_file_getJson = createTransport(function(){
 		return __cfg.getData || file_getJson;
 	});
-	
-	
+
+
 	listeners_on('config', function (config) {
 		var modules = config.modules;
 		if (modules == null) {
@@ -31,7 +31,7 @@ var _file_get,
 		}
 		fn();
 	});
-	
+
 	function createTransport(loaderFactoryFn) {
 		return function(path_){
 			var fn = loaderFactoryFn(),
@@ -43,7 +43,7 @@ var _file_get,
 			return fn(path);
 		};
 	}
-	
+
 	var Loaders = {
 		'default': function () {
 			__cfg.getScript = __cfg.getFile = null;
@@ -51,7 +51,7 @@ var _file_get,
 		'include': function () {
 			__cfg.getScript = getter('js');
 			__cfg.getFile   = getter('load');
-			
+
 			var lib = include;
 			function getter(name) {
 				return function(path){
@@ -60,7 +60,7 @@ var _file_get,
 							var exports = name === 'js'
 								? resp.Module
 								: resp[name].Module;
-							
+
 							resolve(exports);
 						});
 					});
@@ -68,7 +68,7 @@ var _file_get,
 			}
 		}
 	};
-	
+
 	if (typeof include !== 'undefined' && is_Function(include && include.js)) {
 		mask_config('modules', 'include');
 	}

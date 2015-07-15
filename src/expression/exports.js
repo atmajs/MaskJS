@@ -23,7 +23,7 @@ var expression_eval,
 	expression_evalStatements = expression_evaluateStatements;
 	ExpressionUtil = {
 		'parse': expression_parse,
-		
+
 		/**
 		 * Expression.eval(expression [, model, cntx, controller]) -> result
 		 * - expression (String): Expression, only accessors are supoorted
@@ -45,7 +45,7 @@ var expression_eval,
 		 **/
 		'eval': expression_evaluate,
 		'varRefs': refs_extractVars,
-		
+
 		// Return all values of a comma delimiter expressions
 		// like argumets: ' foo, bar, "4,50" ' => [ %fooValue, %barValue, "4,50" ]
 		'evalStatements': expression_evaluateStatements

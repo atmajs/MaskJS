@@ -1,6 +1,6 @@
 (function () {
 	var state_closeTag = 21;
-	
+
 	/**
 	 * Parse **Html** template to the AST tree
 	 * @param {string} template - Html Template
@@ -17,17 +17,17 @@
 			token,
 			c, // charCode
 			start;
-	
+
 		outer: while (i <= imax) {
 			i = cursor_skipWhitespace(str, i, imax);
-			
+
 			if (state === state_attr) {
 				i = parser_parseAttrObject(str, i, imax, current.attr);
 				if (i === imax) {
 					break;
 				}
 				handleNodeAttributes(current);
-				
+
 				switch (char_(str, i)) {
 					case 47:  // /
 						current = current.parent;
@@ -55,7 +55,7 @@
 					}
 					i += 7; //</mask> @TODO proper </mask> search
 				}
-				
+
 				state = state_literal;
 				continue outer;
 			}
@@ -86,11 +86,11 @@
 					i++;
 					i = cursor_skipWhitespace(str, i, imax);
 				}
-				
+
 				start = i;
 				i = cursor_tokenEnd(str, i + 1, imax);
 				token = str.substring(start, i);
-				
+
 				if (state === state_closeTag) {
 					current = tag_Close(current, token.toLowerCase());
 					state   = state_literal;
@@ -103,7 +103,7 @@
 				state = state_attr;
 				continue;
 			}
-			
+
 			// LITERAL
 			start = i;
 			token = '';
@@ -146,17 +146,17 @@
 				current.appendChild(new TextNode(token, current));
 			}
 		}
-		
-			
-		
+
+
+
 		var nodes = fragment.nodes;
 		return nodes != null && nodes.length === 1
 			? nodes[0]
 			: fragment
 			;
 	};
-	
-	
+
+
 	function char_(str, i) {
 		return str.charCodeAt(i);
 	}
@@ -225,10 +225,10 @@
 		}
 		return str.substring(start, i);
 	}
-	
+
 	var entity_toChar;
 	(function (d) {
-		
+
 		//if BROWSER
 		if (d == null) {
 			return;
@@ -239,7 +239,7 @@
 			return i.textContent;
 		};
 		//endif
-		
+
 		// if NODE
 		var HtmlEntities;
 		entity_toChar = function(ent){
@@ -250,7 +250,7 @@
 		};
 		// endif
 	}(document));
-	
+
 	var SINGLE_TAGS = {
 		area  : 1,
 		base  : 1,
@@ -303,13 +303,13 @@
 			optgroup: { optgroup:1 }
 		};
 	}());
-	
+
 	function tag_Close(current, name) {
 		if (SINGLE_TAGS[name] === 1) {
 			// donothing
 			return current;
 		}
-		
+
 		var x = current;
 		while(x != null) {
 			if (x.tagName != null && x.tagName.toLowerCase() === name) {
@@ -331,12 +331,12 @@
 				node = node.parent;
 			}
 		}
-		
+
 		var next = new Node(name, node);
 		node.appendChild(next);
 		return next;
 	}
-	
+
 	function handleNodeAttributes(node) {
 		var obj = node.attr,
 			key, val;
@@ -351,7 +351,7 @@
 			node.type = Dom.STATEMENT;
 		}
 	}
-	
+
 	function _appendMany(node, nodes) {
 		arr_each(nodes, function(x){
 			node.appendChild(x)

@@ -1,7 +1,7 @@
 var Dom;
 
 (function(){
-	
+
 	var dom_NODE = 1,
 		dom_TEXTNODE = 2,
 		dom_FRAGMENT = 3,
@@ -10,13 +10,13 @@ var Dom;
 		dom_SET = 10,
 		dom_STATEMENT = 15
 		;
-	
+
 	// import 1.utils.js
 	// import 2.Node.js
 	// import 3.TextNode.js
 	// import 4.Component.js
 	// import 5.Fragment.js
-	
+
 	/**
 	 * Dom
 	 * @type {object}
@@ -30,7 +30,7 @@ var Dom;
 		CONTROLLER: dom_CONTROLLER,
 		SET: dom_SET,
 		STATEMENT: dom_STATEMENT,
-	
+
 		Node: Node,
 		TextNode: TextNode,
 		Fragment: Fragment,

@@ -5,7 +5,7 @@ var _compile;
 			i = 0;
 			imax = str.length;
 		}
-		
+
 		var tokens = [],
 			c, optional, ref, start;
 		outer: for(; i < imax; i++) {
@@ -38,14 +38,14 @@ var _compile;
 						start = ++i;
 					}
 					i = cursor_tokenEnd(str, i, imax);
-					
+
 					var name = str.substring(start, i);
 					if (optional === false && isExtended === false) {
 						tokens.push(new token_Var(name));
 						i--;
 						continue;
 					}
-					
+
 					c = str.charCodeAt(i);
 					if (c === 91 /*[*/) {
 						i = compileArray(name, tokens, str, i, imax, optional);
@@ -61,7 +61,7 @@ var _compile;
 					}
 					throw_('Unexpected extended type');
 					continue;
-				
+
 				case 40 /*(*/:
 					if (optional === true) {
 						i = compileGroup(optional, tokens, str, i, imax);
@@ -77,7 +77,7 @@ var _compile;
 					tokens.push(new token_Punctuation(String.fromCharCode(c)));
 					continue;
 			}
-			
+
 			while(i < imax) {
 				c = str.charCodeAt(++i);
 				if (c > 32 && c !== 34 && c !== 39 && c !== 36 && c !== 44) {
@@ -88,7 +88,7 @@ var _compile;
 				continue outer;
 			}
 		}
-		
+
 		var jmax = tokens.length,
 			j = -1,
 			orGroup = jmax > 1,
@@ -102,19 +102,19 @@ var _compile;
 		if (0 && orGroup === true) {
 			tokens = [ new token_OrGroup(tokens) ];
 		}
-		
+
 		return tokens;
 	};
-	
+
 	function compileArray(name, tokens, str, i, imax, optional){
 		var start = ++i;
 		i = cursor_groupEnd(str, i, imax, 91, 93);
 		var innerTokens = _compile(str, start, i);
-		
+
 		i++;
 		if (str.charCodeAt(i) !== 40 /*(*/) 
 			throw_('Punctuation group expected');
-		
+
 		start = ++i;
 		i = cursor_groupEnd(str, i, imax, 40, 41)
 		var delimiter = str.substring(start, i);
@@ -152,7 +152,7 @@ var _compile;
 		);
 		return i;
 	}
-	
+
 	function throw_(msg) {
 		throw Error('Lexer pattern: ' + msg);
 	}

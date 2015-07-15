@@ -4,10 +4,10 @@ function expression_evaluate(mix, model, ctx, controller) {
 
 	if (null == mix)
 		return null;
-	
+
 	if ('.' === mix) 
 		return model;
-	
+
 	if (typeof mix === 'string'){
 		ast = cache.hasOwnProperty(mix) === true
 			? (cache[mix])
@@ -18,10 +18,10 @@ function expression_evaluate(mix, model, ctx, controller) {
 	}
 	if (ast == null) 
 		return null;
-	
+
 	var type = ast.type,
 		i, x, length;
-	
+
 	if (type_Body === type) {
 		var value, prev;
 
@@ -35,7 +35,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 				result = value;
 				continue;
 			}
-			
+
 			if (prev.join === op_LogicalAnd) {
 				if (!result) {
 					for (; i < length; i++) {
@@ -112,7 +112,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 		result = expression_evaluate(ast.body, model, ctx, controller);
 		if (ast.next == null) 
 			return result;
-		
+
 		return util_resolveRef(ast.next, result);
 	}
 
@@ -123,7 +123,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 		var body = ast.body.body,
 			imax = body.length,
 			i = -1;
-		
+
 		result = new Array(imax);
 		while( ++i < imax ){
 			result[i] = expression_evaluate(body[i], model, ctx, controller);
@@ -145,7 +145,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 		type_Accessor 		=== type) {
 		return util_resolveRef(ast, model, ctx, controller);
 	}
-	
+
 	if (type_UnaryPrefix === type) {
 		result = expression_evaluate(ast.body, model, ctx, controller);
 		switch (ast.prefix) {

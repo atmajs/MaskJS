@@ -8,7 +8,7 @@
 				var nodes = templates_[id];
 				if (nodes != null) 
 					return nodes;
-				
+
 				var selector = ':template[id=' + id +']',
 					parent = node.parent,
 					tmpl = null
@@ -17,10 +17,10 @@
 					tmpl = jmask(parent.nodes)
 						.filter(selector)
 						.get(0);
-					
+
 					if (tmpl != null) 
 						return tmpl.nodes;
-						
+
 					parent = parent.parent;
 				}
 				log_warn('Template was not found', id);
@@ -52,13 +52,13 @@
 			this.nodes = helper_.resolve(this, id);
 		}
 	});
-	
+
 	custom_Statements['include'] = {
 		render: function (node, model, ctx, container, ctr, els) {
 			var name = attr_first(node.attr);
 			var Compo = customTag_get(name, ctr);
 			var template;
-			
+
 			if (Compo != null) {
 				template = Compo.prototype.template || Compo.prototype.nodes;
 				if (template != null) {
@@ -73,7 +73,7 @@
 			}
 		}
 	};	
-	
+
 	customTag_register('layout:master', {
 		meta: {
 			mode: 'server'
@@ -83,7 +83,7 @@
 			helper_.register(name, this.nodes);
 		}
 	});
-	
+
 	customTag_register('layout:view', {
 		meta: {
 			mode: 'server'
@@ -94,5 +94,5 @@
 			builder_build(template, model, ctx, container, ctr, els);
 		}
 	});
-	
+
 }());

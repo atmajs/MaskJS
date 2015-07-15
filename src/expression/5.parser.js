@@ -4,7 +4,7 @@
 function expression_parse(expr, earlyExit) {
 	if (earlyExit == null) 
 		earlyExit = false;
-	
+
 	template = expr;
 	index = 0;
 	length = expr.length;
@@ -24,7 +24,7 @@ function expression_parse(expr, earlyExit) {
 
 		if (index >= length) 
 			break;
-		
+
 		directive = parser_getDirective(c);
 
 		if (directive == null && index < length) {
@@ -33,10 +33,10 @@ function expression_parse(expr, earlyExit) {
 		if (directive === punc_Semicolon) {
 			if (earlyExit === true) 
 				return [ast, index];
-			
+
 			break;
 		}
-		
+
 		if (earlyExit === true) {
 			var p = current.parent;
 			if (p != null && p.type === type_Body && p.parent == null) {
@@ -45,11 +45,11 @@ function expression_parse(expr, earlyExit) {
 					return [ast, index];
 			}
 		}
-		
+
 		if (directive === punc_Semicolon) {
 			break;
 		}
-		
+
 		switch (directive) {
 			case punc_ParantheseOpen:
 				current = ast_append(current, new Ast_Statement(current));
@@ -78,7 +78,7 @@ function expression_parse(expr, earlyExit) {
 				}
 				index++;
 				continue;
-			
+
 			case punc_BraceOpen:
 				current = ast_append(current, new Ast_Object(current));
 				directive = go_objectKey;
@@ -92,7 +92,7 @@ function expression_parse(expr, earlyExit) {
 				continue;
 			case punc_Comma:
 				if (state !== state_arguments) {
-					
+
 					state = state_body;
 					do {
 						current = current.parent;
@@ -105,12 +105,12 @@ function expression_parse(expr, earlyExit) {
 						util_throw('Unexpected comma', c);
 						break outer;	
 					}
-					
+
 					if (current.type === type_Object) {
 						directive = go_objectKey;
 						break;
 					}
-					
+
 					continue;
 				}
 				do {
@@ -132,7 +132,7 @@ function expression_parse(expr, earlyExit) {
 				current = ast.case1;
 				index++;
 				continue;
-			
+
 			case punc_Colon:
 				current = ast.case2;
 				index++;
@@ -255,18 +255,18 @@ function expression_parse(expr, earlyExit) {
 			case go_ref:
 			case go_acs:
 				var ref = parser_getRef();
-				
+
 				if (directive === go_ref) {
-						
+
 					if (ref === 'null') 
 						ref = null;
-					
+
 					if (ref === 'false') 
 						ref = false;
-					
+
 					if (ref === 'true') 
 						ref = true;
-						
+
 					if (typeof ref !== 'string') {
 						ast_append(current, new Ast_Value(ref));
 						continue;
@@ -293,7 +293,7 @@ function expression_parse(expr, earlyExit) {
 					current = fn.newArgument();
 					continue;
 				}
-				
+
 				var Ctor = directive === go_ref
 					? Ast_SymbolRef
 					: Ast_Accessor
@@ -302,10 +302,10 @@ function expression_parse(expr, earlyExit) {
 			case go_objectKey:
 				if (parser_skipWhitespace() === 125)
 					continue;
-				
-				
+
+
 				var key = parser_getRef();
-				
+
 				if (parser_skipWhitespace() !== 58) {
 					//:
 					return util_throw(
@@ -321,7 +321,7 @@ function expression_parse(expr, earlyExit) {
 
 	if (current.body == null &&
 		current.type === type_Statement) {
-		
+
 		return util_throw(
 			'Unexpected end of expression', c
 		); 

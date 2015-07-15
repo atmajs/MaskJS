@@ -13,21 +13,21 @@ var  refs_extractVars;
 	refs_extractVars = function(expr, model, ctx, ctr){
 		if (typeof expr === 'string') 
 			expr = expression_parse(expr);
-		
+
 		return _extractVars(expr, model, ctx, ctr);
 	};
-	
-	
-	
+
+
+
 	function _extractVars(expr, model, ctx, ctr) {
 
 		if (expr == null) 
 			return null;
-		
+
 		var exprType = expr.type,
 			refs, x;
 		if (type_Body === exprType) {
-			
+
 			var body = expr.body,
 				imax = body.length,
 				i = -1;
@@ -40,7 +40,7 @@ var  refs_extractVars;
 		if (type_SymbolRef === exprType ||
 			type_Accessor === exprType ||
 			type_AccessorExpr === exprType) {
-			
+
 			var path = expr.body,
 				next = expr.next,
 				nextType;
@@ -53,7 +53,7 @@ var  refs_extractVars;
 				if ((type_SymbolRef !== nextType) &&
 					(type_Accessor !== nextType) &&
 					(type_AccessorExpr !== nextType)) {
-					
+
 					log_error('Ast Exception: next should be a symbol/function ref');
 					return null;
 				}
@@ -82,7 +82,7 @@ var  refs_extractVars;
 				refs = _append(refs, x);
 				break;
 		}
-		
+
 		// get also from case1 and case2
 		if (type_Ternary === exprType) {
 			x = _extractVars(ast.case1, model, ctx, ctr);
@@ -101,7 +101,7 @@ var  refs_extractVars;
 				x = _extractVars(args[i], model, ctx, ctr);
 				refs = _append(refs, x);
 			}
-			
+
 			x = null;
 			var parent = expr;
 			outer: while ((parent = parent.parent)) {
@@ -119,11 +119,11 @@ var  refs_extractVars;
 						break outer;
 				}
 			}
-			
+
 			if (x != null) {
 				refs = _append(refs, x);
 			}
-			
+
 			if (expr.next) {
 				x = _extractVars(expr.next, model, ctx, ctr);
 				refs = _append(refs, {accessor: _getAccessor(expr), ref: x});
@@ -132,7 +132,7 @@ var  refs_extractVars;
 
 		return refs;
 	}
-	
+
 	function _append(current, x) {
 		if (current == null) {
 			return x;
@@ -147,28 +147,28 @@ var  refs_extractVars;
 		}
 
 		if (!(typeof x === 'object' && x.length != null)) {
-			
+
 			if (current.indexOf(x) === -1) {
 				current.push(x);
 			}
-			
+
 			return current;
 		}
-		
+
 		for (var i = 0, imax = x.length; i < imax; i++) {
 			if (current.indexOf(x[i]) === -1) {
 				current.push(x[i]);
 			}
 		}
-		
+
 		return current;
 
 	}
-	
+
 	function _getAccessor(current) {
-		
+
 		var parent = current;
-		
+
 		outer: while (parent.parent) {
 			switch (parent.parent.type) {
 				case type_Body:
@@ -177,32 +177,32 @@ var  refs_extractVars;
 			}
 			parent = parent.parent;
 		}
-		
+
 		return _copy(parent, current.next);
 	}
-	
+
 	function _copy(ast, stop) {
-		
+
 		if (ast === stop || ast == null) {
 			return null;
 		}
-		
+
 		if (typeof ast !== 'object') {
 			return ast;
 		}
-		
+
 		if (ast.length != null && typeof ast.splice === 'function') {
-			
+
 			var arr = [];
-			
+
 			for (var i = 0, imax = ast.length; i < imax; i++){
 				arr[i] = _copy(ast[i], stop);
 			}
-			
+
 			return arr;
 		}
-		
-		
+
+
 		var clone = {};
 		for (var key in ast) {
 			if (ast[key] == null || key === 'parent') {
@@ -210,7 +210,7 @@ var  refs_extractVars;
 			}
 			clone[key] = _copy(ast[key], stop);
 		}
-		
+
 		return clone;
 	}
 

@@ -7,7 +7,7 @@ var cursor_groupEnd,
 	cursor_goToWhitespace
 	;
 (function(){
-	
+
 	cursor_groupEnd = function(str, i, imax, startCode, endCode){		
 		var count = 0,
 			start = i,
@@ -36,7 +36,7 @@ var cursor_groupEnd,
 		parser_warn('Group was not closed', str, start);
 		return imax;
 	};
-	
+
 	cursor_refEnd = function(str, i, imax){
 		var c;
 		while (i < imax){
@@ -56,7 +56,7 @@ var cursor_groupEnd,
 		}
 		return i;
 	};
-	
+
 	cursor_tokenEnd = function(str, i, imax){
 		var c;
 		while (i < imax){
@@ -76,7 +76,7 @@ var cursor_groupEnd,
 		}
 		return i;
 	};
-	
+
 	cursor_quoteEnd = function(str, i, imax, char_){
 		var start = i;
 		while ((i = str.indexOf(char_, i)) !== -1) {
@@ -88,7 +88,7 @@ var cursor_groupEnd,
 		parser_warn('Quote was not closed', str, start - 1);
 		return imax;
 	};
-	
+
 	cursor_skipWhitespace = function(str, i, imax) {
 		for(; i < imax; i++) {
 			if (str.charCodeAt(i) > 32) 
@@ -103,7 +103,7 @@ var cursor_groupEnd,
 		}
 		return i;
 	};
-	
+
 	cursor_goToWhitespace = function(str, i, imax) {
 		for(; i < imax; i++) {
 			if (str.charCodeAt(i) < 33) 

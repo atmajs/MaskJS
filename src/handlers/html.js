@@ -5,7 +5,7 @@
 		},
 		render: function(model, ctx, container) {
 			this.html = jmask(this.nodes).text(model, ctx, this);
-	
+
 			if (container.insertAdjacentHTML) {
 				container.insertAdjacentHTML('beforeend', this.html);
 				return;

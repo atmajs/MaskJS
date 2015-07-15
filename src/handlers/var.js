@@ -12,7 +12,7 @@
 	function set(self, source, doEval, attr, model, ctx) {
 		// set data also to model, so that it will be serialized in NodeJS
 		self.model = {};
-		
+
 		var parent = self.parent;
 		var scope  = parent.scope;
 		if (scope == null) {

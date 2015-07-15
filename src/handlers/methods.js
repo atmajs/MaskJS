@@ -8,7 +8,7 @@
 			this.name = node.name;
 		}
 	});
-	
+
 	custom_Tags['slot'] = class_create(Method, {
 		renderEnd: function(){
 			var ctr = this.parent;

@@ -5,7 +5,7 @@ var IImport = class_create({
 		this.path = path;
 		this.alias = alias;
 		this.exports = exports;
-		
+
 		var endpoint = new Endpoint(path, this.contentType);
 		this.module = Module.createModule(endpoint, module);
 		this.parent = module;
@@ -31,7 +31,7 @@ var IImport = class_create({
 			}
 		}
 	},
-	
+
 	hasExport: function(name) {
 		if (this.alias === name) {
 			return true;
@@ -50,7 +50,7 @@ var IImport = class_create({
 		}
 		return false;
 	},
-	
+
 	getOriginal: function(alias){
 		if (this.alias === alias) {
 			return '*';
@@ -68,7 +68,7 @@ var IImport = class_create({
 		}
 		return null;
 	},
-	
+
 	loadImport: function(cb){
 		var self = this;
 		this
@@ -79,9 +79,9 @@ var IImport = class_create({
 				cb(null, self);
 			});
 	},
-	
+
 	registerScope: null,
-	
+
 	logError_: function(msg){
 		var str = '\n(Module) ' + (this.parent || {path: 'root'}).path
 		str += '\n  (Import) ' + this.path

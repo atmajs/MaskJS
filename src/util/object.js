@@ -4,12 +4,12 @@ var obj_getPropertyEx,
     obj_getPropertyEx = function(path, model, ctx, ctr){
         if (path === '.') 
             return model;
-    
+
         var props = path.split('.'),
             imax = props.length,
             key = props[0]
             ;
-        
+
         if ('$c' === key) {
             reporter_deprecated('accessor.compo', 'Use `$` instead of `$c`');
             key = '$';
@@ -33,15 +33,15 @@ var obj_getPropertyEx,
         if ('$scope' === key) {
             return getFromScope_(ctr, props, 1, imax);
         }
-        
+
         var x = getProperty_(model, props, 0, imax);
         if (x != null) {
             return x;
         }
-        
+
         return getFromScope_(ctr, props, 0, imax);
     };
-    
+
     obj_toDictionary = function(obj){
         var array = [],
             i = 0,
@@ -55,9 +55,9 @@ var obj_getPropertyEx,
         }
         return array;
     };
-    
+
     // = private
-    
+
     function getProperty_(obj, props, startIndex, imax) {
         var i = startIndex,
             val = obj;
@@ -67,7 +67,7 @@ var obj_getPropertyEx,
         }
         return val;
     }
-    
+
     function getFromScope_(ctr, props, startIndex, imax) {
         while (ctr != null){
             var scope = ctr.scope;

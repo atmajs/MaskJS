@@ -48,9 +48,9 @@ var listeners_on,
 		}
 		return true;
 	};
-	
+
 	// === private
-	
+
 	var bin = {
 		compoCreated: null,
 		error: null

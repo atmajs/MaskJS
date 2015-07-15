@@ -9,14 +9,14 @@ var token_Const,
 	token_Group,
 	token_OrGroup;
 (function(){
-	
+
 	token_Whitespace = create('Whitespace', {
 		constructor: function(optional){
 			this.optional = optional;
 		},
 		consume: cursor_skipWhitespace
 	});
-	
+
 	// To match the string and continue, otherwise stops current consumer
 	// foo
 	token_Const = create('Const', {
@@ -40,7 +40,7 @@ var token_Const,
 			var end = cursor_tokenEnd(str, i, imax);
 			if (end === i) 
 				return i;
-			
+
 			this.setter(out, str.substring(i, end));
 			return end;
 		}
@@ -84,11 +84,11 @@ var token_Const,
 					.consume
 					.call(this, str, i, imax, out);
 			}
-			
+
 			var end = cursor_groupEnd(str, ++i, imax, start, end);
 			if (end === i) 
 				return i;
-			
+
 			this.setter(out, str.substring(i, end));
 			return end + 1;
 		},
@@ -97,7 +97,7 @@ var token_Const,
 			var match = this.rgx.exec(str);
 			if (match == null) 
 				return i;
-			
+
 			var x = match[0];
 			this.setter(out, x);
 			return i + x.length;
@@ -113,7 +113,7 @@ var token_Const,
 			},
 			consume: function(str, i, imax, out) {
 				var start = i;
-				
+
 				var c;
 				for (; i < imax; i++){
 					c = str.charCodeAt(i);
@@ -133,12 +133,12 @@ var token_Const,
 				}
 				if (i === start) 
 					return i;
-				
+
 				this.setter(out, str.substring(start, i));
 				return i;
 			}
 		});
-		
+
 		var Consumers = {
 			accessor: function(c){
 				if (c === 46 /*.*/) {
@@ -148,7 +148,7 @@ var token_Const,
 			}
 		};
 	}());
-	
+
 	token_String = create('String', {
 		constructor: function(tokens){
 			this.tokens = tokens;
@@ -157,7 +157,7 @@ var token_Const,
 			var c = str.charCodeAt(i);
 			if (c !== 34 && c !== 39) 
 				return i;
-			
+
 			var end = cursor_quoteEnd(str, i + 1, imax, c === 34 ? '"' : "'");
 			if (this.tokens.length === 1) {
 				var $var = this.tokens[0];
@@ -180,7 +180,7 @@ var token_Const,
 			while(true) {
 				obj = {};
 				end = _consume(this.tokens, str, i, imax, obj, this.optional);
-				
+
 				if (i === end) {
 					if (arr == null) 
 						return i;
@@ -190,7 +190,7 @@ var token_Const,
 					arr = [];
 				arr.push(obj);
 				i = end;
-				
+
 				end = this.delim.consume(str, i, imax);
 				if (i === end) 
 					break;
@@ -241,7 +241,7 @@ var token_Const,
 			return i;
 		}
 	});
-	
+
 	function generateSetter(name) {
 		return new Function('obj', 'val', 'obj.' + name + '= val;');
 	}

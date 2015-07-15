@@ -9,10 +9,10 @@ var Module;
 			base: null,
 			version: null
 		};
-	
+
 	// import utils
 	// import loaders
-	
+
 	// import class/Endpoint
 	// import Import/Import
 	// import Import/ImportMask
@@ -20,18 +20,18 @@ var Module;
 	// import Import/ImportStyle
 	// import Import/ImportData
 	// import Import/ImportHtml
-	
+
 	// import Module/Module
 	// import Module/ModuleMask
 	// import Module/ModuleScript
 	// import Module/ModuleStyle
 	// import Module/ModuleData
 	// import Module/ModuleHtml
-	
+
 	// import components
 	// import tools/dependencies
 	// import tools/build
-	
+
 	obj_extend(Module, {
 		ModuleMask: ModuleMask,
 		Endpoint: Endpoint,		
@@ -46,7 +46,7 @@ var Module;
 		},
 		registerModule: function(mix, endpoint, ctx, ctr, parent) {
 			endpoint.path = u_resolvePath(endpoint.path, ctx, ctr, parent);
-			
+
 			var module = Module.createModule(endpoint, ctx, ctr, parent);
 			module.state = 1;
 			if (Module.isMask(endpoint)) {
@@ -62,7 +62,7 @@ var Module;
 			module.resolve(module);
 			return module;
 		},
-		
+
 		createImport: function(node, ctx, ctr, module){
 			var path    = u_resolvePathFromImport(node, ctx, ctr, module),
 				alias   = node.alias,

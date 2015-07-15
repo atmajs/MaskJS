@@ -1,6 +1,6 @@
 var tools_build;
 (function(){
-	
+
 	tools_build = function(template, path, opts_){
 		var opts = obj_extendDefaults(opts_, optionsDefault);
 		return class_Dfr.run(function(resolve, reject){
@@ -15,11 +15,11 @@ var tools_build;
 			}
 		});
 	};
-	
+
 	var optionsDefault = {
 		minify: false
 	};
-	
+
 	function build(deps, opts, resolve, reject) {
 		var types = ['mask', 'script', 'style', 'data'];
 		var out = {
@@ -44,13 +44,13 @@ var tools_build;
 		}
 		next();
 	}
-	
+
 	function build_type (deps, type, opts, done) {
 		var arr = deps[type],
 			imax = arr.length,
 			i = -1,
 			stack = [];
-			
+
 		function next() {
 			if (++i === imax) {
 				done(null, stack.join('\n'));
@@ -66,7 +66,7 @@ var tools_build;
 		}
 		next();
 	}
-	
+
 	var Single = {
 		mask: function(path, opts, done){
 			return class_Dfr.run(function(resolve, reject) {
@@ -82,7 +82,7 @@ var tools_build;
 						ast = jmask('module')
 							.attr('path', path)
 							.append(ast);
-						
+
 						var str = mask_stringify(ast[0], {
 							indent: opts.minify ? 0 : 4
 						});
@@ -100,7 +100,7 @@ var tools_build;
 			return (__cfg.buildData || build_data)(path, opts);
 		}
 	}
-	
+
 	function build_script(path, opts, done) {
 		return class_Dfr.run(function(resolve, reject){
 			_file_get(path)
@@ -133,7 +133,7 @@ var tools_build;
 					var str = JSON.stringify(json, null, opts.minify ? 4 : void 0);
 					var script = 'module = { exports: ' + str + ' }\n'
 						+ 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "json"))';
-						
+
 					resolve(script);
 				});	
 		});

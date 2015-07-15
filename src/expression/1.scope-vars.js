@@ -9,7 +9,7 @@ var op_Minus = '-', //1,
 	op_Divide = '/', //3,
 	op_Multip = '*', //4,
 	op_Modulo = '%', //5,
-	
+
 	op_LogicalOr = '||', //6,
 	op_LogicalAnd = '&&', //7,
 	op_LogicalNot = '!', //8,

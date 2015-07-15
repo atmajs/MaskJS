@@ -3,7 +3,7 @@
 		var node = new VarNode('var', parent),
 			start,
 			c;
-		
+
 		var go_varName = 1,
 			go_assign = 2,
 			go_value = 3,
@@ -16,7 +16,7 @@
 				index++;
 				continue;
 			}
-			
+
 			if (state === go_varName) {
 				start = index;
 				index = cursor_refEnd(str, index, length);
@@ -24,7 +24,7 @@
 				state = go_assign;
 				continue;
 			}
-			
+
 			if (state === go_assign) {
 				if (c !== 61 ) {
 					// =
@@ -41,7 +41,7 @@
 				index++;
 				continue;
 			}
-			
+
 			if (state === go_value) {
 				start = index;
 				index++;
@@ -85,7 +85,7 @@
 		}
 		return [node, index, 0];
 	};
-	
+
 	var VarNode = class_create(Dom.Node, {
 		stringify: function() {
 			var attr = this.attr;
@@ -93,7 +93,7 @@
 			for(var key in attr){
 				if (str !== 'var ') 
 					str += ',';
-				
+
 				str += key + '=' + attr[key];
 			}
 			return str + ';';

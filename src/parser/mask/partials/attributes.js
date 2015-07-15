@@ -1,5 +1,5 @@
 (function(){
-	
+
 	parser_parseAttr = function(str, start, end){
 		var attr = {},
 			i = start,
@@ -8,15 +8,15 @@
 			i = cursor_skipWhitespace(str, i, end);
 			if (i === end) 
 				break;
-			
+
 			start = i;
 			for(; i < end; i++){
 				c = str.charCodeAt(i);
 				if (c === 61 || c < 33) break;
 			}
-			
+
 			key = str.substring(start, i);
-			
+
 			i = cursor_skipWhitespace(str, i, end);
 			if (i === end) {
 				attr[key] = key;
@@ -26,13 +26,13 @@
 				attr[key] = key;
 				continue;
 			}
-			
+
 			i = start = cursor_skipWhitespace(str, i + 1, end);
 			c = str.charCodeAt(i);
 			if (c === 34 || c === 39) {
 				// "|'
 				i = cursor_quoteEnd(str, i + 1, end, c === 39 ? "'" : '"');
-				
+
 				attr[key] = str.substring(start + 1, i);
 				i++;
 				continue;
@@ -42,19 +42,19 @@
 		}
 		return attr;
 	};
-	
+
 	parser_parseAttrObject = function(str, i, imax, attr){
 		var state_KEY = 1,
 			state_VAL = 2,
 			state_END = 3,
 			state = state_KEY,
 			token, index, key, c;
-			
+
 		outer: while(i < imax) {
 			i = cursor_skipWhitespace(str, i, imax);
 			if (i === imax) 
 				break;
-			
+
 			index = i;
 			c = str.charCodeAt(i);
 			switch (c) {
@@ -99,13 +99,13 @@
 					token = str.substring(index, i);
 					break;
 			}
-			
+
 			if (token === '') {
 				parser_warn('Token not readable', str, i);
 				i++;
 				continue;
 			}
-			
+
 			if (state === state_VAL) {
 				attr[key] = token;
 				state = state_KEY;
@@ -123,5 +123,5 @@
 		}
 		return i;
 	};
-	
+
 }());

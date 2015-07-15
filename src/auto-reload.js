@@ -49,7 +49,7 @@
 
 			compo_remove(_instance);
 
-			
+
 
 			compo_insert( //
 			compo_render(compoName, _parent, handler, x), $placeholder, _parent);

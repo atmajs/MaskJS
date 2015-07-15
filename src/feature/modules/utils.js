@@ -2,7 +2,7 @@ var u_resolveLocation,
 	u_resolvePath,
 	u_resolvePathFromImport,
 	u_handler_getDelegate;
-	
+
 (function(){
 
 	u_resolveLocation = function(ctx, ctr, module) {
@@ -27,11 +27,11 @@ var u_resolveLocation,
 				path = path_normalize(ctx.dirname + '/');
 			}
 		}
-		
+
 		if (_opts.base == null) {
 			_opts.base = path_resolveCurrent();
 		}
-		
+
 		if (path != null) {
 			if (path_isRelative(path) === false) {
 				return path;
@@ -40,7 +40,7 @@ var u_resolveLocation,
 		}
 		return _opts.base;
 	};
-	
+
 	u_resolvePath = function(path, ctx, ctr, module){
 		if ('' === path_getExtension(path)) {
 			path += '.mask';
@@ -52,7 +52,7 @@ var u_resolveLocation,
 			u_resolveLocation(ctx, ctr, module), path
 		));
 	};
-	
+
 	u_resolvePathFromImport = function(node, ctx, ctr, module){
 		var path = node.path;
 		if ('' === path_getExtension(path)) {
@@ -68,18 +68,18 @@ var u_resolveLocation,
 			u_resolveLocation(ctx, ctr, module), path
 		));
 	};
-	
-	
+
+
 	u_handler_getDelegate = function(compoName, compo, next) {
 		return function(name) {
 			if (name === compoName) 
 				return compo;
 			if (next != null) 
 				return next(name);
-			
+
 			return null;
 		};
 	};
-	
-	
+
+
 }());

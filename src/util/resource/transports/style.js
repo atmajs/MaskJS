@@ -5,7 +5,7 @@ var style_get;
 		// do not wait for the load event
 		cb();
 	};
-	
+
 	var embedStyle;
 	(function(){
 		embedStyle = function (url, callback) {
@@ -26,6 +26,6 @@ var style_get;
 		};
 		var _head;
 	}());
-	
-	
+
+
 }());
