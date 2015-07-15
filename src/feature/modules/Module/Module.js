@@ -4,7 +4,7 @@ var IModule = class_create(class_Dfr, {
 	location: null,
 	exports: null,
 	state: 0,
-	constructor: function(path, parent) {		
+	constructor: function(path, parent) {
 		this.path = path;
 		this.parent = parent;
 		this.exports = {};
@@ -12,7 +12,7 @@ var IModule = class_create(class_Dfr, {
 		this.complete_ = this.complete_.bind(this);
 	},
 	loadModule: function(){
-		if (this.state !== 0) 
+		if (this.state !== 0)
 			return this;
 
 		this.state = 1;

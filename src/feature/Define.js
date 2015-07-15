@@ -42,7 +42,7 @@ var Define;
 			i = 0, x, name;
 		for(; i < imax; i++) {
 			x = nodes[i];
-			if (x == null) 
+			if (x == null)
 				continue;
 			name = x.tagName;
 			if ('function' === name) {
@@ -99,7 +99,7 @@ var Define;
 	}
 	function compo_extends(extends_, model, ctr) {
 		var args = [];
-		if (extends_ == null) 
+		if (extends_ == null)
 			return args;
 
 		var imax = extends_.length,

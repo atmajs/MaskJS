@@ -15,7 +15,7 @@ var Node = class_create({
 		this.type = Dom.NODE;
 		this.tagName = tagName;
 		this.parent = parent;
-		this.attr = {};	
+		this.attr = {};
 	},
 	__single: null,
 	appendChild: _appendChild,

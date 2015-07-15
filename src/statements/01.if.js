@@ -5,17 +5,17 @@
 			return expression_eval(expr, model, ctx, ctr);
 		}
 
-		if (evaluate(node.expression)) 
+		if (evaluate(node.expression))
 			return node.nodes;
 
 		while (true) {
 			node = node.nextSibling;
 
-			if (node == null || node.tagName !== 'else') 
+			if (node == null || node.tagName !== 'else')
 				break;
 
 			var expr = node.expression;
-			if (expr == null || expr === '' || evaluate(expr)) 
+			if (expr == null || expr === '' || evaluate(expr))
 				return node.nodes;
 		}
 
@@ -27,7 +27,7 @@
 		render: function(node, model, ctx, container, ctr, childs){
 
 			var nodes = getNodes(node, model, ctx, ctr);
-			if (nodes == null) 
+			if (nodes == null)
 				return;
 
 			builder_build(nodes, model, ctx, container, ctr, childs);

@@ -7,7 +7,7 @@
  * Note: Attribute wont be set to an element.
  * @param {string} name - Attribute name to handle
  * @param {string} [mode] - Render mode `client|server|both`
- * @param {AttributeHandler} handler 
+ * @param {AttributeHandler} handler
  * @returns {void}
  * @memberOf mask
  * @method registerAttrHandler
@@ -15,7 +15,7 @@
 customAttr_register = function(attrName, mix, Handler){
 	if (is_Function(mix)) {
 		Handler = mix;
-	}	
+	}
 	custom_Attributes[attrName] = Handler;
 };
 /**

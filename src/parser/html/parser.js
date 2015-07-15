@@ -7,7 +7,7 @@
 	 * @returns {MaskNode}
 	 * @memberOf mask
 	 * @method parseHtml
-	 */	
+	 */
 	parser_parseHtml = function(str) {
 		var current = new Fragment(),
 			fragment = current,

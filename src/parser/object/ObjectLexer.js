@@ -16,7 +16,7 @@ var ObjectLexer;
 		var tokens = _compile(pattern);
 		return function(str, i, imax, out, optional){
 			return _consume(tokens, str, i, imax, out, optional);
-		};	
+		};
 	}
 
 	var ObjectLexer_sequance;
@@ -33,7 +33,7 @@ var ObjectLexer;
 				while( ++j < jmax ) {
 					start = i;
 					i = __consume(args[j], str, i, imax, out, optional);
-					if (i === start) 
+					if (i === start)
 						return start;
 				}
 				return i;
@@ -51,7 +51,7 @@ var ObjectLexer;
 				j = -1;
 			while( ++j < jmax ){
 				i = arr[j](str, i, imax, out, true);
-				if (start !== i) 
+				if (start !== i)
 					return i;
 			}
 			if (optional !== true) {

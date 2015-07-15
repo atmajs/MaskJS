@@ -6,7 +6,7 @@
  * @method registerStatement
  */
 customStatement_register = function(name, handler){
-	//@TODO should it be not allowed to override system statements, if, switch?	
+	//@TODO should it be not allowed to override system statements, if, switch?
 	custom_Statements[name] = is_Function(handler)
 		? { render: handler }
 		: handler

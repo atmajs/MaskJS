@@ -262,7 +262,7 @@
 						start = index + 2;
 						index = template.indexOf((nextC === 124 ? '|' : _char) + _char + _char, start);
 
-						if (index === -1) 
+						if (index === -1)
 							index = length;
 					}
 				}

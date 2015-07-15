@@ -8,7 +8,7 @@ var u_resolveLocation,
 	u_resolveLocation = function(ctx, ctr, module) {
 		if (module != null) {
 			return module.location;
-		}	
+		}
 		while(ctr != null) {
 			if (ctr.location != null) {
 				return ctr.location;
@@ -72,9 +72,9 @@ var u_resolveLocation,
 
 	u_handler_getDelegate = function(compoName, compo, next) {
 		return function(name) {
-			if (name === compoName) 
+			if (name === compoName)
 				return compo;
-			if (next != null) 
+			if (next != null)
 				return next(name);
 
 			return null;

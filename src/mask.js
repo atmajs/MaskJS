@@ -2,12 +2,12 @@
  * @namespace mask
  */
 var Mask;
-(function(){	
-	Mask = {	
+(function(){
+	Mask = {
 		/**
 		 * Render the mask template to document fragment or single html node
 		 * @param {(string|MaskDom)} template - Mask string template or Mask Ast to render from.
-		 * @param {*} [model] - Model Object. 
+		 * @param {*} [model] - Model Object.
 		 * @param {Object} [ctx] - Context can store any additional information, that custom handler may need
 		 * @param {IAppendChild} [container]  - Container Html Node where template is rendered into
 		 * @param {Object} [controller] - Component that should own this template
@@ -36,7 +36,7 @@ var Mask;
 				ctx = new builder_Ctx(ctx);
 
 			return builder_build(template, model, ctx, container, controller);
-		},		
+		},
 		/**
 		 * Same to `mask.render` but returns the promise, which is resolved when all async components
 		 * are resolved, or is in resolved state, when all components are synchronous.
@@ -59,7 +59,7 @@ var Mask;
 				dfr.resolve(dom);
 			}
 			return dfr;
-		},		
+		},
 		// parser/mask/parse.js
 		parse: parser_parse,
 		// parser/html/parse.js
@@ -132,13 +132,13 @@ var Mask;
 			Object: is_Object,
 			NODE: is_NODE,
 			DOM: is_DOM
-		},		
+		},
 		'class': {
 			create: class_create,
 			createError: error_createClass,
 			Deferred: class_Dfr,
 			EventEmitter: class_EventEmitter,
-		},		
+		},
 		parser: {
 			ObjectLexer: parser_ObjectLexer
 		},

@@ -28,7 +28,7 @@ var expression_eval,
 		 * Expression.eval(expression [, model, cntx, controller]) -> result
 		 * - expression (String): Expression, only accessors are supoorted
 		 *
-		 * All symbol and function references will be looked for in 
+		 * All symbol and function references will be looked for in
 		 *
 		 * 1. model, or via special accessors:
 		 * 		- `$c` controller

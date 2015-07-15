@@ -2,7 +2,7 @@ var obj_getPropertyEx,
     obj_toDictionary;
 (function(){
     obj_getPropertyEx = function(path, model, ctx, ctr){
-        if (path === '.') 
+        if (path === '.')
             return model;
 
         var props = path.split('.'),
@@ -73,7 +73,7 @@ var obj_getPropertyEx,
             var scope = ctr.scope;
             if (scope != null) {
                 var x = getProperty_(scope, props, startIndex, imax);
-                if (x != null) 
+                if (x != null)
                     return x;
             }
             ctr = ctr.parent;

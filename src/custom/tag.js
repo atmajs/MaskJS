@@ -1,4 +1,4 @@
-(function(){	
+(function(){
 	/**
 	 * Get Components constructor from the global repository or the scope
 	 * @param {string} name
@@ -31,7 +31,7 @@
 			ctr_ = ctr_.parent;
 		}
 		return custom_Tags_global[name];
-	};	
+	};
 	/**
 	 * Get all components constructors from the global repository and/or the scope
 	 * @param {object} [component] - pass a component to look also in its scope
@@ -90,7 +90,7 @@
 				? custom_Tags_global
 				: custom_Tags
 				;
-		Repo[mix] = Ctor;	
+		Repo[mix] = Ctor;
 
 		//> make fast properties
 		obj_toFastProps(custom_Tags);
@@ -217,10 +217,10 @@
 
 	customTag_registerResolver = function(name){
 		var Ctor = custom_Tags[name];
-		if (Ctor === Resolver) 
+		if (Ctor === Resolver)
 			return;
 
-		if (Ctor != null) 
+		if (Ctor != null)
 			custom_Tags_global[name] = Ctor;
 
 		custom_Tags[name] = Resolver;

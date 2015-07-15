@@ -50,11 +50,11 @@ var script_get;
 		var _stack = [];
 
 		function process() {
-			if (_stack.length === 0) 
+			if (_stack.length === 0)
 				return;
 
 			var res = _stack[0];
-			if (res.state !== 0) 
+			if (res.state !== 0)
 				return;
 
 			res.load().always(function(){

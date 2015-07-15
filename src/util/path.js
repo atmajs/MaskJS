@@ -92,7 +92,7 @@ var path_getDir,
 		if (path_isRelative(url)) {
 			return path_normalize(path_combine(base || path_resolveCurrent(), url));
 		}
-		if (rgx_PROTOCOL.test(url)) 
+		if (rgx_PROTOCOL.test(url))
 			return url;
 
 		if (url.charCodeAt(0) === 47 /*/*/) {

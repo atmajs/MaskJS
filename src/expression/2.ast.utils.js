@@ -70,7 +70,7 @@ var ast_handlePrecedence,
 				// 5 == 3 * 2 + 1 -> 5 == (3 * 2 + 1);
 				while (++i < length){
 					nextJoin = body[i].join;
-					if (nextJoin == null) 
+					if (nextJoin == null)
 						break;
 
 					if (prec_Prev <= precedence[nextJoin])
@@ -82,8 +82,8 @@ var ast_handlePrecedence,
 				ast_handlePrecedence(x);
 			}
 			array.push(x);
-		}	
-		ast.body = array;	
+		}
+		ast.body = array;
 	};
 
 	// = private
@@ -92,7 +92,7 @@ var ast_handlePrecedence,
 		if (bodyArr.length === 0)
 			return null;
 
-		var body = new Ast_Body(bodyArr[0].parent);	
+		var body = new Ast_Body(bodyArr[0].parent);
 		body.join = bodyArr[bodyArr.length - 1].join;
 		body.body = bodyArr;
 

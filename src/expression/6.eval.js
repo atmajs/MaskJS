@@ -5,7 +5,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 	if (null == mix)
 		return null;
 
-	if ('.' === mix) 
+	if ('.' === mix)
 		return model;
 
 	if (typeof mix === 'string'){
@@ -16,7 +16,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 	}else{
 		ast = mix;
 	}
-	if (ast == null) 
+	if (ast == null)
 		return null;
 
 	var type = ast.type,
@@ -110,7 +110,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 
 	if (type_Statement === type) {
 		result = expression_evaluate(ast.body, model, ctx, controller);
-		if (ast.next == null) 
+		if (ast.next == null)
 			return result;
 
 		return util_resolveRef(ast.next, result);

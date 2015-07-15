@@ -6,7 +6,7 @@
 			},
 			resolve: function(node, id){
 				var nodes = templates_[id];
-				if (nodes != null) 
+				if (nodes != null)
 					return nodes;
 
 				var selector = ':template[id=' + id +']',
@@ -18,7 +18,7 @@
 						.filter(selector)
 						.get(0);
 
-					if (tmpl != null) 
+					if (tmpl != null)
 						return tmpl.nodes;
 
 					parent = parent.parent;
@@ -72,7 +72,7 @@
 				builder_build(template, model, ctx, container, ctr, els);
 			}
 		}
-	};	
+	};
 
 	customTag_register('layout:master', {
 		meta: {

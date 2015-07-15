@@ -29,10 +29,10 @@ var Style;
 		style_scope = function(css, parent){
 			var id;
 			return css.replace(rgx_selector, function(full, pref, selector){
-				if (selector.indexOf(':host') !== -1) 
+				if (selector.indexOf(':host') !== -1)
 					return full;
 
-				if (id == null) 
+				if (id == null)
 					id = getId(parent);
 
 				var arr = selector.split(','),

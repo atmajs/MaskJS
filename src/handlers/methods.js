@@ -28,7 +28,7 @@
 			if (i !== -1) {
 				params = name.substring(i + 1).trim();
 				name = name.substring(0, i).trim();
-			}			
+			}
 			Compo.Dom.addEventListener(el, name, this.fn, params);
 		}
 	});

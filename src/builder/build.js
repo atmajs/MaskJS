@@ -11,7 +11,7 @@
  */
 builder_build = function(node, model, ctx, container, ctr, children) {
 
-	if (node == null) 
+	if (node == null)
 		return container;
 
 	var type = node.type,
@@ -19,11 +19,11 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 		key,
 		value;
 
-	if (ctr == null) 
+	if (ctr == null)
 		ctr = new Dom.Component();
 
 	if (type == null){
-		// in case if node was added manually, but type was not set			
+		// in case if node was added manually, but type was not set
 		if (is_ArrayLike(node)) {
 			// Dom.FRAGMENT
 			type = 10;
@@ -38,7 +38,7 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 
 
 	var tagName = node.tagName;
-	if (tagName === 'else') 
+	if (tagName === 'else')
 		return container;
 
 	if (type === 1 && custom_Tags[tagName] != null) {
@@ -55,7 +55,7 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 	}
 
 	// Dom.TEXTNODE
-	if (type === 2) {			
+	if (type === 2) {
 		build_textNode(node, model, ctx, container, ctr);
 		return container;
 	}
@@ -73,7 +73,7 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 	// Dom.STATEMENT
 	if (type === 15) {
 		var Handler = custom_Statements[tagName];
-		if (Handler == null) {				
+		if (Handler == null) {
 			if (custom_Tags[tagName] != null) {
 				// Dom.COMPONENT
 				type = 4;
@@ -140,23 +140,23 @@ builder_build = function(node, model, ctx, container, ctr, children) {
 
 				val = node.attr[key];
 
-				if (val == null) 
+				if (val == null)
 					continue;
 
 				attrFn = null;
 
-				if (attrHandlers != null && is_Function(attrHandlers[key])) 
+				if (attrHandlers != null && is_Function(attrHandlers[key]))
 					attrFn = attrHandlers[key];
 
-				if (attrFn == null && custom_Attributes[key] != null) 
+				if (attrFn == null && custom_Attributes[key] != null)
 					attrFn = custom_Attributes[key];
 
-				if (attrFn != null) 
+				if (attrFn != null)
 					attrFn(node, val, model, ctx, elements[0], ctr);
 			}
 		}
 
-		if (is_Function(node.renderEnd)) 
+		if (is_Function(node.renderEnd))
 			node.renderEnd(elements, model, ctx, container);
 	}
 

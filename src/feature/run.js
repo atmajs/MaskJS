@@ -39,8 +39,8 @@ var mask_run;
 			}
 		}
 
-		if (el == null) 
-			el = document.body;		
+		if (el == null)
+			el = document.body;
 		if (Ctor == null)
 			Ctor = Compo;
 		if (model == null) {
@@ -65,7 +65,7 @@ var mask_run;
 			script = scripts[i];
 
 			var scriptType = script.getAttribute('type');
-			if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask') 
+			if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask')
 				continue;
 
 			var dataRun = script.getAttribute('data-run');
@@ -77,7 +77,7 @@ var mask_run;
 					continue;
 				}
 			}
-			if (dataRun === 'true') { 
+			if (dataRun === 'true') {
 				if (isCurrent(_state_Manual) === false) {
 					continue;
 				}
@@ -103,7 +103,7 @@ var mask_run;
 			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
 		}
 
-		ready = true;		
+		ready = true;
 		if (await === 0) {
 			flush();
 		}
@@ -132,7 +132,7 @@ var mask_run;
 		document.addEventListener("DOMContentLoaded", function(event) {
 			if (_state !== 0)  return;
 			var _app;
-			_state = _state_Auto;			
+			_state = _state_Auto;
 			_app = mask_run();
 			_state = _state_Manual;
 

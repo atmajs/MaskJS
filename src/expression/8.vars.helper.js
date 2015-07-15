@@ -11,7 +11,7 @@ var  refs_extractVars;
 
 
 	refs_extractVars = function(expr, model, ctx, ctr){
-		if (typeof expr === 'string') 
+		if (typeof expr === 'string')
 			expr = expression_parse(expr);
 
 		return _extractVars(expr, model, ctx, ctr);
@@ -21,7 +21,7 @@ var  refs_extractVars;
 
 	function _extractVars(expr, model, ctx, ctr) {
 
-		if (expr == null) 
+		if (expr == null)
 			return null;
 
 		var exprType = expr.type,

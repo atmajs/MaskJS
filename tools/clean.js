@@ -25,10 +25,15 @@ module.exports = {
 
 var cleaners = [
 	function cleanWhitespace(file, content, stat) {
-		var out = content.replace(/^[ \t]+$/gm, function(full){
+		var out = content;
+		out = out.replace(/^[ \t]+$/gm, function(full){
+			stat.removed += full.length;
+			return '';
+		});
+		out = out.replace(/[ \t]+$/gm, function(full){
 			stat.removed += full.length;
 			return '';
 		});
 		return out;
-	}
+	},
 ];

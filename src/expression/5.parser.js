@@ -2,7 +2,7 @@
  * earlyExit - only first statement/expression is consumed
  */
 function expression_parse(expr, earlyExit) {
-	if (earlyExit == null) 
+	if (earlyExit == null)
 		earlyExit = false;
 
 	template = expr;
@@ -22,7 +22,7 @@ function expression_parse(expr, earlyExit) {
 			continue;
 		}
 
-		if (index >= length) 
+		if (index >= length)
 			break;
 
 		directive = parser_getDirective(c);
@@ -31,7 +31,7 @@ function expression_parse(expr, earlyExit) {
 			break;
 		}
 		if (directive === punc_Semicolon) {
-			if (earlyExit === true) 
+			if (earlyExit === true)
 				return [ast, index];
 
 			break;
@@ -41,7 +41,7 @@ function expression_parse(expr, earlyExit) {
 			var p = current.parent;
 			if (p != null && p.type === type_Body && p.parent == null) {
 				// is in root body
-				if (directive === go_ref) 
+				if (directive === go_ref)
 					return [ast, index];
 			}
 		}
@@ -103,7 +103,7 @@ function expression_parse(expr, earlyExit) {
 					index++;
 					if (current == null) {
 						util_throw('Unexpected comma', c);
-						break outer;	
+						break outer;
 					}
 
 					if (current.type === type_Object) {
@@ -236,7 +236,7 @@ function expression_parse(expr, earlyExit) {
 			case go_number:
 				if (current.body != null && current.join == null) {
 					return util_throw(
-						'Directive expected', c 
+						'Directive expected', c
 					);
 				}
 				if (go_string === directive) {
@@ -258,13 +258,13 @@ function expression_parse(expr, earlyExit) {
 
 				if (directive === go_ref) {
 
-					if (ref === 'null') 
+					if (ref === 'null')
 						ref = null;
 
-					if (ref === 'false') 
+					if (ref === 'false')
 						ref = false;
 
-					if (ref === 'true') 
+					if (ref === 'true')
 						ref = true;
 
 					if (typeof ref !== 'string') {
@@ -310,7 +310,7 @@ function expression_parse(expr, earlyExit) {
 					//:
 					return util_throw(
 						'Object parser. Semicolon expeted', c
-					); 
+					);
 				}
 				index++;
 				current = current.nextProp(key);
@@ -324,7 +324,7 @@ function expression_parse(expr, earlyExit) {
 
 		return util_throw(
 			'Unexpected end of expression', c
-		); 
+		);
 	}
 
 	ast_handlePrecedence(ast);

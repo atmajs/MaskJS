@@ -34,7 +34,7 @@
 				isUnescapedBlock = true;
 				start = i + 2;
 				i = str.indexOf(_char + _char + _char, start);
-				if (i === -1) 
+				if (i === -1)
 					i = imax;
 			}
 		}
@@ -45,5 +45,5 @@
 		}
 		i += isUnescapedBlock ? 3 : 1;
 		return [ token, i ];
-	};	
+	};
 }());

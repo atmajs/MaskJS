@@ -112,7 +112,7 @@ var _compile;
 		var innerTokens = _compile(str, start, i);
 
 		i++;
-		if (str.charCodeAt(i) !== 40 /*(*/) 
+		if (str.charCodeAt(i) !== 40 /*(*/)
 			throw_('Punctuation group expected');
 
 		start = ++i;

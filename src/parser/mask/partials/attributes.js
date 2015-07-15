@@ -6,7 +6,7 @@
 			key, val, c;
 		while(i < end) {
 			i = cursor_skipWhitespace(str, i, end);
-			if (i === end) 
+			if (i === end)
 				break;
 
 			start = i;
@@ -52,7 +52,7 @@
 
 		outer: while(i < imax) {
 			i = cursor_skipWhitespace(str, i, imax);
-			if (i === imax) 
+			if (i === imax)
 				break;
 
 			index = i;

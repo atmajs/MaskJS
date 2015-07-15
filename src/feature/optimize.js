@@ -1,6 +1,6 @@
 var mask_optimize,
 	mask_registerOptimizer;
-(function(){	
+(function(){
 	/**
 	 * Run all registerd optimizers recursively on the nodes
 	 * @param {MaskNode} node
@@ -32,7 +32,7 @@ var mask_optimize,
 	};
 
 	function getOptimizer(node) {
-		if (node.type !== Dom.NODE) 
+		if (node.type !== Dom.NODE)
 			return null;
 
 		return custom_Optimizers[node.tagName];

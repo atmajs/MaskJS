@@ -11,17 +11,17 @@
 	 * @param {MaskNode} node - MaskNode
 	 * @param {(object|number)} [opts] - Indent count option or an object with options
 	 * @param {number} [opts.indent=0] - Indent count, `0` for minimization
-	 * @param {bool} [opts.minify=true] 
+	 * @param {bool} [opts.minify=true]
 	 * @param {bool} [opts.minimizeAttributes=true] - Remove quotes when possible
 	 * @returns {string}
 	 * @memberOf mask
 	 * @method stringify
 	 */
 	mask_stringify = function(input, opts) {
-		if (input == null) 
+		if (input == null)
 			return '';
 
-		if (typeof input === 'string') 
+		if (typeof input === 'string')
 			input = parser_parse(input);
 
 		if (opts == null) {
@@ -57,7 +57,7 @@
 
 			if (x !== key) {
 				str += "=" + wrapString(x);
-			} 
+			}
 		}
 		return str;
 	};
@@ -270,17 +270,17 @@
 		return false;
 	}
 	function getSingle(node) {
-		if (is_ArrayLike(node.nodes)) 
+		if (is_ArrayLike(node.nodes))
 			return node.nodes[0];
 
 		return node.nodes;
 	}
 
 	function wrapString(str) {
-		if (str.indexOf("'") === -1) 
+		if (str.indexOf("'") === -1)
 			return "'" + str + "'";
 
-		if (str.indexOf('"') === -1) 
+		if (str.indexOf('"') === -1)
 			return '"' + str + '"';
 
 		return '"' + str.replace(/"/g, '\\"') + '"';
@@ -294,7 +294,7 @@
 	(function() {
 		var C = '[';
 		format_Classes = function(cls){
-			var i = cls.indexOf(C);			
+			var i = cls.indexOf(C);
 			if (i === -1) {
 				return raw(cls);
 			}
@@ -319,7 +319,7 @@
 				str += raw(cls.substring(last));
 			}
 			return str;
-		};		
+		};
 		function raw(str) {
 			return '.' + str.trim().replace(/\s+/g, '.');
 		}

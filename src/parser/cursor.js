@@ -8,7 +8,7 @@ var cursor_groupEnd,
 	;
 (function(){
 
-	cursor_groupEnd = function(str, i, imax, startCode, endCode){		
+	cursor_groupEnd = function(str, i, imax, startCode, endCode){
 		var count = 0,
 			start = i,
 			c;
@@ -29,7 +29,7 @@ var cursor_groupEnd,
 				continue;
 			}
 			if (c === endCode) {
-				if (--count === -1) 
+				if (--count === -1)
 					return i;
 			}
 		}
@@ -40,7 +40,7 @@ var cursor_groupEnd,
 	cursor_refEnd = function(str, i, imax){
 		var c;
 		while (i < imax){
-			c = str.charCodeAt(i);			
+			c = str.charCodeAt(i);
 			if (c === 36 || c === 95) {
 				// $ _
 				i++;
@@ -81,7 +81,7 @@ var cursor_groupEnd,
 		var start = i;
 		while ((i = str.indexOf(char_, i)) !== -1) {
 			if (str.charCodeAt(i - 1) !== 92)
-				// \ 
+				// \
 				return i;
 			i++;
 		}
@@ -91,14 +91,14 @@ var cursor_groupEnd,
 
 	cursor_skipWhitespace = function(str, i, imax) {
 		for(; i < imax; i++) {
-			if (str.charCodeAt(i) > 32) 
+			if (str.charCodeAt(i) > 32)
 				return i;
 		}
 		return i;
 	};
 	cursor_skipWhitespaceBack = function(str, i) {
 		for(; i > 0; i--) {
-			if (str.charCodeAt(i) > 32) 
+			if (str.charCodeAt(i) > 32)
 				return i;
 		}
 		return i;
@@ -106,7 +106,7 @@ var cursor_groupEnd,
 
 	cursor_goToWhitespace = function(str, i, imax) {
 		for(; i < imax; i++) {
-			if (str.charCodeAt(i) < 33) 
+			if (str.charCodeAt(i) < 33)
 				return i;
 		}
 		return i;

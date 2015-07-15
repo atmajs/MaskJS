@@ -34,8 +34,8 @@ var Module;
 
 	obj_extend(Module, {
 		ModuleMask: ModuleMask,
-		Endpoint: Endpoint,		
-		createModule: function(node, ctx, ctr, parent) {			
+		Endpoint: Endpoint,
+		createModule: function(node, ctx, ctr, parent) {
 			var path   = u_resolvePathFromImport(node, ctx, ctr, parent),
 				module = _cache[path];
 			if (module == null) {
@@ -81,7 +81,7 @@ var Module;
 			if (type != null) {
 				return type;
 			}
-			var ext = path_getExtension(path);			
+			var ext = path_getExtension(path);
 			if (ext === '' || ext === 'mask'){
 				return 'mask';
 			}

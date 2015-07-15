@@ -3,7 +3,7 @@ var ImportMask = class_create(IImport, {
 	contentType: 'mask',
 	constructor: function(){
 		this.eachExport(function(compoName){
-			if (compoName !== '*') 
+			if (compoName !== '*')
 				customTag_registerResolver(compoName);
 		});
 	},

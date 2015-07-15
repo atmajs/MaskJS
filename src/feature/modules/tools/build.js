@@ -110,7 +110,7 @@ var tools_build;
 					script += str + ';\n';
 					script += 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "script"))';
 					resolve(script);
-				});	
+				});
 		});
 	}
 	function build_style(path, opts, done) {
@@ -135,7 +135,7 @@ var tools_build;
 						+ 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "json"))';
 
 					resolve(script);
-				});	
+				});
 		});
 	}
 }());

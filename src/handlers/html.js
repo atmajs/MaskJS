@@ -25,6 +25,6 @@
 			return this.html || '';
 		},
 		html: null
-	};	
+	};
 	customTag_register(':html', Compo);
 }());

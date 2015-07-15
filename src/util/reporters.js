@@ -20,9 +20,9 @@ var throw_,
 		if (typeof console === 'undefined') {
 			log = log_warn = log_error = function(){};
 			return;
-		}		
+		}
 		var bind  = Function.prototype.bind;
-		log       = bind.call(console.warn , console);		
+		log       = bind.call(console.warn , console);
 		log_warn  = bind.call(console.warn , console, 'MaskJS [Warn] :');
 		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
 	}());
@@ -132,10 +132,10 @@ var throw_,
 	}
 
 	function formatToken(token){
-		if (token == null) 
+		if (token == null)
 			return '';
 
-		if (typeof token === 'number') 
+		if (typeof token === 'number')
 			token = String.fromCharCode(token);
 
 		return ' Invalid token: `'+ token + '`';
@@ -151,7 +151,7 @@ var throw_,
 			'var': 'VarStatement',
 			'expr': 'Expression'
 		};
-		if (state == null || states[state] == null) 
+		if (state == null || states[state] == null)
 			return '';
 
 		return ' in `' + states[state] + '`';

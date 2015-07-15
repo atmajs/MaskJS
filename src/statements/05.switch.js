@@ -4,18 +4,18 @@
 
 			var value = expression_eval(node.expression, model, ctx, ctr),
 				nodes = getNodes(value, node.nodes, model, ctx, ctr);
-			if (nodes == null) 
+			if (nodes == null)
 				return;
 
 			builder_build(nodes, model, ctx, el, ctr, elements);
 		},
 
 		getNodes: getNodes
-	};	
+	};
 
 
 	function getNodes(value, nodes, model, ctx, ctr) {
-		if (nodes == null) 
+		if (nodes == null)
 			return null;
 
 		var imax = nodes.length,
@@ -50,7 +50,7 @@
 			}
 		}
 
-		if (case_ == null) 
+		if (case_ == null)
 			case_ = default_;
 
 		return case_ != null

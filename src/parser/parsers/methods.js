@@ -1,4 +1,4 @@
-(function(){	
+(function(){
 	function create(tagName){
 		return function(str, i, imax, parent) {
 			var start = str.indexOf('{', i) + 1,
@@ -23,7 +23,7 @@
 		if (parts == null) {
 			return null;
 		}
-		var methodName = parts[1].trim();		
+		var methodName = parts[1].trim();
 		var str = parts[3],
 			methodArgs = str == null ? [] : str.replace(/\s/g, '').split(',');
 		return new MethodHead(methodName, methodArgs);
@@ -41,7 +41,7 @@
 		if (sourceUrl != null) {
 			body += '\n//# sourceURL=' + sourceUrl
 		}
-		arr.push(body);			
+		arr.push(body);
 		return new (Function.bind.apply(Function, [null].concat(arr)));
 	}
 

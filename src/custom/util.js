@@ -7,7 +7,7 @@
 	 * @name _
 	 * @category Mask Util
 	 */
-	customUtil_$utils = {};	
+	customUtil_$utils = {};
 	/**
 	 * Register Util Handler. Template Example: `'~[myUtil: value]'`
 	 * @param {string} name
@@ -24,7 +24,7 @@
 		custom_Utils[name] = createUtil(mix);
 		if (mix['arguments'] === 'parsed')
 			customUtil_$utils[name] = mix.process;
-	};	
+	};
 	/**
 	 * Get the Util Handler
 	 * @param {string} name
@@ -63,7 +63,7 @@
 			);
 			return fn.apply(null, args);
 		};
-	}	
+	}
 	/**
 	 * Is called when the builder matches the interpolation.
 	 * Define `process` function OR group of `node*`,`attr*` functions.
@@ -79,7 +79,7 @@
 	 * @property {function} [attrRenderStart] - `expr, model, ctx, element, controller, attrName`
 	 * @abstract
 	 * @category Mask Util
-	 */	 
+	 */
 	 var IUtilHandler = {
 		'arguments': null,
 		'process': null,

@@ -44,7 +44,7 @@ var mask_TreeWalker;
 			walkCompos(root, fn, root);
 		};
 		function walk(node, fn, parent, index) {
-			if (node == null) 
+			if (node == null)
 				return null;
 
 			var deep = true, break_ = false, mod;
@@ -56,7 +56,7 @@ var mask_TreeWalker;
 				mod.process(new Step(node, parent, index));
 				deep   = mod.deep;
 				break_ = mod['break'];
-			}			
+			}
 			var nodes = safe_getNodes(node);
 			if (nodes == null || deep === false || break_ === true) {
 				return mod;
@@ -72,7 +72,7 @@ var mask_TreeWalker;
 			}
 		}
 		function walkCompos(compo, fn, parent, index) {
-			if (compo == null) 
+			if (compo == null)
 				return;
 
 			var mod = fn(compo, index);
@@ -201,7 +201,7 @@ var mask_TreeWalker;
 		};
 		Modifier.prototype = {
 			/**
-			 * On `true` stops the walker			 
+			 * On `true` stops the walker
 			 */
 			'break': false,
 			/**
@@ -230,7 +230,7 @@ var mask_TreeWalker;
 					return;
 				}
 			}
-		};	
+		};
 	}());
 
 	var Step = function (node, parent, index) {
@@ -246,7 +246,7 @@ var mask_TreeWalker;
 	}
 	function safe_getNodes(node) {
 		var nodes = node.nodes;
-		if (nodes == null) 
+		if (nodes == null)
 			return null;
 
 		return is_Array(nodes)
@@ -280,13 +280,13 @@ var mask_TreeWalker;
 	/**
 	 * Is called on each node
 	 * @callback TreeWalker~SyncVisitor
-	 * @param {MaskNode} node 
+	 * @param {MaskNode} node
 	 * @returns {Modifier|void}
 	 */
 	/**
 	 * Is called on each node
 	 * @callback TreeWalker~AsyncVisitor
-	 * @param {MaskNode} node 
+	 * @param {MaskNode} node
 	 * @param {function} done - Optional pass @see{@link TreeWalker.IModifier} to the callback
 	 * @returns {void}
 	 */

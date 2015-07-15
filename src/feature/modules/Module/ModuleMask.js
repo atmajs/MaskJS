@@ -184,7 +184,7 @@ var ModuleMask;
 		var count = imports.length;
 		if (count === 0) {
 			return done.call(module);
-		}	
+		}
 		var imax = count,
 			i = -1;
 		while( ++i < imax ) {
@@ -192,7 +192,7 @@ var ModuleMask;
 		}
 
 		function await(){
-			if (--count > 0) 
+			if (--count > 0)
 				return;
 			done.call(module);
 		}

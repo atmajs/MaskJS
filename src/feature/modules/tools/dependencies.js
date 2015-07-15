@@ -88,7 +88,7 @@ var tools_getDependencies;
 				});
 			})
 			.fail(done);
-	}		
+	}
 	function resolvePath(node, location) {
 		var path = node.path,
 			type = node.contentType;

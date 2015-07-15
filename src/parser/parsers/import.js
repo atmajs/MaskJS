@@ -64,7 +64,7 @@
 				var arr = this.exports,
 					str = '',
 					imax = arr.length,
-					i = -1, x; 
+					i = -1, x;
 				while( ++i < imax ){
 					x = arr[i];
 					str += x.name;

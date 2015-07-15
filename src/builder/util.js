@@ -4,7 +4,7 @@ var builder_resumeDelegate,
 (function(){
 
 	builder_resumeDelegate = function (ctr, model, ctx, container, children, finilizeFn){
-		var anchor = document.createComment('');		
+		var anchor = document.createComment('');
 		container.appendChild(anchor);
 		return function(){
 			return _resume(ctr, model, ctx, anchor, children, finilizeFn);

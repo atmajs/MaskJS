@@ -91,7 +91,7 @@
 			var attr = this.attr;
 			var str = 'var ';
 			for(var key in attr){
-				if (str !== 'var ') 
+				if (str !== 'var ')
 					str += ',';
 
 				str += key + '=' + attr[key];

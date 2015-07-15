@@ -45,8 +45,8 @@ var __cfg = {
      * @default null
      * @memberOf Configuration
      */
-    base: null,    
-    modules: 'default',    
+    base: null,
+    modules: 'default',
     /**
      * Define custom function for getting files content by path
      * @param {string} path
@@ -67,7 +67,7 @@ var __cfg = {
      * @param {object} options
      * @returns {Promise} Fulfill with {string} content
      * @memberOf Configuration
-     */    
+     */
     buildStyle: null,
     /**
      * Define custom function to build/combine scripts

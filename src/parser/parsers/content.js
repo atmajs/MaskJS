@@ -127,12 +127,12 @@
 					? content('node', model, ctx, el, ctr)
 					: content
 					;
-			},		
+			},
 			render: function(model, ctx, container) {
 				var el = document.createElement(name),
 					body = this.body,
 					attr = this.attr;
-				el.textContent = body; 
+				el.textContent = body;
 				for(var key in attr) {
 					var val =  attr[key];
 					if (val != null) {

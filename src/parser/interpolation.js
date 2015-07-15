@@ -62,7 +62,7 @@
 				wasEscaped = true;
 			}
 			if (escaped === false)  {
-				if (nextC === interp_code_OPEN) 
+				if (nextC === interp_code_OPEN)
 					break;
 				if (_char_isSimpleInterp(nextC)) {
 					break;
@@ -114,7 +114,7 @@
 
 				var str = template.substring(index + 1, end);
 				array[i++] = new InterpolationModel(str, null);
-				lastIndex = index = end;		
+				lastIndex = index = end;
 			}
 			else {
 				array[i] += template[nextI];
@@ -128,7 +128,7 @@
 					wasEscaped = true;
 				}
 				if (escaped === false)  {
-					if (nextC === interp_code_OPEN) 
+					if (nextC === interp_code_OPEN)
 						break;
 					if (_char_isSimpleInterp(nextC)) {
 						break;
@@ -139,7 +139,7 @@
 			if (index === -1) {
 				break;
 			}
-		}	
+		}
 		if (lastIndex < length) {
 			array[i] = wasEscaped === true
 				? _slice(template, lastIndex, length)
@@ -156,11 +156,11 @@
 	function _char_isEscaped (str, i) {
 		if (i === 0) {
 			return false;
-		}		
+		}
 		var c = str.charCodeAt(--i);
 		if (c === 92) {
 			if (_char_isEscaped(str, c))
-				return false;			
+				return false;
 			return true;
 		}
 		return false;
@@ -238,7 +238,7 @@
 			} else {
 				var interp = arr[i],
 					mix = interp.process(model, ctx, el, ctr, name, type);
-				if (mix != null) {					
+				if (mix != null) {
 					if (typeof mix === 'object' && array == null){
 						array = [ string ];
 					}

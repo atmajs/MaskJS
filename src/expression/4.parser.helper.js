@@ -12,7 +12,7 @@ var parser_skipWhitespace,
 		var c;
 		while (index < length) {
 			c = template.charCodeAt(index);
-			if (c > 32) 
+			if (c > 32)
 				return c;
 			index++;
 		}
@@ -79,7 +79,7 @@ var parser_skipWhitespace,
 
 		while (true) {
 
-			if (index === length) 
+			if (index === length)
 				break;
 
 			c = template.charCodeAt(index);
@@ -102,7 +102,7 @@ var parser_skipWhitespace,
 	};
 
 	parser_getDirective = function(code) {
-		if (code == null && index === length) 
+		if (code == null && index === length)
 			return null;
 
 		switch (code) {

@@ -38,7 +38,7 @@ var token_Const,
 		},
 		consume: function(str, i, imax, out) {
 			var end = cursor_tokenEnd(str, i, imax);
-			if (end === i) 
+			if (end === i)
 				return i;
 
 			this.setter(out, str.substring(i, end));
@@ -86,7 +86,7 @@ var token_Const,
 			}
 
 			var end = cursor_groupEnd(str, ++i, imax, start, end);
-			if (end === i) 
+			if (end === i)
 				return i;
 
 			this.setter(out, str.substring(i, end));
@@ -95,7 +95,7 @@ var token_Const,
 		consume: function(str, i, imax, out) {
 			this.rgx.lastIndex = i;
 			var match = this.rgx.exec(str);
-			if (match == null) 
+			if (match == null)
 				return i;
 
 			var x = match[0];
@@ -131,7 +131,7 @@ var token_Const,
 					}
 					break;
 				}
-				if (i === start) 
+				if (i === start)
 					return i;
 
 				this.setter(out, str.substring(start, i));
@@ -155,7 +155,7 @@ var token_Const,
 		},
 		consume: function(str, i, imax, out) {
 			var c = str.charCodeAt(i);
-			if (c !== 34 && c !== 39) 
+			if (c !== 34 && c !== 39)
 				return i;
 
 			var end = cursor_quoteEnd(str, i + 1, imax, c === 34 ? '"' : "'");
@@ -182,17 +182,17 @@ var token_Const,
 				end = _consume(this.tokens, str, i, imax, obj, this.optional);
 
 				if (i === end) {
-					if (arr == null) 
+					if (arr == null)
 						return i;
 					throw Error('Next item expected');
 				}
-				if (arr == null) 
+				if (arr == null)
 					arr = [];
 				arr.push(obj);
 				i = end;
 
 				end = this.delim.consume(str, i, imax);
-				if (i === end) 
+				if (i === end)
 					break;
 				i = end;
 			}
@@ -235,7 +235,7 @@ var token_Const,
 				j = 0;
 			for(; j < this.length; j++) {
 				i = this.groups[j].consume(str, i, imax, out);
-				if (i !== start) 
+				if (i !== start)
 					return i;
 			}
 			return i;

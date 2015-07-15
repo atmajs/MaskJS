@@ -6,7 +6,7 @@ var parser_parse,
 	parser_ensureTemplateFunction,
 	parser_setInterpolationQuotes,
 	parser_cleanObject,
-	parser_ObjectLexer,	
+	parser_ObjectLexer,
 	mask_stringify,
 	mask_stringifyAttr
 	;

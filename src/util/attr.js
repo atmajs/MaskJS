@@ -9,7 +9,7 @@ var attr_extend,
 				: obj_create(b);
 		}
 
-		if (b == null) 
+		if (b == null)
 			return a;
 
 		var key;

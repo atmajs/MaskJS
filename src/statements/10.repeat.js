@@ -32,7 +32,7 @@
 		}
 	};
 
-	function compo_init(name, nodes, model, index, container, parent) {		
+	function compo_init(name, nodes, model, index, container, parent) {
 		return {
 			type: Dom.COMPONENT,
 			compoName: name,

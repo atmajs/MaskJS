@@ -47,7 +47,7 @@ var mask_merge;
 		;
 
 	function _merge(node, placeholders, tmplNode, clonedParent){
-		if (node == null) 
+		if (node == null)
 			return null;
 
 		var fn;
@@ -88,11 +88,11 @@ var mask_merge;
 			node = nodes[i];
 
 			if (node.tagName === tag_ELSE) {
-				// check previous 
+				// check previous
 				if (x != null)
 					continue;
 
-				if (node.expression && !eval_(node.expression, placeholders, tmplNode)) 
+				if (node.expression && !eval_(node.expression, placeholders, tmplNode))
 					continue;
 
 				x = _merge(nodes[i].nodes, placeholders, tmplNode, clonedParent)
@@ -112,7 +112,7 @@ var mask_merge;
 		return fragment;
 	}
 	function _mergeComponent(node, placeholders, tmplNode, clonedParent) {
-		if (node.nodes == null) 
+		if (node.nodes == null)
 			return node;
 
 		var cloned = new Dom.Component;
@@ -179,7 +179,7 @@ var mask_merge;
 				;
 		}
 
-		if (id == null) 
+		if (id == null)
 			id = tagName.substring(1);
 
 		var content = placeholders.$getNode(id, node.expression);
@@ -190,7 +190,7 @@ var mask_merge;
 			return null;
 		}
 
-		if (content.parent) 
+		if (content.parent)
 			_modifyParents(clonedParent, content.parent);
 
 
@@ -225,7 +225,7 @@ var mask_merge;
 		return nodes;
 	}
 	function _mergeAttr(a, b, placeholders, tmplNode){
-		if (a == null || b == null) 
+		if (a == null || b == null)
 			return a || b;
 
 		var out = interpolate_obj_(a, placeholders, tmplNode);
@@ -295,7 +295,7 @@ var mask_merge;
 			parent: clonedParent,
 			nodes: null
 		};
-		if (node.nodes) 
+		if (node.nodes)
 			outnode.nodes = _merge(node.nodes, placeholders, tmplNode, outnode);
 
 		return outnode;
@@ -312,7 +312,7 @@ var mask_merge;
 			x;
 		for(var key in clone){
 			x = clone[key];
-			if (x == null) 
+			if (x == null)
 				continue;
 
 			clone[key] = interpolate_str_(x, placeholders, node);
@@ -328,12 +328,12 @@ var mask_merge;
 			isFn = true;
 			str = mix();
 		}
-		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1) 
+		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1)
 			return mix;
 
 		var result = str.substring(0, index),
 			length = str.length,
-			isBlockEntry = str.charCodeAt(index + 1) === 91, // [ 
+			isBlockEntry = str.charCodeAt(index + 1) === 91, // [
 			last = -1,
 			c;
 
@@ -342,7 +342,7 @@ var mask_merge;
 			last = index;
 			if (isBlockEntry === true) {
 				index = str.indexOf(']', last);
-				if (index === -1) 
+				if (index === -1)
 					index = length;
 				last += 2;
 			}
@@ -376,7 +376,7 @@ var mask_merge;
 			// tail
 			last = isBlockEntry ? (index + 1) : index;
 			index = str.indexOf('@', index);
-			if (index === -1) 
+			if (index === -1)
 				index = length;
 
 			result += str.substring(last, index);
@@ -405,11 +405,11 @@ var mask_merge;
 			else if (tagName === '@counter') {
 				return interpolate_getCounter_(property);
 			}
-			else if (tagName === node.tagName) 
+			else if (tagName === node.tagName)
 				obj = node;
 		}
 
-		if (obj == null) 
+		if (obj == null)
 			obj = placeholders.$getNode(id);
 
 		if (obj == null) {
@@ -439,7 +439,7 @@ var mask_merge;
 	}());
 
 	function appendAny(node, mix){
-		if (mix == null) 
+		if (mix == null)
 			return;
 		if (typeof mix.concat === 'function') {
 			var imax = mix.length;
@@ -468,7 +468,7 @@ var mask_merge;
 
 	var RESERVED = ' else placeholder each attr if parent scope'
 	function _resolvePlaceholders(root, node, placeholders) {
-		if (node == null) 
+		if (node == null)
 			return placeholders;
 
 		if (is_Array(node)) {
@@ -481,7 +481,7 @@ var mask_merge;
 		}
 
 		var type = node.type;
-		if (type === dom_TEXTNODE) 
+		if (type === dom_TEXTNODE)
 			return placeholders;
 
 		if (type === dom_NODE) {
@@ -491,7 +491,7 @@ var mask_merge;
 				placeholders.$count++;
 				var id = tagName.substring(1);
 				// if DEBUG
-				if (RESERVED.indexOf(' ' + id + ' ') !== -1) 
+				if (RESERVED.indexOf(' ' + id + ' ') !== -1)
 					log_error('MaskMerge. Reserved Name', id);
 				// endif
 				var x = {
@@ -524,12 +524,12 @@ var mask_merge;
 		return out;
 	}
 	function _getParentModifiers(root, node) {
-		if (node === root) 
+		if (node === root)
 			return null;
 
 		var current, parents, parent = node.parent;
 		while (true) {
-			if (parent == null) 
+			if (parent == null)
 				break;
 			if (parent === root && root.type !== dom_NODE)
 				break;
@@ -558,10 +558,10 @@ var mask_merge;
 		var nodeParent = clonedParent, modParent = parents;
 		while(nodeParent != null && modParent != null){
 
-			if (modParent.tagName) 
+			if (modParent.tagName)
 				nodeParent.tagName = modParent.tagName;
 
-			if (modParent.expression) 
+			if (modParent.expression)
 				nodeParent.expression = modParent.expression;
 
 			for(var key in modParent.attr){
@@ -611,7 +611,7 @@ var mask_merge;
 			var ctx = this, node;
 			while(ctx != null){
 				node = ctx[id];
-				if (node != null) 
+				if (node != null)
 					break;
 				ctx = ctx.parent;
 			}

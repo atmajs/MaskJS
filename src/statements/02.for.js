@@ -10,7 +10,7 @@
 			parse_For(node.expression);
 
 			var value = expression_eval(__ForDirective[3], model, ctx, ctr);
-			if (value == null) 
+			if (value == null)
 				return;
 
 			build(
@@ -83,7 +83,7 @@
 				log_warn('<ForStatement> Value is not an object', value);
 				return null;
 			}
-			if (is_Array(value)) 
+			if (is_Array(value))
 				log_warn('<ForStatement> Consider to use `for..of` for Arrays');
 
 			return loop_Object(nodes, value, prop1, prop2, expr);
@@ -101,7 +101,7 @@
 			scope = {};
 			scope[prop1] = arr[i];
 
-			if (prop2) 
+			if (prop2)
 				scope[prop2] = i;
 
 			nodes[i] = createForItemNode(
@@ -127,7 +127,7 @@
 			scope = {};
 			scope[prop1] = key;
 
-			if (prop2) 
+			if (prop2)
 				scope[prop2] = value;
 
 			nodes[i++] = createForItemNode(
@@ -173,7 +173,7 @@
 		this.elements = elements;
 	}
 	function handler_proto_dispose() {
-		if (this.elements) 
+		if (this.elements)
 			this.elements.length = 0;
 	}
 	function for_proto_serializeScope(scope, model) {
@@ -184,7 +184,7 @@
 
 
 		var val = scope[propVal];
-		if (val != null && typeof val === 'object') 
+		if (val != null && typeof val === 'object')
 			scope[propVal] = '$ref:(' + expr + ')."' + key + '"';
 
 		return scope;
@@ -247,7 +247,7 @@
 		if (hasBrackets) {
 			c = parser_skipWhitespace();
 
-			if (c !== 41) 
+			if (c !== 41)
 				return throw_('Closing parenthese expected');
 
 			index++;
@@ -284,7 +284,7 @@
 		var c;
 		for(; index < length; index++ ){
 			c = template.charCodeAt(index);
-			if (c < 33) 
+			if (c < 33)
 				continue;
 
 			return c;
@@ -311,7 +311,7 @@
 
 			if (
 				(c === 36) || // $
-				(c === 95) || // _ 
+				(c === 95) || // _
 				(c >= 97 && c <= 122) || // a-z
 				(c >= 65 && c <= 90)  // A-Z
 				) {
@@ -322,7 +322,7 @@
 			break;
 		}
 
-		if (start === index) 
+		if (start === index)
 			return throw_('Variable declaration expected');
 
 		return template.substring(start, index);

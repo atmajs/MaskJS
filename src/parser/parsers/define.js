@@ -32,7 +32,7 @@
 					i = -1, x;
 				while( ++i < imax ){
 					str += extends_[i].compo;
-					if (i < imax - 1) 
+					if (i < imax - 1)
 						str += ', ';
 				}
 			}

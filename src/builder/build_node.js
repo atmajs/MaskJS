@@ -6,7 +6,7 @@ var build_node;
 			attr = node.attr;
 
 		var el = el_create(tagName);
-		if (el == null) 
+		if (el == null)
 			return;
 
 		if (children != null){
@@ -57,7 +57,7 @@ var build_node;
 
 	var el_create;
 	(function(doc){
-		el_create = function(name){			
+		el_create = function(name){
 			// if DEBUG
 			try {
 			// endif

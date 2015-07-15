@@ -5,13 +5,13 @@ var build_compo;
 		var compoName = node.tagName,
 			Handler;
 
-		if (node.controller != null) 
+		if (node.controller != null)
 			Handler = node.controller;
 
-		if (Handler == null) 
+		if (Handler == null)
 			Handler = custom_Tags[compoName];
 
-		if (Handler == null) 
+		if (Handler == null)
 			return build_NodeAsCompo(node, model, ctx, container, ctr, children);
 
 		var isStatic = false,
@@ -40,17 +40,17 @@ var build_compo;
 		compo.parent = ctr;
 		compo.expression = node.expression;
 
-		if (compo.compoName == null) 
+		if (compo.compoName == null)
 			compo.compoName = node.tagName;
 
-		if (compo.model == null) 
+		if (compo.model == null)
 			compo.model = model;
 
-		if (compo.nodes == null) 
+		if (compo.nodes == null)
 			compo.nodes = node.nodes;
 
 		for (key in attr) {
-			if (typeof attr[key] === 'function') 
+			if (typeof attr[key] === 'function')
 				attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
 		}
 
@@ -63,7 +63,7 @@ var build_compo;
 			, container
 		);
 
-		if (is_Function(compo.renderStart)) 
+		if (is_Function(compo.renderStart))
 			compo.renderStart(model, ctx, container);
 
 
@@ -77,7 +77,7 @@ var build_compo;
 				, container
 				, children
 				, compo.renderEnd
-			); 
+			);
 			compo.await(resume);
 			return null;
 		}
@@ -96,7 +96,7 @@ var build_compo;
 			compo.render(compo.model, ctx, container);
 			// Overriden render behaviour - do not render subnodes
 			return null;
-		}	
+		}
 		return compo;
 	}
 
@@ -114,7 +114,7 @@ var build_compo;
 		else {
 			clone = static_;
 
-			for (var key in node) 
+			for (var key in node)
 				clone[key] = node[key];
 
 			clone.parent = ctr;
@@ -123,7 +123,7 @@ var build_compo;
 		var attr = clone.attr;
 		if (attr != null) {
 			for (var key in attr) {
-				if (typeof attr[key] === 'function') 
+				if (typeof attr[key] === 'function')
 					attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
 			}
 		}
@@ -162,7 +162,7 @@ var build_compo;
 
 		builder_pushCompo(ctr, node);
 
-		if (node.model == null) 
+		if (node.model == null)
 			node.model = model;
 
 		var els = node.elements = [];

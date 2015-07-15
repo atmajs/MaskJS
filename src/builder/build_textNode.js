@@ -1,16 +1,16 @@
 var build_textNode;
-(function(){	
+(function(){
 	build_textNode = function build_textNode(node, model, ctx, el, ctr) {
 
 		var content = node.content;
-		if (is_Function(content)) {		
+		if (is_Function(content)) {
 			var result = content(
 				'node', model, ctx, el, ctr
 			);
 			if (typeof result === 'string') {
 				append_textNode(el, result);
 				return;
-			} 		
+			}
 			// result is array with some htmlelements
 			var text = '',
 				jmax = result.length,
@@ -32,9 +32,9 @@ var build_textNode;
 					}
 					el.appendChild(x);
 					continue;
-				}	
+				}
 				text += x;
-			}			
+			}
 			if (text !== '') {
 				append_textNode(el, text);
 			}
