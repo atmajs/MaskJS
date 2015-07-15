@@ -75,6 +75,9 @@
 	};	
 	
 	customTag_register('layout:master', {
+		meta: {
+			mode: 'server'
+		},
 		render: function () {
 			var name = this.attr.id || attr_first(this.attr);
 			helper_.register(name, this.nodes);
@@ -82,6 +85,9 @@
 	});
 	
 	customTag_register('layout:view', {
+		meta: {
+			mode: 'server'
+		},
 		render: function (model, ctx, container, ctr, els) {
 			var nodes = helper_.get(this.attr.master);
 			var template = mask_merge(nodes, this.nodes, null, { extending: true });

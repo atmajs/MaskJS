@@ -135,15 +135,16 @@ var util_resolveRef,
 			}
 		}
 		
-		if (value == null) {
-			if (current == null || current.next != null){
-				// notify that value is not in model, ctx, controller;
-				log_warn('<mask:expression> Accessor error:', key);
-			}
-			return null;
-		}
-		
 		do {
+			
+			if (value == null) {
+				if (current == null || current.next != null){
+					// notify that value is not in model, ctx, controller;
+					log_warn('<mask:expression> Accessor error:', key);
+				}
+				return null;
+			}
+
 			if (current.type === type_FunctionRef) {
 				
 				args = [];
@@ -175,9 +176,6 @@ var util_resolveRef,
 			object = value;
 			value = value[key];
 			
-			if (value == null) 
-				break;
-
 		} while (true);
 		
 		return value;
