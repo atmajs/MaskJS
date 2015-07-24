@@ -130,6 +130,7 @@ var Mask;
 			ArrayLike: is_ArrayLike,
 			Array: is_ArrayLike,
 			Object: is_Object,
+			Date: is_Date,
 			NODE: is_NODE,
 			DOM: is_DOM
 		},
@@ -140,8 +141,10 @@ var Mask;
 			EventEmitter: class_EventEmitter,
 		},
 		parser: {
-			ObjectLexer: parser_ObjectLexer
+			ObjectLexer: parser_ObjectLexer,
+			getStackTrace: reporter_getNodeStack
 		},
+
 		// util/listeners.js
 		on: listeners_on,
 		off: listeners_off,

@@ -12,6 +12,7 @@ var throw_,
 	log_warn,
 	log_error,
 	reporter_createErrorNode,
+	reporter_getNodeStack,
 	reporter_deprecated;
 
 (function(){
@@ -50,6 +51,29 @@ var throw_,
 		return parser_parse(
 			'div style="background:red;color:white;">tt>"""' + message + '"""'
 		);
+	};
+
+	reporter_getNodeStack = function(node){
+		var stack = [ node ];
+
+		var parent = node.parent;
+		while (parent != null) {
+			stack.unshift(parent);
+			parent = parent.parent;
+		}
+		var str = '';
+		var root = stack[0];
+		if (root !== node && is_String(root.source) && node.sourceIndex > -1) {
+			str += error_formatSource(root.source, node.sourceIndex, root.filename) + '\n';
+		}
+
+		str += '  at ' + stack
+			.map(function(x){
+				return x.tagName || x.compoName;
+			})
+			.join(' > ');
+
+		return str;
 	};
 
 	(function(){
@@ -93,35 +117,11 @@ var throw_,
 			var error = new Ctor(str);
 			error.message = error.message
 				+ '\n'
-				+ _getNodeStack(node);
+				+ reporter_getNodeStack(node);
 
 			report(error, type);
 		};
 	}
-
-	function _getNodeStack(node){
-		var stack = [ node ];
-
-		var parent = node.parent;
-		while (parent != null) {
-			stack.unshift(parent);
-			parent = parent.parent;
-		}
-		var str = '';
-		var root = stack[0];
-		if (root !== node && is_String(root.source) && node.sourceIndex > -1) {
-			str += error_formatSource(root.source, node.sourceIndex, root.filename) + '\n';
-		}
-
-		str += '  at ' + stack
-			.map(function(x){
-				return x.tagName;
-			})
-			.join(' > ');
-
-		return str;
-	}
-
 	function report(error, type) {
 		if (listeners_emit(type, error)) {
 			return;
