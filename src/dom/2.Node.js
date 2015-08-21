@@ -6,7 +6,7 @@
  * @property {string} tagName
  * @property {Array.<IMaskNode>} nodes
  * @property {IMaskNode} parent
- * @property {string} expression
+ * @property {string} [expression]
  * @property {function} appendChild
  * @memberOf mask.Dom
  */

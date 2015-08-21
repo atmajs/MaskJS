@@ -20,7 +20,7 @@
 		}
 	});
 	custom_Tags['event'] = class_create(Method, {
-		renderEnd: function(els, model, ctx, el){
+		renderEnd: function(els, model, ctx, el, ctr){
 			this.fn = this.fn.bind(this.parent);
 			var name = this.name,
 				params = null,
@@ -29,7 +29,7 @@
 				params = name.substring(i + 1).trim();
 				name = name.substring(0, i).trim();
 			}
-			Compo.Dom.addEventListener(el, name, this.fn, params);
+			Compo.Dom.addEventListener(el, name, this.fn, params, ctr);
 		}
 	});
 	custom_Tags['function'] = class_create(Method, {
