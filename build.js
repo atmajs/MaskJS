@@ -68,6 +68,7 @@ module.exports = {
 			DEBUG: false,
 			SAFE: true,
 			BROWSER: true,
+			NODE: false
 		}
 	},
 
