@@ -1,0 +1,51 @@
+{
+    "name": "maskjs",
+    "description": "Template / Markup / HMVC Engine",
+    "version": "0.12.23",
+    "homepage": "http://atmajs.com/mask",
+    "contributors": [
+        {
+            "name": "Kiryl Yermakou",
+            "email": "rma4ok@gmail.com"
+        }
+    ],
+    "main": "./lib/mask.node.js",
+    "author": "Alexander Kit <alex.kit@atmajs.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/atmajs/MaskJS.git"
+    },
+    "bugs": {
+        "url": "https://github.com/atmajs/MaskJS/issues"
+    },
+    "licenses": [
+        "MIT"
+    ],
+    "devDependencies": {
+        "atma": ">0.9.26",
+        "atma-loader-traceur": ">=1.0.19"
+    },
+    "scripts": {
+        "test" : "atma test",
+        "build": "atma",
+        "server": "atma server",
+        "examples": "atma server"
+    },
+    "keywords": [],
+    "engines": {
+        "node": "~0.8.9"
+    },
+    "atma": {
+        "plugins": [
+            "atma-loader-traceur"
+        ],
+        "settings": {
+            "atma-loader-traceur": {
+                "extensions": [
+                    "es6",
+                    "test"
+                ]
+            }
+        }
+    }
+}

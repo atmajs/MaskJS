@@ -1,0 +1,35 @@
+{
+  "name": "maskjs",
+  "version": "0.52.4",
+  "homepage": "https://github.com/atmajs/MaskJS",
+  "authors": [
+    "Alex Kit <alex.kit@atmajs.com>"
+  ],
+  "description": "Template / Markup / HMVC Engine",
+  "main": "lib/mask.js",
+  "keywords": [
+    "MVC",
+    "Components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".travis.yml",
+    "build.js",
+    "*.komodoproject",
+    "builds/",
+    "src/",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.52.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.52.4",
+    "commit": "1b2f8823ee0f3f423e2cc269113e39f8e708248e"
+  },
+  "_source": "https://github.com/atmajs/MaskJS.git",
+  "_target": "0.52.4",
+  "_originalSource": "https://github.com/atmajs/MaskJS.git"
+}

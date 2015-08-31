@@ -9,7 +9,7 @@
  * @memberOf mask
  * @method build
  */
-builder_build = function(node, model, ctx, container, ctr, children) {
+var builder_build = function(node, model, ctx, container, ctr, children) {
 
 	if (node == null)
 		return container;

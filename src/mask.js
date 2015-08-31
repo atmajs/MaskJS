@@ -66,8 +66,10 @@ var Mask;
 		parseHtml: parser_parseHtml,
 		// formatter/stringify.js
 		stringify: mask_stringify,
-		// builder/build.js
+		// builder/delegate/build.js
 		build: builder_build,
+		// builder/svg/exports.js
+		buildSVG: builder_buildSVG,
 		// feature/run.js
 		run: mask_run,
 		// feature/merge.js

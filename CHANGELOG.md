@@ -1,5 +1,8 @@
 # Changelog
 
+- 0.52.4
+	- `SVG` renderer
+
 - 0.51
 	- Better debugging for `slot` `function` `event` handlers
 	- `event` handler: accept additional parameters, e.g.:

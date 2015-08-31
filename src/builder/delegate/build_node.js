@@ -61,7 +61,7 @@ var build_node;
 			// if DEBUG
 			try {
 			// endif
-				return doc.createElement(name);
+				return __createElement(name, doc);
 			// if DEBUG
 			} catch(error) {
 				log_error(name, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
