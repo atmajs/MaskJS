@@ -106,7 +106,7 @@ var tools_build;
 			_file_get(path)
 				.fail(reject)
 				.done(function(str){
-					var script = 'module = { exports: null }\n';
+					var script = 'var module = { exports: null }\n';
 					script += str + ';\n';
 					script += 'mask.Module.registerModule(module.exports, new mask.Module.Endpoint("' + path + '", "script"))';
 					resolve(script);
