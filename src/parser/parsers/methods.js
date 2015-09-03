@@ -121,6 +121,7 @@
 	}());
 
 	custom_Parsers['slot' ]    = create('slot');
+	custom_Parsers['pipe' ]    = create('pipe');	
 	custom_Parsers['event']    = create('event');
 	custom_Parsers['function'] = create('function');
 }());

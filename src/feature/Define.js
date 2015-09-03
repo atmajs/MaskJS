@@ -63,6 +63,10 @@ var Define;
 				fns[x.name] = x.fn;
 				continue;
 			}
+			if ('pipe' === name) {
+				custom_Tags.pipe.attach(x, Proto);
+				continue;
+			}
 			if ('define' === name || 'let' === name) {
 				var fn = name === 'define'
 					? Define.registerGlobal
