@@ -50,6 +50,7 @@ var _file_get,
 		},
 		'include': function () {
 			__cfg.getScript = getter('js');
+			__cfg.getStyle  = getter('css');
 			__cfg.getFile   = getter('load');
 
 			var lib = include;
@@ -57,11 +58,13 @@ var _file_get,
 				return function(path){
 					return class_Dfr.run(function(resolve, reject){
 						lib.instance('/')[name](path + '::Module').done(function(resp){
-							var exports = name === 'js'
-								? resp.Module
-								: resp[name].Module;
-
-							resolve(exports);
+							if ('css' === name) {
+								return resolve();
+							}
+							if ('js' === name) {
+								return resolve(resp.Module);
+							}
+							resolve(resp[name].Module);
 						});
 					});
 				}
