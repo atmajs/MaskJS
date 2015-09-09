@@ -96,6 +96,9 @@ var ModuleMask;
 		var arr = mix;
 		if (type === Dom.FRAGMENT) {
 			arr = mix.nodes;
+			if (arr == null) {
+				return [];
+			}
 		}
 		var imax = arr.length,
 			i = -1, x;
