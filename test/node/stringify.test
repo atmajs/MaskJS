@@ -1,5 +1,5 @@
 UTest({
-	
+
 	'literals': {
 		'format' () {
 			test('literals', 2);
@@ -43,7 +43,7 @@ UTest({
 	'misc': {
 		'format' () {
 			test('misc', 2);
-		},	
+		},
 		'minify' () {
 			test('misc.min');
 		}
@@ -53,29 +53,30 @@ UTest({
 			test('interpolation', 2);
 		}
 	}
-	
+
 })
 
 function test(filename, opts) {
 	var M = Mask
-	
+
 	io
 		.File
 		.read(`test/tmpl/stringify/${filename}.mask`)
 		.split(/^[=]{3,}$/gm)
 		.map(function(test){
-			
+
 			return test
 				.replace(/\r\n/g, '\n')
 				.split(/^[\-]{3,}$/gm)
 				.map(x => x.trim());
 		})
 		.forEach(function(parts){
-			if (parts.length < 2) 
+			if (parts.length < 2)
 				return;
-			
+
 			var [ mask, expect ] = parts;
 			var str = M.stringify(mask, opts);
 			eq_(str, expect.replace(/\r\n/g, '\n'));
 		});
 }
+// vim: set ft=js:

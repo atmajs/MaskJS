@@ -1,0 +1,40 @@
+UTest({
+	'evaluate to empty array' () {
+		[
+			'[]',
+			'	[ ]',
+			' [		] ',
+			`
+				[
+
+				]
+			`
+		]
+		.forEach(x => {
+			var arr = Mask.Utils.Expression.eval(x);
+
+			is_(arr, 'Array');
+			eq_(arr.length, 0);
+		})
+	},
+	'evaluate to an array with a number' () {
+		[
+			'[1]',
+			'	[ 1 ]',
+			' [		1] ',
+			`
+				[1
+
+				]
+			`
+		]
+		.forEach(x => {
+			var arr = Mask.Utils.Expression.eval(x);
+
+			is_(arr, 'Array');
+			eq_(arr.length, 1);
+			eq_(arr[0], 1);
+		})
+	}
+})
+// vim: set ft=js:

@@ -39,6 +39,10 @@ var ast_handlePrecedence,
 			length = body.length,
 			x, prev, array;
 
+		if (length === 0) {
+			return;
+		}
+
 		for(; i < length; i++){
 			ast_handlePrecedence(body[i]);
 		}

@@ -1,63 +1,63 @@
-		
+
 UTest({
-	
+
 	'inline-comment': function(){
-		
+
 		var ast = mask.parse(' //some');
-		
+
 		eq_(ast instanceof mask.Dom.Fragment, true);
 		eq_(ast.nodes, null);
-		
-		
+
+
 		ast = mask.parse('div; // comment');
 		eq_(ast instanceof mask.Dom.Fragment, false);
 		eq_(ast.tagName, 'div');
 		eq_(ast.nodes, null);
-		
-		
+
+
 		ast = mask.parse('div; //comment \n\
 						   span;');
-		
+
 		assert(ast.nodes != null);
-		
+
 		eq_(ast.nodes.length, 2);
 		eq_(ast.nodes[1].tagName , 'span');
-		
+
 		ast = mask.parse('div //comment \n\
 						   foo=fvalue // comment \n\
 						   // x \n\
 						   bar=bvalue');
-		
+
 		eq_(ast.nodes, null);
 		eq_(ast.tagName, 'div');
 		eq_(Object.keys(ast.attr).length, 2);
 		eq_(ast.attr.foo, 'fvalue');
 		eq_(ast.attr.bar, 'bvalue');
 	},
-	
+
 	'block-comment': function(){
-		
+
 		var ast = mask.parse(' /* comment */');
 		eq_(ast instanceof mask.Dom.Fragment, true);
 		eq_(ast.nodes, null);
-		
+
 		ast = mask.parse('div; /* comment */');
 		eq_(ast instanceof mask.Dom.Fragment, false);
 		eq_(ast.tagName, 'div');
 		eq_(ast.nodes, null);
-		
-		
+
+
 		ast = mask.parse('div; \n\
 						   /* \n\
 								comment \n\
 						   */\n\
 						   span;');
-		
+
 		assert(ast.nodes != null);
-		
+
 		eq_(ast.nodes.length, 2);
 		eq_(ast.nodes[1].tagName , 'span');
-		
+
 		ast = mask.parse('div /*\n\
 						   comment \n \
 						   1\n \
@@ -68,13 +68,13 @@ UTest({
 							comment \n\
 						   */ \n\
 						   bar=bvalue');
-		
+
 		eq_(ast.nodes, null);
 		eq_(ast.tagName, 'div');
 		eq_(Object.keys(ast.attr).length, 2);
 		eq_(ast.attr.foo, 'fvalue');
 		eq_(ast.attr.bar, 'bvalue');
-		
+
 		ast = mask.parse('  /*\n\
 						   comment \n \
 						   1\n \
@@ -85,13 +85,14 @@ UTest({
 							comment \n\
 						   */ \n\
 						   bar=bvalue');
-		
+
 		eq_(ast.nodes, null);
 		eq_(ast.tagName, 'div');
 		eq_(Object.keys(ast.attr).length, 2);
 		eq_(ast.attr.foo, 'fvalue');
 		eq_(ast.attr.bar, 'bvalue');
-		
+
 	}
 })
-	
+
+// vim: set ft=js:

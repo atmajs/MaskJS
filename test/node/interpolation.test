@@ -15,7 +15,7 @@ UTest({
 			var txt = fn('node', { foo: 'one'});
 			eq_(txt, 'a one b one c');
 		},
-		
+
 		'should not interpolate' () {
 			var template = '~ foo ~(bar)';
 			var node = Mask.parse('"' + template + '"');
@@ -31,7 +31,7 @@ UTest({
 			var txt = fn('node', { foo: 'test' });
 			eq_(txt, 'test ~foo');
 		},
-		
+
 		'is interpolation' () {
 			[
 				{
@@ -59,10 +59,10 @@ UTest({
 				var { content, model, expect } = row;
 				var fn = getFn(`"${content}"`);
 				var str = fn('node', model);
-				
+
 				eq_(str, expect);
 			})
-		},		
+		},
 	},
 	'expression' : {
 		'should interpolate simple' () {
@@ -104,12 +104,12 @@ UTest({
 		'head' () {
 			var node = Mask.parse(`.~foo #~baz;`)
 			eq_(node.tagName, 'div');
-			
+
 			var fn = node.attr.class;
 			is_(fn, 'Function');
 			var txt = fn('attr', { foo: 'zfoo'});
 			eq_(txt, 'zfoo');
-			
+
 			var fn = node.attr.id;
 			is_(fn, 'Function');
 			var txt = fn('attr', { baz: 'zbaz'});
@@ -154,3 +154,4 @@ function getFn(tmpl) {
 	is_(fn, 'Function');
 	return fn;
 }
+// vim: set ft=js:
