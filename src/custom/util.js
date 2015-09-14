@@ -52,9 +52,9 @@
 			this.nodeRenderStart(expr, model, ctx, el, ctr);
 			return this.node(expr, model, ctx, el, ctr);
 		}
-		// asume 'attr'
-		this.attrRenderStart(expr, model, ctx, el, ctr, attrName);
-		return this.attr(expr, model, ctx, el, ctr, attrName);
+		// `attr`, `compo-attr`
+		this.attrRenderStart(expr, model, ctx, el, ctr, attrName, type);
+		return this.attr(expr, model, ctx, el, ctr, attrName, type);
 	}
 	function processParsedDelegate(fn) {
 		return function(expr, model, ctx, el, ctr) {
