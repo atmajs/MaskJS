@@ -51,7 +51,7 @@ var build_compo;
 
 		for (key in attr) {
 			if (typeof attr[key] === 'function')
-				attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
+				attr[key] = attr[key]('compo-attr', model, ctx, container, compo, key);
 		}
 
 
