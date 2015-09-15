@@ -34,7 +34,7 @@ UTest({
 		"'' + 5 + 'hello'", "'' + 5 + 'h' + 'e' + \"l\" + 'l' + 'o'", "'' + ('5' + 'h' + 'e') + (\"l\" + 'l' + 'o')", //
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
-		"5 + $.parent.fn2()", 
+		"5 + $.parent.fn2()",
 		"5 + $.closest(':test').value",
 		"5 + var_", //
 		"1 + 2*2 + var_"], '5hello', {
@@ -47,47 +47,68 @@ UTest({
 				fn2: function() {
 					return "hello"
 				},
-				
+
 				compoName: ':test',
 				value: 'hello'
 			}
 		});
 	},
-	'math': function() {
-		expression([ //
-		'10', //
-		'5+5', //
-		'6+1+3', //
-		'1 + 2 * 2 + 1 * 5',
-		'15-5', //
-		'5*2', //
-		'20/2', //
-		'2*(2+3)', //
-		'2+2*4', //
-		'3 * (2+3) - 5', //
-		'(5*1)*1/5+9', //
-		'(5 * 1) * 1 / 5 +   9 ', //
-		'(((5 / 1) / 1) / 5) +   9 ', //
-		'((((5 / 1) / 1) / 5) +   9 )', //
-		'(5 * 1) * 1 / 5 + 1 + (4 * 2)', //
-		'-(-10)',
-		'23%13'], 10);
-
-		expression(['a + b+b', //
-		'_c*c3+4+a', //
-		'fn(5)', //
-		'fn(3) + fn(2)', //
-		'fn(3) + fn(1) +fn(1)', //
-		'fn(3,4) + fn(4,3) + fn(2,-2)', //
-		], 20, {
-			a: 10,
-			b: 5,
-			_c: 2,
-			c3: 3,
-			fn: function(n, x) {
-				return n * (x || 4);
-			}
-		});
+	'math': {
+		'number operations' () {
+			expression([
+				'10',
+				'5+5',
+				'6+1+3',
+				'1 + 2 * 2 + 1 * 5',
+				'15-5',
+				'5*2',
+				'20/2',
+				'2*(2+3)',
+				'2+2*4',
+				'3 * (2+3) - 5',
+				'(5*1)*1/5+9',
+				'(5 * 1) * 1 / 5 +   9 ',
+				'(((5 / 1) / 1) / 5) +   9 ',
+				'((((5 / 1) / 1) / 5) +   9 )',
+				'(5 * 1) * 1 / 5 + 1 + (4 * 2)',
+				'-(-10)',
+				'23%13'
+			], 10);
+		},
+		'bit operations' () {
+			[
+				'2^3',
+				'1.23 | 0',
+				'5 & 1',
+				'-2 + 3.1 | 0',
+				'5 & 1 | 0 ^ 4',
+				'1^-1'
+			]
+			.forEach(str => {
+				eq_(Expression.eval(str), eval(str));
+			});
+		},
+		'should access variables and functions' () {
+			expression(['a + b+b',
+				'_c*c3+4+a',
+				'fn(5)',
+				'fn(3) + fn(2)',
+				'fn(3) + fn(1) +fn(1)',
+				'fn(3,4) + fn(4,3) + fn(2,-2)',
+				'$float | 0 '
+			]
+			, 20
+			, {
+				a: 10,
+				b: 5,
+				_c: 2,
+				c3: 3,
+				$float: 20.2,
+				fn: function(n, x) {
+					return n * (x || 4);
+				}
+			});
+		}
 
 	},
 	'condition': function() {
@@ -123,7 +144,7 @@ UTest({
 			a: 10,
 			b: 5
 		});
-		
+
 		expression([ //
 		'5==6', //
 		'6==5', //
@@ -161,7 +182,7 @@ UTest({
 			var_: 'enabled'
 		});
 	},
-	
+
 	'OR': function(){
 		expression([
 			'a || b',
@@ -174,11 +195,11 @@ UTest({
 			'some-key': 1
 		});
 	},
-	
+
 	'extractVars': function(){
 		eq_($refs('x'),'x');
 		deepEq_($refs('x + fn(a.b.c)'),['x','a.b.c']);
-		
+
 		deepEq_($refs('(var * var2 / (1 - same)) + object.fn(a.b.c)'),
 			[
 				'var',
@@ -188,8 +209,8 @@ UTest({
 				'object'
 			]
 		);
-		
-		
+
+
 		var obj = {
 			fn: function(){
 				return {
@@ -198,21 +219,21 @@ UTest({
 			}
 		},
 		refs;
-		
+
 		obj.prop = obj;
-		
+
 		refs = $refs('fn().model');
 		eq_(refs.ref, 'model');
 		deepEq($eval(refs.accessor, obj), {model: 'yeap'});
-		
+
 		refs = $refs('x + prop.fn().model');
-		
+
 		eq(refs[0], 'x');
 		eq(refs[1], 'prop');
 		eq(refs[2].ref, 'model');
 		deepEq($eval(refs[2].accessor, obj), {model: 'yeap'});
 	},
-	
+
 	'accessors': function(){
 		expression([
 			'(a).foo.length',
@@ -229,16 +250,16 @@ UTest({
 			key: 'foo'
 		});
 	},
-	
+
 	'array': function(){
 		deepEq_($eval('[("b" + "a" + "z")]'), [
 			'baz'
 		]);
-		
+
 		deepEq_($eval('[1,2,"4", true, 5.5, [1]]'), [
 			1, 2, '4', true, 5.5, [1]
 		]);
-		
+
 		deepEq_($eval('[[foo[a], foo.prop[0]], ("ba" + "z")]', {
 			foo: { prop: 'x-foo' },
 			a: 'prop'
@@ -246,7 +267,7 @@ UTest({
 			['x-foo', 'x'], ['baz']
 		]);
 	},
-	
+
 	'early exit': (function(){
 		function check(data){
 			var str = data.str,
@@ -285,7 +306,7 @@ UTest({
 			}
 		}
 	}()),
-	
+
 	'object': function(){
 		deepEq_($eval("{}"), {});
 		deepEq_($eval("{ foo: 'baz'}"), { foo: 'baz' });
@@ -296,9 +317,9 @@ UTest({
 			}
 		);
 	},
-	
+
 	'predefined accessors': function(){
-		expression([ 
+		expression([
 		'$.three * 3 - 5',
 		'$ctx.number.two - two + 4',
 		'0 + $.attr.four - 0',
@@ -316,9 +337,9 @@ UTest({
 			}
 		});
 	},
-	
+
 	'controller`s scope accessors': function(){
-		
+
 		expression(
 			[
 				'a + b.sub',
@@ -342,15 +363,15 @@ UTest({
 			}
 		);
 	},
-	
+
 	'should eval array of statements': function(){
 		var x;
 		x = Expression.evalStatements('"a", 2');
 		deepEq_(x, ['a', 2]);
-		
+
 		x = Expression.evalStatements('"a" + "b", 10 /2');
 		deepEq_(x, ['ab', 5]);
-		
+
 		x = Expression.evalStatements('1+1, 10 - 2 * 3');
 		deepEq_(x, [2, 4]);
 	}

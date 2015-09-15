@@ -51,7 +51,7 @@ var ast_handlePrecedence,
 			x = body[i];
 			prev = body[i-1];
 
-			if (precedence[prev.join] > precedence[x.join])
+			if (PRECEDENCE[prev.join] > PRECEDENCE[x.join])
 				break;
 		}
 
@@ -63,8 +63,8 @@ var ast_handlePrecedence,
 			x = body[i];
 			prev = body[i-1];
 
-			var prec_Prev = precedence[prev.join];
-			if (prec_Prev > precedence[x.join] && i < length - 1){
+			var prec_Prev = PRECEDENCE[prev.join];
+			if (prec_Prev > PRECEDENCE[x.join] && i < length - 1){
 
 				var start = i,
 					nextJoin,
@@ -77,7 +77,7 @@ var ast_handlePrecedence,
 					if (nextJoin == null)
 						break;
 
-					if (prec_Prev <= precedence[nextJoin])
+					if (prec_Prev <= PRECEDENCE[nextJoin])
 						break;
 				}
 

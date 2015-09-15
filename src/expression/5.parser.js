@@ -194,6 +194,9 @@ function expression_parse(expr, earlyExit) {
 			case op_Multip:
 			case op_Divide:
 			case op_Modulo:
+			case op_BitOr:
+			case op_BitXOr:
+			case op_BitAnd:
 
 			case op_LogicalAnd:
 			case op_LogicalOr:

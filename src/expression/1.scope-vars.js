@@ -23,6 +23,10 @@ var op_Minus = '-', //1,
 	op_LogicalLessEqual = '<=', //15,
 	op_Member = '.', // 16
 
+	op_BitOr = '|',
+	op_BitXOr = '^',
+	op_BitAnd = '&',
+
 	punc_ParantheseOpen 	= 20,
 	punc_ParantheseClose 	= 21,
 	punc_BracketOpen 		= 22,
@@ -60,27 +64,29 @@ var type_Body = 1,
 var state_body = 1,
 	state_arguments = 2;
 
+var PRECEDENCE;
+(function(){
 
-var precedence = {};
+	PRECEDENCE = {};
+	PRECEDENCE[op_Member] = 1;
+	PRECEDENCE[op_Divide] = 2;
+	PRECEDENCE[op_Multip] = 2;
+	PRECEDENCE[op_Minus] = 3;
+	PRECEDENCE[op_Plus] = 3;
+	PRECEDENCE[op_LogicalGreater] = 4;
+	PRECEDENCE[op_LogicalGreaterEqual] = 4;
+	PRECEDENCE[op_LogicalLess] = 4;
+	PRECEDENCE[op_LogicalLessEqual] = 4;
+	PRECEDENCE[op_LogicalEqual] = 5;
+	PRECEDENCE[op_LogicalEqual_Strict] = 5;
+	PRECEDENCE[op_LogicalNotEqual] = 5;
+	PRECEDENCE[op_LogicalNotEqual_Strict] = 5;
+	PRECEDENCE[op_BitOr ] = 5;
+	PRECEDENCE[op_BitXOr] = 5;
+	PRECEDENCE[op_BitAnd] = 5;
+	PRECEDENCE[op_LogicalAnd] = 7;
+	PRECEDENCE[op_LogicalOr] = 7;
 
-precedence[op_Member] = 1;
+	obj_toFastProps(PRECEDENCE);
+}());
 
-precedence[op_Divide] = 2;
-precedence[op_Multip] = 2;
-
-precedence[op_Minus] = 3;
-precedence[op_Plus] = 3;
-
-precedence[op_LogicalGreater] = 4;
-precedence[op_LogicalGreaterEqual] = 4;
-precedence[op_LogicalLess] = 4;
-precedence[op_LogicalLessEqual] = 4;
-
-precedence[op_LogicalEqual] = 5;
-precedence[op_LogicalEqual_Strict] = 5;
-precedence[op_LogicalNotEqual] = 5;
-precedence[op_LogicalNotEqual_Strict] = 5;
-
-
-precedence[op_LogicalAnd] = 6;
-precedence[op_LogicalOr] = 6;

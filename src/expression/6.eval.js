@@ -74,6 +74,15 @@ function expression_evaluate(mix, model, ctx, controller) {
 			case op_Modulo:
 				result %= value;
 				break;
+			case op_BitOr:
+				result |= value;
+				break;
+			case op_BitXOr:
+				result ^= value;
+				break;
+			case op_BitAnd:
+				result &= value;
+				break;
 			case op_LogicalNotEqual:
 				/* jshint eqeqeq: false */
 				result = result != value;

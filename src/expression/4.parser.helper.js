@@ -194,21 +194,18 @@ var parser_skipWhitespace,
 			case 38:
 				// &
 				if (template.charCodeAt(++index) !== code) {
-					util_throw(
-						'Not supported: Bitwise AND', code
-					);
-					return null;
+					return op_BitAnd;
 				}
 				return op_LogicalAnd;
 			case 124:
 				// |
 				if (template.charCodeAt(++index) !== code) {
-					util_throw(
-						'Not supported: Bitwise OR', code
-					);
-					return null;
+					return op_BitOr;
 				}
 				return op_LogicalOr;
+			case 94:
+				// ^
+				return op_BitXOr;
 			case 63:
 				// ?
 				return punc_Question;
