@@ -3,7 +3,7 @@ UTest({
 		var a = '@foo',
 			b = '@foo { span > "Foo" }'
 			;
-			
+
 		var tmpl = mask.merge(a, b);
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
@@ -12,7 +12,7 @@ UTest({
 		var a = '@foo > span > "Foo"',
 			b = '@foo;'
 			;
-			
+
 		var tmpl = mask.merge(a, b);
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
@@ -33,7 +33,7 @@ UTest({
 			.find('span > em')
 			.eq_('length', 1)
 			.eq_('text', 'Baz');
-		
+
 		$dom
 			.filter('p')
 			.eq_('length', 1)
@@ -56,7 +56,7 @@ UTest({
 		`,
 			b = '@foo { span > "Foo" }'
 			;
-		
+
 		var $dom = $render(a, b);
 		$dom
 			.children('h4')
@@ -73,7 +73,7 @@ UTest({
 		var a = '.outer > @content';
 		var b = '@content > .inner > @title';
 		var c = '@title > "Hello"';
-		
+
 		var tmpl1 = mask.merge(a, b, null, { extending: true });
 		var dom = $render(tmpl1, c);
 		dom
@@ -92,7 +92,7 @@ UTest({
 			`,
 			b = '@bazContent > span > "baz"'
 			;
-		
+
 		var dom = $render(a, b);
 		dom
 			.filter('div')
@@ -117,7 +117,7 @@ UTest({
 			`,
 			b = '@fooContent > span > "baz"'
 			;
-		
+
 		var dom = $render(a, b);
 		dom
 			.filter('div')
@@ -129,7 +129,7 @@ UTest({
 		var a = 'div > @fooContent',
 			b = 'p > @fooContent > span > "baz"'
 			;
-		
+
 		var tmpl = mask.merge(a, b);
 		var dom = $(mask.render(tmpl));
 		dom
@@ -142,7 +142,7 @@ UTest({
 		var a = '.foo some=true  > @foo',
 			b = '.baz some=false > @foo > span > "baz"'
 			;
-		
+
 		var dom = $render(a, b);
 		dom
 			.eq_('attr', 'class', 'baz')
@@ -169,7 +169,7 @@ UTest({
 					section > @xContent;
 				}
 			`);
-		
+
 		var b = mask.parse(`
 				stub {
 					@xContent > 'BazContent'
@@ -189,7 +189,7 @@ UTest({
 	},
 	'should insert attribute value' () {
 		var b = "@foo name=myFoo > br";
-		
+
 		[
 			"@foo > div name='@foo.attr.name' > @placeholder;",
 			"@foo > div name='@attr.name' > @placeholder",
@@ -274,9 +274,9 @@ UTest({
 			.eq_('prop', 'tagName', 'P')
 			.eq_('attr', 'class', 'hello')
 			.eq_('html', 'Hello')
-			
+
 	},
-	
+
 	'should render each tab' () {
 		var a = `
 			.some > @each (tab) > @head > .header name='@tab.attr.name' > @placeholder;
@@ -299,16 +299,18 @@ UTest({
 			@foo as=div > span > @placeholder;
 		`;
 		var b = `
-			@foo > 'baz'
+			@foo.qux > 'baz'
 		`
 		var dom = $render(a, b);
-		dom
-			.filter('div')
-			.eq_('length', 1)
-			.children('span')
-			.eq_('length', 1)
-			.eq_('html', 'baz')
-			;
+		return UTest.domtest(dom, `
+			find ('div') {
+				length 1;
+				hasClass ('qux');
+				children ('span') {
+					html ('baz');
+				}
+			}
+		`)
 	},
 	'should create proper expressions' () {
 		var a = `@foo > div > '~[: value + @foo.attr.base ]'`;
@@ -326,13 +328,13 @@ UTest({
 	'combine template- and render-time interpolations' () {
 		var a = `@foo > div class="~[: name + '@foo.attr.name']"`,
 			b = `@foo name="baz"`
-		
+
 		var tmpl = mask.merge(a, b);
 		is_(tmpl[0].attr.class, 'Function');
-		
+
 		var klass = tmpl[0].attr.class();
 		eq_(klass, "~[: name + 'baz']");
-		
+
 		var div = mask.render(tmpl, { name: 'foo' }).firstChild;
 		eq_(div.tagName, 'DIV');
 		eq_(div.className, 'foobaz');
@@ -340,18 +342,18 @@ UTest({
 	'combine template- and render-time interpolations in template nodes' () {
 		var a = `@foo class="~[: name + '@foo.attr.name']" as=div;`,
 			b = `@foo name="baz"`
-		
+
 		var tmpl = mask.merge(a, b);
 		is_(tmpl.attr.class, 'Function');
-		
+
 		var klass = tmpl.attr.class();
 		eq_(klass, "~[: name + 'baz']");
-		
+
 		var div = mask.render(tmpl, { name: 'foo' });
 		eq_(div.tagName, 'DIV');
 		eq_(div.className, 'foobaz');
 	},
-	
+
 	'should replace `:import` with the templates content' () {
 		var a = `
 			:template #foo > h4 name="@attr.name" > "Hello"
@@ -370,7 +372,7 @@ UTest({
 			.eq_('text', 'Hello')
 			;
 	},
-	
+
 	'should render @if' () {
 		var a = `
 			@master {
@@ -389,7 +391,7 @@ UTest({
 			[ `@master name='foo';`, 'h1' ],
 			[ `@master name='bar';`, 'h2' ],
 			[ `@master name='isElse';`, 'h3' ]
-			
+
 		].forEach((row) => {
 			var [b, expect] = row;
 			var dom = $render(a, b);
@@ -400,7 +402,7 @@ UTest({
 				;
 		});
 	},
-	
+
 	'renders generic `if` which should support `nextSibling` for the `else`' (){
 		var a = `
 			section {
@@ -428,7 +430,7 @@ UTest({
 			.has_('div[name=none]')
 			.hasNot_('span[name=false]')
 			.hasNot_('div[name=false]');
-			
+
 		var dom = $render(a, b, { Id: 'foo' });
 		dom
 			.has_('span[name=foo]')
@@ -436,7 +438,7 @@ UTest({
 			.hasNot_('span[name=none]')
 			.hasNot_('div[name=none]');
 	},
-	
+
 	'should merge $root placeholder' () {
 		var a = "div > @placeholder",
 			b = "span > 'Foo'";
@@ -449,7 +451,7 @@ UTest({
 	},
 	'should merge $root placeholder with filtering' () {
 		var a = "section > @placeholder (div)",
-			b = "span > 'Foo'; div > 'Bar'";		
+			b = "span > 'Foo'; div > 'Bar'";
 		var dom = $render(a, b);
 		return UTest.domtest(dom, `
 			find ('section > div') {
@@ -460,7 +462,7 @@ UTest({
 	},
 	'should merge $root placeholder with filtering (pseudo selector)' () {
 		var a = "section > @placeholder (::text)",
-			b = "span > 'Foo'; 'Bar'";		
+			b = "span > 'Foo'; 'Bar'";
 		var dom = $render(a, b);
 		return UTest.domtest(dom, `
 			find ('section') {
@@ -469,7 +471,7 @@ UTest({
 			hasNot ('span');
 		`);
 	},
-	
+
 	'options': {
 		'(extending) two step merging. 1.Extend 2.Merge': {
 			'Extend and Merge nodes' () {
@@ -488,7 +490,7 @@ UTest({
 				return UTest.domtest(dom, `
 					find ('h1') > text XOne;
 					find ('h2') > text XTwo;
-				`);	
+				`);
 			},
 			'Extend and Merge attributes' () {
 				var a = `
@@ -510,7 +512,7 @@ UTest({
 				return UTest.domtest(dom, `
 					find ('h1') > attr name XOne;
 					find ('h2') > attr name XTwo;
-				`);	
+				`);
 			},
 			'Extend and Merge owner attributes' () {
 				var a = `
@@ -525,8 +527,47 @@ UTest({
 				return UTest.domtest(dom, `
 					find ('h1') > attr name XOne;
 					find ('h2') > attr name XTwo;
-				`);	
+				`);
 			}
+		}
+	},
+	'components': {
+		'should merge components in a seperate merge flow' () {
+			// Mergin @letter in `A` component only from "ALetters > A > @letter"
+			var dom = mask.render(`
+				define A {
+					h1 > @letter;
+				}
+				define ALetters {
+					@header;
+					section > A > @letter > 'a'
+				}
+
+				ALetters {
+					@letter > em > 'c'
+					@header > b > 'Head';
+				}
+			`);
+			return UTest.domtest(dom,`
+				filter (b) > text ('Head');
+				find ('section > h1') > text ('a');
+				hasNot ('em')
+			`)
+		},
+		'should merge components attributes in a first merge flow' () {
+			var dom = mask.render(`
+				define A {
+					h1 > '@attr.letter';
+				}
+				define ALetters {
+					section > A letter='@attr.testLetter';
+				}
+
+				ALetters testLetter='z';
+			`);
+			return UTest.domtest(dom,`
+				find ('section > h1') > text ('z');
+			`)
 		}
 	}
 });
@@ -535,7 +576,7 @@ function $render(tmplA, tmplB, model) {
 	var tmpl = mask.merge(tmplA, tmplB);
 	var dom = mask.render(tmpl, model);
 	notEq_(dom, null);
-	
+
 	return $(dom);
 }
 

@@ -280,25 +280,28 @@ var mask_merge;
 				if (handler != null) {
 					var proto = handler.prototype;
 					if (proto && proto.meta != null && proto.meta.template === 'merge') {
-						return node;
+						return _cloneNodeShallow(node, clonedParent, placeholders, tmplNode)
 					}
 				}
 				break;
 		}
 
-		var outnode = {
+		var outnode = _cloneNodeShallow(node, clonedParent, placeholders, tmplNode);
+		if (outnode.nodes)
+			outnode.nodes = _merge(node.nodes, placeholders, tmplNode, outnode);
+
+		return outnode;
+	}
+	function _cloneNodeShallow(node, clonedParent, placeholders, tmplNode) {
+		return {
 			type: node.type,
-			tagName: tagName,
+			tagName: node.tagName,
 			attr: interpolate_obj_(node.attr, placeholders, tmplNode),
 			expression: interpolate_str_(node.expression, placeholders, tmplNode),
 			controller: node.controller,
 			parent: clonedParent,
-			nodes: null
+			nodes: node.nodes
 		};
-		if (node.nodes)
-			outnode.nodes = _merge(node.nodes, placeholders, tmplNode, outnode);
-
-		return outnode;
 	}
 	function _cloneTextNode(node, placeholders, tmplNode, clonedParent){
 		return {
@@ -307,6 +310,7 @@ var mask_merge;
 			parent: clonedParent
 		};
 	}
+
 	function interpolate_obj_(obj, placeholders, node){
 		var clone = _Object_create(obj),
 			x;
