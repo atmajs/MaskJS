@@ -5,11 +5,9 @@
 	custom_Parsers['style' ] = createParser('style', Style.transform);
 	custom_Parsers['script'] = createParser('script');
 
-	custom_Tags['style' ] = createHandler('style');
-	custom_Tags['script'] = createHandler('script');
-
 	var ContentNode = class_create(Dom.Node, {
 		content: null,
+		id: null,
 
 		stringify: function (stream) {
 			stream.processHead(this);
@@ -22,13 +20,15 @@
 			if (is_Function(body)) {
 				body = body();
 			}
-
 			stream.openBlock('{');
 			stream.print(body);
 			stream.closeBlock('}');
 			return;
 		}
 	});
+
+	var COUNTER = 0;
+	var PRFX = '_cm_';
 
 	function createParser(name, transform) {
 		return function (str, i, imax, parent) {
@@ -37,6 +37,7 @@
 				attr,
 				hasBody,
 				body,
+				id,
 				c;
 
 			while(i < imax) {
@@ -101,48 +102,11 @@
 			var node = new ContentNode(name, parent);
 			node.content = body;
 			node.attr = attr;
+			node.id = PRFX + (++COUNTER);
 			return [ node, end + 1, 0 ];
 		};
 	}
 
-	function createHandler(name) {
-		return class_create(customTag_Base, {
-			meta: {
-				mode: 'server'
-			},
-			body : null,
-
-			constructor: function(node, model, ctx, el, ctr){
-				var content = node.content;
-				if (content == null && node.nodes) {
-					var x = node.nodes[0];
-					if (x.type === Dom.TEXTNODE) {
-						content = x.content;
-					} else {
-						content = jmask(x.nodes).text(model, ctr);
-					}
-				}
-
-				this.body = is_Function(content)
-					? content('node', model, ctx, el, ctr)
-					: content
-					;
-			},
-			render: function(model, ctx, container) {
-				var el = document.createElement(name),
-					body = this.body,
-					attr = this.attr;
-				el.textContent = body;
-				for(var key in attr) {
-					var val =  attr[key];
-					if (val != null) {
-						el.setAttribute(key, val);
-					}
-				}
-				container.appendChild(el);
-			}
-		});
-	}
 
 	function preprocess(name, body) {
 		var fn = __cfg.preprocessor[name];

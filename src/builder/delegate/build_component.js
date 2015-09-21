@@ -93,7 +93,7 @@ var build_compo;
 
 
 		if (typeof compo.render === 'function') {
-			compo.render(compo.model, ctx, container);
+			compo.render(compo.model, ctx, container, ctr, children);
 			// Overriden render behaviour - do not render subnodes
 			return null;
 		}

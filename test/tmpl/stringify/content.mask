@@ -18,10 +18,10 @@ div {
   }
 }
 ----
-#scoped__css__1 {
-  style {
+div {
+  style scoped {
 
-    #scoped__css__1 span {}
+    span {}
   
   }
 }

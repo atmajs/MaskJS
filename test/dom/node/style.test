@@ -1,9 +1,9 @@
-UTest({	
+UTest({
 	'check generic multiple style nodes' () {
 		TestRunner({
 			template: `
 				section.foo.bar {
-					
+
 					style {
 						.foo {
 							border: 2px solid red;
@@ -26,7 +26,7 @@ UTest({
 			count: 2
 		})
 	},
-	
+
 	'check scoped styles' () {
 		TestRunner({
 			template: `
@@ -46,7 +46,7 @@ UTest({
 					}
 					span;
 				}
-				
+
 			`,
 			contains: [
 				'scoped__'
@@ -65,12 +65,12 @@ UTest({
 			$root.filter('.bar').has_('attr', 'id', 'scoped__')
 		})
 	},
-	
+
 	'check `:host` support' () {
 		TestRunner({
 			template: `
 				section.foo.bar {
-					style media='screen' {
+					style scoped media='screen' {
 						:host {
 							display: inline-block;
 						}
@@ -100,7 +100,7 @@ UTest({
 		TestRunner({
 			template: `
 				section.foo  {
-					style {
+					style scoped {
 						:host {
 							display: inline-block;
 						}
@@ -145,7 +145,7 @@ UTest({
 		TestRunner({
 			template: `
 				section.foo  {
-					style {
+					style scoped {
 						:host {
 							border: ~[width]px ~[style] red;
 						}
@@ -182,11 +182,11 @@ UTest({
 		return mask
 			.renderAsync(template)
 			.pipe(function(div){
-				
-				var str = div.querySelector('style').textContent;
+
+				var str = $('body').children('style').last().text();
 				hasNot_(str, 'red');
 				has_   (str, 'green');
-				
+
 				mask.cfg('preprocessor.style', null);
 			});
 	},
@@ -234,46 +234,49 @@ function TestRunner(test, additionalFn) {
 		count = 1,
 		isInterpolated = false
 	} = test;
-	
+
 	var nodes = mask.parse('div { ' + template + '}'),
-		style = jmask(nodes).find('style');
-	
+		style = jmask(nodes).find('style'),
+		$root = $(mask.render(nodes, model)).appendTo('body');
+
+
 	eq_(style.length, count);
-	
+
+	if (count != 0) {
+		var id = style.get(0).id;
+		var $style = $(document.body).find('#' + id).last();
+	}
+
 	if (count !== 0) {
 		var node = style.get(0);
 		is_(node.content, isInterpolated ? 'Function' : 'String');
-		
+
 		if (contains != null) {
-			contains.forEach(expect => has_(node.content, expect));
+			contains.forEach(expect => has_($style.text(), expect));
 		}
 	}
-	
-	
-	
-	var $root = $(mask.render(template, model)).appendTo('body');
+
 	if (attributes) {
-		var $style = $root.find('style');
 		for(var key in attributes) {
 			$style.eq_('attr', key, attributes[key])
 		}
 	}
-	
+
 	if (styles) {
 		for(var selector in styles) {
 			var css = styles[selector];
 			var $el = $(document).find(selector)
-			
+
 			for (var prop in css) {
 				$el.eq_('css', prop, css[prop]);
 			}
 		}
 	}
-	
-	additionalFn && additionalFn($root);
-	
+
+	additionalFn && additionalFn($root.children());
+
 	$root.remove();
-	
+
 }
 
 // vim: set ft=js:

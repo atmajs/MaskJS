@@ -9,7 +9,7 @@ UTest({
 			}
 		`;
 		document.body.appendChild(mask.render(template));
-		
+
 		is_(window.foo, 'Object');
 		eq_(window.foo.isGlobal, true);
 	},

@@ -14,8 +14,8 @@ div {
   }
 }
 ----
-#scoped__css__2{style{
-    #scoped__css__2 span {}
+div{style scoped{
+    span {}
   }}
 =================
 define foo {
