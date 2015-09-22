@@ -36,7 +36,6 @@ var build_compo;
 		var attr, key;
 
 		compo.ID = ++builder_componentID;
-		compo.attr = attr = attr_extend(compo.attr, node.attr);
 		compo.parent = ctr;
 		compo.expression = node.expression;
 
@@ -49,11 +48,7 @@ var build_compo;
 		if (compo.nodes == null)
 			compo.nodes = node.nodes;
 
-		for (key in attr) {
-			if (typeof attr[key] === 'function')
-				attr[key] = attr[key]('compo-attr', model, ctx, container, compo, key);
-		}
-
+		setComponentsAttributes(compo, node, model, ctx, container);
 
 		listeners_emit(
 			'compoCreated'
@@ -178,4 +173,40 @@ var build_compo;
 		return null;
 	}
 
+	function setComponentsAttributes(compo, node, model, ctx, container){
+		var attr = obj_create(node.attr || {});
+		for(var key in attr) {
+			var fn = attr[key];
+			if (typeof fn === 'function')
+				attr[key] = fn('compo-attr', model, ctx, container, compo, key);
+		}
+
+		var readAttributes = compo.meta && compo.meta.readAttributes;
+		if (readAttributes != null) {
+			readAttributes.call(compo, compo, attr, model, container);
+		}
+
+		var ownAttr = compo.attr;
+		for(var key in ownAttr) {
+			var current = attr[key],
+				val = null;
+
+			if (current == null || key === 'class') {
+				var x = ownAttr[key];
+
+				val = is_Function(x)
+					? x('compo-attr', model, ctx, container, compo, key)
+					: x;
+			}
+			if (key === 'class') {
+				attr[key] = current == null ? val : (current + ' ' + val);
+				continue;
+			}
+			if (current != null) {
+				continue;
+			}
+			attr[key] = val;
+		}
+		return (compo.attr = attr);
+	}
 }());
