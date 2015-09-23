@@ -25,8 +25,10 @@ UTest({
 			var nodes = Mask.parse(template).nodes;
 			eq_(nodes[0].content, '<A>');
 			eq_(nodes[0].attr.type, 'text/mask');
-			
+
 			eq_(nodes[1].tagName, 'baz');
 		}
 	}
 })
+
+// vim: set ft=js:

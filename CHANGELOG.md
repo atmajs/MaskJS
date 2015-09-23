@@ -11,6 +11,19 @@
 
 		`h4` header is rendered during the `Foo` may still being loaded.
 
+	- `define` and `let` support arguments
+
+		```mask
+		define Foo (user) {
+			h4 > '~user.name'
+		}
+
+		Foo(me);
+		```
+		```javascript
+		mask.render(template, { me: { name: 'TestUser' }});
+		```
+
 - `0.53.8`
 	- Expressions: Support bitwise operators
 	- Components: Animatable attributes

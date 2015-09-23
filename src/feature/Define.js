@@ -18,7 +18,7 @@ var Define;
 		}
 	};
 
-	function compo_prototype(compoName, tagName, attr, nodes, owner, model, Base) {
+	function compo_prototype(compoName, tagName, attr, fnModelResolver, nodes, owner, model, Base) {
 		var arr = [];
 		var Proto = obj_extend({
 			tagName: tagName,
@@ -29,10 +29,13 @@ var Define;
 			meta: {
 				template: 'merge'
 			},
-			renderStart: function(){
+			renderStart: function(model, ctx){
 				Compo.prototype.renderStart.apply(this, arguments);
 				if (this.nodes === this.template) {
 					this.nodes = mask_merge(this.nodes, [], this);
+				}
+				if (fnModelResolver != null) {
+					this.model = fnModelResolver(this.expression, model, ctx, this);
 				}
 			},
 			getHandler: null
@@ -132,22 +135,48 @@ var Define;
 
 	function compo_fromNode(node, model, ctr, Base) {
 		var extends_ = node['extends'],
+			args_ = node['arguments'],
 			as_ = node['as'],
 			tagName,
-			attr;
+			attr,
+			modelResolver;
 		if (as_ != null) {
 			var x = parser_parse(as_);
 			tagName = x.tagName;
 			attr = obj_extend(node.attr, x.attr);
 		}
+		if (args_ != null) {
+			modelResolver = compo_modelArgsBinding_Delegate(args_);
+		}
 
 		var name = node.name,
-			Proto = compo_prototype(name, tagName, attr, node.nodes, ctr, model, Base),
+			Proto = compo_prototype(name, tagName, attr, modelResolver, node.nodes, ctr, model, Base),
 			args = compo_extends(extends_, model, ctr)
 			;
 
 		args.push(Proto);
 		return Compo.apply(null, args);
+	}
+
+	function compo_modelArgsBinding_Delegate(args) {
+		return function(expr, model, ctx, ctr){
+			var arr = null;
+			if (expr == null) {
+				arr = args.map(function(x){
+					expression_eval(x.prop, model, ctx, ctr);
+				});
+			} else {
+				arr = expression_evalStatements(expr, model, ctx, ctr);
+			}
+			var out = {},
+				arrMax = arr.length,
+				argsMax = args.length,
+				i = -1;
+			while ( ++i < arrMax && i < argsMax ){
+				out[args[i].prop] = arr[i]
+			}
+			return out;
+		};
 	}
 
 	function trav_location(ctr) {

@@ -319,5 +319,18 @@ _`@latest`_
 
 		`h4` header is rendered during the `Foo` may still being loaded.
 
+	- `define` and `let` support arguments
+
+		```mask
+		define Foo (user) {
+			h4 > '~user.name'
+		}
+
+		Foo(me);
+		```
+		```javascript
+		mask.render(template, { me: { name: 'TestUser' }});
+		```
+
 ----
 :copyright: MIT - 2015 Atma.js Project

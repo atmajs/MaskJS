@@ -22,7 +22,7 @@ UTest({
 			eq_($bar.tagName, 'define');
 			eq_($bar.name, ':bar');
 			deepEq_($bar.extends,  [ { compo: ':foo' } ]);
-			
+
 			eq_($bar.nodes[0].tagName, 'h4');
 		},
 		'extend compos' () {
@@ -85,8 +85,34 @@ UTest({
 				{ compo: 'c.y.z' },
 			]);
 		}
-		
-		
+	},
+	'should pass arguments as a model': {
+		'single' () {
+			var template = `
+				define Foo (user) {
+					h4 > '~user.name'
+				}
+				Foo (me);
+			`
+			var dom = mask.render(template, { me: { name: 'TestUser' }});
+			return UTest.domtest(dom, `
+				find (h4) > text TestUser;
+			`)
+		},
+		'multiple' () {
+			var template = `
+				define Foo (user, friend) {
+					h3 > '~user.name'
+					h4 > '~friend.name'
+				}
+				Foo (me, me);
+			`
+			var dom = mask.render(template, { me: { name: 'TestUser' }});
+			return UTest.domtest(dom, `
+				find (h3) > text TestUser;
+				find (h4) > text TestUser;
+			`)
+		}
 	}
 });
 

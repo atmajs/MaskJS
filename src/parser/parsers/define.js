@@ -11,13 +11,14 @@
 	}
 	var lex_ = ObjectLexer(
 		'$name'
-		, '?( as $$as(*()))?( extends $$extends[$$compo<accessor>](,))'
+		, '?( ($$arguments[$$prop<accessor>](,)))?( as $$as(*()))?( extends $$extends[$$compo<accessor>](,))'
 		, '{'
 	);
 	var DefineNode = class_create(Dom.Node, {
+		'as': null,
 		'name': null,
 		'extends': null,
-		'as': null,
+		'arguments': null,
 
 		stringify: function(stream){
 			var extends_ = this['extends'],
