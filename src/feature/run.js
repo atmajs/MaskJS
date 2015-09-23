@@ -90,8 +90,7 @@ var mask_run;
 			);
 			if (ctx_.async === true) {
 				await++;
-				ctx_.done(_insertDelegate(fragment, script, resumer));
-				continue;
+				ctx_.done(resumer);
 			}
 			script.parentNode.insertBefore(fragment, script);
 		}
@@ -119,13 +118,6 @@ var mask_run;
 		}
 
 		return ctr;
-	}
-
-	function _insertDelegate(fragment, script, done) {
-		return function(){
-			script.parentNode.insertBefore(fragment, script);
-			done();
-		};
 	}
 
 	if (document != null && document.addEventListener) {
