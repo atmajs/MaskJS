@@ -37,7 +37,7 @@ UTest({
 			mask.define('TestAsync', mask.Compo({
 				onRenderStart () {
 					var x = this.$scope('X');
-					has_(x, { foo: { name: 'Foo2' }});
+					has_(x, { foo: { name: 'Foo3' }});
 
 					$(dom)
 						.find('.progress')
@@ -48,7 +48,7 @@ UTest({
 			}));
 			var dom = mask.render(`
 				div {
-					import async * as X from '/test/tmpl/modules/data_foo_2.js';
+					import async * as X from '/test/tmpl/modules/data_foo_3.js';
 					await (X) {
 						@progress > .progress > 'Loading';
 						TestAsync;
