@@ -159,6 +159,8 @@
 		progressNodes: null,
 		completeNodes: null,
 		errorNodes: null,
+		namesViaExpr: null,
+		namesViaAttr: null,
 		splitNodes_: function(){
 			var map = {
 				'@progress': 'progressNodes',
@@ -184,19 +186,59 @@
 					.concat
 					.call(current, nodes);
 			}, this);
-			if (this.completeNodes == null) {
-				this.completeNodes = parser_parse(this.getExports_().join(';'));
-			}
 			this.nodes = null;
+		},
+		getAwaitableNamesViaExpr: function(){
+			if (this.namesViaExpr != null) {
+				return this.namesViaExpr;
+			}
+			var expr = this.expression;
+			return this.namesViaExpr = expr == null ? [] : expr
+				.split(',')
+				.map(function(x){
+					return x.trim();
+				});
+		},
+		getAwaitableNamesViaAttr: function(){
+			if (this.namesViaAttr != null) {
+				return this.namesViaAttr;
+			}
+			var arr = [];
+			for(var key in this.attr) {
+				arr.push(key);
+			}
+			return this.namesViaAttr = arr;
+		},
+		getAwaitableImports: function(){
+			var namesAttr = this.getAwaitableNamesViaAttr(),
+				namesExpr = this.getAwaitableNamesViaExpr(),
+				names = namesAttr.concat(namesExpr);
+
+			var imports = Compo.prototype.closest.call(this, 'imports');
+			if (imports == null) {
+				this.error_(Error('"imports" not found. "await" should be used within "import" statements.'));
+				return null;
+			}
+			return imports
+				.imports_
+				.filter(function(x){
+					if (x.module.state === 4) {
+						// loaded
+						return false;
+					}
+					return names.some(function(name){
+						return x.hasExport(name);
+					});
+				});
 		},
 		getExports_: function(){
 			var expr = this.expression;
 			if (expr != null) {
 				return expr
-				.split(',')
-				.map(function(x){
-					return x.trim();
-				});
+					.split(',')
+					.map(function(x){
+						return x.trim();
+					});
 			}
 			var arr = [];
 			for(var key in this.attr) {
@@ -205,34 +247,20 @@
 			return arr;
 		},
 		await_: function(ctx, container){
-			var exports = this.getExports_();
-			var imports = Compo.prototype.closest.call(this, 'imports');
-			if (imports == null) {
-				this.error_(Error('"imports" not found. "await" should be used within "import" statements.'));
+			var arr = this.getAwaitableImports();
+			if (arr == null) {
 				return;
 			}
-			var arr = imports
-				.imports_
-				.filter(function(x){
-					if (x.module.state === 4) {
-						// loaded
-						return false;
-					}
-					return exports.some(function(name){
-						return x.hasExport(name);
-					});
-				});
 			if (arr.length === 0) {
 				this.complete_();
 				return;
 			}
 
 			this.progress_(ctx, container);
-			var self = this,
-				resume = Compo.pause(this, ctx),
-				awaiting = arr.length;
-
-			arr.forEach(function(x){
+			var resume = Compo.pause(this, ctx),
+				awaiting = arr.length,
+				self = this;
+			coll_each(arr, function(x){
 				x.module.always(function(){
 					if (--awaiting === 0) {
 						self.complete_();
@@ -274,8 +302,13 @@
 			if (progress) {
 				progress.remove();
 			}
-			this.nodes = this.completeNodes;
-		}
+			var nodes = this.completeNodes;
+			var names = this.namesViaAttr;
+			if (names.length === 1) {
+				nodes = jmask(names[0]).append(nodes);
+			}
+			this.nodes = nodes;
+		},
 	});
 
 }());
