@@ -2,80 +2,90 @@ var render = mask.render.bind(mask),
 	template, node, attr;
 
 UTest({
-	'className is "test"': function() {
-		var dom = render('div > div.test');
-
-		assert(dom.querySelector('.test') != null);
+	'should render classNames' () {
+		var dom = mask.render(`
+			div { div .test }
+			section
+				.foo;
+			span > i class='baz';
+			b > span > em.baz;
+		`);
+		return UTest.domtest(dom, `
+			find ('.test') > length 1;
+			find ('.baz') > length 2;
+			filter ('.foo') > length 1;
+		`);
 	},
-	'right model insertion': function() {
-		var div = render('div#~[id].~[klass] data-type="~[type]" > "~[name]"', {
+	'should insert model values' () {
+		var div = mask.render('#~[id].~[klass] data-type="~[type]" > "~[name]"', {
 			name: 'NAME',
 			id: 'ID',
 			klass: 'CLASS',
 			type: 'TYPE'
 		});
 
-		assert(div != null, 'DIV not rendered');
-		assert(div.tagName === 'DIV', 'right DIV not redered');
-
-
-		assert(div.getAttribute('id') == 'ID', 'id is not ID');
-		assert(div.getAttribute('class') == 'CLASS', 'class is not CLASS');
-		assert(div.getAttribute('data-type') == 'TYPE', 'data-type is not TYPE');
-
-		assert(div.textContent == 'NAME', 'text is not NAME');
+		return UTest.domtest(div, `
+			prop tagName DIV;
+			attr id ID;
+			attr class CLASS;
+			attr data-type TYPE;
+			text NAME;
+		`);
 	},
-	'right text interpolation': function(){
-		var div = render('"~[name]~[id] i ~[klass]am~[type]end"', {
+	'should interpolate text node' () {
+		var frag = mask.render('"~[name]~[id] i ~[klass]am~[type]end"', {
 			name: 'NAME',
 			id: 'ID',
 			klass: 'CLASS',
 			type: 'TYPE'
 		});
-		assert(div.textContent == 'NAMEID i CLASSamTYPEend', 'text was not proper interpolated');
+		eq_(frag.textContent, 'NAMEID i CLASSamTYPEend');
 	},
-	'right model insertion with check': function(){
-		var dom = render('div.~[:enabled?"enabled":"disabled"]', {
+	'interpolation with ternary operator' () {
+		var div = mask.render('.~[ enabled ? "enabled" : "disabled"]', {
 			enabled: true
 		});
 
-		assert(dom.getAttribute('class') == 'enabled', 'div has no "enabled" class');
+		$(div).eq_('hasClass', 'enabled', true);
 	},
 
-	'tag-less template check': function(){
-		var dom = render('.~[:enabled?"enabled":"disabled"] { .item; .item; .item > "Last" }', {
+	'should render with children': function(){
+		var dom = mask.render('.~[ enabled ?"enabled" ] { .item; .item; .item > "Last" }', {
 			enabled: true
 		});
 
-		assert(dom != null, 'Div with .enabled class not rendered');
-		assert(dom.getAttribute('class') === 'enabled', 'Div shoud have class "enabled"');
+		return UTest.domtest(dom, `
+			prop tagName DIV;
+			attr class enabled;
+			find ('.item') {
+				length 3;
 
-		assert(dom.querySelectorAll('.item').length === 3, 'Div should have 3 childs with class .item');
-		assert(dom.querySelectorAll('.item')[2].textContent == 'Last', 'Last Div should have text "Last"');
+				eq (2) {
+					text ('Last');
+				}
+			}
+		`);
 	},
-	
+
 	'scoped variables': function(){
-		
-		var dom = render('"~[a] ~[b.sub]"', {}, {}, null, {
+		var dom = mask.render('"~[a] ~[b.sub]"', {}, {}, null, {
 			scope: {
 				a: 'a'
 			},
 			parent: {
-				scope: {
-					b: {
-						sub: 'sub!'
-					}
-				}
+				scope: { b: { sub: 'sub!' } }
 			}
 		});
-		
+
 		eq(dom.textContent, 'a sub!');
 	},
 	'expressions': function(){
-		var dom = render('"~[a] ~[: b[\'sub\'] ]"', {a: 'A', b: { sub: 'Sub!'}});
-		
+		var dom = render('"~[a] ~[: b[\'sub\'] ]"', {
+			a: 'A',
+			b: { sub: 'Sub!'}
+		});
 		eq_(dom.textContent, 'A Sub!');
 	}
-})
+});
 
 // vim: set ft=js:
