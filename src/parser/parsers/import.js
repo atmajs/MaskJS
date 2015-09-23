@@ -6,7 +6,8 @@
 		var obj = {
 			exports: null,
 			alias: null,
-			path: null
+			path: null,
+			async: null
 		};
 		var end = lex_(str, i, imax, obj);
 		return [ new ImportNode(parent, obj),  end, 0 ];
@@ -22,8 +23,8 @@
 
 	var lex_ = ObjectLexer(
 		[ 'from "$path"?( is $contentType)'
-		, '* as $alias from "$path"?( is $contentType)'
-		, '$$exports[$name?( as $alias)](,) from "$path"?( is $contentType)'
+		, '?($$async(async) )* as $alias from "$path"?( is $contentType)'
+		, '?($$async(async) )$$exports[$name?( as $alias)](,) from "$path"?( is $contentType)'
 		]
 	);
 
@@ -38,27 +39,32 @@
 		tagName: IMPORT,
 
 		path: null,
-		exports: null,
 		alias: null,
+		async: null,
+		exports: null,
 
 		constructor: function(parent, data){
 			this.path = data.path;
 			this.alias = data.alias;
+			this.async = data.async;
 			this.exports = data.exports;
 			this.contentType = data.contentType;
 			this.parent = parent;
 		},
 		stringify: function(){
-			var from = " from '" + this.path + "'";
-
-			var type = this.contentType;
+			var from = " from '" + this.path + "'",
+				importStr = IMPORT,
+				type = this.contentType;
 			if (type != null) {
 				from += ' is ' + type;
+			}
+			if (this.async != null) {
+				importStr += ' ' + this.async;
 			}
 			from += ';';
 
 			if (this.alias != null) {
-				return IMPORT + " * as " + this.alias + from;
+				return importStr + " * as " + this.alias + from;
 			}
 			if (this.exports != null) {
 				var arr = this.exports,
@@ -75,9 +81,9 @@
 						str +=', ';
 					}
 				}
-				return IMPORT + ' ' + str + from;
+				return importStr + ' ' + str + from;
 			}
-			return IMPORT + from;
+			return importStr + from;
 		}
 	});
 

@@ -67,8 +67,9 @@ var Module;
 			var path    = u_resolvePathFromImport(node, ctx, ctr, module),
 				alias   = node.alias,
 				exports = node.exports,
+				async   = node.async,
 				endpoint = new Endpoint(path, node.contentType);
-			return IImport.create(endpoint, alias, exports, module);
+			return IImport.create(endpoint, async, alias, exports, module);
 		},
 		isMask: function(endpoint){
 			var type = endpoint.contentType,

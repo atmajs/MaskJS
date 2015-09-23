@@ -78,7 +78,7 @@ import CustomComponent from 'foo'
     h4 > 'Title'
     section.content data-id='myID' {
         span > 'Hello ~[name]!'
-        
+
         if (admins.indexOf(name) > -1) {
             em > 'Admin'
         }
@@ -86,7 +86,7 @@ import CustomComponent from 'foo'
     CustomComponent {
         button x-tap='changeName' >
             '~[bind: name]'
-            
+
         for (tag of tags) {
             h4 > '~[tag.title]'
         }
@@ -112,7 +112,7 @@ var ast = mask.parseHtml(html);
 var dom = mask.render(ast);
 ```
 
-> MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**. 
+> MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**.
 
 > MaskJS default build contains sub projects: `CompoJS`, `Bindings`, `jMask`.
 
@@ -182,7 +182,7 @@ input type=number >
 
 :orange_book: [Read more...**&crarr;**](https://github.com/atmajs/mask-j)
 
-jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations. 
+jMask offers jQuery-alike syntax for the dynamic MaskDOM Manipulations.
 
 
 # `2.4` jQuery
@@ -221,14 +221,14 @@ MaskJS on the server
 - Models serialization/de-serialization
 - Components render mode - `server`, `client` or `both`
 - HTML rendered output with further bootstrapping on the client, so that the components are initialized, all events and bindings are attached
-- Application start performance: browser receives ready html for rendering. 
+- Application start performance: browser receives ready html for rendering.
 - SEO
 
 
 # `5` Browser Support
 
 - IE7+
-	
+
 # `6` Plugins
 There are already many plugins, components and useful utilities. Some of them worth to checking out:
 - [Formatter Util](https://github.com/atmajs/util-format)
@@ -308,19 +308,16 @@ $ npm test
 
 _`@latest`_
 
-- 0.12.19
-	- **Modules** of different types
-	
-		```mask
-		import qux from 'baz';
-		import * as Foo  from './bar.mask'
-		import * as Bic  from 'script.js';
-		import from 'app.css';
-		import * as AboutBlock from 'about.html';
-		```
-	- **HTML** Parser
+- `0.55.0`
+	- Async imports.
 
-		Use also `html` for the templates
-	
+		```mask
+		import async Foo from './Foo.mask';
+		h4 > 'MyHeader'
+		await Foo;
+		```
+
+		`h4` header is rendered during the `Foo` may still being loaded.
+
 ----
 :copyright: MIT - 2015 Atma.js Project

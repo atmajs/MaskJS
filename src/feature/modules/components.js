@@ -53,7 +53,9 @@
 				self = this,
 				imax = arr.length,
 				await = imax,
+				next  = cb,
 				i = -1, x;
+
 
 			function done(error, import_) {
 				if (error == null) {
@@ -64,12 +66,16 @@
 						ctx._modules.add(import_.module);
 					}
 				}
-				if (--await === 0) {
-					cb();
+				if (--await === 0 && next != null) {
+					next();
 				}
 			}
 			while( ++i < imax ){
 				x = arr[i];
+				if (x.async && (--await) === 0) {
+					next();
+					next = null;
+				}
 				x.loadImport(done);
 			}
 		},
@@ -149,5 +155,127 @@
 		},
 	});
 
+	custom_Tags['await'] = class_create({
+		progressNodes: null,
+		completeNodes: null,
+		errorNodes: null,
+		splitNodes_: function(){
+			var map = {
+				'@progress': 'progressNodes',
+				'@fail': 'errorNodes',
+				'@done': 'completeNodes',
+			};
+			coll_each(this.nodes, function(node){
+				var name = node.tagName,
+					nodes = node.nodes;
+
+				var prop = map[name];
+				if (prop == null) {
+					prop = 'completeNodes';
+					nodes = [ node ];
+				}
+				var current = this[prop];
+				if (current == null) {
+					this[prop] = nodes;
+					return;
+				}
+				this[prop] = Array
+					.prototype
+					.concat
+					.call(current, nodes);
+			}, this);
+			if (this.completeNodes == null) {
+				this.completeNodes = parser_parse(this.getExports_().join(';'));
+			}
+			this.nodes = null;
+		},
+		getExports_: function(){
+			var expr = this.expression;
+			if (expr != null) {
+				return expr
+				.split(',')
+				.map(function(x){
+					return x.trim();
+				});
+			}
+			var arr = [];
+			for(var key in this.attr) {
+				arr.push(key);
+			}
+			return arr;
+		},
+		await_: function(ctx, container){
+			var exports = this.getExports_();
+			var imports = Compo.prototype.closest.call(this, 'imports');
+			if (imports == null) {
+				this.error_(Error('"imports" not found. "await" should be used within "import" statements.'));
+				return;
+			}
+			var arr = imports
+				.imports_
+				.filter(function(x){
+					if (x.module.state === 4) {
+						// loaded
+						return false;
+					}
+					return exports.some(function(name){
+						return x.hasExport(name);
+					});
+				});
+			if (arr.length === 0) {
+				this.complete_();
+				return;
+			}
+
+			this.progress_(ctx, container);
+			var self = this,
+				resume = Compo.pause(this, ctx),
+				awaiting = arr.length;
+
+			arr.forEach(function(x){
+				x.module.always(function(){
+					if (--awaiting === 0) {
+						self.complete_();
+						resume();
+					}
+				});
+			});
+		},
+		renderStart: function(model, ctx, container){
+			this.splitNodes_();
+			this.await_(ctx, container);
+		},
+
+		error_: function(error) {
+			this.nodes = this.errorNodes || reporter_createErrorNode(error.message);
+			this.model = error;
+		},
+		progress_: function(ctx, container){
+			var nodes = this.progressNodes;
+			if (nodes == null) {
+				return;
+			}
+			var hasLiteral = nodes.some(function(x){
+				return x.type === Dom.TEXTNODE;
+			});
+			if (hasLiteral) {
+				nodes = jmask('div').append(nodes);
+			}
+			var node = {
+				type: Dom.COMPONENT,
+				nodes: nodes,
+				controller: new Compo,
+				attr: {},
+			};
+			builder_build(node, null, ctx, container, this);
+		},
+		complete_: function(){
+			var progress = this.components && this.components[0];
+			if (progress) {
+				progress.remove();
+			}
+			this.nodes = this.completeNodes;
+		}
+	});
 
 }());

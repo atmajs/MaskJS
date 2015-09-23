@@ -73,13 +73,38 @@ UTest({
 			var str = Mask.stringify(nodes);
 			eq_(str, template);
 		})
+	},
+	'should parse `async` keyword' () {
+		[
+			{
+				template: "import async Foo from 'foo';"
+			},
+			{
+				template: "import async Foo as Baz from 'foo';"
+			},
+			{
+				template: "import async Foo as Baz, Qux as q, T from 'foo';"
+			},
+			{
+				template: "import async * as X from '/foo/test';"
+			},
+			{
+				template: "import async * as X from '/foo/test' is mask;"
+			},
+		]
+		.forEach(data => {
+			var {template} = data;
+			var nodes = Mask.parse(template);
+			var str = Mask.stringify(nodes);
+			eq_(str, template);
+		})
 	}
 })
 
 function parse(template) {
 	var imports = Mask.parse(template),
 		import_ = imports.nodes[0];
-	
+
 	is_(import_, 'Object', `Not correct parsed ${template}`);
 	return import_;
 }
