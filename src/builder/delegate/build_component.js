@@ -174,13 +174,24 @@ var build_compo;
 	}
 
 	function setComponentsAttributes(compo, node, model, ctx, container){
-		var attr = obj_create(node.attr || {});
-		for(var key in attr) {
-			var fn = attr[key];
-			if (typeof fn === 'function')
-				attr[key] = fn('compo-attr', model, ctx, container, compo, key);
+		var ownAttr = compo.attr;
+		var attr = node.attr;
+		if (attr == null) {
+			if (ownAttr == null) {
+				return;
+			}
+			attr = {};
 		}
-
+		else {
+			attr = obj_create(attr);
+			for(var key in attr) {
+				var fn = attr[key];
+				if (typeof fn === 'function') {
+					attr[key] = fn('compo-attr', model, ctx, container, compo, key);
+				}
+			}
+		}
+		
 		var readAttributes = compo.meta && compo.meta.readAttributes;
 		if (readAttributes != null) {
 			readAttributes.call(compo, compo, attr, model, container);
