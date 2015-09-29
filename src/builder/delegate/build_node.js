@@ -20,14 +20,14 @@ var build_node;
 		}
 		var attr = node.attr;
 		if (attr != null) {
-			el_writeAttributes(el, attr, model, ctx, container, ctr);
+			el_writeAttributes(el, node, attr, model, ctx, container, ctr);
 		}
 		return el;
 	};
 
 	var el_writeAttributes;
 	(function(){
-		el_writeAttributes = function (el, attr, model, ctx, container, ctr) {
+		el_writeAttributes = function (el, node, attr, model, ctx, container, ctr) {
 			for(var key in attr) {
 				var mix = attr[key],
 					val = is_Function(mix)
