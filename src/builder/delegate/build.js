@@ -9,12 +9,16 @@
  * @memberOf mask
  * @method build
  */
-var builder_build = function(node, model, ctx, container, ctr, children) {
-
+var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 	if (node == null)
 		return container;
 
-	var type = node.type,
+	var ctr = ctr_,
+		model = model_,
+		children = children_,
+		container = container_,
+
+		type = node.type,
 		elements,
 		key,
 		value;
@@ -62,10 +66,11 @@ var builder_build = function(node, model, ctx, container, ctr, children) {
 
 	// Dom.SET
 	if (type === 10) {
-		var j = 0,
-			jmax = node.length;
+		var arr = node,
+			j = 0,
+			jmax = arr.length;
 		for(; j < jmax; j++) {
-			builder_build(node[j], model, ctx, container, ctr, children);
+			builder_build(arr[j], model, ctx, container, ctr, children);
 		}
 		return container;
 	}
