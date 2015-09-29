@@ -37,11 +37,15 @@ var listeners_on,
 			return false;
 		}
 		var imax = fns.length,
-			i = -1,
-			args = _Array_slice.call(arguments, 1)
-			;
+			i = -1;
 		if (imax === 0) {
 			return false;
+		}
+		var j = 0,
+			jmax = arguments.length,
+			args = new Array(jmax - 1);
+		while(++j < jmax) {
+			args[j-1] = arguments[j];
 		}
 		while ( ++i < imax) {
 			fns[i].apply(null, args);
