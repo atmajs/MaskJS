@@ -1,9 +1,0 @@
-let Greetings {
-	span > 'Hello'
-}
-
-define IidSample {
-	h4 > Greetings;
-}
-
-IidSample;
