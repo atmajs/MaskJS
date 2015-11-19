@@ -26,6 +26,9 @@ var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 	if (ctr == null)
 		ctr = new Dom.Component();
 
+	if (ctx == null)
+		ctx = new builder_Ctx;
+
 	if (type == null){
 		// in case if node was added manually, but type was not set
 		if (is_ArrayLike(node)) {
