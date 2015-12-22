@@ -55,7 +55,7 @@ UTest({
 					Lorem <li>ipsum</li> doler
 				</section>
 			`;
-			
+
 			var node = Mask.parseHtml(template);
 			eq_(node.tagName, 'section');
 			var nodes = node.nodes;
@@ -72,7 +72,7 @@ UTest({
 					<li><div>B
 				</ul>
 			`;
-			
+
 			var node = Mask.parseHtml(template);
 			eq_(node.tagName, 'ul');
 			eq_(node.nodes[0].tagName, 'li');
@@ -83,7 +83,7 @@ UTest({
 		var template = `
 			<if expression='foo%2 === 1'>Hello</if>
 		`;
-		
+
 		var node = Mask.parseHtml(template);
 		eq_(node.tagName, 'if');
 		eq_(node.expression, 'foo%2 === 1');
@@ -99,10 +99,47 @@ UTest({
 				}
 				</mask>
 			`;
-			
+
 			var node = Mask.parseHtml(template);
 			eq_(node.tagName, 'function');
 			eq_(node.body.trim(), 'var a = 10;');
+		}
+	},
+	'embedded html': {
+		'simple' () {
+			var template = `
+				div {
+					<span>Hello</span>
+				}
+			`;
+			return UTest
+				.domtest
+				.use('jmask')
+				.process(Mask.parse(template), `
+					filter('div') {
+						find('span') > text ("Hello");
+					}
+				`);
+		},
+		'nested mix' () {
+			var template = `
+				<section>
+					<mask>
+						h4.header {
+							<span>Foo</span>
+						}
+					</mask>
+				</section>
+			`;
+			return UTest
+				.domtest
+				.use('jmask')
+				.process(Mask.parse(template), `
+					find('section') >
+						find('.header') >
+							find ('span') >
+								text ("Foo");
+				`);
 		}
 	}
 })

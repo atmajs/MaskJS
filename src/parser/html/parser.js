@@ -1,3 +1,4 @@
+var parser_parseHtmlPartial;
 (function () {
 	var state_closeTag = 21;
 
@@ -9,10 +10,14 @@
 	 * @method parseHtml
 	 */
 	parser_parseHtml = function(str) {
+		var tripple = parser_parseHtmlPartial(str, 0, false);
+		return tripple[0];
+	};
+	parser_parseHtmlPartial = function(str, index, exitEarly) {
 		var current = new Fragment(),
 			fragment = current,
 			state = go_tag,
-			i = 0,
+			i = index,
 			imax = str.length,
 			token,
 			c, // charCode
@@ -96,6 +101,9 @@
 					state   = state_literal;
 					i   = until_(str, i, imax, 62 /*>*/);
 					i   ++;
+					if (current === fragment && exitEarly === true) {
+						return [ fragment, i, 0 ];
+					}
 					continue;
 				}
 				// open tag
@@ -147,16 +155,13 @@
 			}
 		}
 
-
-
 		var nodes = fragment.nodes;
-		return nodes != null && nodes.length === 1
+		var result = nodes != null && nodes.length === 1
 			? nodes[0]
 			: fragment
 			;
+		return [result, imax, 0];
 	};
-
-
 	function char_(str, i) {
 		return str.charCodeAt(i);
 	}

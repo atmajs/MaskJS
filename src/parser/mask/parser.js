@@ -194,6 +194,22 @@
 			}
 
 			switch (c) {
+			case 60 /*<*/:
+				var tuple = parser_parseHtmlPartial(template, index, true);
+				var node = tuple[0];
+
+				node.sourceIndex = index;
+				index = tuple[1];
+				state = go_tag;
+				token = null;
+
+				current.appendChild(node);
+				if (current.__single === true) {
+					do {
+						current = current.parent;
+					} while (current != null && current.__single != null);
+				}
+				continue;
 			case 123:
 				// {
 				last = state;

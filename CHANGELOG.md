@@ -1,5 +1,19 @@
 # Changelog
 
+- `0.55.1`
+	- Mixed markup: HTML can be used within Mask markup, and Mask can be used within HTLM
+
+		```mask
+			section {
+				<h4> Html Markup </h4>
+			}
+			// or
+			<section>
+				<mask>
+					h4 > 'Mask markup'
+				</mask>
+			</section>
+		```
 - `0.55.0`
 	- Async imports.
 

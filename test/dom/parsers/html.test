@@ -1,0 +1,14 @@
+UTest({
+	'mixed markup' () {
+		var template = `
+			<section>
+				<h4><mask>i>'Foo'</mask></h4>
+			</section>
+		`;
+		var dom = mask.render(template);
+		return UTest.domtest(dom, `
+			find('section>h4>i') >
+				text Foo;
+		`);
+	}
+})
