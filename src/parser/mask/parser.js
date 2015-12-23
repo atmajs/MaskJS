@@ -195,6 +195,9 @@
 
 			switch (c) {
 			case 60 /*<*/:
+				if (state !== go_tag) {
+					break;
+				}
 				var tuple = parser_parseHtmlPartial(template, index, true);
 				var node = tuple[0];
 

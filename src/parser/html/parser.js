@@ -82,34 +82,34 @@ var parser_parseHtmlPartial;
 					}
 					continue;
 				}
-				if (c < 33) {
-					i = cursor_skipWhitespace(str, i, imax);
-				}
-				c = char_(str, i, imax);
-				if (c === 47 /*/*/) {
-					state = state_closeTag;
-					i++;
-					i = cursor_skipWhitespace(str, i, imax);
-				}
 
-				start = i;
-				i = cursor_tokenEnd(str, i + 1, imax);
-				token = str.substring(start, i);
-
-				if (state === state_closeTag) {
-					current = tag_Close(current, token.toLowerCase());
-					state   = state_literal;
-					i   = until_(str, i, imax, 62 /*>*/);
-					i   ++;
-					if (current === fragment && exitEarly === true) {
-						return [ fragment, i, 0 ];
+				if (c === 36 || c === 95 || c === 58 || c === 43 || c === 47 || (65 <= c && c <= 90) || (97 <= c && c <= 122)) {
+					// $_:+/ A-Z a-z
+					if (c === 47 /*/*/) {
+						state = state_closeTag;
+						i++;
+						i = cursor_skipWhitespace(str, i, imax);
 					}
+					start = i;
+					i = cursor_tokenEnd(str, i + 1, imax);
+					token = str.substring(start, i);
+
+					if (state === state_closeTag) {
+						current = tag_Close(current, token.toLowerCase());
+						state   = state_literal;
+						i   = until_(str, i, imax, 62 /*>*/);
+						i   ++;
+						if (current === fragment && exitEarly === true) {
+							return [ fragment, i, 0 ];
+						}
+						continue;
+					}
+					// open tag
+					current = tag_Open(token, current);
+					state = state_attr;
 					continue;
 				}
-				// open tag
-				current = tag_Open(token, current);
-				state = state_attr;
-				continue;
+				i--;
 			}
 
 			// LITERAL
@@ -120,8 +120,8 @@ var parser_parseHtmlPartial;
 				if (c === 60 /*<*/) {
 					// MAYBE NODE
 					c = char_(str, i + 1);
-					if (c === 36 || c === 95 || c === 58 || 43) {
-						// $ _ : +
+					if (c === 36 || c === 95 || c === 58 || c === 43 || c === 47) {
+						// $_:+/
 						break;
 					}
 					if ((65 <= c && c <= 90) ||		// A-Z

@@ -308,6 +308,9 @@ $ npm test
 
 _`@latest`_
 
+- `0.55.1`
+	- HTML markup within Mask templates
+	
 - `0.55.0`
 	- Async imports.
 

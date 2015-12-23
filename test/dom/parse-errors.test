@@ -10,12 +10,12 @@ function getLast(arr) {
 }
 
 UTest({
-	
+
 	$before () {
 		mask.on('error', error => errors.push(error));
 		mask.on('warn', warn => warns.push(warn));
 	},
-	$after () {		
+	$after () {
 		mask.off('error');
 	},
 	$teardown () {
@@ -33,9 +33,9 @@ UTest({
 		},
 		'after node' () {
 			mask.parse("div { span }} span;");
-			
+
 			var lines = getLinesOfLast(warns);
-			
+
 			deepEq_(lines, [
 				'Unexpected tag closing',
 				'1|div { span }} span;',
@@ -51,9 +51,9 @@ UTest({
 				}
 				h4;
 			`);
-			
+
 			var lines = getLinesOfLast(warns);
-			
+
 			has_(lines, [
 				'6|\t\t\t\t}'
 			]);
@@ -75,7 +75,7 @@ UTest({
 				"          ^",
 			]);
 		},
-		
+
 	},
 	'unexpect `,`': {
 		'in a tagname' () {
@@ -97,27 +97,27 @@ UTest({
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `,`');
 	},
-	
-	'unexpect `<`': function(){
-		
+
+	'unexpect `<` : Changed : ': function(){
+
 		var ast = mask.parse('baz <>');
 		var error = errors.pop();
-		
+
 		has_(error.message, 'Invalid token: `<`');
 		has_(error.message, 'attribute key');
-		
+
 		'but should parse everything before'
 		eq_(ast.tagName, 'baz');
 	},
-	
+
 	'parse dual `#`': function(){
 		var fragment = mask.parse(`
 			lorem ipsum; ##.how;
 		`)
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `#`')
-		
-		
+
+
 		var nodes = fragment.nodes;
 		eq_(nodes.length, 2);
 		has_(nodes[0], {
@@ -134,13 +134,13 @@ UTest({
 		`)
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `=`');
-		
+
 	},
 	'invalid tag assignment': function(){
 		var fragment = mask.parse(`
 			name=foo;
 		`);
-		
+
 		var error = errors.pop();
 		has_(error.message, 'Invalid token: `=`');
 	},
@@ -149,7 +149,7 @@ UTest({
 			div name='baz;
 			div;
 		`);
-		
+
 		var error = errors.pop();
 		has_(error.message, 'Literal has no ending');
 	},
@@ -180,13 +180,13 @@ UTest({
 		var fragment = mask.parse(`
 			foo {
 				bar { foo
-				
+
 				baz { some }
 			}
 		`)
 		var error = errors.pop();
 		has_(error.message, 'Tag was not closed: bar')
-		
+
 		eq_(mask.stringify(fragment), 'foo>bar>foo baz>some;');
 	},
 	'interpolation': function(){
@@ -200,13 +200,13 @@ UTest({
 		'invalid operators': function(){
 			var ast = mask.render('"~[:1/+1]"');
 			var error = errors.pop();
-			
+
 			has_(error.message, 'Unexpected operator Invalid token: `+`');
 		},
 		'unsupported bit shifting': function(){
 			var ast = mask.render('"~[: 64<<1 ]"');
 			var error = errors.pop();
-			
+
 			has_(error.message, 'Unexpected operator Invalid token: `<`');
 		},
 	}
