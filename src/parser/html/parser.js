@@ -1,6 +1,8 @@
 var parser_parseHtmlPartial;
 (function () {
 	var state_closeTag = 21;
+	var CDATA = '[CDATA[',
+		DOCTYPE = 'DOCTYPE';
 
 	/**
 	 * Parse **Html** template to the AST tree
@@ -24,20 +26,16 @@ var parser_parseHtmlPartial;
 			start;
 
 		outer: while (i <= imax) {
-			i = cursor_skipWhitespace(str, i, imax);
-
 			if (state === state_attr) {
 				i = parser_parseAttrObject(str, i, imax, current.attr);
 				if (i === imax) {
 					break;
 				}
 				handleNodeAttributes(current);
-
 				switch (char_(str, i)) {
 					case 47:  // /
 						current = current.parent;
 						i = until_(str, i, imax, 62);
-						i++;
 						break;
 					case 62: // >
 						if (SINGLE_TAGS[current.tagName.toLowerCase()] === 1) {
@@ -46,21 +44,26 @@ var parser_parseHtmlPartial;
 						break;
 				}
 				i++;
-				if (current.tagName === 'mask') {
-					start = i;
-					i = str.indexOf('</mask>', start);
-					var mix = parser_parse(str.substring(start, i));
-					var nodes = current.parent.nodes;
-					nodes.splice(nodes.length - 1, 1);
-					current = current.parent;
-					if (mix.type === Dom.FRAGMENT) {
-						_appendMany(current, mix.nodes);
-					} else {
-						current.appendChild(mix);
-					}
-					i += 7; //</mask> @TODO proper </mask> search
-				}
 
+				var tagName = current.tagName;
+				if (tagName === 'mask' || tagName === 'script' || tagName === 'style' || tagName === 'markdown') {
+					var result = _extractContent(str, i, tagName);
+					var txt = result[0];
+					i = result[1];
+
+					if (tagName === 'mask') {
+						current.parent.nodes.pop();
+						current = current.parent;
+						if (mix.type === Dom.FRAGMENT) {
+							_appendMany(current, mix.nodes);
+						} else {
+							current.appendChild(mix);
+						}
+					} else {
+						current.appendChild(new TextNode(result[0]));
+						current = current.parent;
+					}
+				}
 				state = state_literal;
 				continue outer;
 			}
@@ -80,6 +83,21 @@ var parser_parseHtmlPartial;
 						// endif
 						i = imax;
 					}
+					continue;
+				}
+
+				if (c === 33
+					&& str.substring(i + 1, i + 1 + CDATA.length).toUpperCase() === CDATA) {
+					start = i + 1 + CDATA.length;
+					i = str.indexOf(']]>', start);
+					if (i === -1) i = imax;
+					current.appendChild(new TextNode(str.substring(start, i)));
+					i += 3;
+					continue;
+				}
+				if (c === 33
+					&& str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
+					i = until_(str, i, imax, 62) + 1;
 					continue;
 				}
 
@@ -120,8 +138,8 @@ var parser_parseHtmlPartial;
 				if (c === 60 /*<*/) {
 					// MAYBE NODE
 					c = char_(str, i + 1);
-					if (c === 36 || c === 95 || c === 58 || c === 43 || c === 47) {
-						// $_:+/
+					if (c === 36 || c === 95 || c === 58 || c === 43 || c === 47 || c === 33) {
+						// $_:+/!
 						break;
 					}
 					if ((65 <= c && c <= 90) ||		// A-Z
@@ -362,4 +380,30 @@ var parser_parseHtmlPartial;
 			node.appendChild(x)
 		});
 	}
+
+	var _extractContent;
+	(function(){
+		_extractContent = function(str, i, name) {
+			var start = i, end = i;
+			var match = rgxGet(name, i).exec(str);
+			if (match == null) {
+				end = i = str.length;
+			} else {
+				end = match.index;
+				i = end + match[0].length;
+			}
+			return [ str.substring(start, end), i];
+		};
+
+		var rgx = {};
+		var rgxGet = function(name, i) {
+			var r = rgx[name];
+			if (r == null) {
+				r = rgx[name] = new RegExp('<\\s*/' + name + '[^>]*>', 'gi');
+			}
+			r.lastIndex = i;
+			return r;
+		};
+
+	}());
 }());
