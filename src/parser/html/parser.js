@@ -54,6 +54,7 @@ var parser_parseHtmlPartial;
 					if (tagName === 'mask') {
 						current.parent.nodes.pop();
 						current = current.parent;
+						var mix = parser_parse(txt);
 						if (mix.type === Dom.FRAGMENT) {
 							_appendMany(current, mix.nodes);
 						} else {

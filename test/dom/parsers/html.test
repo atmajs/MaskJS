@@ -12,9 +12,7 @@ UTest({
 		`);
 	},
 	'html markup' () {
-		var template = `
-			<!-- Comment -->
-			<ul>
+		var template = `<!-- Comment --><ul>
 				<li>Foo</li>
 				<li>Bar</li>
 			</ul>
