@@ -1,18 +1,18 @@
 UTest({
 	'content' () {
 		var template = `Lorem ipsum doler!`;
-		var node = Mask.parseHtml(template);
+		var node = parseHtml(template);
 		eq_(node.content, template);
 	},
 	'node':{
 		'single notation' () {
 			var template = `<div/>`;
-			var node = Mask.parseHtml(template);
+			var node = parseHtml(template);
 			eq_(node.tagName, 'div');
 		},
 		'open-close notation' () {
 			var template = `<div > </div>`;
-			var node = Mask.parseHtml(template);
+			var node = parseHtml(template);
 			eq_(node.tagName, 'div');
 		},
 		'attributes' () {
@@ -32,7 +32,7 @@ UTest({
 					> </ div >
 				`,
 			].forEach(str => {
-				var node = Mask.parseHtml(str);
+				var node = parseHtml(str);
 				eq_(node.tagName, 'div');
 				has_(node.attr, {
 					'id': 'qux',
@@ -45,7 +45,7 @@ UTest({
 	'children': {
 		'text' () {
 			var template = `<span>Foo</span>`;
-			var node = Mask.parseHtml(template);
+			var node = parseHtml(template);
 			eq_(node.tagName, 'span');
 			eq_(node.nodes[0].content, 'Foo');
 		},
@@ -56,7 +56,7 @@ UTest({
 				</section>
 			`;
 
-			var node = Mask.parseHtml(template);
+			var node = parseHtml(template);
 			eq_(node.tagName, 'section');
 			var nodes = node.nodes;
 			eq_(nodes.length, 3);
@@ -72,11 +72,17 @@ UTest({
 					<li><div>B
 				</ul>
 			`;
-
-			var node = Mask.parseHtml(template);
-			eq_(node.tagName, 'ul');
-			eq_(node.nodes[0].tagName, 'li');
-			eq_(node.nodes[0].nodes[0].content.trim(), 'A');
+			var node = parseHtml(template);
+			return UTest
+				.domtest
+				.use('jmask')
+				.process(node, `
+					find('ul') > children('li') {
+						length 2;
+						eq(0) > equal ($.text().trim(), 'A');
+						eq(1) > children('div') > equal ($.text().trim(), 'B');
+					}
+				`);
 		}
 	},
 	'expression' () {
@@ -84,7 +90,7 @@ UTest({
 			<if expression='foo%2 === 1'>Hello</if>
 		`;
 
-		var node = Mask.parseHtml(template);
+		var node = parseHtml(template);
 		eq_(node.tagName, 'if');
 		eq_(node.expression, 'foo%2 === 1');
 		eq_(node.type, mask.Dom.STATEMENT);
@@ -100,7 +106,7 @@ UTest({
 				</mask>
 			`;
 
-			var node = Mask.parseHtml(template);
+			var node = parseHtml(template);
 			eq_(node.tagName, 'function');
 			eq_(node.body.trim(), 'var a = 10;');
 		}
@@ -143,3 +149,7 @@ UTest({
 		}
 	}
 });
+
+function parseHtml(template) {
+	return Mask.parseHtml(template.trim());
+}

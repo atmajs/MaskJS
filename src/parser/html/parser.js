@@ -351,11 +351,10 @@ var parser_parseHtmlPartial;
 		var node = current;
 		var TAGS = IMPLIES_CLOSE[name];
 		if (TAGS != null) {
-			while (node.parent != null && node.parent.tagName && TAGS[node.parent.tagName.toLowerCase()] === 1) {
+			while (node != null && node.tagName != null && TAGS[node.tagName.toLowerCase()] === 1) {
 				node = node.parent;
 			}
 		}
-
 		var next = new Node(name, node);
 		node.appendChild(next);
 		return next;
