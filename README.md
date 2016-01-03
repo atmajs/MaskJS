@@ -310,7 +310,7 @@ _`@latest`_
 
 - `0.55.1`
 	- HTML markup within Mask templates
-	
+
 - `0.55.0`
 	- Async imports.
 
@@ -336,4 +336,4 @@ _`@latest`_
 		```
 
 ----
-:copyright: MIT - 2015 Atma.js Project
+:copyright: MIT - 2016 Atma.js Project
