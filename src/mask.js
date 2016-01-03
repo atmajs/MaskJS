@@ -126,6 +126,9 @@ var Mask;
 			set: obj_setProperty,
 			extend: obj_extend,
 		},
+		str: {
+			dedent: str_dedent
+		},
 		is: {
 			Function: is_Function,
 			String: is_String,
