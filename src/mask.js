@@ -147,7 +147,8 @@ var Mask;
 		},
 		parser: {
 			ObjectLexer: parser_ObjectLexer,
-			getStackTrace: reporter_getNodeStack
+			getStackTrace: reporter_getNodeStack,
+			defineContentTag: parser_defineContentTag
 		},
 
 		// util/listeners.js

@@ -7,6 +7,7 @@ var parser_parse,
 	parser_setInterpolationQuotes,
 	parser_cleanObject,
 	parser_ObjectLexer,
+	parser_defineContentTag,
 	mask_stringify,
 	mask_stringifyAttr
 	;
@@ -14,6 +15,7 @@ var parser_parse,
 (function(Node, TextNode, Fragment, Component) {
 
 	// import ./const
+	// import ./config
 	// import ./utils
 	// import ./cursor
 	// import ./interpolation

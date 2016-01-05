@@ -46,7 +46,7 @@ var parser_parseHtmlPartial;
 				i++;
 
 				var tagName = current.tagName;
-				if (tagName === 'mask' || tagName === 'script' || tagName === 'style' || tagName === 'markdown') {
+				if (tagName === 'mask' || parser_cfg_ContentTags[tagName] === 1) {
 					var result = _extractContent(str, i, tagName);
 					var txt = result[0];
 					i = result[1];
