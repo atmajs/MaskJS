@@ -41,22 +41,24 @@ var Mask;
 		 * Same to `mask.render` but returns the promise, which is resolved when all async components
 		 * are resolved, or is in resolved state, when all components are synchronous.
 		 * For the parameters doc @see {@link mask.render}
-		 * @returns {Promise} Alwats fullfills with `IAppendChild|Node|DocumentFragment`
+		 * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
 		 * @memberOf mask
 		 */
 		renderAsync: function(template, model, ctx, container, ctr) {
 			if (ctx == null || ctx.constructor !== builder_Ctx)
 				ctx = new builder_Ctx(ctx);
+			if (ctr == null)
+				ctr = new Compo;
 
 			var dom = this.render(template, model, ctx, container, ctr),
 				dfr = new class_Dfr;
 
 			if (ctx.async === true) {
 				ctx.done(function(){
-					dfr.resolve(dom);
+					dfr.resolve(dom, ctr);
 				});
 			} else {
-				dfr.resolve(dom);
+				dfr.resolve(dom, ctr);
 			}
 			return dfr;
 		},
