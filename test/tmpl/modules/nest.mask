@@ -1,6 +1,0 @@
-import * as a_nest from 'nest-a';
-import * as SubFolder from '../a';
-
-div > a_nest;
-
-SubFolder;
