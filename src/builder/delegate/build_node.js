@@ -64,12 +64,12 @@ var build_node;
 	}());
 
 	var el_create;
-	(function(doc){
+	(function(doc, factory){
 		el_create = function(name){
 			// if DEBUG
 			try {
 			// endif
-				return __createElement(name, doc);
+				return factory(name, doc);
 			// if DEBUG
 			} catch(error) {
 				log_error(name, 'element cannot be created. If this should be a custom handler tag, then controller is not defined');
@@ -77,5 +77,5 @@ var build_node;
 			}
 			// endif
 		};
-	}(document));
+	}(document, __createElement));
 }());
