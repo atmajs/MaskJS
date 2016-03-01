@@ -147,6 +147,19 @@ UTest({
 								text ("Foo");
 				`);
 		}
+	},
+	'should parse and render the HTML5 doctype' () {
+		[
+			'<!DOCTYPE html>',
+			'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
+			'<!doctype>',
+			'<!doctype />',
+		]
+		.forEach(template => {
+			var ast = Mask.parse(template);
+			var str = mask.stringify(ast);
+			eq_(str, '!DOCTYPE html;');
+		});
 	}
 });
 

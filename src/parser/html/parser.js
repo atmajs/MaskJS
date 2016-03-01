@@ -98,6 +98,11 @@ var parser_parseHtmlPartial;
 				}
 				if (c === 33
 					&& str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
+
+					var doctype = new Node('!' + DOCTYPE, current);
+					doctype.attr.html = 'html';
+					current.appendChild(doctype);
+
 					i = until_(str, i, imax, 62) + 1;
 					continue;
 				}
@@ -291,7 +296,8 @@ var parser_parseHtmlPartial;
 		param : 1,
 		source: 1,
 		track : 1,
-		wbr   : 1
+		wbr   : 1,
+		'!doctype': 1,
 	};
 	var IMPLIES_CLOSE;
 	(function(){
