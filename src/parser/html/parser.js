@@ -72,39 +72,43 @@ var parser_parseHtmlPartial;
 			if (c === 60) {
 				//<
 				c = char_(str, ++i)
-				if (c === 33 &&
-					char_(str, i + 1) === 45 &&
-					char_(str, i + 2) === 45) {
-					//!--
-					// COMMENT
-					i = str.indexOf('-->', i + 3) + 3;
-					if (i === 2) {
-						// if DEBUG
-						parser_warn('Comment has no ending', str, i);
-						// endif
-						i = imax;
+				if (c === 33 /*!*/) {
+					var isBangElement = true;
+					if (char_(str, i + 1) === 45 && char_(str, i + 2) === 45) {
+						//-- COMMENT
+						i = str.indexOf('-->', i + 3) + 3;
+						if (i === 2) {
+							// if DEBUG
+							parser_warn('Comment has no ending', str, i);
+							// endif
+							i = imax;
+						}
 					}
-					continue;
-				}
+					else if (str.substring(i + 1, i + 1 + CDATA.length).toUpperCase() === CDATA) {
+						// CDATA
+						start = i + 1 + CDATA.length;
+						i = str.indexOf(']]>', start);
+						if (i === -1) i = imax;
+						current.appendChild(new TextNode(str.substring(start, i)));
+						i += 3;
+					}
+					else if (str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
+						// DOCTYPE
+						var doctype = new Node('!' + DOCTYPE, current);
+						doctype.attr.html = 'html';
+						current.appendChild(doctype);
+						i = until_(str, i, imax, 62) + 1;
+					}
+					else {
+						isBangElement = false;
+					}
 
-				if (c === 33
-					&& str.substring(i + 1, i + 1 + CDATA.length).toUpperCase() === CDATA) {
-					start = i + 1 + CDATA.length;
-					i = str.indexOf(']]>', start);
-					if (i === -1) i = imax;
-					current.appendChild(new TextNode(str.substring(start, i)));
-					i += 3;
-					continue;
-				}
-				if (c === 33
-					&& str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
-
-					var doctype = new Node('!' + DOCTYPE, current);
-					doctype.attr.html = 'html';
-					current.appendChild(doctype);
-
-					i = until_(str, i, imax, 62) + 1;
-					continue;
+					if (isBangElement === true) {
+						if (exitEarly === true) {
+							return [ fragment, i, 0 ];
+						}
+						continue;
+					}
 				}
 
 				if (c === 36 || c === 95 || c === 58 || c === 43 || c === 47 || (65 <= c && c <= 90) || (97 <= c && c <= 122)) {
