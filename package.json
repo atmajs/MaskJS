@@ -22,7 +22,7 @@
     "MIT"
   ],
   "devDependencies": {
-    "atma": ">0.9.26",
+    "atma": "^0.10.48",
     "atma-io-middleware-uglify": "^1.0.19",
     "atma-loader-babel": "^1.0.19",
     "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
