@@ -191,7 +191,7 @@ var path_getDir,
 		if (path.substring(0, 5) === 'file:')
 			return path;
 
-		return 'file:///' + path;
+		return 'file://' + path;
 	}
 
 	function path_collapse(url_) {
