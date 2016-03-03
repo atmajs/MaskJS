@@ -1,21 +1,22 @@
 var css_ensureScopedStyles;
-
 (function(){
 	css_ensureScopedStyles = function (str, node, el) {
 		var attr = node.attr;
-		if (attr.scoped == null) {
+		if (attr.scoped == null && attr[KEY] == null) {
 			return str;
 		}
+		// Remove `scoped` attribute to exclude supported browsers.
+		// Redefine custom attribute to use same template later
 		attr.scoped = null;
-
-
-		var str_;
+		attr[KEY] = 1;
 		var id = getScopeIdentity(node, el);
-		str_ = transformScopedStyles(str, id);
+		var str_ = str;
+		str_ = transformScopedStyles(str_, id);
 		str_ = transformHostCss(str_, id);
 		return str_;
 	};
 
+	var KEY = 'x-scoped';
 	var rgx_selector = /^([\s]*)([^\{\}]+)\{/gm;
 	var rgx_host = /^([\s]*):host\s*(\(([^)]+)\))?\s*\{/gm;
 
