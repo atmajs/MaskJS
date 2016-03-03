@@ -1,10 +1,9 @@
 var u_resolveLocation,
 	u_resolvePath,
+	u_resolveBase,
 	u_resolvePathFromImport,
 	u_handler_getDelegate;
-
 (function(){
-
 	u_resolveLocation = function(ctx, ctr, module) {
 		if (module != null) {
 			return module.location;
@@ -27,16 +26,25 @@ var u_resolveLocation,
 				path = path_normalize(ctx.dirname + '/');
 			}
 		}
+		var base = u_resolveBase();
+		if (path != null) {
+			if (path_isRelative(path) === false) {
+				if (path.charCodeAt(0) === 47 /*/*/) {
+					return path_normalize(path_combine(base, path));
+				}
+				return path;
+			}
+			return path_combine(base, path);
+		}
+		return base;
+	};
 
+	u_resolveBase = function(){
 		if (_opts.base == null) {
 			_opts.base = path_resolveCurrent();
 		}
-
-		if (path != null) {
-			if (path_isRelative(path) === false) {
-				return path;
-			}
-			return path_combine(_opts.base, path);
+		else if (path_isRelative(_opts.base) === true) {
+			_opts.base = path_combine(path_resolveCurrent(), _opts.base);
 		}
 		return _opts.base;
 	};
@@ -45,12 +53,7 @@ var u_resolveLocation,
 		if ('' === path_getExtension(path)) {
 			path += '.mask';
 		}
-		if (path_isRelative(path) === false) {
-			return path;
-		}
-		return path_normalize(path_combine(
-			u_resolveLocation(ctx, ctr, module), path
-		));
+		return toAbsolute(path, ctx, ctr, module);
 	};
 
 	u_resolvePathFromImport = function(node, ctx, ctr, module){
@@ -61,14 +64,8 @@ var u_resolveLocation,
 				path += '.mask';
 			}
 		}
-		if (path_isRelative(path) === false) {
-			return path;
-		}
-		return path_normalize(path_combine(
-			u_resolveLocation(ctx, ctr, module), path
-		));
+		return toAbsolute(path, ctx, ctr, module);
 	};
-
 
 	u_handler_getDelegate = function(compoName, compo, next) {
 		return function(name) {
@@ -81,5 +78,14 @@ var u_resolveLocation,
 		};
 	};
 
-
+	function toAbsolute(path_, ctx, ctr, module) {
+		var path = path_;
+		if (path_isRelative(path)) {
+			path = path_combine(u_resolveLocation(ctx, ctr, module), path);
+		}
+		else if (path.charCodeAt(0) === 47 /*/*/) {
+			path = path_combine(u_resolveBase(), path);
+		}
+		return path_normalize(path);
+	}
 }());
