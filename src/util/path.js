@@ -55,14 +55,10 @@ var path_getDir,
 			return (current_ = path_sliceFilename(fn()));
 		};
 		function fromBase() {
-			var base = global.document.baseURI;
-			if (base.substring(0, 5) === 'file:') {
-				return base;
-			}
-			return base.replace(global.location.origin, '');
+			return global.document.baseURI;
 		}
 		function fromLocation() {
-			return global.location.pathname;
+			return global.location.origin + global.location.pathname;
 		}
 		// endif
 
@@ -212,4 +208,3 @@ var path_getDir,
 	}
 
 }());
-
