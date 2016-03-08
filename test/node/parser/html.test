@@ -146,6 +146,47 @@ UTest({
 							find ('span') >
 								text ("Foo");
 				`);
+		},
+		'embedded html' () {
+			var template = `
+				ul {
+					li > <div>Foo</div>
+					li > span > 'Bar';
+				}
+			`;
+			return UTest
+				.domtest
+				.use('jmask')
+				.process(Mask.parse(template), `
+					find('ul') {
+						children('li') {
+							length 2;
+							eq (0) > find ('div') > text Foo;
+							eq (1) > find ('span') > text Bar;
+						}
+					}
+				`);
+		},
+		'embedded content' () {
+			Mask.parser.defineContentTag("Test");
+			var template = `
+				ul {
+					li > <Test><div>Foo</div></Test>
+					li > span > 'Bar';
+				}
+			`;
+			return UTest
+				.domtest
+				.use('jmask')
+				.process(Mask.parse(template), `
+					find('ul') {
+						children('li') {
+							length 2;
+							eq (0) > text ('<div>Foo</div>');
+							eq (1) > find ('span') > text Bar;
+						}
+					}
+				`);
 		}
 	},
 	'should parse and render the HTML5 doctype' () {

@@ -26,6 +26,10 @@ var parser_parseHtmlPartial;
 			start;
 
 		outer: while (i <= imax) {
+			if (state === state_literal && current === fragment && exitEarly === true) {						
+				return [ fragment, i, 0 ];
+			}
+
 			if (state === state_attr) {
 				i = parser_parseAttrObject(str, i, imax, current.attr);
 				if (i === imax) {
@@ -73,7 +77,6 @@ var parser_parseHtmlPartial;
 				//<
 				c = char_(str, ++i)
 				if (c === 33 /*!*/) {
-					var isBangElement = true;
 					if (char_(str, i + 1) === 45 && char_(str, i + 2) === 45) {
 						//-- COMMENT
 						i = str.indexOf('-->', i + 3) + 3;
@@ -83,31 +86,27 @@ var parser_parseHtmlPartial;
 							// endif
 							i = imax;
 						}
+						state = state_literal;
+						continue outer;
 					}
-					else if (str.substring(i + 1, i + 1 + CDATA.length).toUpperCase() === CDATA) {
+					if (str.substring(i + 1, i + 1 + CDATA.length).toUpperCase() === CDATA) {
 						// CDATA
 						start = i + 1 + CDATA.length;
 						i = str.indexOf(']]>', start);
 						if (i === -1) i = imax;
 						current.appendChild(new TextNode(str.substring(start, i)));
 						i += 3;
+						state = state_literal;
+						continue outer;
 					}
-					else if (str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
+					if (str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
 						// DOCTYPE
 						var doctype = new Node('!' + DOCTYPE, current);
 						doctype.attr.html = 'html';
 						current.appendChild(doctype);
 						i = until_(str, i, imax, 62) + 1;
-					}
-					else {
-						isBangElement = false;
-					}
-
-					if (isBangElement === true) {
-						if (exitEarly === true) {
-							return [ fragment, i, 0 ];
-						}
-						continue;
+						state = state_literal;
+						continue outer;
 					}
 				}
 
@@ -127,15 +126,12 @@ var parser_parseHtmlPartial;
 						state   = state_literal;
 						i   = until_(str, i, imax, 62 /*>*/);
 						i   ++;
-						if (current === fragment && exitEarly === true) {
-							return [ fragment, i, 0 ];
-						}
-						continue;
+						continue outer;
 					}
 					// open tag
 					current = tag_Open(token, current);
 					state = state_attr;
-					continue;
+					continue outer;
 				}
 				i--;
 			}
