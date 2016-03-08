@@ -106,5 +106,15 @@ var Module;
 		resolveLocation: u_resolveLocation,
 		getDependencies: tools_getDependencies,
 		build: tools_build,
+		clearCache: function (path) {
+			if (path == null) {
+				_cache = {};
+				return;
+			}
+			delete _cache[path]
+		},
+		getCache: function() {
+			return _cache;
+		}
 	});
 }());
