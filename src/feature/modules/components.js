@@ -1,3 +1,4 @@
+
 (function() {
 	var IMPORT  = 'import',
 		IMPORTS = 'imports';
@@ -100,14 +101,9 @@
 			}
 			this.load_(ctx, resume);
 		},
+		// if (NODE)
 		meta: {
 			serializeNodes: true
-		},
-		renderStart: function(model, ctx){
-			this.start_(model, ctx);
-		},
-		renderStartClient: function(model, ctx){
-			this.start_(model, ctx);
 		},
 		serializeNodes: function(){
 			// NodeJS
@@ -121,7 +117,17 @@
 			}
 			return mask_stringify(arr);
 		},
-
+		// endif
+		renderStart: function(model, ctx){
+			this.start_(model, ctx);
+		},
+		renderStartClient: function(model, ctx){
+			var self = this;
+			self.start_(model, ctx);
+			return class_Dfr.run(function(resolve){
+				self.await(resolve)
+			});
+		},
 		getHandler: function(name){
 			var arr = this.imports_,
 				imax = arr.length,
