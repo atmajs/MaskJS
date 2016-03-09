@@ -106,7 +106,6 @@
 			serializeNodes: true
 		},
 		serializeNodes: function(){
-			// NodeJS
 			var arr = [],
 				i = this.nodes.length, x;
 			while( --i > -1 ){
@@ -122,11 +121,7 @@
 			this.start_(model, ctx);
 		},
 		renderStartClient: function(model, ctx){
-			var self = this;
-			self.start_(model, ctx);
-			return class_Dfr.run(function(resolve){
-				self.await(resolve)
-			});
+			this.start_(model, ctx);
 		},
 		getHandler: function(name){
 			var arr = this.imports_,
