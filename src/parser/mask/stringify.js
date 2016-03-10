@@ -113,6 +113,10 @@
 				stream.write(wrapString(node.content()));
 				return;
 			}
+			if (node.type === Dom.FRAGMENT) {
+				this.process(node);
+				return;
+			}
 
 			this.processHead(node);
 
@@ -257,7 +261,7 @@
 			return false;
 		}
 		var x = isArray ? arr[0] : arr;
-		return x.stringify == null;
+		return x.stringify == null && x.type !== Dom.FRAGMENT;
 	}
 	function isTagNameOptional(node, id, cls) {
 		if (id == null && cls == null) {

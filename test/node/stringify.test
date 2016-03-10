@@ -52,6 +52,11 @@ UTest({
 		'format' () {
 			test('interpolation', 2);
 		}
+	},
+	'html': {
+		'format' () {
+			test('html', 2);
+		}
 	}
 
 })
