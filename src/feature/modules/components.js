@@ -40,7 +40,8 @@
 				.loadModule()
 				.always(function(){
 					self.scope = self.module.scope;
-					self.nodes = self.module.source;
+					self.nodes = self.module.exports['__nodes__'];
+					self.location = self.module.location;
 					self.getHandler = self.module.getHandler.bind(self.module);
 					resume();
 				});
