@@ -38,13 +38,16 @@
 			this
 				.module
 				.loadModule()
-				.always(function(){
-					self.scope = self.module.scope;
+				.done(function(){
 					self.nodes = self.module.exports['__nodes__'];
+					self.scope = self.module.scope;
 					self.location = self.module.location;
 					self.getHandler = self.module.getHandler.bind(self.module);
-					resume();
-				});
+				})
+				.fail(function(){
+					self.nodes = self.module.source;
+				})
+				.always(resume);
 		}
 	});
 
