@@ -18,7 +18,7 @@ var file_get,
 	};
 
 	function get(fn, path, ctr) {
-		path = path_resolveUrl(path, ctr);
+		path = path_resolveUrl(path, Module.resolveLocation(ctr));
 
 		var dfr = Cache[path];
 		if (dfr !== void 0) {
