@@ -21,10 +21,14 @@
 		return imports;
 	};
 
+	var meta = '?( is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})'
+	var default_LINK = 'static',
+		default_MODE = 'both';
+
 	var lex_ = ObjectLexer(
-		[ 'from "$path"?( is $contentType)'
-		, '?($$async(async) )* as $alias from "$path"?( is $contentType)'
-		, '?($$async(async) )$$exports[$name?( as $alias)](,) from "$path"?( is $contentType)'
+		[ 'from "$path"' + meta
+		, '?($$async(async) )* as $alias from "$path"' + meta
+		, '?($$async(async) )$$exports[$name?( as $alias)](,) from "$path"' + meta
 		]
 	);
 
@@ -42,6 +46,9 @@
 		alias: null,
 		async: null,
 		exports: null,
+		contentType: null,
+		link: default_LINK,
+		mode: default_MODE,
 
 		constructor: function(parent, data){
 			this.path = data.path;
@@ -49,14 +56,21 @@
 			this.async = data.async;
 			this.exports = data.exports;
 			this.contentType = data.contentType;
+			this.link = data.link || this.link;
+			this.mode = data.mode || this.mode;
 			this.parent = parent;
 		},
 		stringify: function(){
 			var from = " from '" + this.path + "'",
 				importStr = IMPORT,
-				type = this.contentType;
-			if (type != null) {
-				from += ' is ' + type;
+				type = this.contentType,
+				link = this.link,
+				mode = this.mode;
+			if (type != null || link !== default_LINK || mode !== default_MODE) {
+				from += ' is';
+				if (type != null) from += ' ' + type;
+				if (link !== default_LINK) from += ' ' + link;
+				if (mode !== default_MODE) from += ' ' + mode;
 			}
 			if (this.async != null) {
 				importStr += ' ' + this.async;

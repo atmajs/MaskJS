@@ -59,6 +59,10 @@ var _compile;
 						i = compileCustomVar(name, tokens, str, i, imax);
 						continue;
 					}
+					if (c === 123 /*{*/ ) {
+						i = compileCustomParser(name, tokens, str, i, imax);
+						continue;
+					}
 					throw_('Unexpected extended type');
 					continue;
 
@@ -141,6 +145,14 @@ var _compile;
 		i = cursor_tokenEnd(str, i, imax);
 		tokens.push(
 			new token_CustomVar(name, str.substring(start, i))
+		);
+		return i;
+	}
+	function compileCustomParser(name, tokens, str, i, imax){
+		var start = ++i;
+		i = cursor_groupEnd(str, i, imax, 123, 125);
+		tokens.push(
+			new token_CustomParser(name, str.substring(start, i))
 		);
 		return i;
 	}

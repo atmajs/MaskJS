@@ -6,24 +6,12 @@ UTest({
 			`);
 			eq_(import_.path, '/ foo ');
 			has_(import_.exports, [
-				{
-					name: ':a'
-				},
-				{
-					name: 'B'
-				},
-				{
-					name: 'c'
-				},
-				{
-					name: '_d'
-				},
-				{
-					name: '_d1'
-				},
-				{
-					name: '$j'
-				},
+				{ name: ':a' },
+				{ name: 'B' },
+				{ name: 'c' },
+				{ name: '_d' },
+				{ name: '_d1' },
+				{ name: '$j' },
 			]);
 		},
 		'should parse export with newlines' () {
@@ -98,7 +86,32 @@ UTest({
 			var str = Mask.stringify(nodes);
 			eq_(str, template);
 		})
+	},
+	'should parse and serialize metas' () {
+		[
+			{
+				template: "import from 'foo' is dynamic;"
+			},
+			{
+				template: "import from 'foo' is static;",
+				expect: "import from 'foo';"
+			},
+			{
+				template: "import from 'foo' is json dynamic server;"
+			},
+			{
+				template: "import from 'foo' is both dynamic json;",
+				expect: "import from 'foo' is json dynamic;"
+			},
+		]
+		.forEach(data => {
+			var {template, expect} = data;
+			var nodes = Mask.parse(template);
+			var str = Mask.stringify(nodes);
+			eq_(str, expect || template);
+		})
 	}
+
 })
 
 function parse(template) {

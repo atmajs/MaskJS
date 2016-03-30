@@ -6,6 +6,7 @@ var token_Const,
 	token_Punctuation,
 	token_ExtendedVar,
 	token_CustomVar,
+	token_CustomParser,
 	token_Group,
 	token_OrGroup;
 (function(){
@@ -146,6 +147,71 @@ var token_Const,
 				}
 				return false;
 			}
+		};
+	}());
+	(function(){
+		// Consume string with custom Stop/Continue Function to the variable
+		token_CustomParser = create('CustomParser', {
+			constructor: function(name, param) {
+				return new Parsers[name](param);
+			}
+		});
+
+		var Parsers = {
+			flags: class_create({
+				name: 'Flags',
+				token: '',
+				// Index Map { key: Array<Min,Max> }
+				flags: null,
+				optional: true,
+				constructor: function(param, isOptional) {
+					this.optional = isOptional;
+					this.flags = {};
+					var parts = param.replace(/\s+/g, '').split(';'),
+						imax = parts.length,
+						i = -1;
+					while (++i < imax) {
+						var flag = parts[i],
+							index = flag.indexOf(':'),
+							name = flag.substring(0, index),
+							opts = flag.substring(index + 1);
+
+						var token = '|' + opts + '|';
+						var l = this.token.length;
+						this.flags[name] = [l, l + token.length];
+						this.token += token;
+					}
+				},
+				consume: function(str, i_, imax, out){
+					var hasFlag = false;
+					var i = i_;
+					while (i < imax) {
+						i = cursor_skipWhitespace(str, i, imax);
+						var end = cursor_tokenEnd(str, i, imax);
+						if (end === i) {
+							break;
+						}
+						var token = str.substring(i, end);
+						var idx = this.token.indexOf(token);
+						if (idx === -1) {
+							break;
+						}
+						for (var key in this.flags) {
+							var range = this.flags[key];
+							var min = range[0];
+							if (min > idx) continue;
+							var max = range[1];
+							if (max < idx) continue;
+
+							out[key] = token;
+							hasFlag = true;
+							break;
+						}
+						i = end;
+					}
+					return hasFlag ? i : i_;
+				}
+			})
 		};
 	}());
 
