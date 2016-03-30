@@ -89,8 +89,8 @@ var cursor_groupEnd,
 		return imax;
 	};
 
-	cursor_skipWhitespace = function(str, i, imax) {
-		for(; i < imax; i++) {
+	cursor_skipWhitespace = function(str, i_, imax) {
+		for(var i = i_; i < imax; i++) {
 			if (str.charCodeAt(i) > 32)
 				return i;
 		}
