@@ -80,9 +80,9 @@ var cursor_groupEnd,
 	cursor_quoteEnd = function(str, i, imax, char_){
 		var start = i;
 		while ((i = str.indexOf(char_, i)) !== -1) {
-			if (str.charCodeAt(i - 1) !== 92)
-				// \
+			if (str.charCodeAt(i - 1) !== 92 /*\*/){
 				return i;
+			}
 			i++;
 		}
 		parser_warn('Quote was not closed', str, start - 1);
