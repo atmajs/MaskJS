@@ -96,23 +96,14 @@ var IImport = class_create({
 	IImport.create = function(endpoint, async, alias, exports, parent){
 		return new (Factory(endpoint))(endpoint.path, async, alias, exports, parent);
 	};
+	IImport.types = {};
+
 	function Factory(endpoint) {
-		var type = endpoint.contentType;
-		var ext = type || path_getExtension(endpoint.path);
-		if (ext === 'mask') {
-			return ImportMask;
+		var type = Module.getType(endpoint);
+		var Ctor = IImport.types[type];
+		if (Ctor == null) {
+			throw Error('Module is not supported for type ' + type + ' and the path ' + endpoint.path);
 		}
-		if (ext === 'html') {
-			return ImportHtml;
-		}
-		var search = ' ' + ext + ' ';
-		if (_extensions_style.indexOf(search) !== -1) {
-			return ImportStyle;
-		}
-		if (_extensions_data.indexOf(search)  !== -1) {
-			return ImportData;
-		}
-		// assume script, as anything else is not supported yet
-		return ImportScript;
+		return Ctor;
 	}
 }());

@@ -401,7 +401,27 @@ UTest({
 						}
 					`));
 			}
-		}, //< packages
+		},
+
+		'plain': {
+			'load text content by extension and explicit by type' () {
+				return mask
+					.renderAsync(`
+						import * as baz from '/test/tmpl/modules/baz.txt';
+						import * as bazIni from '/test/tmpl/modules/baz.ini' is text;
+						h4 > '~baz';
+						h3 > '~bazIni';
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text ('Hello foo baz!');
+							filter('h3') > text ('name=Baz');
+						`);
+					});
+			},
+		},
+
+		//< packages
 
 		'version' () {
 			mask.Module.cfg('version', 'fooVer');

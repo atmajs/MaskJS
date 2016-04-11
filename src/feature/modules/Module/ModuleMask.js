@@ -1,6 +1,6 @@
 var ModuleMask;
 (function(){
-	ModuleMask = class_create(IModule, {
+	ModuleMask = IModule.types['mask'] = class_create(IModule, {
 		type: 'mask',
 		scope: null,
 		source: null,

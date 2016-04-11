@@ -1,4 +1,4 @@
-var ModuleScript = class_create(IModule, {
+var ModuleScript = IModule.types['script'] = class_create(IModule, {
 	type: 'script',
 
 	load_: _file_getScript,

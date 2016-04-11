@@ -1,4 +1,4 @@
-var ImportMask = class_create(IImport, {
+var ImportMask = IImport.types['mask'] = class_create(IImport, {
 	type: 'mask',
 	contentType: 'mask',
 	constructor: function(){

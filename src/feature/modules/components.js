@@ -64,7 +64,7 @@
 
 			function done(error, import_) {
 				if (error == null) {
-					if (import_.registerScope) {
+					if (import_.registerScope != null) {
 						import_.registerScope(self);
 					}
 					if (ctx._modules != null) {

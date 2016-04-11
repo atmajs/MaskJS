@@ -61,23 +61,14 @@ var IModule = class_create(class_Dfr, {
 	IModule.create = function(endpoint, parent, contentType){
 		return new (Factory(endpoint))(endpoint.path, parent);
 	};
+	IModule.types = {};
+
 	function Factory(endpoint) {
-		var type = endpoint.contentType;
-		var ext = type || path_getExtension(endpoint.path);
-		if (ext === 'mask') {
-			return ModuleMask;
+		var type = Module.getType(endpoint);
+		var Ctor = IModule.types[type];
+		if (Ctor == null) {
+			throw Error('Import is not supported for type ' + type + ' and the path ' + endpoint.path);
 		}
-		var search = ' ' + ext + ' ';
-		if (_extensions_style.indexOf(search) !== -1) {
-			return ModuleStyle;
-		}
-		if (_extensions_data.indexOf(search)  !== -1) {
-			return ModuleData;
-		}
-		if (ext === 'html') {
-			return ModuleHtml;
-		}
-		// assume script, as anything else is not supported yet
-		return ModuleScript;
+		return Ctor;
 	}
 }());

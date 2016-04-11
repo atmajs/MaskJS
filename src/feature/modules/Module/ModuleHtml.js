@@ -1,6 +1,6 @@
 var ModuleHtml;
 (function(){
-	ModuleHtml = class_create(ModuleMask, {
+	ModuleHtml = IModule.types['html'] = class_create(ModuleMask, {
 		type: 'mask',
 		preprocess_: function(mix, next) {
 			var ast = typeof mix === 'string'

@@ -1,4 +1,4 @@
-var ImportScript = class_create(IImport, {
+var ImportScript = IImport.types['script'] = class_create(IImport, {
 	type: 'script',
 	contentType: 'script',
 	registerScope: function(owner){

@@ -1,4 +1,4 @@
-var ImportData = class_create(ImportScript, {
+var ImportData = IImport.types['data'] = class_create(ImportScript, {
 	type: 'data',
 	contentType: 'json'
 });

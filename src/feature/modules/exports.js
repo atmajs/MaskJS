@@ -2,12 +2,28 @@ var Module;
 (function(){
 	Module = {};
 	var _cache = {},
-		_extensions_script = ' js es6 test coffee ',
-		_extensions_style  = ' css sass scss less ',
-		_extensions_data   = ' json ',
 		_opts = {
 			base: null,
 			version: null
+		},
+		_typeMappings = {
+			script: 'script',
+			style: 'style',
+			data: 'data',
+			mask: 'mask',
+			html: 'html',
+			js: 'script',
+			ts: 'script',
+			es6: 'script',
+			coffee: 'script',
+			css: 'style',
+			scss: 'style',
+			sass: 'style',
+			less: 'style',
+			json: 'data',
+			yml: 'data',
+			txt: 'text',
+			text: 'text',
 		};
 
 	// import utils
@@ -20,6 +36,7 @@ var Module;
 	// import Import/ImportStyle
 	// import Import/ImportData
 	// import Import/ImportHtml
+	// import Import/ImportText
 
 	// import Module/Module
 	// import Module/ModuleMask
@@ -27,6 +44,7 @@ var Module;
 	// import Module/ModuleStyle
 	// import Module/ModuleData
 	// import Module/ModuleHtml
+	// import Module/ModuleText
 
 	// import components
 	// import tools/dependencies
@@ -77,24 +95,12 @@ var Module;
 			return ext === '' || ext === 'mask' || ext === 'html';
 		},
 		getType: function(endpoint) {
-			var type = endpoint.contentType,
-				path = endpoint.path;
-			if (type != null) {
-				return type;
-			}
-			var ext = path_getExtension(path);
+			var type = endpoint.contentType;
+			var ext = type || path_getExtension(endpoint.path);
 			if (ext === '' || ext === 'mask'){
 				return 'mask';
 			}
-			var search = ' ' + ext + ' ';
-			if (_extensions_style.indexOf(search) !== -1){
-				return 'style';
-			}
-			if (_extensions_data.indexOf(search) !== -1){
-				return 'data';
-			}
-			// assume is javascript
-			return 'script';
+			return _typeMappings[ext];
 		},
 		cfg: function(name, val){
 			if (name in _opts === false) {
