@@ -12,7 +12,7 @@ var parser_parse,
 	mask_stringifyAttr
 	;
 
-(function(Node, TextNode, Fragment, Component) {
+(function(Node, TextNode, Fragment, HtmlFragment, Component) {
 
 	// import ./const
 	// import ./config
@@ -31,4 +31,4 @@ var parser_parse,
 	// import ./mask/partials/literal
 	// import ./mask/stringify
 
-}(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.Component));
+}(Dom.Node, Dom.TextNode, Dom.Fragment, Dom.HtmlFragment, Dom.Component));

@@ -1,4 +1,5 @@
 function _appendChild(el){
+	el.parent = this;
 	var nodes = this.nodes;
 	if (nodes == null) {
 		this.nodes = [el];

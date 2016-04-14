@@ -16,7 +16,7 @@ var parser_parseHtmlPartial;
 		return tripple[0];
 	};
 	parser_parseHtmlPartial = function(str, index, exitEarly) {
-		var current = new Fragment(),
+		var current = new HtmlFragment(),
 			fragment = current,
 			state = go_tag,
 			i = index,
@@ -26,7 +26,7 @@ var parser_parseHtmlPartial;
 			start;
 
 		outer: while (i <= imax) {
-			if (state === state_literal && current === fragment && exitEarly === true) {						
+			if (state === state_literal && current === fragment && exitEarly === true) {
 				return [ fragment, i, 0 ];
 			}
 
@@ -59,11 +59,12 @@ var parser_parseHtmlPartial;
 						current.parent.nodes.pop();
 						current = current.parent;
 						var mix = parser_parse(txt);
-						if (mix.type === Dom.FRAGMENT) {
-							_appendMany(current, mix.nodes);
-						} else {
-							current.appendChild(mix);
+						if (mix.type !== Dom.FRAGMENT) {
+							var maskFrag = new Dom.Fragment();
+							maskFrag.appendChild(mix);
+							mix = maskFrag;
 						}
+						current.appendChild(mix);
 					} else {
 						current.appendChild(new TextNode(result[0]));
 						current = current.parent;

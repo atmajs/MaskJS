@@ -34,6 +34,7 @@ var Dom;
 		Node: Node,
 		TextNode: TextNode,
 		Fragment: Fragment,
+		HtmlFragment: HtmlFragment,
 		Component: Component
 	};
 	/**

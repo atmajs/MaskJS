@@ -81,6 +81,12 @@
 		},
 		process: function(mix){
 			if (mix.type === Dom.FRAGMENT) {
+				if (mix.syntax === 'html') {
+					// indent current
+					this.write('');
+					new HtmlStreamWriter(this).process(mix.nodes);
+					return;
+				}
 				mix = mix.nodes;
 			}
 			if (is_ArrayLike(mix)) {
@@ -239,6 +245,130 @@
 		}
 	});
 
+	var HtmlStreamWriter = class_create({
+		stream: null,
+		constructor: function(stream) {
+			this.stream = stream;
+		},
+		process: function(mix){
+			if (mix.type === Dom.FRAGMENT) {
+
+				if (mix.syntax !== 'html') {
+					var count = 0, p = mix;
+					while (p != null) {
+						if (p.type !== Dom.FRAGMENT) {
+							count++;
+						}
+						p = p.parent;
+					}
+					var stream = this.stream;
+					stream.indent++;
+					stream.print('<mask>\n')
+					stream.indent += count;
+					stream.process(mix);
+					stream.print('\n');
+					stream.indent--;
+					stream.write('</mask>')
+					stream.indent -= count;
+					return;
+				}
+				mix = mix.nodes;
+			}
+			if (is_ArrayLike(mix)) {
+				var imax = mix.length,
+					i = -1;
+				while ( ++i < imax ){
+					this.processNode(mix[i]);
+				}
+				return;
+			}
+			this.processNode(mix);
+		},
+		processNode: function(node) {
+			var stream = this.stream;
+			if (is_Function(node.stringify)) {
+				var str = node.stringify(stream);
+				if (str != null) {
+					stream.print('<mask>');
+					stream.write(str);
+					stream.print('</mask>');
+				}
+				return;
+			}
+			if (is_String(node.content)) {
+				stream.print(node.content);
+				return;
+			}
+			if (is_Function(node.content)){
+				stream.print(node.content());
+				return;
+			}
+			if (node.type === Dom.FRAGMENT) {
+				this.process(node);
+				return;
+			}
+
+			stream.print('<' + node.tagName);
+			this.processAttr(node);
+
+			if (isEmpty(node)) {
+				if (html_isVoid(node)) {
+					stream.print('>');
+					return;
+				}
+				if (html_isSemiVoid(node)) {
+					stream.print('/>');
+					return;
+				}
+				stream.print('></' + node.tagName + '>');
+				return;
+			}
+			stream.print('>');
+			this.process(node.nodes);
+			stream.print('</' + node.tagName + '>');
+		},
+		processAttr: function(node) {
+			var stream = this.stream,
+				str = ''
+				;
+			var attr = node.attr;
+			if (attr != null) {
+				for(var key in attr) {
+					var val = attr[key];
+					if (val == null) {
+						continue;
+					}
+					str += ' ' + key;
+					if (val === key) {
+						continue;
+					}
+					if (is_Function(val)) {
+						val = val();
+					}
+					if (is_String(val)) {
+						if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
+							val = wrapString(val);
+						}
+					}
+					str += '=' + val;
+				}
+			}
+
+			var expr = node.expression;
+			if (expr != null) {
+				if (typeof expr === 'function') {
+					expr = expr();
+				}
+
+				str += ' expression=' + wrapString(expr);
+			}
+			if (str === '') {
+				return;
+			}
+			stream.print(str);
+		}
+	});
+
 	function doindent(count, c) {
 		var output = '';
 		while (count--) {
@@ -327,5 +457,21 @@
 		function raw(str) {
 			return '.' + str.trim().replace(/\s+/g, '.');
 		}
+	}());
+
+
+
+	var html_isVoid,
+		html_isSemiVoid;
+	(function(){
+		var _void = /^(!doctype)$/i,
+			_semiVoid = /^(area|base|br|col|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)$/;
+
+		html_isVoid = function(node) {
+			return _void.test(node.tagName);
+		};
+		html_isSemiVoid = function(node) {
+			return _semiVoid.test(node.tagName);
+		};
 	}());
 }());
