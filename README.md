@@ -61,6 +61,8 @@ Resources:
 
 # `1` Markup
 
+We support `mask` and `html` syntax for writing your templates. And you can even mix them within one template, as each of them has its advantages.
+
 ##### `1.1` Mask Syntax
 - Component and element-based markup
 - Statements, Expressions, Interpolations
@@ -72,12 +74,12 @@ Resources:
 	`[Template → Mask AST → HTML]`
 
 ```mask
-import CustomComponent from 'foo'
+import CustomComponent from 'Foo.mask'
 
 .container {
     h4 > 'Title'
-    section.content data-id='myID' {
-        span > 'Hello ~[name]!'
+    section.content {
+        span > 'Hello ~name!'
 
         if (admins.indexOf(name) > -1) {
             em > 'Admin'
@@ -88,7 +90,7 @@ import CustomComponent from 'foo'
             '~[bind: name]'
 
         for (tag of tags) {
-            h4 > '~[tag.title]'
+            h4 > '~tag.title'
         }
     }
 }
@@ -97,7 +99,7 @@ import CustomComponent from 'foo'
 ##### `1.2` HTML Syntax
 
 There is no difference if you use `html` or `mask` syntax. Both parsers are extremely performant, work in NodeJS and create same `Mask AST`.
-Default parser is `Mask`. In what cases you might want to use `html`:
+Default parser is `Mask`, but you can write `HTML` within mask templates. In what cases you might want to use `html`:
 - when writing text with little tags
 - when html templates already exist
 
@@ -109,7 +111,7 @@ Default parser is `Mask`. In what cases you might want to use `html`:
 ```
 ```javascript
 var ast = mask.parseHtml(html);
-var dom = mask.render(ast);
+var dom = mask.render(ast, { name: 'Quux' });
 ```
 
 > MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**.
