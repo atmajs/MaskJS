@@ -106,7 +106,8 @@ UTest({
 				</mask>
 			`;
 
-			var node = parseHtml(template);
+			var frag = parseHtml(template);
+			var node = frag.nodes[0];
 			eq_(node.tagName, 'function');
 			eq_(node.body.trim(), 'var a = 10;');
 		}
