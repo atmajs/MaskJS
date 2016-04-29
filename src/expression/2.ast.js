@@ -127,7 +127,15 @@ var Ast_Body,
 			this.next = null;
 		},
 		toString: function(){
-			return this.body + (this.next == null ? '' : ('.' + this.next.toString()));
+			var str = this.body,
+				next = this.next;
+			if (next == null) {
+				return str;
+			}
+			if (next.type === type_AccessorExpr) {
+				return str + next.toString();
+			}
+			return str + '.' + next.toString();
 		}
 	});
 	Ast_AccessorExpr = class_create({
