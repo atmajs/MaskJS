@@ -21,12 +21,15 @@ var Ast_Body,
 			this.join = null;
 		},
 		toString: function(){
-			return this
-				.body
-				.map(function(x){
-					return x.toString()
-				})
-				.join(', ');
+			var imax = this.body,
+				i = -1,
+				str = '';
+			while(++i < imax) {
+				if (i !== 0) {
+					str += ', ';
+				}
+				str += this.body[i].toString();
+			}
 		}
 	});
 
@@ -137,6 +140,9 @@ var Ast_Body,
 		type: type_AccessorExpr,
 		getBody: function(){
 			return this.body.body;
+		},
+		toString: function () {
+			return '[' + this.body.toString() + ']';
 		}
 	});
 
