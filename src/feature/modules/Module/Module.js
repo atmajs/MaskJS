@@ -12,10 +12,27 @@ var IModule = class_create(class_Dfr, {
 		this.complete_ = this.complete_.bind(this);
 	},
 	loadModule: function(){
-		if (this.state !== 0)
+		if (this.state !== 0) {
 			return this;
-
+		}
 		this.state = 1;
+		var self = this;
+		if (u_isNpmPath(this.path)) {
+            u_resolveNpmPath(this.type, this.path, this.parent.location, function(err, path){
+				if (err != null) {
+                    self.onLoadError_(err);
+					return;
+                }
+				self.location = path_getDir(path);
+				self.path = path;
+				self.doLoad();
+			});
+			return this;
+        }
+		self.doLoad();
+		return this;
+	},
+	doLoad: function(){
 		var self = this;
 		this
 			.load_(this.path)
@@ -25,7 +42,6 @@ var IModule = class_create(class_Dfr, {
 			.done(function(mix){
 				self.onLoadSuccess_(mix);
 			});
-		return this;
 	},
 	complete_: function(error, exports){
 		this.exports = exports;

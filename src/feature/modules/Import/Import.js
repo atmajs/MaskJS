@@ -8,7 +8,7 @@ var IImport = class_create({
 		this.async = async;
 
 		var endpoint = new Endpoint(path, this.contentType);
-		this.module = Module.createModule(endpoint, module);
+		this.module = Module.createModule(endpoint, null, null, module);
 		this.parent = module;
 	},
 	eachExport: function(fn){

@@ -2,6 +2,8 @@ var u_resolveLocation,
 	u_resolvePath,
 	u_resolveBase,
 	u_resolvePathFromImport,
+	u_isNpmPath,
+	u_resolveNpmPath,
 	u_handler_getDelegate;
 (function(){
 	u_resolveLocation = function(ctx, ctr, module) {
@@ -50,7 +52,7 @@ var u_resolveLocation,
 	};
 
 	u_resolvePath = function(path, ctx, ctr, module){
-		if ('' === path_getExtension(path)) {
+		if (false === hasExt(path)) {
 			path += '.mask';
 		}
 		return toAbsolute(path, ctx, ctr, module);
@@ -58,10 +60,16 @@ var u_resolveLocation,
 
 	u_resolvePathFromImport = function(node, ctx, ctr, module){
 		var path = node.path;
-		if ('' === path_getExtension(path)) {
-			var type = node.contentType;
-			if (type == null || type === 'mask' ) {
-				path += '.mask';
+		if (false === hasExt(path)) {
+			var c = path.charCodeAt(0);
+			if (c === 47 || c === 46) {
+                // / .
+				var type = node.contentType;
+				if (type == null || type === 'mask') {
+					path += '.mask';
+				}
+            } else if (u_isNpmPath(path)) {
+				return path;
 			}
 		}
 		return toAbsolute(path, ctx, ctr, module);
@@ -77,7 +85,11 @@ var u_resolveLocation,
 			return null;
 		};
 	};
-
+	
+	u_isNpmPath = function (path) {
+        return /^([\w\-]+)(\/[\w\-_]+)*$/.test(path);
+    };
+	
 	function toAbsolute(path_, ctx, ctr, module) {
 		var path = path_;
 		if (path_isRelative(path)) {
@@ -88,4 +100,60 @@ var u_resolveLocation,
 		}
 		return path_normalize(path);
 	}
+	function hasExt(path) {
+        return path_getExtension(path) !== '';
+    }
+	u_resolveNpmPath = function (contentType, path, parentLocation, cb){
+		var name = /^([\w\-]+)/.exec(path)[0];
+		var resource = path.substring(name.length + 1);
+		if (resource && hasExt(resource) === false) {
+			resource += '.' + _ext[contentType];
+		}
+		var current = parentLocation;
+		var nodeModules;
+		function check(){
+			nodeModules = current + '/node_modules/' + name + '/';
+			_file_get(path_combine(nodeModules, 'package.json')).then(function(text){
+				onComplete(null, text);
+			}, onComplete);
+		}
+		function onComplete(error, text) {
+			var json;
+			if (text) {
+				try { json = JSON.parse(text); }
+				catch (error) {}
+			}
+			if (error != null || json == null) {
+				var next = current.replace(/[^\/]+$/, '');
+				if (next === current) {
+					cb('Not found');
+					return;
+				}
+				check();
+				return;
+			}
+			if (resource) {
+				cb(null, nodeModules + resource);
+				return;
+			}
+			var filename;
+			if (contentType === 'mask' && json.mainMask) {
+				filename = json.mainMask;
+			}
+			else if (contentType === 'js' && json.main) {
+				filename = json.main;
+			} else {
+				filename = 'index.' + _ext[contentType];
+			}
+			cb(null, path_combine(nodeModules, filename));
+        }
+		check();
+	};
+	
+	var _ext = {
+		'js': 'js',
+		'mask': 'mask',
+		'css': 'css'
+	};
+	
 }());
