@@ -67,7 +67,7 @@ var _file_get,
 							resolve(resp[name].Module);
 						});
 					});
-				}
+				};
 			}
 		}
 	};
