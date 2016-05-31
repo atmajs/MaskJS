@@ -2,7 +2,7 @@ div.test-above-node;
 
 import foo from 'data_foo.js';
 import baz from 'data_baz.json';
-import * as title from 'h4';
+import * as title from './h4';
 import from 'style.css';
 
 
