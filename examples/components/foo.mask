@@ -1,6 +1,6 @@
-import panel from 'panel';
+import panel as Panel from './panel';
 
-define foo extends panel {
+define foo extends Panel {
 	@title > 'Foo title'
 	@body {
 		i > tt > 'Content'

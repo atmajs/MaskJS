@@ -1,4 +1,4 @@
-import panel as layout from 'panel';
+import panel as layout from './panel';
 
 define counter {
 	var index = 0;
