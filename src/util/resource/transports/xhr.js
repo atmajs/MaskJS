@@ -13,7 +13,7 @@ var xhr_get;
 				errMsg = res || xhr.statusText;
 			}
 			if (status === 0 && res === '') {
-				errMsg = res || xhr.statusText || 'File is not accessable';
+				errMsg = res || xhr.statusText || 'File is not accessible';
 			}
 			if (errMsg != null) {
 				err = {
