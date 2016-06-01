@@ -46,7 +46,7 @@ var _file_get,
 
 	var Loaders = {
 		'default': function () {
-			__cfg.getScript = __cfg.getFile = null;
+			__cfg.getScript = __cfg.getFile = __cfg.getStyle = null;
 		},
 		'include': function () {
 			__cfg.getScript = getter('js');

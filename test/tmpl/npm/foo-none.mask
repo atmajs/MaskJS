@@ -1,0 +1,3 @@
+import NotExists from 'fake';
+
+NotExists;

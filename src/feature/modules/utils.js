@@ -109,11 +109,20 @@ var u_resolveLocation,
 		if (resource && hasExt(resource) === false) {
 			resource += '.' + _ext[contentType];
 		}
-		var current = parentLocation;
-		var nodeModules;
+		var root = '';
+		var domainMatch = /(\w{2,5}:\/{2,3}[^/]+)/.exec(parentLocation);
+		if (domainMatch) {
+			root = domainMatch[0];
+			parentLocation = parentLocation.substring(root.length);
+		}
+		var current = parentLocation,
+			lookups = [],
+			nodeModules;
+
 		function check(){
-			nodeModules = current + '/node_modules/' + name + '/';
-			_file_get(path_combine(nodeModules, 'package.json')).then(function(text){
+			nodeModules = path_combine(root, current, '/node_modules/', name, '/');
+			lookups.unshift(path_combine(nodeModules, 'package.json'));
+			_file_get(lookups[0]).then(function(text){
 				onComplete(null, text);
 			}, onComplete);
 		}
@@ -124,11 +133,12 @@ var u_resolveLocation,
 				catch (error) {}
 			}
 			if (error != null || json == null) {
-				var next = current.replace(/[^\/]+$/, '');
+				var next = current.replace(/[^\/]+\/?$/, '');
 				if (next === current) {
-					cb('Not found');
+					cb('Not found: ' + lookups.join(','));
 					return;
 				}
+				current = next;
 				check();
 				return;
 			}

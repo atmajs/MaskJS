@@ -20,7 +20,6 @@ var xhr_get;
 					status: status,
 					content: errMsg
 				};
-				log_warn('File error', path, status);
 			}
 			cb(err, res);
 		};

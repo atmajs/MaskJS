@@ -48,6 +48,7 @@ var IModule = class_create(class_Dfr, {
 		this.error = error;
 		this.state = 4;
 		if (error) {
+			log_error(error);
 			this.reject(error);
 			return;
 		}
