@@ -17,6 +17,7 @@ UTest({
 	},
 	$after () {
 		mask.off('error');
+		mask.off('warn');
 	},
 	$teardown () {
 		errors = [];

@@ -2,7 +2,7 @@
 mask.config('modules', 'default');
 
 UTest({
-	'!should load default file in node_modules' () {
+	'should load default file in node_modules' () {
 		return mask
 				.renderAsync(`
 					import Foo from '/test/tmpl/npm/foo.mask';
@@ -15,18 +15,16 @@ UTest({
 					`);
 				});
 	},
-	'!should fail loading' () {
-		mask.on('error', (error) => {
-			console.log('Err', error)
-		});
+	'should fail loading' () {
+		mask.on('error', assert.await((error) => {
+			eq_(error.status, 404);
+		}));
 		return mask
 				.renderAsync(`
 					import Any from '/test/tmpl/npm/foo-none.mask';					
 					Any;
 				`)
-				.then(dom => {
-				
-				});
+				.always(() => mask.off('error'));
 	}
 });
 
