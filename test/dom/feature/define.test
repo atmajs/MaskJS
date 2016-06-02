@@ -112,6 +112,23 @@ UTest({
 				find (h3) > text TestUser;
 				find (h4) > text TestUser;
 			`)
+		},
+		'accessible in onRenderStart' () {
+			var template = `
+				let Foo (user, friendName) {
+					function onRenderStart (model) {
+						eq_(model.user.name, 'ifoo');
+						eq_(model.friendName, 'IFOO');
+						this.model = 'rewritten';
+					}
+					h5 > '~[.]'
+				}
+				Foo (me, me.name.toUpperCase())
+			`;
+			var dom = mask.render(template, { me: { name: 'ifoo' }});
+			return UTest.domtest(dom, `
+				find (h5) > text rewritten;
+			`);
 		}
 	}
 });

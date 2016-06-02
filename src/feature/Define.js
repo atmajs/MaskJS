@@ -30,12 +30,13 @@ var Define;
 				template: 'merge'
 			},
 			renderStart: function(model, ctx){
-				Compo.prototype.renderStart.apply(this, arguments);
+				var args = _Array_slice.call(arguments);
+				if (fnModelResolver != null) {
+					args[0] = this.model = fnModelResolver(this.expression, model, ctx, this);
+				}
+				Compo.prototype.renderStart.apply(this, args);
 				if (this.nodes === this.template) {
 					this.nodes = mask_merge(this.nodes, [], this);
-				}
-				if (fnModelResolver != null) {
-					this.model = fnModelResolver(this.expression, model, ctx, this);
 				}
 			},
 			getHandler: null
