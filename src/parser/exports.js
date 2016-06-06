@@ -1,3 +1,5 @@
+// import ./cursor
+
 var parser_parse,
 	parser_parseHtml,
 	parser_parseAttr,
@@ -17,7 +19,6 @@ var parser_parse,
 	// import ./const
 	// import ./config
 	// import ./utils
-	// import ./cursor
 	// import ./interpolation
 	// import ./object/ObjectLexer
 	// import ./parsers/var

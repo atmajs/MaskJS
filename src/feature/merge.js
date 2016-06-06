@@ -345,7 +345,8 @@ var mask_merge;
 			// interpolation
 			last = index;
 			if (isBlockEntry === true) {
-				index = str.indexOf(']', last);
+				index = cursor_groupEnd(str, index + 2, length, 91, 93);
+				// []
 				if (index === -1)
 					index = length;
 				last += 2;
