@@ -3,6 +3,7 @@
 
 # node
 node_modules
+!test/tmpl/npm/node_modules
 
 # WebStorm
 .idea

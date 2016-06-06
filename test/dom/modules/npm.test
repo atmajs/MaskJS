@@ -15,16 +15,17 @@ UTest({
 					`);
 				});
 	},
-	'should fail loading' () {
+	'!should fail loading' (done) {
 		mask.on('error', assert.await((error) => {
-			eq_(error.status, 404);
+			has_(error.message, 'Resource for the import \`NotExists\` not loaded');
 		}));
-		return mask
+		mask
 				.renderAsync(`
 					import Any from '/test/tmpl/npm/foo-none.mask';					
 					Any;
 				`)
-				.always(() => mask.off('error'));
+				.always(() => mask.off('error'))
+				.done(done);
 	}
 });
 

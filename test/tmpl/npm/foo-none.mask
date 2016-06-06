@@ -1,3 +1,5 @@
 import NotExists from 'fake';
 
-NotExists;
+define Any {
+	NotExists;
+}
