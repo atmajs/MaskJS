@@ -85,11 +85,11 @@ var u_resolveLocation,
 			return null;
 		};
 	};
-	
+
 	u_isNpmPath = function (path) {
-        return /^([\w\-]+)(\/[\w\-_]+)*$/.test(path);
+        return _opts.moduleResolution === 'node' && /^([\w\-]+)(\/[\w\-_]+)*$/.test(path);
     };
-	
+
 	function toAbsolute(path_, ctx, ctr, module) {
 		var path = path_;
 		if (path_isRelative(path)) {
@@ -135,7 +135,7 @@ var u_resolveLocation,
 			if (error != null || json == null) {
 				var next = current.replace(/[^\/]+\/?$/, '');
 				if (next === current) {
-					cb('Not found: ' + lookups.join(','));
+					cb('Module was not resolved: ' + lookups.join(','));
 					return;
 				}
 				current = next;
@@ -159,11 +159,11 @@ var u_resolveLocation,
         }
 		check();
 	};
-	
+
 	var _ext = {
 		'js': 'js',
 		'mask': 'mask',
 		'css': 'css'
 	};
-	
+
 }());

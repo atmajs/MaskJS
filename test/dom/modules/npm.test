@@ -1,12 +1,15 @@
-// use default module loader
-mask.config('modules', 'default');
-
 UTest({
+	$before () {
+		// use default module loader
+		mask.config('modules', 'default');
+		mask.Module.cfg('moduleResolution', 'node');
+	},
+
 	'should load default file in node_modules' () {
 		return mask
 				.renderAsync(`
 					import Foo from '/test/tmpl/npm/foo.mask';
-					
+
 					Foo;
 				`)
 				.then(dom => {
@@ -15,17 +18,23 @@ UTest({
 					`);
 				});
 	},
-	'!should fail loading' (done) {
-		mask.on('error', assert.await((error) => {
-			has_(error.message, 'Resource for the import \`NotExists\` not loaded');
-		}));
+	'should fail loading' (done) {
+		var errors = [];
+		mask.on('error', assert.await((error) => errors.push(error)));
 		mask
 				.renderAsync(`
-					import Any from '/test/tmpl/npm/foo-none.mask';					
+					import Any from '/test/tmpl/npm/foo-none.mask';
 					Any;
 				`)
 				.always(() => mask.off('error'))
-				.done(done);
+				.done(() => {
+					notEq_(errors.length, 0);
+					var error = errors[0];
+					has_(error.message, 'Module was not resolved');
+
+					mask.off('error');
+					done();
+				});
 	}
 });
 

@@ -33,6 +33,7 @@ var ModuleMask;
 			};
 
 			var arr  = _nodesToArray(ast),
+				importNodes = [],
 				imax = arr.length,
 				i = -1,
 				x;
@@ -40,6 +41,7 @@ var ModuleMask;
 				x = arr[i];
 				switch (x.tagName) {
 					case 'import':
+						importNodes.push(x);
 						this.imports.push(Module.createImport(
 							x, null, null, this
 						));
@@ -60,9 +62,9 @@ var ModuleMask;
 				}
 			}
 
-			_loadImports(this.imports, function(){
+			_loadImports(this, arr, function(){
 				next.call(this, null, _createExports(arr, null, this));
-			}, this);
+			});
 		},
 
 		getHandler: function(name){
@@ -183,22 +185,31 @@ var ModuleMask;
 		});
 	}
 
-	function _loadImports(imports, done, module) {
-		var count = imports.length;
+	function _loadImports(module, importNodes, done) {
+		var imports = module.imports,
+			count = imports.length;
 		if (count === 0) {
 			return done.call(module);
 		}
 		var imax = count,
 			i = -1;
 		while( ++i < imax ) {
-			imports[i].loadImport(await);
+			_loadImport(module, imports[i], importNodes[i], await);
 		}
-
-		function await(){
-			if (--count > 0)
+		function await(error){
+			if (--count > 0) {
 				return;
+			}
 			done.call(module);
 		}
+	}
+	function _loadImport(module, import_, node, done) {
+		import_.loadImport(function(error){
+			if (error) {
+				error_withNode(error, node);
+			}
+			done();
+		});
 	}
 	function _module_getHandlerDelegate(module) {
 		return function(name) {

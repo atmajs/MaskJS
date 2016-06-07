@@ -87,7 +87,7 @@ var IImport = class_create({
 		var str = '\n(Module) ' + (this.parent || {path: 'root'}).path
 		str += '\n  (Import) ' + this.path
 		str += '\n    ' + msg;
-		log_error(str);
+		error_withCompo(str, this);
 	}
 });
 

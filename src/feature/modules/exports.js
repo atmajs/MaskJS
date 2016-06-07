@@ -4,7 +4,8 @@ var Module;
 	var _cache = {},
 		_opts = {
 			base: null,
-			version: null
+			version: null,
+			moduleResolution: 'classic'
 		},
 		_typeMappings = {
 			script: 'script',

@@ -44,7 +44,8 @@
 					self.location = self.module.location;
 					self.getHandler = self.module.getHandler.bind(self.module);
 				})
-				.fail(function(){
+				.fail(function(error){
+					error_withCompo(error, this);
 					self.nodes = self.module.source;
 				})
 				.always(resume);
@@ -61,7 +62,6 @@
 				next  = cb,
 				i = -1, x;
 
-
 			function done(error, import_) {
 				if (error == null) {
 					if (import_.registerScope != null) {
@@ -70,6 +70,8 @@
 					if (ctx._modules != null) {
 						ctx._modules.add(import_.module);
 					}
+				} else {
+					error_withNode(error, self);
 				}
 				if (--await === 0 && next != null) {
 					next();
