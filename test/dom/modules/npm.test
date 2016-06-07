@@ -4,6 +4,9 @@ UTest({
 		mask.config('modules', 'default');
 		mask.Module.cfg('moduleResolution', 'node');
 	},
+	$after () {
+		mask.Module.cfg('moduleResolution', 'classic');
+	},
 
 	'should load default file in node_modules' () {
 		return mask
