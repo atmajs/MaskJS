@@ -4,6 +4,7 @@ var throw_,
 	error_,
 	error_withSource,
 	error_withNode,
+	error_withCompo,
 	warn_,
 	warn_withSource,
 	warn_withNode,
@@ -40,9 +41,11 @@ var throw_,
 
 	error_withSource = delegate_withSource(MaskError, 'error');
 	error_withNode   = delegate_withNode  (MaskError, 'error');
+	error_withCompo  = delegate_withCompo (MaskError, error_withNode);
 
 	warn_withSource = delegate_withSource(MaskWarn, 'warn');
 	warn_withNode   = delegate_withNode  (MaskWarn, 'warn');
+	warn_withCompo  = delegate_withCompo (MaskWarn, warn_withNode);
 
 	parser_error = delegate_parserReporter(MaskError, 'error');
 	parser_warn = delegate_parserReporter(MaskWarn, 'warn');
@@ -115,11 +118,21 @@ var throw_,
 	function delegate_withNode(Ctor, type){
 		return function(str, node){
 			var error = new Ctor(str);
-			error.message = error.message
-				+ '\n'
-				+ reporter_getNodeStack(node);
-
+			if (node != null) {
+				error.message += '\n' + reporter_getNodeStack(node);
+			}
 			report(error, type);
+		};
+	}
+	function delegate_withCompo(Ctor, withNodeFn){
+		return function(str, compo){
+			var node = compo.node,
+				cursor = compo.parent;
+			while(cursor != null && node == null) {
+				node = cursor.node;
+				cursor = cursor.parent;
+			}
+			withNodeFn(str, node);
 		};
 	}
 	function report(error, type) {
