@@ -31,6 +31,9 @@
 		getNodes: getNodes,
 
 		getHandler: function(compoName, model){
+			if (compoName !== FOR_OF_ITEM && compoName !== FOR_IN_ITEM) {
+				return null;
+			}
 			return createForItemHandler(compoName, model);
 		}
 	};
@@ -338,4 +341,3 @@
 	}
 
 }());
-
