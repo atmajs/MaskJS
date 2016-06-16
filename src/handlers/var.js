@@ -9,7 +9,7 @@
 		}
 	});
 
-	function set(self, source, doEval, attr, model, ctx) {
+	function set(self, source, doEval, model, ctx) {
 		// set data also to model, so that it will be serialized in NodeJS
 		self.model = {};
 

@@ -41,7 +41,6 @@
 				index++;
 				continue;
 			}
-
 			if (state === go_value) {
 				start = index;
 				index++;
@@ -59,6 +58,11 @@
 					default:
 						while (index < length) {
 							c = str.charCodeAt(index);
+							if (c === 91 || c === 40) {
+								// [ (
+								index = cursor_groupEnd(str, index + 1, length, c, c === 91 ? 93 : 41);
+								continue;
+							}
 							if (c === 44 || c === 59) {
 								//, ;
 								break;
