@@ -246,8 +246,9 @@ var mask_merge;
 				var id = interpolate_str_(node.attr.id, placeholders, tmplNode),
 					nodes = Mask.templates.resolve(node, id);
 				return _merge(nodes, placeholders, tmplNode, clonedParent);
-			case 'define':
 			case 'function':
+			case 'define':
+			case 'let':
 			case 'var':
 			case 'import':
 			case 'script':
