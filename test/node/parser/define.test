@@ -1,3 +1,5 @@
+var Mask = mask;
+
 UTest({
 	'should parse name' () {
 		var ast = jmask(`
@@ -45,6 +47,31 @@ UTest({
 		var def = jmask(ast).filter('define').get(0);
 		deepEq_(def.arguments, [ { prop: 'foo'}, { prop: '$scope.qu_x'} ]);
 	},
+	'should parse arguments and extends' () {
+		Mask.on('error', assert.avoid());
+		var ast = Mask.parse(`
+			define Foo (a, b) extends Bar {
+				span > 'Hello'
+			}
+		`);
+		var def = jmask(ast).filter('define').get(0);
+		deepEq_(def.arguments, [ { prop: 'a'}, { prop: 'b'} ]);
+		deepEq_(def.extends, [ { compo:'Bar' } ]);
+		Mask.off('error');
+	},
+	'should parse arguments, extends and as' () {
+		Mask.on('error', assert.avoid());
+		var ast = Mask.parse(`
+			define Foo (a,   b ) as (div) extends Xy, Bar {
+				span > 'Hello'
+			}
+		`);
+		var def = jmask(ast).filter('define').get(0);
+		deepEq_(def.arguments, [ { prop: 'a'}, { prop: 'b'} ]);
+		deepEq_(def.extends, [ { compo:'Xy' }, { compo:'Bar' } ]);
+		deepEq_(def.as, 'div');
+		Mask.off('error');
+	}
 })
 
 // vim: set ft=js:

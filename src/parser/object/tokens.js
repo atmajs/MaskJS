@@ -89,7 +89,7 @@ var token_Const,
 			var end = cursor_groupEnd(str, ++i, imax, start, end);
 			if (end === i)
 				return i;
-
+			
 			this.setter(out, str.substring(i, end));
 			return end + 1;
 		},
