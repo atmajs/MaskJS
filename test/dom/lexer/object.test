@@ -32,7 +32,7 @@ UTest({
 	},
 	'should consume arrays' () {
 		Test({
-			pattern: '$$exports[$name?( as $alias)](,) from "$path"',
+			pattern: '$$exports[$name?(as $alias)](,) from "$path"',
 			template: 'foo as bar, qux from "some.mask"',
 			expect: {
 				exports: [

@@ -21,14 +21,14 @@
 		return imports;
 	};
 
-	var meta = '?( is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})'
+	var meta = '?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})'
 	var default_LINK = 'static',
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
 		[ 'from "$path"' + meta
 		, '?($$async(async) )* as $alias from "$path"' + meta
-		, '?($$async(async) )$$exports[$name?( as $alias)](,) from "$path"' + meta
+		, '?($$async(async) )$$exports[$name?(as $alias)](,) from "$path"' + meta
 		]
 	);
 

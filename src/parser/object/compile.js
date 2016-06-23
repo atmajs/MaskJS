@@ -160,7 +160,6 @@ var _compile;
 		var start = ++i;
 		i = cursor_groupEnd(str, start, imax, 40, 41);
 		tokens.push(
-			new token_Whitespace(true),
 			new token_Group(_compile(str, start, i), optional)
 		);
 		return i;

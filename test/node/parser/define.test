@@ -1,5 +1,3 @@
-var Mask = mask;
-
 UTest({
 	'should parse name' () {
 		var ast = jmask(`

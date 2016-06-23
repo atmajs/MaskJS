@@ -288,7 +288,9 @@ var token_Const,
 			this.tokens = tokens;
 		},
 		consume: function(str, i, imax, out){
-			return _consume(this.tokens, str, i, imax, out, this.optional);
+			var start = cursor_skipWhitespace(str, i, imax);
+			var end = _consume(this.tokens, str, start, imax, out, this.optional);
+			return start === end ? i : end;
 		}
 	});
 	token_OrGroup = create('OrGroup', {
