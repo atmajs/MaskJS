@@ -55,7 +55,9 @@ var path_getDir,
 			return (current_ = path_sliceFilename(fn()));
 		};
 		function fromBase() {
-			return global.document.baseURI;
+			var path = global.document.baseURI;
+			var i = path.indexOf('?');
+			return i === -1 ? path : path.substring(0, i);
 		}
 		function fromLocation() {
 			return global.location.origin + global.location.pathname;
