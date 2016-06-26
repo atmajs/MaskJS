@@ -1,0 +1,19 @@
+UTest({
+	'should create functions with scope for': {
+		'variables' () {
+
+			var template = `
+				define Foo {
+					var WIDTH = 10 / 2;
+
+					function onRenderStart () {
+						this.width = WIDTH;
+					}
+				}
+			`;
+
+			var Foo = mask.Compo.initialize('Foo');
+			eq_(Foo.width, 5);
+		}
+	}
+})
