@@ -1,6 +1,6 @@
 UTest({
 	'should create functions with scope for': {
-		'variables' () {
+		'... for variables' () {
 
 			var template = `
 				define Foo {
@@ -14,6 +14,24 @@ UTest({
 
 			var Foo = mask.Compo.initialize('Foo');
 			eq_(Foo.width, 5);
+		},
+
+		'!... for imports' () {
+			var template = `
+				import foo as '/test/tmpl/modules/data_foo.js';
+
+				define Foo {
+					
+					function getFoo () {
+						return foo;
+					}
+				}
+			`;
+
+			var Foo = mask.Compo.initialize(template);
+			debugger;
+
+			deepEq_(Foo.getFoo(), { name: 'Foo'});
 		}
-	}
+	},
 })

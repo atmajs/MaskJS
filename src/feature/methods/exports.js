@@ -4,8 +4,10 @@ var Methods;
 	// import ./utils.js
 	// import ./parsers.js
 	// import ./handlers.js
+	// import ./define-methods.js
 
 	Methods = {		
+		Define: DefineMethods,
 		compileWithScope: function(nodes, ctr) {
 			var code = null,
 				i = -1, 
