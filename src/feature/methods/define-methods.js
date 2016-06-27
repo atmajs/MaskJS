@@ -2,7 +2,7 @@ var DefineMethods;
 
 (function(){
 	DefineMethods = {
-		compile: function (defineNode, defineProto, model, owner) {
+		compile: function (defineNode, defineProto, model, owner) {		
 			var nodes = getFnNodes(defineNode.nodes);
 			if (nodes == null) {
 				return null;
@@ -11,7 +11,7 @@ var DefineMethods;
 			var body = createFnBody(defineNode, nodes);
 			var sourceUrl = createSourceUrl(defineNode);
 			if (sourceUrl != null) {
-				body += '\n' + sourceUrl;
+				body += '\n//' + sourceUrl;
 			}
 
 			var scopeVars = getScopeVars(defineNode, defineProto, model, owner);
@@ -48,9 +48,11 @@ var DefineMethods;
 			}
 			code += 'function ' + name + ' (' + args.join(',') + ') {\n';
 			code += localVars + body; 
-			code += '\n}' + (i < imax ? ',' : '') + '\n';				
+			code += '\n}' + (i === imax - 1 ? '' : ',') + '\n';				
 		}
 		code += '];\n';
+
+		return code;
 	}
 	function createFnLocalVars(defineNode) {
 		var args = defineNode.arguments;
@@ -89,31 +91,37 @@ var DefineMethods;
 		return out;
 	}
 	function getImportVars(defNode, defProto, model, owner, out) {
-		var x = owner;
-		while(x != null && x.tagName !== 'imports') {
-			x = x.parent;
-		}
-		if (x == null) {
+		debugger;
+		var imports = getImports(owner);
+		if (imports == null) {
 			return null;
 		}
-		var imports = x.imports_,
-			imax = imports.length,
+
+		var imax = imports.length,
 			i = -1,
 			arr;
 
-		debugger;
 		while ( ++i < imax ) {
 			var import_ = imports[i];
 			if (import_.type !== 'script') continue;
 			
 		}
 	}
-	function isFn(node) {
+	function getImports (owner) {
+		if (owner.imports) return owner.imports;
+
+		var x = owner;
+		while(x != null && x.tagName !== 'imports') {
+			x = x.parent;
+		}
+		return x.import_;
+	}
+	function isFn(name) {
 		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
 	}
-	var constructSourceUrl;
+	var createSourceUrl;
 	(function(){
-		constructSourceUrl = function (defNode) {
+		createSourceUrl = function (defNode) {
 			//if DEBUG
 			var url = defNode.tagName + '_' + defNode.name;
 			

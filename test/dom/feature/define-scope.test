@@ -1,3 +1,6 @@
+// use default module loader
+mask.config('modules', 'default');
+
 UTest({
 	'should create functions with scope for': {
 		'... for variables' () {
@@ -16,9 +19,9 @@ UTest({
 			eq_(Foo.width, 5);
 		},
 
-		'!... for imports' () {
+		'!... for imports' (done) {
 			var template = `
-				import foo as '/test/tmpl/modules/data_foo.js';
+				import foo from '/test/tmpl/modules/data_foo.js';
 
 				define Foo {
 					
@@ -28,10 +31,11 @@ UTest({
 				}
 			`;
 
-			var Foo = mask.Compo.initialize(template);
-			debugger;
+			mask.define(template).done(() => {
+				var Foo = mask.Compo.initialize('Foo');
+				deepEq_(Foo.getFoo(), { name: 'Foo'});
+			});
 
-			deepEq_(Foo.getFoo(), { name: 'Foo'});
 		}
 	},
 })
