@@ -21,19 +21,34 @@ UTest({
 
 		'!... for imports' (done) {
 			var template = `
-				import foo from '/test/tmpl/modules/data_foo.js';
+				import foo as FooDataObj, foo from '/test/tmpl/modules/data_foo.js';
+				import * as BazTxt from '/test/tmpl/modules/baz.txt';
+				import * as BazIni from '/test/tmpl/modules/baz.ini' is text;
 
 				define Foo {
 					
-					function getFoo () {
+					function getJsExports_PropAlias () {
+						return FooDataObj;
+					}
+					function getJsExports_Prop () {
 						return foo;
+					}
+					function getTextImport () {
+						return BazTxt;
+					}
+					function getTextAlikeImport () {
+						return BazIni;
 					}
 				}
 			`;
 
 			mask.define(template).done(() => {
 				var Foo = mask.Compo.initialize('Foo');
-				deepEq_(Foo.getFoo(), { name: 'Foo'});
+				deepEq_(Foo.getJsExports_Prop(), { name: 'Foo'});
+				deepEq_(Foo.getJsExports_PropAlias(), { name: 'Foo'});
+				eq_(Foo.getTextImport(), 'Hello foo baz!');
+				eq_(Foo.getTextAlikeImport(), 'name=Baz');
+				done();
 			});
 
 		}

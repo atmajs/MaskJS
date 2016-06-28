@@ -91,10 +91,9 @@ var DefineMethods;
 		return out;
 	}
 	function getImportVars(defNode, defProto, model, owner, out) {
-		debugger;
 		var imports = getImports(owner);
 		if (imports == null) {
-			return null;
+			return;
 		}
 
 		var imax = imports.length,
@@ -103,8 +102,15 @@ var DefineMethods;
 
 		while ( ++i < imax ) {
 			var import_ = imports[i];
-			if (import_.type !== 'script') continue;
-			
+			var type = import_.type;
+			if (type !== 'script' && type !== 'data' && type !== 'text') continue;
+
+			import_.eachExport(register);
+		}
+		function register(varName, origName) {
+			var val = this.module.getExport_(origName);
+			out[0].push(varName);
+			out[1].push(val);
 		}
 	}
 	function getImports (owner) {
