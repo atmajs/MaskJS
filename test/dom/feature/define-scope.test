@@ -3,6 +3,27 @@ mask.config('modules', 'default');
 
 UTest({
 	'should create functions with scope for': {
+		'!... no imports' () {
+			var template = `
+				define Foo {
+					h4 > '~name'
+
+					function onRenderStart (model) {
+						model.name = this.toUpper(model.name);
+					}
+
+					function toUpper (str) {
+						return str.toUpperCase();
+					}	
+				}
+				Foo;
+			`;
+			var dom = mask.render(template, { name: 'Hello'});
+			$(dom)
+				.filter('h4')
+				.eq_('length', 1)
+				.eq_('text', 'HELLO');
+		},
 		'... for variables' () {
 
 			var template = `

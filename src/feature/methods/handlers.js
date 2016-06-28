@@ -4,7 +4,7 @@
 			serializeNodes: true
 		},
 		constructor: function(node) {
-			this.fn = node.fn; 
+			this.fn = node.getFn(); 
 			this.name = node.name;
 		}
 	});

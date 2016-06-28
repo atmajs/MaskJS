@@ -25,7 +25,7 @@ var parser_parse,
 	// import ./parsers/content
 	// import ./parsers/import
 	// import ./parsers/define
-	// import ./parsers/methods
+	// i m p o r t ./parsers/methods
 	// import ./html/parser
 	// import ./mask/parser
 	// import ./mask/partials/attributes

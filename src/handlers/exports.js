@@ -1,7 +1,7 @@
 // import debug
 // import define
 // import html
-// import methods
+// i m p o r t methods
 // import content
 // import template
 // import var

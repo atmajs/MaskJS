@@ -4,10 +4,10 @@ var DefineMethods;
 	DefineMethods = {
 		compile: function (defineNode, defineProto, model, owner) {		
 			var nodes = getFnNodes(defineNode.nodes);
-			if (nodes == null) {
-				return null;
+			if (nodes == null || nodes.length === 0) {
+				return;
 			}
-
+			
 			var body = createFnBody(defineNode, nodes);
 			var sourceUrl = createSourceUrl(defineNode);
 			if (sourceUrl != null) {
@@ -32,7 +32,7 @@ var DefineMethods;
 
 	function createFnBody(defineNode, nodes) {
 		var code = 'return [\n',
-			localVars = createFnLocalVars(defineNode),
+			localVars = '', //createFnLocalVars(defineNode),
 			i = -1, 
 			imax = nodes.length;
 
@@ -73,11 +73,14 @@ var DefineMethods;
 		return str;
 	}
 	function getFnNodes (nodes) {
+		if (nodes == null) {
+			return null;
+		}
 		var imax = nodes.length,
 			i = -1, arr;
 		while (++i < imax) {
 			var node = nodes[i];
-			if (isFn(node.tagName) === false) {
+			if (isFn(node.tagName) === false || node.fn != null) {
 				continue;
 			}
 			if (arr == null) arr = [];
@@ -120,7 +123,7 @@ var DefineMethods;
 		while(x != null && x.tagName !== 'imports') {
 			x = x.parent;
 		}
-		return x.import_;
+		return x == null ? null : x.imports;
 	}
 	function isFn(name) {
 		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
