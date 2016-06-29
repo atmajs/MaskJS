@@ -1,4 +1,4 @@
-import :footer as Footer, :menu as Menu from 'defines';
+import :footer as Footer, :menu as Menu from './defines';
 
 define FooScoped {
 	

@@ -200,11 +200,13 @@ UTest({
 				});
 		},
 		'errored' () {
+			mask.on('error', assert.await());
 			return mask
 				.renderAsync(`
 					import from '/none.mask';
 				`)
-				.pipe(dom => {
+				.then(dom => {
+					mask.off('error');
 					$(dom).has_('text', 'Load error: http://localhost:5777/utest/none.mask; Status: 404');
 				});
 		},
@@ -225,12 +227,14 @@ UTest({
 					});
 			},
 			'should render define with inner `let` scope' () {
+				mask.on('error', assert.avoid());
 				return mask
 					.renderAsync(`
 						import FooScoped from '/test/tmpl/modules/defines_scopes';
 						FooScoped;
 					`)
-					.pipe(dom => {
+					.then(dom => {
+						mask.off('error');
 						return UTest.domtest(dom, `
 							find('.inner') > text Inner;
 							find('menu') > text Home;

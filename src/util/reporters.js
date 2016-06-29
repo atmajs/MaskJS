@@ -108,15 +108,15 @@ var throw_,
 		};
 	}
 	function delegate_withSource(Ctor, type){
-		return function(str, source, index, file){
-			var error = new Ctor(str);
+		return function(mix, source, index, file){
+			var error = new Ctor(stringifyError);
 			error.message = '\n' + error_formatSource(source, index, file);
 			report(error, type);
 		};
 	}
 	function delegate_withNode(Ctor, type){
-		return function(str, node){
-			var error = new Ctor(str);
+		return function(mix, node){
+			var error = new Ctor(stringifyError(mix));
 			if (node != null) {
 				error.message += '\n' + reporter_getNodeStack(node);
 			}
@@ -124,14 +124,14 @@ var throw_,
 		};
 	}
 	function delegate_withCompo(Ctor, withNodeFn){
-		return function(str, compo){
+		return function(mix, compo){
 			var node = compo.node,
 				cursor = compo.parent;
 			while(cursor != null && node == null) {
 				node = cursor.node;
 				cursor = cursor.parent;
 			}
-			withNodeFn(str, node);
+			withNodeFn(stringifyError, node);
 		};
 	}
 	function report(error, type) {
@@ -141,6 +141,12 @@ var throw_,
 		var fn = type === 'error' ? log_error : log_warn;
 		fn(error.message);
 		fn('\n' + error.stack);
+	}
+	function stringifyError(mix) {
+		if (mix == null) return 'Uknown error';
+		if (typeof mix !== 'object') return mix;
+		if (mix.toString !== Object.prototype.toString) return String(mix);
+		return JSON.stringify(mix);
 	}
 
 	function formatToken(token){

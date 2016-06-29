@@ -14,16 +14,15 @@ var DefineMethods;
 				body += '\n//' + sourceUrl;
 			}
 
+			// [[name],[value]]			
 			var scopeVars = getScopeVars(defineNode, defineProto, model, owner);
-			// [[name],[value]]
 			var arr = scopeVars[0];
 			var values = scopeVars[1];
-			arr.push(body);
 
+			arr.push(body);
+			
 			var factory = new (Function.bind.apply(Function, [null].concat(arr)));
 			var fns = factory.apply(null, values);
-
-
 			var imax = nodes.length,
 				i = -1;
 			while(++i < imax) nodes[i].fn = fns[i];
@@ -43,8 +42,8 @@ var DefineMethods;
 				body = node.body,
 				args = node.args;
 			
-			if (tag === 'event') {
-				name = name.replace(/^[\w_$]/g, '_');
+			if (tag === 'event' || tag === 'pipe') {
+				name = name.replace(/[^\w_$]/g, '_');
 			}
 			code += 'function ' + name + ' (' + args.join(',') + ') {\n';
 			code += localVars + body; 
