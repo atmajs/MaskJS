@@ -3,7 +3,7 @@ mask.config('modules', 'default');
 
 UTest({
 	'should create functions with scope for': {
-		'!... no imports' () {
+		'... none of imports - vars - args' () {
 			var template = `
 				define Foo {
 					h4 > '~name'
@@ -24,8 +24,21 @@ UTest({
 				.eq_('length', 1)
 				.eq_('text', 'HELLO');
 		},
-		'... for variables' () {
+		'... for define arguments' () {
+			var template = `
+				define Foo (user) {
 
+					function testFn () {
+						return user.name;
+					}
+				}
+			`;
+			mask.define(template);
+			var Wrapper = mask.Compo.initialize('Foo (bob)', { bob: { name: 'IBob'}});
+			var Foo = Wrapper.find('Foo');
+			eq_(Foo.testFn(), 'IBob');
+		},
+		'... for variables' () {
 			var template = `
 				define Foo {
 					var WIDTH = 10 / 2;
@@ -40,7 +53,7 @@ UTest({
 			eq_(Foo.width, 5);
 		},
 
-		'!... for imports' (done) {
+		'... for imports' (done) {
 			var template = `
 				import foo as FooDataObj, foo from '/test/tmpl/modules/data_foo.js';
 				import * as BazTxt from '/test/tmpl/modules/baz.txt';
@@ -62,7 +75,6 @@ UTest({
 					}
 				}
 			`;
-
 			mask.define(template).done(() => {
 				var Foo = mask.Compo.initialize('Foo');
 				deepEq_(Foo.getJsExports_Prop(), { name: 'Foo'});

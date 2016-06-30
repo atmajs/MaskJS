@@ -2,22 +2,38 @@ var DefineMethods;
 
 (function(){
 	DefineMethods = {
-		compile: function (defineNode, defineProto, model, owner) {		
-			var nodes = getFnNodes(defineNode.nodes);
+		getSource: function (defNode, defProto, model, owner) {
+			var nodes = getFnNodes(defNode.nodes);
 			if (nodes == null || nodes.length === 0) {
 				return;
 			}
-			
-			var body = createFnBody(defineNode, nodes);
-			var sourceUrl = createSourceUrl(defineNode);
-			
-			// [[name],[value]]			
-			var scopeVars = getScopeVars(defineNode, defineProto, model, owner);
-			var code = createFnWrapperCode(defineNode, body, scopeVars[0]);
-			var factory = compile(code, sourceUrl);
+			var body = createFnBody(defNode, nodes);
+			var sourceUrl = sourceUrl_get(defNode);
+			// [[name],[value]]
+			var scopeVars = getScopeVars(defNode, defProto, model, owner);
+			var code = createFnWrapperCode(defNode, body, scopeVars[0]);
 
-			var fns = factory.apply(null, scopeVars[1]);
-			var imax = nodes.length,
+			var preproc = __cfg.preprocessor.script;
+			if (preproc) {
+				code = preproc(code);
+			}
+			if (sourceUrl != null) {
+				code += sourceUrl
+			}
+			return [code, scopeVars[1]];
+		},
+		compile: function (defNode, defProto, model, owner) {
+			var source = this.getSource(defNode, defProto, model, owner);
+			if (source == null)
+				return;
+
+			var nodes = defNode.nodes,
+				code = source[0],
+				vals = source[1],
+				fnWrapper = Function('return ' + code),
+				factory = fnWrapper(),
+				fns = factory.apply(null, vals),
+				imax = nodes.length,
 				i = -1;
 			while(++i < imax) nodes[i].fn = fns[i];
 		}
@@ -25,7 +41,7 @@ var DefineMethods;
 
 	function createFnBody(defineNode, nodes) {
 		var code = 'return [\n',
-			localVars = '', //createFnLocalVars(defineNode),
+			localVars = createFnLocalVars(defineNode),
 			i = -1, 
 			imax = nodes.length;
 
@@ -61,7 +77,7 @@ var DefineMethods;
 			body = preproc(body);
 		}
 		if (sourceUrl != null) {
-			body += '\n//# sourceURL=' + sourceUrl
+			body += sourceUrl
 		}
 		var fnWrapper = Function('return ' + body);
 		var factory = fnWrapper();
@@ -103,61 +119,8 @@ var DefineMethods;
 	}
 	function getScopeVars (defNode, defProto, model, owner) {
 		var out = [[],[]];
-		getImportVars(defNode, defProto, model, owner, out);
+		scopeRefs_getImportVars(owner, out);
 		return out;
 	}
-	function getImportVars(defNode, defProto, model, owner, out) {
-		var imports = getImports(owner);
-		if (imports == null) {
-			return;
-		}
-
-		var imax = imports.length,
-			i = -1,
-			arr;
-
-		while ( ++i < imax ) {
-			var import_ = imports[i];
-			var type = import_.type;
-			if (type !== 'script' && type !== 'data' && type !== 'text') continue;
-
-			import_.eachExport(register);
-		}
-		function register(varName, origName) {
-			var val = this.module.getExport_(origName);
-			out[0].push(varName);
-			out[1].push(val);
-		}
-	}
-	function getImports (owner) {
-		if (owner.imports) return owner.imports;
-
-		var x = owner;
-		while(x != null && x.tagName !== 'imports') {
-			x = x.parent;
-		}
-		return x == null ? null : x.imports;
-	}
-	function isFn(name) {
-		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
-	}
-	var createSourceUrl;
-	(function(){
-		createSourceUrl = function (defNode) {
-			//if DEBUG
-			var url = defNode.tagName + '_' + defNode.name;
-			
-			var i = _sourceUrls[url]
-			if (i !== void 0) {
-				i = ++_sourceUrls[url];
-			}
-			if (i != null) {
-				url += '_' + i;
-			}
-			_sourceUrls[url] = 1;
-			return 'dynamic://MaskJS/' + url;
-			//endif
-		};
-		var _sourceUrls = {};
-	}());
+	
 }());
