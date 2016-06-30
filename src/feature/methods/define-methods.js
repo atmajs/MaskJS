@@ -10,19 +10,13 @@ var DefineMethods;
 			
 			var body = createFnBody(defineNode, nodes);
 			var sourceUrl = createSourceUrl(defineNode);
-			if (sourceUrl != null) {
-				body += '\n//' + sourceUrl;
-			}
-
+			
 			// [[name],[value]]			
 			var scopeVars = getScopeVars(defineNode, defineProto, model, owner);
-			var arr = scopeVars[0];
-			var values = scopeVars[1];
+			var code = createFnWrapperCode(defineNode, body, scopeVars[0]);
+			var factory = compile(code, sourceUrl);
 
-			arr.push(body);
-			
-			var factory = new (Function.bind.apply(Function, [null].concat(arr)));
-			var fns = factory.apply(null, values);
+			var fns = factory.apply(null, scopeVars[1]);
 			var imax = nodes.length,
 				i = -1;
 			while(++i < imax) nodes[i].fn = fns[i];
@@ -52,6 +46,26 @@ var DefineMethods;
 		code += '];\n';
 
 		return code;
+	}
+	function createFnWrapperCode (defineNode, body, args) {
+		var name = defineNode.name + 'Controller';
+		var code = 'function ' + name + ' (' + args.join(',') + ') {\n';
+		code += body
+		code += '\n}';
+		return code;
+	}
+	function compile (fnCode, sourceUrl) {
+		var body = fnCode;
+		var preproc = __cfg.preprocessor.script;
+		if (preproc) {
+			body = preproc(body);
+		}
+		if (sourceUrl != null) {
+			body += '\n//# sourceURL=' + sourceUrl
+		}
+		var fnWrapper = Function('return ' + body);
+		var factory = fnWrapper();
+		return factory;
 	}
 	function createFnLocalVars(defineNode) {
 		var args = defineNode.arguments;
