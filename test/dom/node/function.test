@@ -29,6 +29,11 @@ UTest({
 				function doChange() {
 					this.$.text('B');
 				}
+				function onRenderStart (model, ctx,  container ) {
+					return new Promise(resolve => {
+						setTimeout(resolve, 1000);
+					});
+				}
 				button > 'A'
 			}
 		`;
