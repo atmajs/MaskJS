@@ -1,5 +1,24 @@
 # Changelog
 
+- `0.56.0`
+	
+	- Functions now receive the scope with imports and defines arguments
+
+		```mask
+		import * as Service from '/services/UserService.js';
+		define UserEditor (user) {
+			
+			slot save () {
+				Service
+					.changeUserName(user.id, user.name)
+					.then(() => console.log('saved!'));
+			}
+
+			input > dualbind value='user.name';
+			button x-tap=save > 'Save'
+		}
+		```
+
 - `0.55.1`
 	- Mixed markup: HTML can be used within Mask markup, and Mask can be used within HTLM
 
