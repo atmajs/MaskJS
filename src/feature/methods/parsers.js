@@ -57,17 +57,29 @@
 			this.name = name;
 			this.args = args;
 			this.body = body;
-			this.parent = parent;
-
+			this.parent = parent;			
+		},
+		getFn: function(){
+			if (this.fn != null) {
+				return this.fn;
+			}
+			var parent = this.parent;
 			var sourceUrl = null;
 			//if DEBUG
 			var ownerName = parent.tagName;
 			if (ownerName === 'let' || ownerName === 'define') {
 				ownerName += '_' + parent.name;
 			}
-			sourceUrl = constructSourceUrl(tagName, name, parent);
+			sourceUrl = constructSourceUrl(this.tagName, this.name, parent);
 			//endif
-			this.fn = compileFn(args, body, sourceUrl);
+			return (this.fn = compileFn(this.args, this.body, sourceUrl));
+		},
+		getFnName: function(){
+			var tag = this.tagName, 
+				name = this.name;
+			return tag === 'event' || tag === 'pipe' 
+				? name.replace(/[^\w_$]/g, '_')
+				: name;
 		},
 		stringify: function(stream){
 			var head = this.tagName

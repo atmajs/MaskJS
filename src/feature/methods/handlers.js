@@ -3,16 +3,16 @@
 		meta: {
 			serializeNodes: true
 		},
-		constructor: function(node) {
-			this.fn = node.fn; // || compileFn(node.args, node.body);
+		constructor: function(node, model, ctx, el, parent) {
+			this.fn = nodeMethod_compile(node, model, parent); 
 			this.name = node.name;
 		}
 	});
 
 	custom_Tags['slot'] = class_create(Method, {
 		renderEnd: function(){
-			var ctr = this.parent;
-			var slots = ctr.slots;
+			var ctr = this.parent,
+				slots = ctr.slots;
 			if (slots == null) {
 				slots = ctr.slots = {};
 			}

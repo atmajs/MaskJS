@@ -18,7 +18,7 @@ var Define;
 		}
 	};
 
-	function compo_prototype(compoName, tagName, attr, fnModelResolver, nodes, owner, model, Base) {
+	function compo_prototype(node, compoName, tagName, attr, fnModelResolver, nodes, owner, model, Base) {
 		var arr = [];
 		var Proto = obj_extend({
 			tagName: tagName,
@@ -41,6 +41,8 @@ var Define;
 			},
 			getHandler: null
 		}, Base);
+
+		Methods.compileForDefine(node, Proto, model, owner);
 
 		var imax = nodes == null ? 0 : nodes.length,
 			i = 0, x, name;
@@ -151,7 +153,7 @@ var Define;
 		}
 
 		var name = node.name,
-			Proto = compo_prototype(name, tagName, attr, modelResolver, node.nodes, ctr, model, Base),
+			Proto = compo_prototype(node, name, tagName, attr, modelResolver, node.nodes, ctr, model, Base),
 			args = compo_extends(extends_, model, ctr)
 			;
 
