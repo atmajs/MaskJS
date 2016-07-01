@@ -1,42 +1,42 @@
-var DefineMethods;
-
+var defMethods_getSource,
+	defMethods_compile;
 (function(){
-	DefineMethods = {
-		getSource: function (defNode, defProto, model, owner) {
-			var nodes = getFnNodes(defNode.nodes);
-			if (nodes == null || nodes.length === 0) {
-				return;
-			}
-			var body = createFnBody(defNode, nodes);
-			var sourceUrl = sourceUrl_get(defNode);
-			// [[name],[value]]
-			var scopeVars = getScopeVars(defNode, defProto, model, owner);
-			var code = createFnWrapperCode(defNode, body, scopeVars[0]);
-
-			var preproc = __cfg.preprocessor.script;
-			if (preproc) {
-				code = preproc(code);
-			}
-			if (sourceUrl != null) {
-				code += sourceUrl
-			}
-			return [code, scopeVars[1]];
-		},
-		compile: function (defNode, defProto, model, owner) {
-			var source = this.getSource(defNode, defProto, model, owner);
-			if (source == null)
-				return;
-
-			var nodes = defNode.nodes,
-				code = source[0],
-				vals = source[1],
-				fnWrapper = Function('return ' + code),
-				factory = fnWrapper(),
-				fns = factory.apply(null, vals),
-				imax = nodes.length,
-				i = -1;
-			while(++i < imax) nodes[i].fn = fns[i];
+	
+	defMethods_getSource = function (defNode, defProto, model, owner) {
+		var nodes = getFnNodes(defNode.nodes);
+		if (nodes == null || nodes.length === 0) {
+			return;
 		}
+		var body = createFnBody(defNode, nodes);
+		var sourceUrl = sourceUrl_get(defNode);
+		// [[name],[value]]
+		var scopeVars = getScopeVars(defNode, defProto, model, owner);
+		var code = createFnWrapperCode(defNode, body, scopeVars[0]);
+
+		var preproc = __cfg.preprocessor.script;
+		if (preproc) {
+			code = preproc(code);
+		}
+		if (sourceUrl != null) {
+			code += sourceUrl
+		}
+		return [code, nodes, scopeVars[1]];
+	};
+	defMethods_compile = function (defNode, defProto, model, owner) {
+		var source = defMethods_getSource(defNode, defProto, model, owner);
+		if (source == null)
+			return;
+
+		var code = source[0],
+			nodes = source[1],
+			vals = source[2],
+			fnWrapper = Function('return ' + code),
+			factory = fnWrapper(),
+			fns = factory.apply(null, vals),
+			imax = nodes.length,
+			i = -1;
+
+		while(++i < imax) nodes[i].fn = fns[i];
 	};
 
 	function createFnBody(defineNode, nodes) {
@@ -48,13 +48,10 @@ var DefineMethods;
 		while( ++i < imax ) {
 			var node = nodes[i], 
 				tag = node.tagName,
-				name = node.name,
+				name = node.getFnName(),
 				body = node.body,
 				args = node.args;
 			
-			if (tag === 'event' || tag === 'pipe') {
-				name = name.replace(/[^\w_$]/g, '_');
-			}
 			code += 'function ' + name + ' (' + args.join(',') + ') {\n';
 			code += localVars + body; 
 			code += '\n}' + (i === imax - 1 ? '' : ',') + '\n';				
@@ -121,6 +118,9 @@ var DefineMethods;
 		var out = [[],[]];
 		scopeRefs_getImportVars(owner, out);
 		return out;
+	}
+	function isFn(name) {
+		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
 	}
 	
 }());

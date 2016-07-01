@@ -42,7 +42,7 @@ var Define;
 			getHandler: null
 		}, Base);
 
-		Methods.Define.compile(node, Proto, model, owner);
+		Methods.compileForDefine(node, Proto, model, owner);
 
 		var imax = nodes == null ? 0 : nodes.length,
 			i = 0, x, name;

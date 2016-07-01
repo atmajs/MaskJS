@@ -6,14 +6,14 @@ var Methods;
 	// import ./handlers.js
 	// import ./scope-refs.js
 	// import ./source-url.js
-	// import ./node-methods.js
+	// import ./node-method.js
 	// import ./define-methods.js
 
 	Methods = {
-		getSourceForDefine: DefineMethods.getSource,
-		compileForDefine: DefineMethods.compile,
+		getSourceForDefine: defMethods_getSource,
+		compileForDefine: defMethods_compile,
 
-		getSourceForNode: NodeMethod.getSource,
-		compileForNode: NodeMethod.compile,
+		getSourceForNode: nodeMethod_getSource,
+		compileForNode: nodeMethod_compile,
 	};
 }());

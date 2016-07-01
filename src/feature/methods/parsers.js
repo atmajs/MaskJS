@@ -74,6 +74,13 @@
 			//endif
 			return (this.fn = compileFn(this.args, this.body, sourceUrl));
 		},
+		getFnName: function(){
+			var tag = this.tagName, 
+				name = this.name;
+			return tag === 'event' || tag === 'pipe' 
+				? name.replace(/[^\w_$]/g, '_')
+				: name;
+		},
 		stringify: function(stream){
 			var head = this.tagName
 				+ ' '

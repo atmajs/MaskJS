@@ -38,7 +38,7 @@ UTest({
 			var Foo = Wrapper.find('Foo');
 			eq_(Foo.testFn(), 'IBob');
 		},
-		'... for variables' () {
+		'//... for variables' () {
 			var template = `
 				define Foo {
 					var WIDTH = 10 / 2;

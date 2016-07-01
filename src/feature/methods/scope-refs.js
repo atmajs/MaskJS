@@ -1,7 +1,7 @@
 var scopeRefs_getImportVars;
 (function () {
 
-	scopeRefs_getImportVars = (owner, out_) {		
+	scopeRefs_getImportVars = function (owner, out_) {
 		var imports = getImports(owner);
 		if (imports == null) {
 			return;

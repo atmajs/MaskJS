@@ -3,8 +3,8 @@
 		meta: {
 			serializeNodes: true
 		},
-		constructor: function(node) {
-			this.fn = node.getFn(); 
+		constructor: function(node, model, ctx, el, parent) {
+			this.fn = nodeMethod_compile(node, model, parent); 
 			this.name = node.name;
 		}
 	});
