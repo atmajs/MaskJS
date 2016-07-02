@@ -98,20 +98,24 @@ import CustomComponent from 'Foo.mask'
 
 ##### `1.2` HTML Syntax
 
-There is no difference if you use `html` or `mask` syntax. Both parsers are extremely performant, work in NodeJS and create same `Mask AST`.
-Default parser is `Mask`, but you can write `HTML` within mask templates. In what cases you might want to use `html`:
-- when writing text with little tags
-- when html templates already exist
+Here is nothing new for you. Old good HTML syntax to define the templates. But we highly encourage the use of the mask syntax, as the templates are smaller, cleaner and with additional features.
 
 ```html
 <h4>~[name]</h4>
-<dialog>
+<Dialog>
 	<div>Hello Foo</div>
-</dialog>
+</Dialog>
 ```
-```javascript
-var ast = mask.parseHtml(html);
-var dom = mask.render(ast, { name: 'Quux' });
+
+##### `1.3` HTML within Mask
+
+You can even use html blocks in a mask syntax
+
+```mask
+ul {
+	<li> Foo
+	<li> Bar
+}
 ```
 
 > MaskJS has extremely extendable API based on interfaces and contracts. It supports **Custom Tag** Handlers, **Custom Attribute** Handlers, Model **Utils**.
@@ -309,6 +313,23 @@ $ npm test
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 
 _`@latest`_
+	
+	Function scope: imports and define arguments
+
+	```mask
+	import * as Service from '/services/UserService.js';
+	define UserEditor (user) {
+		
+		slot save () {
+			Service
+				.changeUserName(user.id, user.name)
+				.then(() => console.log('saved!'));
+		}
+
+		input > dualbind value='user.name';
+		button x-tap=save > 'Save'
+	}
+	```
 
 - `0.55.1`
 	- HTML markup within Mask templates
