@@ -83,7 +83,25 @@ UTest({
 				eq_(Foo.getTextAlikeImport(), 'name=Baz');
 				done();
 			});
-
+		},
+		'... for imports and arguments' (done) {
+			var template = `
+				import * as Service from '/test/tmpl/modules/data_service.js';
+				
+				define Foo (name) {
+					
+					function getSomething () {
+						var service = new Service;
+						return service.getData() + '-' + name;
+					}					
+				}
+			`;
+			mask.define(template).done(() => {
+				var Wrapper = mask.Compo.initialize('Foo ("Hello")');
+				var Foo = Wrapper.find('Foo');
+				deepEq_(Foo.getSomething(), 'iFoo-Hello');
+				done();
+			});	
 		}
 	},
 });
