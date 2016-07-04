@@ -59,20 +59,8 @@
 			this.body = body;
 			this.parent = parent;			
 		},
-		getFn: function(){
-			if (this.fn != null) {
-				return this.fn;
-			}
-			var parent = this.parent;
-			var sourceUrl = null;
-			//if DEBUG
-			var ownerName = parent.tagName;
-			if (ownerName === 'let' || ownerName === 'define') {
-				ownerName += '_' + parent.name;
-			}
-			sourceUrl = constructSourceUrl(this.tagName, this.name, parent);
-			//endif
-			return (this.fn = compileFn(this.args, this.body, sourceUrl));
+		getFnSource: function(){
+			return nodeMethod_getSource(this, null, this.parent);
 		},
 		getFnName: function(){
 			var tag = this.tagName, 
@@ -94,43 +82,6 @@
 			stream.closeBlock('}');
 		}
 	});
-
-	var constructSourceUrl;
-	(function(){
-		constructSourceUrl = function (methodType, methodName, owner) {
-			var ownerName = owner.tagName,
-				parent = owner,
-				stack = '',
-				tag;
-			while(parent != null) {
-				tag = parent.tagName;
-				if ('let' === tag || 'define' === tag) {
-					if (stack !== '') {
-						stack = '.' + stack;
-					}
-					stack = parent.name + stack;
-				}
-				parent = parent.parent;
-			}
-			if ('let' !== ownerName && 'define' !== ownerName) {
-				if (stack !== '') {
-					stack += '_';
-				}
-				stack += ownerName
-			}
-			var url = stack + '_' + methodType + '_' + methodName;
-			var index = null
-			if (_sourceUrls[url] !== void 0) {
-				index = ++_sourceUrls[url];
-			}
-			if (index != null) {
-				url += '_' + index;
-			}
-			_sourceUrls[url] = 1;
-			return 'dynamic://MaskJS/' + url;
-		};
-		var _sourceUrls = {};
-	}());
 
 	custom_Parsers['slot' ]    = create('slot');
 	custom_Parsers['pipe' ]    = create('pipe');	

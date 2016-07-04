@@ -1,5 +1,5 @@
 	Mask.Compo = Compo;
-	Mask.jmask = jmask;
+	Mask.jmask = Mask.j = jmask;
 
 	Mask.version = '%IMPORT(version)%';
 

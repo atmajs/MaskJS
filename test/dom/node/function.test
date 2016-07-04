@@ -2,6 +2,19 @@ UTest({
 	$before () {
 		mask.define('JustAContainer', Compo());
 	},
+	'function source' () {
+		var template = `
+			function doSmth (foo, bar) {
+				return Service(foo);
+			};
+		`;
+		var node = mask.j(template).filter('function').get(0);
+		deepEq_(node.args, ['foo', 'bar']);
+
+		var clean = str => str.replace(/\s*/g, '');
+
+		eq_(clean(node.body), clean('return Service(foo);'))
+	},
 	'function node' () {
 		var dom = mask.render(`
 			JustAContainer {

@@ -1,4 +1,3 @@
-
 var nodeMethod_getSource,
 	nodeMethod_compile;
 (function(){
