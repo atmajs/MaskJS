@@ -32,12 +32,8 @@ var mask_optimize,
 	};
 
 	function getOptimizer(node) {
-		if (node.type !== Dom.NODE)
-			return null;
-
 		return custom_Optimizers[node.tagName];
 	}
-
 
 	/**
 	 * Returns optimized mask tree
