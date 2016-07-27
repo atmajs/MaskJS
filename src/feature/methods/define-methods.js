@@ -61,7 +61,7 @@ var defMethods_getSource,
 		return code;
 	}
 	function createFnWrapperCode (defineNode, body, args) {
-		var name = defineNode.name + 'Controller';
+		var name = defineNode.name.replace(/[:$]/g, '_') + 'Controller';
 		var code = 'function ' + name + ' (' + args.join(',') + ') {\n';
 		code += body
 		code += '\n}';
