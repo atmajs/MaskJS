@@ -1,6 +1,52 @@
 // use default module loader
 mask.config('modules', 'default');
 UTest({
+	'should test sync module loading' (done) {
+		var Files = {
+			'MyComponents.mask': `
+				module path='A.mask' {
+					h1 > 'A'
+				}
+				module path='B.mask' {
+					h1 > 'B'
+				}
+				module path='C.mask' {
+					h1 > 'C'
+				}
+			`,
+			'MyNumber.mask': `
+				import * as Template from './B';
+				Template;
+			`
+		};
+
+		var _queue = [];
+		mask.cfg('getFile', (path) => {
+			var dfr = new mask.class.Deferred();
+			var name = path.substring(path.lastIndexOf('/') + 1);
+
+			_queue.push(name);
+			var str = Files[name];
+			is_(str, 'String');
+			if (name === 'MyComponents.mask') {
+				setTimeout(() => dfr.resolve(str), 200);
+				return dfr;
+			}
+			return dfr.resolve(str);
+		});
+
+		mask
+			.renderAsync(`
+				import sync from './MyComponents';
+				import Number from './MyNumber';
+			`)
+			.done(() => {
+				mask.cfg('getFile', null);
+
+				deepEq_(_queue, ['MyComponents.mask', 'MyNumber.mask']);
+				done();
+			})
+	},
 	'should load async javascripts scope' (done) {
 		mask.define('TestAsync', mask.Compo({
 			onRenderStart () {

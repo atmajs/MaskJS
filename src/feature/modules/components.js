@@ -60,31 +60,42 @@
 				imax = arr.length,
 				await = imax,
 				next  = cb,
-				i = -1, x;
+				i = -1;
 
 			function done(error, import_) {
 				if (error == null) {
-					if (import_.registerScope != null) {
+					if (import_.registerScope) {
 						import_.registerScope(self);
 					}
 					if (ctx._modules != null) {
 						ctx._modules.add(import_.module);
 					}
-				} else {
-					error_withNode(error, self);
 				}
 				if (--await === 0 && next != null) {
 					next();
 				}
 			}
-			while( ++i < imax ){
-				x = arr[i];
-				if (x.async && (--await) === 0) {
-					next();
-					next = null;
+			function process (error, import_) {
+				if (arguments.length !== 0) {
+					done(error, import_);							
 				}
-				x.loadImport(done);
+				while( ++i < imax ){
+					var x = arr[i];							
+					if (x.async === 'async' && (--await) === 0) {
+						next();
+						next = null;
+					}
+
+					var onReady = x.async === 'sync' 
+						? process 
+						: done;
+
+					x.loadImport(onReady);
+					if (x.async === 'sync') 
+						break;
+				}
 			}
+			process();
 		},
 		start_: function(model, ctx){
 			var resume = Compo.pause(this, ctx),

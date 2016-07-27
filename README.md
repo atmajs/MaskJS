@@ -314,7 +314,7 @@ $ npm test
 
 _`@latest`_
 	
-	Function scope: imports and define arguments
+- Function scope: imports and define arguments
 
 	```mask
 	import * as Service from '/services/UserService.js';
@@ -330,6 +330,14 @@ _`@latest`_
 		button x-tap=save > 'Save'
 	}
 	```
+
+- `sync` imports, as import loading for better performance is parallel, but bundles should be loaded in sync, as they register all resources then.
+
+```mask
+import sync from './MyComponentsBundle';
+import FooCompo from './Foo';
+// ...
+```
 
 - `0.55.1`
 	- HTML markup within Mask templates

@@ -26,9 +26,9 @@
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
-		[ 'from "$path"' + meta
-		, '?($$async(async) )* as $alias from "$path"' + meta
-		, '?($$async(async) )$$exports[$name?(as $alias)](,) from "$path"' + meta
+		[ '?($$async(async|sync) )from "$path"' + meta
+		, '?($$async(async|sync) )* as $alias from "$path"' + meta
+		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from "$path"' + meta
 		]
 	);
 
