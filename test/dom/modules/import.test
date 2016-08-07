@@ -72,6 +72,18 @@ UTest({
 				path: 'compo/bar'
 			});
 		},
+		'multiple sync resources' () {
+			var imports = mask.parse(`
+				import sync from 'foo';
+				import from 'bar';
+				import sync from 'qux';
+			`);
+			var nodes = imports.nodes;
+			eq_(nodes.length, 3);
+			has_(nodes[0], {path: 'foo', async: 'sync'});
+			has_(nodes[1], {path: 'bar', async: null});
+			has_(nodes[2], {path: 'qux', async: 'sync'});
+		},
 		'template with nodes' () {
 			var imports = mask.parse(`
 				import h4 as b_nest from 'nest-b';

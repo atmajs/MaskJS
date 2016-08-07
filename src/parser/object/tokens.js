@@ -95,8 +95,9 @@ var token_Const,
 		},
 		consume: function(str, i, imax, out) {
 			this.rgx.lastIndex = i;
-			var match = this.rgx.exec(str);
-			if (match == null)
+			// @TODO: use sticky
+			var match = this.rgx.exec(str);			
+			if (match == null || match.index !== i)
 				return i;
 
 			var x = match[0];
