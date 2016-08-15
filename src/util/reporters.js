@@ -40,11 +40,11 @@ var throw_,
 
 	error_withSource = delegate_withSource(MaskError, 'error');
 	error_withNode   = delegate_withNode  (MaskError, 'error');
-	error_withCompo  = delegate_withCompo (MaskError, error_withNode);
+	error_withCompo  = delegate_withCompo (error_withNode);
 
 	warn_withSource = delegate_withSource(MaskWarn, 'warn');
 	warn_withNode   = delegate_withNode  (MaskWarn, 'warn');
-	warn_withCompo  = delegate_withCompo (MaskWarn, warn_withNode);
+	warn_withCompo  = delegate_withCompo (warn_withNode);
 
 	parser_error = delegate_parserReporter(MaskError, 'error');
 	parser_warn = delegate_parserReporter(MaskWarn, 'warn');
@@ -123,7 +123,7 @@ var throw_,
 			report(error, type);
 		};
 	}
-	function delegate_withCompo(Ctor, withNodeFn){
+	function delegate_withCompo(withNodeFn){
 		return function(mix, compo){
 			var node = compo.node,
 				cursor = compo.parent;
@@ -131,7 +131,7 @@ var throw_,
 				node = cursor.node;
 				cursor = cursor.parent;
 			}
-			withNodeFn(stringifyError, node);
+			withNodeFn(mix, node);
 		};
 	}
 	function report(error, type) {
@@ -139,8 +139,7 @@ var throw_,
 			return;
 		}
 		var fn = type === 'error' ? log_error : log_warn;
-		fn(error.message);
-		fn('\n' + error.stack);
+		fn(error.message + '\n' + error.stack);
 	}
 	function stringifyError(mix) {
 		if (mix == null) return 'Uknown error';
