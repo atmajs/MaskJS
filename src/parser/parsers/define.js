@@ -22,20 +22,20 @@
 
 		stringify: function(stream){
 			var extends_ = this['extends'],
+				args_ = this['arguments'],
 				as_ = this['as'],
 				str = '';
+			if (args_ != null && args_.length != 0) {
+				str += ' (';
+				str += toCommaSeperated(args_, 'prop');
+				str += ')';
+			}
 			if (as_ != null && as_.length !== 0) {
 				str += ' as (' + as_ + ')';
 			}
 			if (extends_ != null && extends_.length !== 0) {
 				str += ' extends ';
-				var imax = extends_.length,
-					i = -1, x;
-				while( ++i < imax ){
-					str += extends_[i].compo;
-					if (i < imax - 1)
-						str += ', ';
-				}
+				str += toCommaSeperated(extends_, 'compo');				
 			}
 
 			var head = this.tagName + ' ' + this.name + str;
@@ -45,5 +45,16 @@
 			stream.closeBlock('}');
 		},
 	});
+
+	function toCommaSeperated(arr, prop) {
+		var imax = arr.length,
+			i = -1, str = '';
+		while( ++i < imax ){
+			str += arr[i][prop];
+			if (i < imax - 1)
+				str += ', ';
+		}
+		return str;
+	}
 
 }());
