@@ -25,7 +25,7 @@
 				args_ = this['arguments'],
 				as_ = this['as'],
 				str = '';
-			if (args_ != null && args_.length != 0) {
+			if (args_ != null && args_.length !== 0) {
 				str += ' (';
 				str += toCommaSeperated(args_, 'prop');
 				str += ')';
