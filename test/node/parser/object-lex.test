@@ -1,0 +1,29 @@
+UTest({
+	'should parse args' () {
+
+		var syntax = '($$arguments[$$prop<accessor>](,))';
+		var str = '(foo, bar)';
+		var obj = parse(syntax, str);
+
+		deepEq_(obj, {
+			arguments: [
+				{ prop: 'foo' },
+				{ prop: 'bar' }
+			]
+		});
+	},
+	'!should parse args with Type definition' () {
+		var syntax = '($$arguments[$$prop<token>:? $$type<token>](,))';
+		var str = '(foo:Foo)';
+		var obj = parse(syntax, str);
+
+		logger.log(obj);
+	}
+})
+
+function parse(syntax, str) {
+	var lex = Mask.parser.ObjectLexer(syntax);
+	var out = {};	
+	lex(str, 0, str.length, out);
+	return out;
+}
