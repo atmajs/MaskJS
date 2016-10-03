@@ -36,9 +36,15 @@ var defMethods_getSource,
 			imax = nodes.length,
 			i = -1;
 
-		while(++i < imax) nodes[i].fn = fns[i];
+		while(++i < imax) {			
+			var node = nodes[i];
+			var fn = fns[i];
+			if (node.name === 'constructor') {
+				fn = wrapDi(fn, node);
+			}
+			node.fn = fn;
+		}
 	};
-
 	function createFnBody(defineNode, nodes) {
 		var code = 'return [\n',
 			localVars = createFnLocalVars(defineNode),
@@ -122,5 +128,45 @@ var defMethods_getSource,
 	function isFn(name) {
 		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
 	}
+	function wrapDi(fn, fnNode) {		
+		var types = fnNode.types;
+		if (types == null) {
+			return fn;
+		}		
+		return createDiFn(types, fn);
+	}
+	var createDiFn;
+	(function(){
+		createDiFn = function(types, fn) {
+			return function () {
+				var args = mergeArgs(types, _Array_slice.call(arguments));
+				return fn.apply(this, args);
+			};
+		};
+		function mergeArgs (types, args) {
+			var model = args[1];
+			var controller = args[4];
+
+			var tLength = types.length,
+				aLength = args.length,
+				max = tLength > aLength ? tLength : aLength,
+				arr = new Array(max),
+				i = -1;
+
+			while(++i < max) {
+				// injections are resolved first.
+				if (i < tLength && types[i] != null) {
+					var Type = expression_eval(types[i], model, null, controller);					
+					arr[i] = Di.resolve(Type);
+					continue;
+				}
+				if (i < aLength && args[i] != null) {
+					arr[i] = args[i];
+					continue;
+				}
+			}
+			return arr;			
+		}
+	}());
 	
 }());

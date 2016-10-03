@@ -1,7 +1,7 @@
 var Define;
 (function(){
 	Define = {
-		create: function(node, model, ctr, Base){
+		create: function(node, model, ctr, Base) {
 			return compo_fromNode(node, model, ctr, Base);
 		},
 		registerGlobal: function(node, model, ctr, Base) {
@@ -149,7 +149,10 @@ var Define;
 			attr = obj_extend(node.attr, x.attr);
 		}
 		if (args_ != null) {
-			modelResolver = compo_modelArgsBinding_Delegate(args_);
+			modelResolver = compo_modelArgsBinding_Delegate(
+				args_,
+				compo_getInjections(node, args_, model, ctr)
+			);
 		}
 
 		var name = node.name,
@@ -161,7 +164,31 @@ var Define;
 		return Compo.apply(null, args);
 	}
 
-	function compo_modelArgsBinding_Delegate(args) {
+	function compo_getInjections (node, args, model, ctr) {
+		var imax = args.length,
+			i = -1,
+			out = null;
+
+		while(++i < imax) {
+			var type = args[i].type;
+			if (type == null) {
+				continue
+			}
+			var val = expression_eval(type, model, null, ctr);
+			if (val == null) {
+				error_withNode(node, type + ' was not resolved');				
+				continue;
+			}
+			var x = Di.resolve(val);
+			if (out == null) {
+				out = new Array(imax);
+			}			
+			out[i] = x;
+		}
+		return out;
+	}
+
+	function compo_modelArgsBinding_Delegate(args, injections) {
 		return function(expr, model, ctx, ctr){
 			var arr = null;
 			if (expr == null) {
@@ -177,6 +204,17 @@ var Define;
 				i = -1;
 			while ( ++i < arrMax && i < argsMax ){
 				out[args[i].prop] = arr[i]
+			}
+
+			if (injections != null) {
+				arr = injections;
+				i = -1;
+				while(++i < argsMax) {
+					var key = args[i].prop;
+					if (out[key] == null &&  arr[i] != null) {
+						out[key] = injections[i];
+					}
+				}
 			}
 			return out;
 		};
