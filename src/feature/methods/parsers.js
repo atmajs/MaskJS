@@ -31,7 +31,7 @@
 	}
 	var parseHead;
 	(function(){
-		var lex_ = parser_ObjectLexer('$$methodName<token>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
+		var lex_ = parser_ObjectLexer('$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
 		parseHead = function (name, str, i, imax) {
 			var obj = {};
 			var end = lex_(str, i, imax, obj, true);
