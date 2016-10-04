@@ -115,27 +115,14 @@ var token_Const,
 			},
 			consume: function(str, i, imax, out) {
 				var start = i;
-
-				var c;
 				for (; i < imax; i++){
-					c = str.charCodeAt(i);
-					if (c === 36 || c === 95 || c === 58) {
-						// $ _ :
-						continue;
+					if (this.fn(str.charCodeAt(i)) === false) {
+						break;
 					}
-					if ((48 <= c && c <= 57) ||		// 0-9
-						(65 <= c && c <= 90) ||		// A-Z
-						(97 <= c && c <= 122)) {	// a-z
-						continue;
-					}
-					if (this.fn(c) === true) {
-						continue;
-					}
-					break;
 				}
-				if (i === start)
+				if (i === start) {
 					return i;
-
+				}
 				this.setter(out, str.substring(start, i));
 				return i;
 			}
@@ -143,7 +130,23 @@ var token_Const,
 
 		var Consumers = {
 			accessor: function(c){
-				if (c === 46 /*.*/) {
+				if (Consumers.token(c) === true)
+					return true;
+
+				if (c === 58 || c === 46) {
+					// : .
+					return true;
+				}
+				return false;
+			},
+			token: function (c) {
+				if (c === 36 || c === 95) {
+					// $ _
+					return true;
+				}
+				if ((48 <= c && c <= 57) ||		// 0-9
+					(65 <= c && c <= 90) ||		// A-Z
+					(97 <= c && c <= 122)) {	// a-z
 					return true;
 				}
 				return false;

@@ -81,7 +81,7 @@ var Mask;
 		registerOptimizer: mask_registerOptimizer,
 		// feature/TreeWalker.js
 		TreeWalker: mask_TreeWalker,
-		// feature/Module.j
+		// feature/Module.js
 		Module: Module,
 
 		File: {
@@ -90,7 +90,8 @@ var Mask;
 			getStyle: file_getStyle,
 			getJson: file_getJson
 		},
-
+		// feature/Di.js
+		Di: Di,
 		// custom/tag.js
 		registerHandler: customTag_register,
 		registerFromTemplate: customTag_registerFromTemplate,

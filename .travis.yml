@@ -11,17 +11,18 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - sleep 4
   - npm run build &
+  - sleep 8
   - npm run server &
-  - sleep 4
+  - sleep 8
   - firefox http://localhost:5777/utest/ &
-  - sleep 6
+  - sleep 8
 
 script:
   - "npm test"
 
 language: node_js
 node_js:
-  - "5.6.0"
+  - "6.6.0"
 compiler: clang-3.4
 env:
   - CXX=clang-3.4

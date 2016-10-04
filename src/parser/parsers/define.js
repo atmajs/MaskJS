@@ -11,7 +11,7 @@
 	}
 	var lex_ = ObjectLexer(
 		'$name'
-		, ' ?(($$arguments[$$prop<accessor>](,)))?(as $$as(*()))?(extends $$extends[$$compo<accessor>](,))'
+		, ' ?(($$arguments[$$prop<token>?(? :? $$type<accessor>)](,)))?(as $$as(*()))?(extends $$extends[$$compo<accessor>](,))'
 		, '{'
 	);
 	var DefineNode = class_create(Dom.Node, {
@@ -19,7 +19,6 @@
 		'name': null,
 		'extends': null,
 		'arguments': null,
-
 		stringify: function(stream){
 			var extends_ = this['extends'],
 				args_ = this['arguments'],
@@ -27,7 +26,7 @@
 				str = '';
 			if (args_ != null && args_.length !== 0) {
 				str += ' (';
-				str += toCommaSeperated(args_, 'prop');
+				str += toCommaSeperated(args_, get_arg);
 				str += ')';
 			}
 			if (as_ != null && as_.length !== 0) {
@@ -35,7 +34,7 @@
 			}
 			if (extends_ != null && extends_.length !== 0) {
 				str += ' extends ';
-				str += toCommaSeperated(extends_, 'compo');				
+				str += toCommaSeperated(extends_, get_compo);
 			}
 
 			var head = this.tagName + ' ' + this.name + str;
@@ -46,15 +45,24 @@
 		},
 	});
 
-	function toCommaSeperated(arr, prop) {
+	function toCommaSeperated(arr, getter) {
 		var imax = arr.length,
 			i = -1, str = '';
 		while( ++i < imax ){
-			str += arr[i][prop];
+			str += getter(arr[i]);
 			if (i < imax - 1)
 				str += ', ';
 		}
 		return str;
 	}
-
+	function get_compo(x) {
+		return x.compo;
+	}	
+	function get_arg(x) {
+		var arg = x.prop;
+		if (x.type != null) {
+			arg += ': ' + x.type;
+		}
+		return arg;
+	}
 }());

@@ -44,15 +44,27 @@ UTest({
 	'should parse arguments ' () {
 		var ast = Mask.parse(`
 			define Foo (
-						foo, $scope.qu_x ) {
+						foo, $qu_x ) {
 				h4 > 'Hello'
 			}
 		`);
 		var def = jmask(ast).filter('define').get(0);
-		deepEq_(def.arguments, [ { prop: 'foo'}, { prop: '$scope.qu_x'} ]);
+		deepEq_(def.arguments, [ { prop: 'foo'}, { prop: '$qu_x'} ]);
 
 		var back = Mask.stringify(ast, 4);
-		has_(back, "define Foo (foo, $scope.qu_x)");		
+		has_(back, "define Foo (foo, $qu_x)");		
+	},
+	'should parse arguments with types' () {
+		var ast = Mask.parse(`
+			define Foo (store: IStore) {
+				h4 > 'Hello'
+			}
+		`);
+		var def = jmask(ast).filter('define').get(0);
+		deepEq_(def.arguments, [ { prop: 'store', type: 'IStore'}]);
+
+		var back = Mask.stringify(ast, 4);
+		has_(back, "define Foo (store: IStore)");
 	},
 	'should parse arguments and extends' () {
 		Mask.on('error', assert.avoid());
