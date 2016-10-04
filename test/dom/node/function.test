@@ -9,7 +9,7 @@ UTest({
 			};
 		`;
 		var node = mask.j(template).filter('function').get(0);
-		deepEq_(node.args, ['foo', 'bar']);
+		deepEq_(node.args, [{prop:'foo'}, {prop:'bar'}]);
 
 		var clean = str => str.replace(/\s*/g, '');
 

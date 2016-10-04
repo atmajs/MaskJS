@@ -33,7 +33,7 @@ define foo {
 }
 -----
 define foo {
-  slot change(event) {
+  slot change (event) {
 
     var a = 10;
   

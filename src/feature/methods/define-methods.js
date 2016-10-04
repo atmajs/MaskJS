@@ -56,9 +56,9 @@ var defMethods_getSource,
 				tag = node.tagName,
 				name = node.getFnName(),
 				body = node.body,
-				args = node.args;
+				argMetas = node.args;
 			
-			code += 'function ' + name + ' (' + args.join(',') + ') {\n';
+			code += 'function ' + name + ' (' + _args_toCode(argMetas) + ') {\n';
 			code += localVars + body; 
 			code += '\n}' + (i === imax - 1 ? '' : ',') + '\n';				
 		}
@@ -129,25 +129,25 @@ var defMethods_getSource,
 		return name === 'function' || name === 'slot' || name === 'event' || name === 'pipe';
 	}
 	function wrapDi(fn, fnNode) {		
-		var types = fnNode.types;
-		if (types == null) {
+		var args = fnNode.args;
+		if (args == null) {
 			return fn;
 		}		
-		return createDiFn(types, fn);
+		return createDiFn(args, fn);
 	}
 	var createDiFn;
 	(function(){
-		createDiFn = function(types, fn) {
+		createDiFn = function(argMetas, fn) {
 			return function () {
-				var args = mergeArgs(types, _Array_slice.call(arguments));
+				var args = mergeArgs(argMetas, _Array_slice.call(arguments));
 				return fn.apply(this, args);
 			};
 		};
-		function mergeArgs (types, args) {
+		function mergeArgs (argMetas, args) {
 			var model = args[1];
 			var controller = args[4];
 
-			var tLength = types.length,
+			var tLength = argMetas.length,
 				aLength = args.length,
 				max = tLength > aLength ? tLength : aLength,
 				arr = new Array(max),
@@ -155,8 +155,8 @@ var defMethods_getSource,
 
 			while(++i < max) {
 				// injections are resolved first.
-				if (i < tLength && types[i] != null) {
-					var Type = expression_eval(types[i], model, null, controller);					
+				if (i < tLength && argMetas[i].type != null) {
+					var Type = expression_eval(argMetas[i].type, model, null, controller);					
 					arr[i] = Di.resolve(Type);
 					continue;
 				}

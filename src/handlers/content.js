@@ -49,10 +49,13 @@
 	var manager_get;
 	(function(){
 		manager_get = function (ctx, el) {
+			if (ctx == null) {
+				return manager || new Manager(document.body);
+			}
 			var KEY = '__contentManager';
 			return ctx[KEY] || (ctx[KEY] = new Manager(el));
 		};
-
+		var manager;
 		var Manager = class_create({
 			constructor: function (el) {
 				this.container = el.ownerDocument.body;

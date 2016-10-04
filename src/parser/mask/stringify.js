@@ -213,9 +213,7 @@
 		},
 
 		newline: function(){
-			if (this.minify === false) {
-				this.string += '\n';
-			}
+			this.format('\n');			
 		},
 		openBlock: function(c){
 			this.indent++;
@@ -242,7 +240,30 @@
 		},
 		print: function(str){
 			this.string += str;
-		}
+		},
+		format: function(str){
+			if (this.minify === false) {
+				this.string += str;
+			}
+		},
+		printArgs: function(args){
+			if (args == null || args.length === 0) return;
+			var imax = args.length,
+				i = -1;
+			while(++i < imax) {
+				if (i > 0) {
+					this.print(',');
+					this.format(' ');
+				}
+				var arg = args[i];
+				this.print(arg.prop);
+				if (arg.type != null) {
+					this.print(':');
+					this.format(' ');
+					this.print(arg.type);
+				}
+			}
+		}		
 	});
 
 	var HtmlStreamWriter = class_create({

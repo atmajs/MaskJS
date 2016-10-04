@@ -1,4 +1,4 @@
-(function(){
+ (function(){
 	function create(tagName){
 		return function(str, i, imax, parent) {
 			var start = str.indexOf('{', i) + 1,
@@ -37,36 +37,15 @@
 			var end = lex_(str, i, imax, obj, true);
 			if (end === i)
 				return null;
-
-			var types = [],
-				args = [],
-				imax = obj.args == null ? 0 : obj.args.length,
-				i = -1;
-			while(++i < imax){
-				args[i] = obj.args[i].prop;
-				types[i] = obj.args[i].type;
-			}			
-			return new MethodHead(obj.methodName, args, types);
+					
+			return new MethodHead(obj.methodName, obj.args);
 		}
 	}());
-	function MethodHead(name, args, types) {
+	function MethodHead(name, args) {
 		this.name = name;
 		this.args = args;
-		this.types = types;		
 	}
-	function compileFn(args, body, sourceUrl) {
-		var arr = _Array_slice.call(args);
-		var compile = __cfg.preprocessor.script;
-		if (compile != null) {
-			body = compile(body);
-		}
-		if (sourceUrl != null) {
-			body += '\n//# sourceURL=' + sourceUrl
-		}
-		arr.push(body);
-		return new (Function.bind.apply(Function, [null].concat(arr)));
-	}
-
+	
 	var MethodNode = class_create(Dom.Component.prototype, {
 		'name': null,
 		'body': null,
@@ -94,13 +73,11 @@
 				: name;
 		},
 		stringify: function(stream){
-			var head = this.tagName
-				+ ' '
-				+ this.name
-				+ '('
-				+ this.args.join(',')
-				+ ')';
-			stream.write(head);
+			stream.write(this.tagName + ' ' + this.name);
+			stream.format(' ');
+			stream.print('(');
+			stream.printArgs(this.args);
+			stream.print(')');
 			stream.openBlock('{');
 			stream.print(this.body);
 			stream.closeBlock('}');

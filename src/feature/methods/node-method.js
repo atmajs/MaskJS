@@ -8,7 +8,7 @@ var nodeMethod_getSource,
 			args = node.args,
 			body = node.body,
 			code = '';
-		code += 'function ' + name + ' (' + args.join(',') + ') {\n';
+		code += 'function ' + name + ' (' + _args_toCode(args) + ') {\n';
 		code += body; 
 		code += '\n}'
 
