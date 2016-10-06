@@ -1,8 +1,7 @@
-<p align="center">
-    <img src='http://atmajs.com/images/logos/mask.png' />
+<p align='center'>
+    <img src='assets/logo.png'/>
 	</p>
-
-
+	
 ----
 
 <p align="center">
