@@ -176,7 +176,7 @@ var Define;
 			}
 			var val = expression_eval(type, model, null, ctr);
 			if (val == null) {
-				error_withNode(node, type + ' was not resolved');				
+				error_withNode(type + ' was not resolved', node);
 				continue;
 			}
 			var x = Di.resolve(val);
