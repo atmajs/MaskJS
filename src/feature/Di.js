@@ -4,12 +4,11 @@ var Di;
 		resolve: function (Type) {
 			return _di.resolve(Type);
 		},
-		setLibrary: function (lib) {
-			_di = lib;
+		setResolver: function (di) {
+			_di = di;
 		},
 
 	};
-
 	var _di = {
 		resolve: function (Type) { 
 			if (typeof Type === 'function')
