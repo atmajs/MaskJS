@@ -46,6 +46,7 @@ Resources:
 	- `2.2` [Bindings](#22-bindings)
 	- `2.3` [jMask](#23-jmask)
 	- `2.4` [jQuery](#24-jquery)
+	- `2.5` [Dependency Injection](#25-dependency-injection)
 - `3` [Performance](#3-performance)
 - `4` [NodeJS](#4-nodejs)
 - `5` [Browser Support](#5-browser-support)
@@ -205,6 +206,30 @@ $('.foo').appendMask('h4 > "~[title]"', { title: 'Hello' });
 ```
 _So you would never need to use the HTML._
 
+# `2.5` Dependency Injection
+
+:orange_book: [Read more...**&crarr;**](https://github.com/tenbits/di)
+
+You can annotate arguments for `define` declaration or for its constructor and if you don't provide the values on initialization MaskJS will do it for you using registered IoC container.
+
+The library is not include, you can use any other DI library. MaskJS only requires an IoC container with a single method: `.resolve(Type):Any`. 
+
+```mask
+import * as IStore from '/services/IStore.js';
+
+define UserList (store: IStore) {
+	
+	foreach (user of store.getUsers()) {
+		div > '~user.username'
+	}
+
+	// or in constructor
+	function constructor (store: IStore) {
+		this.store = store;
+	}
+}
+```
+
 # `3` Performance
 
 We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
@@ -312,7 +337,22 @@ $ npm test
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 
 _`@latest`_
-	
+
+- `0.57.0`
+- Typa annotations for arguments: `(argumentName: argumentType, ...)`
+
+	```mask
+	import * as IFoo from '/service/IFoo.js';
+	import * as IBar from '/service/IBar.js';
+	define MyCompo (foo: IFoo) {
+		function constructor (bar: IBar) { 
+			this.bar = bar;
+		}
+		span > `~[foo.someMethod()]`
+	}
+	```
+
+- `0.56.5`
 - Function scope: imports and define arguments
 
 	```mask
