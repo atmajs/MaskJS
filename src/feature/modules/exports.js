@@ -25,6 +25,7 @@ var Module;
 			yml: 'data',
 			txt: 'text',
 			text: 'text',
+			load: 'text'
 		};
 
 	// import utils
