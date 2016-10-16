@@ -7,6 +7,7 @@
 			exports: null,
 			alias: null,
 			path: null,
+			namespace: null,
 			async: null
 		};
 		var end = lex_(str, i, imax, obj);
@@ -26,9 +27,9 @@
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
-		[ '?($$async(async|sync) )from "$path"' + meta
-		, '?($$async(async|sync) )* as $alias from "$path"' + meta
-		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from "$path"' + meta
+		[ '?($$async(async|sync) )from |("$path"$$namespace<accessor>)' + meta
+		, '?($$async(async|sync) )* as $alias from |("$path"$$namespace<accessor>)' + meta
+		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)' + meta
 		]
 	);
 
@@ -43,6 +44,7 @@
 		tagName: IMPORT,
 
 		path: null,
+		namespace: null,
 		alias: null,
 		async: null,
 		exports: null,
@@ -55,17 +57,24 @@
 			this.alias = data.alias;
 			this.async = data.async;
 			this.exports = data.exports;
+			this.namespace = data.namespace;
 			this.contentType = data.contentType;
 			this.link = data.link || this.link;
 			this.mode = data.mode || this.mode;
 			this.parent = parent;
 		},
 		stringify: function(){
-			var from = " from '" + this.path + "'",
+			var from = " from ",
 				importStr = IMPORT,
 				type = this.contentType,
 				link = this.link,
 				mode = this.mode;
+			if (this.path != null) {
+				from += "'" + this.path + "'";
+			}
+			if (this.namespace != null) {
+				from += this.namespace;
+			}
 			if (type != null || link !== default_LINK || mode !== default_MODE) {
 				from += ' is';
 				if (type != null) from += ' ' + type;

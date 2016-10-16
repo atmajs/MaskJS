@@ -107,7 +107,7 @@
 			while( ++i < imax ){
 				x = nodes[i];
 				if (x.tagName === IMPORT) {
-					if (x.path.indexOf('~') !== -1) {
+					if (x.path != null && x.path.indexOf('~') !== -1) {
 						var fn = parser_ensureTemplateFunction(x.path);
 						if (is_Function(fn)) {
 							x.path = fn('attr', model, ctx, null, this);

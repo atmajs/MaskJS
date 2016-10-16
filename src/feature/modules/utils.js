@@ -60,6 +60,9 @@ var u_resolveLocation,
 
 	u_resolvePathFromImport = function(node, ctx, ctr, module){
 		var path = node.path;
+		if (path == null && node.namespace != null) {
+			path = fromNs(node);			
+		}
 		if (false === hasExt(path)) {
 			var c = path.charCodeAt(0);
 			if (c === 47 || c === 46) {
@@ -101,7 +104,29 @@ var u_resolveLocation,
 		return path_normalize(path);
 	}
 	function hasExt(path) {
-        return path_getExtension(path) !== '';
+		return path_getExtension(path) !== '';
+	}
+    function fromNs(node) {
+    	var path = node.namespace.replace(/\./g, '/');
+		var base = _opts.nsBase;
+		if (base != null) {
+			path = path_combine(path, base);
+		}
+		var exports = node.exports;
+		if (exports == null) {
+			path += '/' + node.alias;
+		}
+		else if (exports.length === 1) {
+			var name = node.exports[0].name;
+			path += '/' + name;
+			node.alias = name;
+			node.exports = null;
+		}
+		var type = node.contentType || 'mask';
+		var default_ = _opts.ext[type] || type;
+		path += '.' + default_;
+
+		return path;
     }
 	u_resolveNpmPath = function (contentType, path, parentLocation, cb){
 		var name = /^([\w\-]+)/.exec(path)[0];

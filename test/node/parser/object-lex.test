@@ -84,10 +84,26 @@ UTest({
 				]
 			});
 		});
+	},
+
+	'should parse conditional group' () {
+		var now = Date.now();
+		var syntax = '|("foo"$$bar<accessor>)';
+		
+		'> should parse string'
+		var str = '"Hello" some';
+		var obj = parse(syntax, str);
+
+		'> should parse var'
+		var str = 'services.Test "Hello"';
+		var obj = parse(syntax, str);
+		deepEq_(obj, {
+			bar: 'services.Test'
+		});
 	}
 })
 
-function parse(syntax, str) {
+function parse(syntax, str) {	
 	var lex = Mask.parser.ObjectLexer(syntax);
 	var out = {};	
 	lex(str, 0, str.length, out);

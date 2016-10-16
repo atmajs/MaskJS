@@ -4,8 +4,14 @@ var Module;
 	var _cache = {},
 		_opts = {
 			base: null,
+			nsBase: '',
 			version: null,
-			moduleResolution: 'classic'
+			moduleResolution: 'classic',
+			ext: {
+				'mask': 'mask',
+				'script': 'js',
+				'style': 'js'
+			}
 		},
 		_typeMappings = {
 			script: 'script',
@@ -105,11 +111,7 @@ var Module;
 			return _typeMappings[ext];
 		},
 		cfg: function(name, val){
-			if (name in _opts === false) {
-				log_error('Invalid module option: ', name);
-				return;
-			}
-			_opts[name] = val;
+			obj_setProperty(_opts, name, val);
 		},
 		resolveLocation: u_resolveLocation,
 		getDependencies: tools_getDependencies,

@@ -7,13 +7,18 @@ var _compile;
 		}
 
 		var tokens = [],
-			c, optional, ref, start;
+			c, optional, conditional, ref, start;
 		outer: for(; i < imax; i++) {
 			start = i;
 			c = str.charCodeAt(i);
-			optional = false;
+			optional = conditional = false;
 			if (63 === c /* ? */) {
 				optional = true;
+				start = ++i;
+				c = str.charCodeAt(i);
+			}
+			if (124 === c /* | */) {
+				conditional = true;
 				start = ++i;
 				c = str.charCodeAt(i);
 			}
@@ -67,8 +72,8 @@ var _compile;
 					continue;
 
 				case 40 /*(*/:
-					if (optional === true) {
-						i = compileGroup(optional, tokens, str, i, imax);
+					if (optional === true || conditional === true) {
+						i = compileGroup(optional, conditional, tokens, str, i, imax);
 						continue;
 					}
 					/* fall through */
@@ -156,11 +161,12 @@ var _compile;
 		);
 		return i;
 	}
-	function compileGroup(optional, tokens, str, i, imax) {
+	function compileGroup(optional, conditional, tokens, str, i, imax) {
 		var start = ++i;
+		var Ctor = conditional ? token_OrGroup : token_Group;
 		i = cursor_groupEnd(str, start, imax, 40, 41);
 		tokens.push(
-			new token_Group(_compile(str, start, i), optional)
+			new Ctor(_compile(str, start, i), optional)
 		);
 		return i;
 	}

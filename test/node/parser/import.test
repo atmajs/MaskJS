@@ -131,7 +131,35 @@ UTest({
 			var str = Mask.stringify(nodes);
 			eq_(str, expect || template);
 		})
+	},
+	'namespaces': {
+		'should parse namespaces' () {
+			[
+				{
+					template: "import FooService from Services.Foos;",
+					expect (node) {
+						eq_(node.namespace, 'Services.Foos');
+					}
+				},
+				{
+					template: "import FooService from Services.Foos is script;",
+					expect (node) {
+						eq_(node.namespace, 'Services.Foos');
+						eq_(node.contentType, 'script');
+					}
+				}
+			]
+			.forEach(data => {
+				var {template, expect} = data;
+				var nodes = Mask.parse(template);
+
+				var node = Mask.jmask(nodes).find('import').get(0);
+				is_(node, 'Object');
+				expect(node);
+			})	
+		}	
 	}
+	
 
 })
 
