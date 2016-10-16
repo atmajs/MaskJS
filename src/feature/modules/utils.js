@@ -107,6 +107,7 @@ var u_resolveLocation,
 		return path_getExtension(path) !== '';
 	}
     function fromNs(node) {
+    	var type = node.contentType || 'script';
     	var path = node.namespace.replace(/\./g, '/');
 		var base = _opts.nsBase;
 		if (base != null) {
@@ -117,12 +118,16 @@ var u_resolveLocation,
 			path += '/' + node.alias;
 		}
 		else if (exports.length === 1) {
-			var name = node.exports[0].name;
+			var exp = exports[0];
+			var name = exp.name;
 			path += '/' + name;
-			node.alias = name;
-			node.exports = null;
+
+			if (type === 'script') {
+				node.alias = exp.alias || name;
+				node.exports = null;
+			}
 		}
-		var type = node.contentType || 'js';
+		
 		var default_ = _opts.ext[type] || type;
 		path += '.' + default_;
 
