@@ -12,7 +12,7 @@ UTest({
 		}));
 		return mask
 			.renderAsync(`
-				import Foo from controls;
+				import Foo from controls is mask;
 				Foo;
 			`)
 			.then(dom => {
@@ -34,7 +34,7 @@ UTest({
 		}));
 		return mask
 			.renderAsync(`
-				import Foo from services is script;
+				import Foo from services;
 				h5 > '~[Foo.getName()]';
 			`)
 			.then(dom => {

@@ -156,6 +156,9 @@ UTest({
 				var node = Mask.jmask(nodes).find('import').get(0);
 				is_(node, 'Object');
 				expect(node);
+
+				var str = Mask.stringify(node);
+				eq_(template, str);
 			})	
 		}	
 	}

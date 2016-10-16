@@ -17,7 +17,7 @@
 		Module.cfg('base', x);
 	};
 	custom_Tags['import:cfg'] = function(node, model, ctx, el, ctr){
-		var args = expression_eval(node.expression, model, ctx, ctr);
+		var args = expression_evalStatements(node.expression, model, ctx, ctr);
 		Module.cfg.apply(null, args);
 	};
 	custom_Tags[IMPORT] = class_create({

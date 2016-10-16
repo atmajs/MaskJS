@@ -110,7 +110,7 @@ var u_resolveLocation,
     	var path = node.namespace.replace(/\./g, '/');
 		var base = _opts.nsBase;
 		if (base != null) {
-			path = path_combine(path, base);
+			path = path_combine(base, path);
 		}
 		var exports = node.exports;
 		if (exports == null) {
@@ -122,7 +122,7 @@ var u_resolveLocation,
 			node.alias = name;
 			node.exports = null;
 		}
-		var type = node.contentType || 'mask';
+		var type = node.contentType || 'js';
 		var default_ = _opts.ext[type] || type;
 		path += '.' + default_;
 
