@@ -111,6 +111,14 @@ var Module;
 			return _typeMappings[ext];
 		},
 		cfg: function(name, val){
+			if (name === 'base' || name === 'nsBase') {
+				var path = path_normalize(val);
+				if (path[path.length - 1] !== '/') {
+					path += '/';
+				}
+				_opts[name] = path;
+				return;
+			}
 			obj_setProperty(_opts, name, val);
 		},
 		resolveLocation: u_resolveLocation,

@@ -13,11 +13,12 @@
 		render: fn_doNothing
 	});
 	custom_Tags['import:base'] = function(node, model, ctx, el, ctr){
-		var base = path_normalize(expression_eval(node.expression, model, ctx, ctr));
-		if (base != null && base[base.length - 1] !== '/') {
-			base += '/';
-		}
-		Module.cfg('base', base);
+		var x = expression_eval(node.expression, model, ctx, ctr);
+		Module.cfg('base', x);
+	};
+	custom_Tags['import:cfg'] = function(node, model, ctx, el, ctr){
+		var args = expression_eval(node.expression, model, ctx, ctr);
+		Module.cfg.apply(null, args);
 	};
 	custom_Tags[IMPORT] = class_create({
 		meta: {

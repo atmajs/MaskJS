@@ -22,7 +22,7 @@ UTest({
 				`)
 			})
 	},
-	'!should load script' () {
+	'should load script' () {
 		mask.Module.cfg('ext.script', 'es6');
 		mask.cfg('getScript', assert.await(path => {
 			has_(path, 'services/Foo.es6');
