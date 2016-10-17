@@ -113,7 +113,7 @@ var Module;
 		},
 		cfg: function(name, val){
 			if (arguments.length === 1) {
-				return obj_getProperty(name);
+				return obj_getProperty(_opts, name);
 			}
 			if (val == null) {
 				return this;
