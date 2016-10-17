@@ -135,6 +135,7 @@ var Module;
 			return this;
 		},
 		resolveLocation: u_resolveLocation,
+		resolvePath: u_resolvePathFromImport,
 		getDependencies: tools_getDependencies,
 		build: tools_build,
 		clearCache: function (path) {
