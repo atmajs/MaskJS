@@ -8,7 +8,8 @@ var path_getDir,
 	path_isRelative,
 	path_toRelative,
 	path_appendQuery,
-	path_toLocalFile
+	path_toLocalFile,
+	path_fromPrfx
 	;
 (function(){
 	var isWeb = true;
@@ -35,6 +36,33 @@ var path_getDir,
 		}
 		var match = rgx_EXT.exec(path);
 		return match == null ? '' : match[1];
+	};
+
+	path_fromPrfx = function (path, prefixes) {
+		var i = path.indexOf('/');
+    	if (i === -1) i = path.length;
+    	var prfx = path.substring(1, i);
+    	var sfx = path.substring(i + 1);
+    	var route = prefixes[prfx];
+    	if (route == null) throw Error('No route is defined for the prefix: ' + prfx);
+    	if (route.indexOf('{') === 1) 
+    		return path_combine(route, sfx);
+    	var routeArr = route.split('{'),
+    		sfxArr = sfx.split('/'),
+    		imax = routeArr.length,
+    		i = 0;
+    	while(++i < imax){
+    		var x = routeArr[i];
+    		var end = x.indexOf('}');
+    		var num = x.substring(0, end) | 0;
+    		var y = sfxArr[num];
+    		
+    		if (i === imax - 1 && i < sfxArr.length) {
+    			y = path_combine(y, sfxArr.slice(i).join('/'));
+    		}
+    		routeArr[i] = (y || '') + x.substring(end + 1);
+    	}
+    	return path_combine.apply(null, routeArr);
 	};
 
 	path_appendQuery = function(path, key, val){

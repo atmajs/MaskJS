@@ -11,7 +11,8 @@ var Module;
 				'mask': 'mask',
 				'script': 'js',
 				'style': 'js'
-			}
+			},
+			prefixes: {}
 		},
 		_typeMappings = {
 			script: 'script',
@@ -111,15 +112,27 @@ var Module;
 			return _typeMappings[ext];
 		},
 		cfg: function(name, val){
+			if (arguments.length === 1) {
+				return obj_getProperty(name);
+			}
+			if (val == null) {
+				return this;
+			}
 			if (name === 'base' || name === 'nsBase') {
 				var path = path_normalize(val);
 				if (path[path.length - 1] !== '/') {
 					path += '/';
 				}
 				_opts[name] = path;
-				return;
+				return this;
+			}
+			var current = obj_getProperty(_opts, name);
+			if (is_Object(current) && is_Object(val)) {
+				obj_extend(current, val);
+				return this;
 			}
 			obj_setProperty(_opts, name, val);
+			return this;
 		},
 		resolveLocation: u_resolveLocation,
 		getDependencies: tools_getDependencies,
