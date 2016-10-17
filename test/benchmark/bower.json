@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "maskjs-0.52.4": "https://github.com/atmajs/MaskJS/tarball/v0.52.4",
-    "maskjs-0.12.23": "https://github.com/atmajs/MaskJS/tarball/v0.12.23"
-  }
-}
