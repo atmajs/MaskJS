@@ -58,7 +58,7 @@ var u_resolveLocation,
 		return toAbsolute(path, ctx, ctr, module);
 	};
 
-	u_resolvePathFromImport = function(node, ctx, ctr, module){
+	u_resolvePathFromImport = function(node, ctx, ctr, module, makeAbs){
 		var path = node.path;
 		if (path == null && node.namespace != null) {
 			path = fromNs(node);			
@@ -78,7 +78,9 @@ var u_resolveLocation,
 				return path;
 			}
 		}
-		return toAbsolute(path, ctx, ctr, module);
+		return makeAbs === false
+			? path
+			: toAbsolute(path, ctx, ctr, module);
 	};
 
 	u_handler_getDelegate = function(compoName, compo, next) {

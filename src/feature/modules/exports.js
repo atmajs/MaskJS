@@ -4,7 +4,7 @@ var Module;
 	var _cache = {},
 		_opts = {
 			base: null,
-			nsBase: '',
+			nsBase: '/',
 			version: null,
 			moduleResolution: 'classic',
 			ext: {
