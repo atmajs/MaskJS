@@ -141,7 +141,7 @@ var throw_,
 		var fn = type === 'error' ? log_error : log_warn;
 		var stack = error.stack;
 		if (stack) {
-			stack = stack.split('\n')[1];
+			stack = stack.split('\n')[0];
 		}
 		fn(error.message + '\n' + stack);
 	}

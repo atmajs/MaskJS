@@ -51,14 +51,14 @@ var path_getDir,
     		return path_combine(route, sfx);
     	var routeArr = route.split('{'),
     		sfxArr = sfx.split('/'),
+    		sfxArrL = sfxArr.length,
     		imax = routeArr.length,
     		i = 0;
     	while(++i < imax){
     		var x = routeArr[i];
     		var end = x.indexOf('}');
     		var num = x.substring(0, end) | 0;
-    		var y = sfxArr[num];
-    		
+    		var y = num < sfxArrL ? sfxArr[num] : sfxArr[sfxArrL - 1];
     		if (i === imax - 1 && i < sfxArr.length) {
     			y = path_combine(y, sfxArr.slice(i).join('/'));
     		}
