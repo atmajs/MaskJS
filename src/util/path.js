@@ -44,7 +44,9 @@ var path_getDir,
     	var prfx = path.substring(1, i);
     	var sfx = path.substring(i + 1);
     	var route = prefixes[prfx];
-    	if (route == null) throw Error('No route is defined for the prefix: ' + prfx);
+    	if (route == null) {
+    		return null;
+    	}
     	if (route.indexOf('{') === 1) 
     		return path_combine(route, sfx);
     	var routeArr = route.split('{'),

@@ -65,6 +65,11 @@ var u_resolveLocation,
 		}
 		if (path[0] === '@') {
 			path = path_fromPrfx(path, _opts.prefixes);
+			if (path == null) {
+				path = node.path;
+				warn_withNode('Prefix not defined: ' + path);
+			}
+
 		}
 		if (false === hasExt(path)) {
 			var c = path.charCodeAt(0);
