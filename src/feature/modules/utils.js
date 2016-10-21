@@ -67,7 +67,7 @@ var u_resolveLocation,
 			path = path_fromPrfx(path, _opts.prefixes);
 			if (path == null) {
 				path = node.path;
-				warn_withNode('Prefix not defined: ' + path);
+				warn_withNode('Prefix not defined: ' + path, node);
 			}
 
 		}
