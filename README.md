@@ -338,6 +338,32 @@ $ npm test
 
 _`@latest`_
 
+- **Modules**
+	- Namespace routing
+
+		```mask
+		import FooService from services;
+
+		h4 > '~FooService.doSmth()'
+		```
+
+		You can also configurate the base path for the routing, e.g. `mask.Module.cfg('baseNs', '/src/')`
+
+		> If the module is not loaded or not set to the namespace repository, we will load it for you by the resolved path, e.g. `'/src/services/FooService.js'`
+	
+	- Prefix routing
+
+		```mask
+		import MyButton from '@controls/MyButton';
+		MyButton x-tap='clicked';
+		```
+
+		You have to configurate the prefix first, e.g.:
+
+		```js
+		mask.Module.cfg('prefixes.controls', '/src/controls/{0}/{1}.mask');
+		```
+
 - `0.57.0`
 - Typa annotations for arguments: `(argumentName: argumentType, ...)`
 
