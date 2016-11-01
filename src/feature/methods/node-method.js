@@ -8,6 +8,10 @@ var nodeMethod_getSource,
 			args = node.args,
 			body = node.body,
 			code = '';
+
+		if (node.flagAsync) {
+			code += 'async ';
+		}
 		code += 'function ' + name + ' (' + _args_toCode(args) + ') {\n';
 		code += body; 
 		code += '\n}'

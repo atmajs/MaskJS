@@ -57,7 +57,9 @@ var defMethods_getSource,
 				name = node.getFnName(),
 				body = node.body,
 				argMetas = node.args;
-			
+			if (node.flagAsync) {
+				code += 'async ';
+			}
 			code += 'function ' + name + ' (' + _args_toCode(argMetas) + ') {\n';
 			code += localVars + body; 
 			code += '\n}' + (i === imax - 1 ? '' : ',') + '\n';				

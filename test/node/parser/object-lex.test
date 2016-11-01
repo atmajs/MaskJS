@@ -13,7 +13,7 @@ UTest({
 		});
 	},
 	'should parse function name and the arguments' () {
-		var syntax = '$$methodName<token>? ($$arguments[$$prop<token>?(? :? $$type<accessor>)](,))';
+		var syntax = '$$methodName<token>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))';
 
 		[
 			'testy (foo:Foo )',
@@ -25,7 +25,7 @@ UTest({
 			var obj = parse(syntax, str);
 			deepEq_(obj, {
 				methodName: 'testy',
-				arguments: [
+				args: [
 					{ prop: 'foo', type: 'Foo' }
 				]
 			});
@@ -99,6 +99,23 @@ UTest({
 		var obj = parse(syntax, str);
 		deepEq_(obj, {
 			bar: 'services.Test'
+		});
+	},
+	'should parse method flags' () {
+		var syntax = '?($$flags{async:async;binding:private|public})$$methodName<token>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))';
+
+		[
+			'async private foo()',
+			'private async foo()'
+		]
+		.forEach(str => {
+			var obj = parse(syntax, str);
+			deepEq_(obj, {
+				methodName: 'foo',
+				//arguments: [],
+				async: 'async',
+				binding: 'private'
+			});
 		});
 	}
 })

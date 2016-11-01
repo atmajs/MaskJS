@@ -18,20 +18,9 @@
 			return [ node, end + 1, 0 ];
 		};
 	}
-
-	function parseHead_Obsolete(name, str) {
-		var parts = /([^\(\)\n]+)\s*(\(([^\)]*)\))?/.exec(str);
-		if (parts == null) {
-			return null;
-		}
-		var methodName = parts[1].trim();
-		var str = parts[3],
-			methodArgs = str == null ? [] : str.replace(/\s/g, '').split(',');
-		return new MethodHead(methodName, methodArgs);
-	}
 	var parseHead;
 	(function(){
-		var lex_ = parser_ObjectLexer('$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
+		var lex_ = parser_ObjectLexer('?($$flags{async:async;binding:private|public})$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
 		parseHead = function (name, str, i, imax) {
 			var obj = {};
 			var end = lex_(str, i, imax, obj, true);
@@ -54,6 +43,10 @@
 
 		'fn': null,
 
+		'flagAsync': false,
+		'flagPrivate': false,
+		'flagPublic': false,
+
 		constructor: function(tagName, name, args, types, body, parent){
 			this.tagName = tagName;
 			this.name = name;
@@ -73,7 +66,12 @@
 				: name;
 		},
 		stringify: function(stream){
-			stream.write(this.tagName + ' ' + this.name);
+			var str = this.tagName + ' ';
+			if (this.flagAsync) str += 'async ';
+			if (this.flagPrivate) str += 'private ';
+			if (this.flagPublic) str += 'public ';
+
+			stream.write(str + this.name);
 			stream.format(' ');
 			stream.print('(');
 			stream.printArgs(this.args);
