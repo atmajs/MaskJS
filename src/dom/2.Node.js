@@ -27,4 +27,5 @@ var Node = class_create({
 	stringify: null,
 	tagName: null,
 	type: dom_NODE,
+	decorators: null
 });

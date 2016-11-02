@@ -298,6 +298,30 @@
 				}
 				index += isUnescapedBlock ? 3 : 1;
 				continue;
+			case 91:
+				start = index + 1;
+				index = cursor_groupEnd(template, start, length, c, 93 /* ] */);
+				if (index === 0) {
+					parser_warn('Attribute not closed', template, start - 1);
+					index = length;
+					continue;
+				}
+				token = template.substring(start + 1, index);
+				var deco = new DecoratorNode(token, current);
+				deco.sourceIndex = start;
+				current.appendChild(deco);
+
+				index = cursor_skipWhitespace(template, index + 1, length);
+				if (index !== length) {
+					c = template.charCodeAt(index);
+					if (c === 46 || c === 35 || c === 91 || (c >= 65 && c <= 122) || c === 36 || c === 95) {
+						// .#[A-z$_
+						continue;
+					}
+					parser_error('Unexpected char after decorator. Tag is expected', template, index, c, state);
+					break outer;
+				}
+				
 			}
 
 			if (state === go_tag) {

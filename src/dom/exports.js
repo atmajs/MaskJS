@@ -8,7 +8,8 @@ var Dom;
 		dom_COMPONENT = 4,
 		dom_CONTROLLER = 9,
 		dom_SET = 10,
-		dom_STATEMENT = 15
+		dom_STATEMENT = 15,
+		dom_DECORATOR = 16
 		;
 
 	// import 1.utils.js
@@ -30,6 +31,7 @@ var Dom;
 		CONTROLLER: dom_CONTROLLER,
 		SET: dom_SET,
 		STATEMENT: dom_STATEMENT,
+		DECORATOR: dom_DECORATOR,
 
 		Node: Node,
 		TextNode: TextNode,
