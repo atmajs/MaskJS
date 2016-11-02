@@ -123,9 +123,21 @@ var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 		}
 		if (is_ArrayLike(nodes)) {
 			var imax = nodes.length,
-				i = 0;
+				i = 0, child, decoStart = -1;
 			for(; i < imax; i++) {
-				builder_build(nodes[i], model, ctx, container, ctr, elements);
+				child = nodes[i];
+				if (child.type === dom_DECORATOR) {
+					if (decoStart === -1) {
+						decoStart = i;
+						continue;
+					}
+				}
+				if (decoStart !== -1) {
+					child.decorators = nodes.slice(decoStart, i - decoStart);
+					decoStart = -1;
+				}
+
+				builder_build(child, model, ctx, container, ctr, elements);
 			}
 		} else {
 
