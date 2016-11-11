@@ -337,7 +337,28 @@ $ npm test
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 
 _`@latest`_
+- `0.58.0`
+- **Decorators** for methods and nodes
+	
+	```mask
+	[IsAuthorized]
+	div;
 
+	[LogCall]
+	function doSmth () {
+		// ...
+	}
+	```
+- Async and Private methods. For browsers which do not yet support `async/await` es2017 feature, please use `postmask-babel` plugin.
+	
+	```mask
+	slot private async upload () {
+		await MyService.doSmth();
+	} 
+	```
+
+
+- `0.57.13`
 - **Modules**
 	- Namespace routing
 
