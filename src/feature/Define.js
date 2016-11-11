@@ -45,11 +45,20 @@ var Define;
 		Methods.compileForDefine(node, Proto, model, owner);
 
 		var imax = nodes == null ? 0 : nodes.length,
-			i = 0, x, name;
+			i = 0, x, name, decorators;
 		for(; i < imax; i++) {
+			decorators = null;
 			x = nodes[i];
 			if (x == null)
 				continue;
+
+			if (x.type === Dom.DECORATOR) {
+				var start = i;
+				i = Decorator.goToNode(nodes, i, imax);
+				decorators = _Array_slice.call(nodes, start, i);
+				x = nodes[i];
+			}
+			
 			name = x.tagName;
 			if ('function' === name) {
 				Proto[x.name] = x.fn;
@@ -103,8 +112,12 @@ var Define;
 				}
 				continue;
 			}
+
+			if (decorators != null) {
+				arr.push.apply(arr, decorators);
+			}
 			arr.push(x);
-		}
+		}		
 		return Proto;
 	}
 	function compo_extends(extends_, model, ctr) {

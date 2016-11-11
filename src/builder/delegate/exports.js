@@ -7,6 +7,8 @@ var builder_buildDelegate;
 		// import build_textNode
 		// import build_node
 		// import build_component
+		// import build_many
+		// import build_decorators
 		// import build
 		
 		return builder_build;

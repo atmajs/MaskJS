@@ -17,6 +17,7 @@ var Dom;
 	// import 3.TextNode.js
 	// import 4.Component.js
 	// import 5.Fragment.js
+	// import 6.DecoratorNode.js
 
 	/**
 	 * Dom
@@ -37,7 +38,8 @@ var Dom;
 		TextNode: TextNode,
 		Fragment: Fragment,
 		HtmlFragment: HtmlFragment,
-		Component: Component
+		Component: Component,
+		DecoratorNode: DecoratorNode
 	};
 	/**
 	 * @interface

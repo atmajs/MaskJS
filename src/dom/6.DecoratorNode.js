@@ -1,5 +1,5 @@
-var Decorator = class_create({
-	constructor:  function Node(expression, parent) {
+var DecoratorNode = class_create({
+	constructor:  function DecoratorNode (expression, parent) {
 		this.expression = expression;
 		this.parent = parent;
 	},

@@ -42,6 +42,9 @@ var defMethods_getSource,
 			if (node.name === 'constructor') {
 				fn = wrapDi(fn, node);
 			}
+			if (node.decorators != null) {
+				fn = Decorator.wrapMethod(node.decorators, fn, model, null, owner);
+			}
 			node.fn = fn;
 		}
 	};
@@ -111,9 +114,18 @@ var defMethods_getSource,
 			return null;
 		}
 		var imax = nodes.length,
-			i = -1, arr;
+			i = -1, arr, decoStart = -1;
 		while (++i < imax) {
 			var node = nodes[i];
+			if (node.type === Dom.DECORATOR) {
+				var start = i;
+				i = Decorator.goToNode(nodes, i, imax);
+				node = nodes[i];
+				if (isFn(node.tagName) === false) {
+					continue;
+				}
+				node.decorators = _Array_slice.call(nodes, start, i);				
+			}			
 			if (isFn(node.tagName) === false || node.fn != null) {
 				continue;
 			}

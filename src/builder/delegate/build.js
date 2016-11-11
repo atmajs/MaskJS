@@ -69,12 +69,7 @@ var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 
 	// Dom.SET
 	if (type === 10) {
-		var arr = node,
-			j = 0,
-			jmax = arr.length;
-		for(; j < jmax; j++) {
-			builder_build(arr[j], model, ctx, container, ctr, children);
-		}
+		build_many(node, model, ctx, container, ctr, children);
 		return container;
 	}
 
@@ -122,25 +117,8 @@ var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 			elements = children;
 		}
 		if (is_ArrayLike(nodes)) {
-			var imax = nodes.length,
-				i = 0, child, decoStart = -1;
-			for(; i < imax; i++) {
-				child = nodes[i];
-				if (child.type === dom_DECORATOR) {
-					if (decoStart === -1) {
-						decoStart = i;
-						continue;
-					}
-				}
-				if (decoStart !== -1) {
-					child.decorators = nodes.slice(decoStart, i - decoStart);
-					decoStart = -1;
-				}
-
-				builder_build(child, model, ctx, container, ctr, elements);
-			}
+			build_many(nodes, model, ctx, container, ctr, elements);			
 		} else {
-
 			builder_build(nodes, model, ctx, container, ctr, elements);
 		}
 	}

@@ -109,6 +109,8 @@ var Mask;
 		getUtil: customUtil_get,
 		$utils: customUtil_$utils,
 		_     : customUtil_$utils,
+
+		defineDecorator: Decorator.define,
 		// dom/exports.js
 		Dom: Dom,
 		/**

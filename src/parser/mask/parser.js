@@ -306,12 +306,12 @@
 					index = length;
 					continue;
 				}
-				token = template.substring(start + 1, index);
-				var deco = new DecoratorNode(token, current);
+				var expr = template.substring(start, index);
+				var deco = new DecoratorNode(expr, current);
 				deco.sourceIndex = start;
 				current.appendChild(deco);
 
-				index = cursor_skipWhitespace(template, index + 1, length);
+				index = cursor_skipWhitespace(template, index + 1, length);				
 				if (index !== length) {
 					c = template.charCodeAt(index);
 					if (c === 46 || c === 35 || c === 91 || (c >= 65 && c <= 122) || c === 36 || c === 95) {

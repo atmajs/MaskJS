@@ -39,7 +39,7 @@ UTest({
 					span;
 				}
 				section.bar {
-					style scoped{
+					style scoped {
 						span {
 							line-height: 11px;
 						}
@@ -244,7 +244,10 @@ function TestRunner(test, additionalFn) {
 
 	if (count != 0) {
 		var id = style.get(0).id;
-		var $style = $(document.body).find('#' + id).last();
+		//var $style = $(document.body).find('#' + id).last();
+		var arr = document.body.querySelectorAll('#' + id);
+		var $style = $(arr[arr.length - 1]);
+		
 	}
 
 	if (count !== 0) {
@@ -268,6 +271,14 @@ function TestRunner(test, additionalFn) {
 			var $el = $(document).find(selector)
 
 			for (var prop in css) {
+				var val = $el.css(prop);
+				var exp = css[prop];
+				if (/\d+px/.test(exp) && /[\d\.]+px/.test(val)) {
+					var a = Math.ceil(parseFloat(exp));
+					var b = Math.ceil(parseFloat(val));
+					eq_(a, b);
+					continue;
+				}
 				$el.eq_('css', prop, css[prop]);
 			}
 		}
@@ -276,7 +287,7 @@ function TestRunner(test, additionalFn) {
 	additionalFn && additionalFn($root.children());
 
 	$root.remove();
-
+	$style && $style.remove();
 }
 
 // vim: set ft=js:

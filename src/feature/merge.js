@@ -43,7 +43,8 @@ var mask_merge;
 		dom_TEXTNODE  = Dom.TEXTNODE,
 		dom_FRAGMENT  = Dom.FRAGMENT,
 		dom_STATEMENT = Dom.STATEMENT,
-		dom_COMPONENT = Dom.COMPONENT
+		dom_COMPONENT = Dom.COMPONENT,
+		dom_DECORATOR = Dom.DECORATOR
 		;
 
 	function _merge(node, placeholders, tmplNode, clonedParent){
@@ -57,6 +58,9 @@ var mask_merge;
 			switch(node.type){
 				case dom_TEXTNODE:
 					fn = _cloneTextNode;
+					break;
+				case dom_DECORATOR:
+					fn = _cloneDecorator;
 					break;
 				case dom_NODE:
 				case dom_STATEMENT:
@@ -73,7 +77,7 @@ var mask_merge;
 		if (fn !== void 0) {
 			return fn(node, placeholders, tmplNode, clonedParent);
 		}
-		log_warn('Uknown type', node.type);
+		log_warn('Unknown type', node.type);
 		return null;
 	}
 	function _mergeArray(nodes, placeholders, tmplNode, clonedParent){
@@ -300,8 +304,9 @@ var mask_merge;
 			attr: interpolate_obj_(node.attr, placeholders, tmplNode),
 			expression: interpolate_str_(node.expression, placeholders, tmplNode),
 			controller: node.controller,
-			parent: clonedParent,
-			nodes: node.nodes
+			parent: clonedParent || node.parent,
+			nodes: node.nodes,
+			sourceIndex: node.sourceIndex,
 		};
 	}
 	function _cloneTextNode(node, placeholders, tmplNode, clonedParent){
@@ -310,6 +315,11 @@ var mask_merge;
 			content: interpolate_str_(node.content, placeholders, tmplNode),
 			parent: clonedParent
 		};
+	}
+	function _cloneDecorator(node, placeholders, tmplNode, clonedParent){
+		var out = new Dom.DecoratorNode(node.expression, clonedParent || node.parent);
+		out.sourceIndex = node.sourceIndex;
+		return out;
 	}
 
 	function interpolate_obj_(obj, placeholders, node){
