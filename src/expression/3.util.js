@@ -1,16 +1,30 @@
 var util_resolveRef,
-	util_throw;
+	util_throw,
+	util_getNodeStack;
 
 (function(){
 
-	util_throw = function(msg, token){
-		return parser_error(msg
+	util_throw = function(msg, token, astNode){
+			return parser_error(msg + util_getNodeStack(astNode)
 			, template
 			, index
 			, token
 			, 'expr'
 		);
 	};
+
+	util_getNodeStack = function (astNode) {
+		var domNode = null,
+			x = astNode;
+		while (domNode == null && x != null) {
+			domNode = x.node;
+			x = x.parent;
+		}
+		if (domNode == null) {
+			return '';
+		}
+		return reporter_getNodeStack(domNode);
+	}
 
 	util_resolveRef = function(astRef, model, ctx, ctr) {
 		var controller = ctr,
@@ -23,25 +37,24 @@ var util_resolveRef,
 			imax
 			;
 
-		if ('$c' === key) {
+		if ('$c' === key || '$' === key) {
 			reporter_deprecated(
-				'accessor.compo', "Use `$` instead of `$c`."
+				'accessor.compo', "Use `this` instead of `$c` or `$`." + util_getNodeStack(astRef)
 			);
-			key = '$';
+			key = 'this';
 		}
 		if ('$u' === key) {
 			reporter_deprecated(
-				'accessor.util', "Use `_` instead of `$u`"
+				'accessor.util', "Use `_` instead of `$u`" + util_getNodeStack(astRef)
 			);
 			key = '_';
 		}
 		if ('$a' === key) {
 			reporter_deprecated(
-				'accessor.attr', "Use `$.attr` instead of `$a`"
+				'accessor.attr', "Use `this.attr` instead of `$a`" + util_getNodeStack(astRef)
 			);
 		}
-
-		if ('$' === key) {
+		if ('this' === key) {
 			value = controller;
 
 			var next = current.next,
@@ -78,20 +91,15 @@ var util_resolveRef,
 			}
 
 		}
-
 		else if ('$a' === key) {
 			value = controller && controller.attr;
 		}
-
 		else if ('_' === key) {
 			value = customUtil_$utils;
 		}
-
-
 		else if ('$ctx' === key) {
 			value = ctx;
 		}
-
 		else if ('$scope' === key) {
 			var next = current.next,
 				nextBody = next != null && next.body;
@@ -110,7 +118,9 @@ var util_resolveRef,
 				current = next;
 			}
 		}
-
+		else if ('global' === key && (model == null || model.global === void 0)) {
+			value = global;
+		}
 		else {
 			// scope resolver
 
@@ -144,6 +154,7 @@ var util_resolveRef,
 						'<mask:expression> Accessor error:'
 						, key
 						, ' in expression `' + astRef.toString() + '`'
+						, util_getNodeStack(astRef)
 					);
 				}
 				return null;
@@ -156,7 +167,7 @@ var util_resolveRef,
 				imax = current.arguments.length;
 
 				while( ++i < imax ) {
-					args[i] = expression_evaluate(
+					args[i] = _evaluateAst(
 						current.arguments[i]
 						, model
 						, ctx
@@ -173,7 +184,7 @@ var util_resolveRef,
 
 			current = current.next;
 			key = current.type === type_AccessorExpr
-				? expression_evaluate(current.body, model, ctx, controller)
+				? _evaluateAst(current.body, model, ctx, controller)
 				: current.body
 				;
 

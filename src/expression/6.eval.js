@@ -1,5 +1,4 @@
-function expression_evaluate(mix, model, ctx, controller) {
-
+function _evaluate (mix, model, ctx, ctr, node) {
 	var result, ast;
 
 	if (null == mix)
@@ -11,16 +10,21 @@ function expression_evaluate(mix, model, ctx, controller) {
 	if (typeof mix === 'string'){
 		ast = cache.hasOwnProperty(mix) === true
 			? (cache[mix])
-			: (cache[mix] = expression_parse(mix))
+			: (cache[mix] = _parse(mix, false, node))
 			;
-	}else{
+	} else {
 		ast = mix;
 	}
+
+	return _evaluateAst(ast, model, ctx, ctr);
+}
+function _evaluateAst(ast, model, ctx, ctr) {
+
 	if (ast == null)
 		return null;
 
 	var type = ast.type,
-		i, x, length;
+		result, i, x, length;
 
 	if (type_Body === type) {
 		var value, prev;
@@ -28,7 +32,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 		outer: for (i = 0, length = ast.body.length; i < length; i++) {
 			x = ast.body[i];
 
-			value = expression_evaluate(x, model, ctx, controller);
+			value = _evaluateAst(x, model, ctx, ctr);
 
 			if (prev == null || prev.join == null) {
 				prev = x;
@@ -116,15 +120,13 @@ function expression_evaluate(mix, model, ctx, controller) {
 			prev = x;
 		}
 	}
-
 	if (type_Statement === type) {
-		result = expression_evaluate(ast.body, model, ctx, controller);
+		result = _evaluateAst(ast.body, model, ctx, ctr);
 		if (ast.next == null)
 			return result;
 
 		return util_resolveRef(ast.next, result);
 	}
-
 	if (type_Value === type) {
 		return ast.body;
 	}
@@ -135,7 +137,7 @@ function expression_evaluate(mix, model, ctx, controller) {
 
 		result = new Array(imax);
 		while( ++i < imax ){
-			result[i] = expression_evaluate(body[i], model, ctx, controller);
+			result[i] = _evaluateAst(body[i], model, ctx, ctr);
 		}
 		return result;
 	}
@@ -143,20 +145,18 @@ function expression_evaluate(mix, model, ctx, controller) {
 		result = {};
 		var props = ast.props;
 		for(var key in props){
-			result[key] = expression_evaluate(props[key], model, ctx, controller);
+			result[key] = _evaluateAst(props[key], model, ctx, ctr);
 		}
 		return result;
 	}
-
 	if (type_SymbolRef 		=== type ||
 		type_FunctionRef 	=== type ||
 		type_AccessorExpr 	=== type ||
 		type_Accessor 		=== type) {
-		return util_resolveRef(ast, model, ctx, controller);
+		return util_resolveRef(ast, model, ctx, ctr);
 	}
-
 	if (type_UnaryPrefix === type) {
-		result = expression_evaluate(ast.body, model, ctx, controller);
+		result = _evaluateAst(ast.body, model, ctx, ctr);
 		switch (ast.prefix) {
 		case op_Minus:
 			result = -result;
@@ -166,12 +166,9 @@ function expression_evaluate(mix, model, ctx, controller) {
 			break;
 		}
 	}
-
 	if (type_Ternary === type){
-		result = expression_evaluate(ast.body, model, ctx, controller);
-		result = expression_evaluate(result ? ast.case1 : ast.case2, model, ctx, controller);
-
+		result = _evaluateAst(ast.body, model, ctx, ctr);
+		result = _evaluateAst(result ? ast.case1 : ast.case2, model, ctx, ctr);
 	}
-
 	return result;
 }

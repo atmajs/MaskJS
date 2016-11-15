@@ -9,15 +9,10 @@ var  refs_extractVars;
 	 * ~[:someFn().user.name] -> {accessor: (Accessor AST function call) , ref: 'user.name'}
 	 */
 
-
-	refs_extractVars = function(expr, model, ctx, ctr){
-		if (typeof expr === 'string')
-			expr = expression_parse(expr);
-
-		return _extractVars(expr, model, ctx, ctr);
+	refs_extractVars = function(mix, model, ctx, ctr){
+		var ast = typeof mix === 'string' ? _parse(mix) : mix;		
+		return _extractVars(ast, model, ctx, ctr);
 	};
-
-
 
 	function _extractVars(expr, model, ctx, ctr) {
 
@@ -72,7 +67,6 @@ var  refs_extractVars;
 
 			return path;
 		}
-
 
 		switch (exprType) {
 			case type_Statement:

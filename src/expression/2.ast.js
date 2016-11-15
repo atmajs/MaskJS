@@ -14,11 +14,12 @@ var Ast_Body,
 (function(){
 
 	Ast_Body = class_create({
-		constructor: function Ast_Body (parent) {
+		constructor: function Ast_Body (parent, node) {
 			this.parent = parent;
 			this.type = type_Body;
 			this.body = [];
 			this.join = null;
+			this.node = node;
 		},
 		toString: function(){
 			var imax = this.body,

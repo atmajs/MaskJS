@@ -21,7 +21,9 @@ var Mask;
 				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
 			}
 			// endif
-
+			if (ctx == null || ctx.constructor !== builder_Ctx) {
+				ctx = new builder_Ctx(ctx);
+			}
 			var template = mix;
 			if (typeof mix === 'string') {
 				if (_Object_hasOwnProp.call(__templates, mix)){
@@ -29,12 +31,9 @@ var Mask;
 					then "!=null" http://jsperf.com/not-in-vs-null/2 */
 					template = __templates[mix];
 				}else{
-					template = __templates[mix] = parser_parse(mix);
+					template = __templates[mix] = parser_parse(mix, ctx.filename);
 				}
-			}
-			if (ctx == null || ctx.constructor !== builder_Ctx)
-				ctx = new builder_Ctx(ctx);
-
+			}			
 			return builder_build(template, model, ctx, container, controller);
 		},
 		/**

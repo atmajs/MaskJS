@@ -19,10 +19,10 @@ var expression_eval,
 	// import 7.eval_statements.js
 	// import 8.vars.helper.js
 
-	expression_eval           = expression_evaluate;
-	expression_evalStatements = expression_evaluateStatements;
+	expression_eval           = _evaluate;
+	expression_evalStatements = _evaluateStatements;
 	ExpressionUtil = {
-		'parse': expression_parse,
+		'parse': _parse,
 
 		/**
 		 * Expression.eval(expression [, model, cntx, controller]) -> result
@@ -43,12 +43,12 @@ var expression_eval,
 		 * '(user.age + 20) / 2'
 		 * 'fn(user.age + "!") + x'
 		 **/
-		'eval': expression_evaluate,
+		'eval': _evaluate,
 		'varRefs': refs_extractVars,
 
 		// Return all values of a comma delimiter expressions
 		// like argumets: ' foo, bar, "4,50" ' => [ %fooValue, %barValue, "4,50" ]
-		'evalStatements': expression_evaluateStatements
+		'evalStatements': _evaluateStatements
 	};
 
 }());

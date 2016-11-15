@@ -1,7 +1,7 @@
 /*
  * earlyExit - only first statement/expression is consumed
  */
-function expression_parse(expr, earlyExit) {
+function _parse(expr, earlyExit, node) {
 	if (earlyExit == null)
 		earlyExit = false;
 
@@ -9,7 +9,7 @@ function expression_parse(expr, earlyExit) {
 	index = 0;
 	length = expr.length;
 
-	ast = new Ast_Body();
+	ast = new Ast_Body(null, node);
 
 	var current = ast,
 		state = state_body,

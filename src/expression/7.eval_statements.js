@@ -1,6 +1,6 @@
-function expression_evaluateStatements(expr, model, ctx, ctr){
+function _evaluateStatements(expr, model, ctx, ctr){
 
-	var body = expression_parse(expr).body,
+	var body = _parse(expr).body,
 		args = [],
 		imax = body.length,
 		i = -1
@@ -11,7 +11,7 @@ function expression_evaluateStatements(expr, model, ctx, ctr){
 		if (body[i].join != null)
 			continue;
 
-		args.push(expression_evaluate(group, model, ctx, ctr));
+		args.push(_evaluateAst(group, model, ctx, ctr));
 		group.body.length = 0;
 	}
 	return args;

@@ -3,7 +3,9 @@ var Fragment = class_create({
 	nodes: null,
 	appendChild: _appendChild,
 	source: '',
-	syntax: 'mask'
+	filename: '',
+	syntax: 'mask',
+	parent: null
 });
 var HtmlFragment = class_create(Fragment, {
 	syntax: 'html'

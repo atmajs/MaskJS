@@ -20,7 +20,7 @@ var ModuleMask;
 		},
 		preprocess_: function(mix, next) {
 			var ast = typeof mix === 'string'
-				? parser_parse(mix)
+				? parser_parse(mix, this.path)
 				: mix
 				;
 

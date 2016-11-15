@@ -7,7 +7,7 @@
 	 * @memberOf mask
 	 * @method parse
 	 */
-	parser_parse = function(template) {
+	parser_parse = function(template, filename) {
 		var current = new Fragment(),
 			fragment = current,
 			state = go_tag,
@@ -25,6 +25,7 @@
 			nextC;
 
 		fragment.source = template;
+		fragment.filename = filename;
 		outer: while (true) {
 
 			while (index < length && (c = template.charCodeAt(index)) < 33) {
