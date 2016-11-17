@@ -54,7 +54,7 @@ var  refs_extractVars;
 				}
 
 				var prop = nextType === type_AccessorExpr
-					? expression_evaluate(next.body, model, ctx, ctr)
+					? _evaluateAst(next.body, model, ctx, ctr)
 					: next.body
 					;
 				if (typeof prop !== 'string') {
