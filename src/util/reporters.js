@@ -26,6 +26,8 @@ var throw_,
 		log       = bind.call(console.warn , console);
 		log_warn  = bind.call(console.warn , console, 'MaskJS [Warn] :');
 		log_error = bind.call(console.error, console, 'MaskJS [Error] :');
+
+		
 	}());
 
 	var STACK_SLICE = 4;
@@ -144,7 +146,7 @@ var throw_,
 			stack = stack.split('\n')[0];
 		}
 		fn(error.message + '\n' + stack);
-	}
+	}	
 	function stringifyError(mix) {
 		if (mix == null) return 'Uknown error';
 		if (typeof mix !== 'object') return mix;

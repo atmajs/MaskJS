@@ -10,10 +10,11 @@ function _parse(expr, earlyExit, node) {
 	length = expr.length;
 
 	ast = new Ast_Body(null, node);
+	ast.source = expr;
 
 	var current = ast,
 		state = state_body,
-		c, next, directive;
+		c, t, next, directive;
 
 	outer: while (true) {
 
@@ -128,9 +129,19 @@ function _parse(expr, earlyExit, node) {
 				continue;
 
 			case punc_Question:
+				index++;
+				c = parser_skipWhitespace();
+				t = current.type;
+				if ((t === type_SymbolRef || t === type_AccessorExpr || t === type_Accessor) && c === 46) {
+					// .
+					index++;
+					parser_skipWhitespace();
+					directive = go_acs;
+					current.optional = true;
+					break;
+				}					
 				ast = new Ast_TernaryStatement(ast);
 				current = ast.case1;
-				index++;
 				continue;
 
 			case punc_Colon:
@@ -140,23 +151,22 @@ function _parse(expr, earlyExit, node) {
 
 
 			case punc_Dot:
-				c = template.charCodeAt(index + 1);
+				index++;
+				c = parser_skipWhitespace();
 				if (c >= 48 && c <= 57) {
 					directive = go_number;
 				} else {
 					directive = current.type === type_Body
 						? go_ref
 						: go_acs
-						;
-					index++;
+						;					
 				}
 				break;
 			case punc_BracketOpen:
-				if (current.type === type_SymbolRef ||
-					current.type === type_AccessorExpr ||
-					current.type === type_Accessor
-					) {
-					current = ast_append(current, new Ast_AccessorExpr(current))
+				t = current.type;
+				if (t === type_SymbolRef || t === type_AccessorExpr || t === type_Accessor) {
+					current = ast_append(current, new Ast_AccessorExpr(current));
+					current.sourceIndex = index;
 					current = current.getBody();
 					index++;
 					continue;
@@ -301,6 +311,7 @@ function _parse(expr, earlyExit, node) {
 					? Ast_SymbolRef
 					: Ast_Accessor
 				current = ast_append(current, new Ctor(current, ref));
+				current.sourceIndex = index;
 				break;
 			case go_objectKey:
 				if (parser_skipWhitespace() === 125)

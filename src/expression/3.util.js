@@ -21,6 +21,20 @@ var util_resolveRef,
 			x = x.parent;
 		}
 		if (domNode == null) {
+			var str, i;
+			x = astNode;
+			while(x != null) {
+				if (i == null) {
+					i = x.sourceIndex;
+				}
+				if (str == null) {
+					str = x.source;
+				}
+				x = x.parent;
+			}
+			if (str != null) {
+				return '\n' + error_formatSource(str, i || 0);
+			}
 			return '';
 		}
 		return reporter_getNodeStack(domNode);
@@ -148,12 +162,11 @@ var util_resolveRef,
 		do {
 
 			if (value == null) {
-				if (current == null || current.next != null){
+				if (current == null || (current.next != null && current.optional !== true)){
 					// notify that value is not in model, ctx, controller;
 					log_warn(
-						'<mask:expression> Accessor error:'
+						'<mask:expression> Is undefined:'
 						, key
-						, ' in expression `' + astRef.toString() + '`'
 						, util_getNodeStack(astRef)
 					);
 				}

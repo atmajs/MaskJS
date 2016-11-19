@@ -11,7 +11,7 @@ UTest({
 			`
 		]
 		.forEach(x => {
-			var arr = Mask.Utils.Expression.eval(x);
+			var arr = run(x);
 
 			is_(arr, 'Array');
 			eq_(arr.length, 0);
@@ -29,12 +29,46 @@ UTest({
 			`
 		]
 		.forEach(x => {
-			var arr = Mask.Utils.Expression.eval(x);
-
+			var arr = run(x);
 			is_(arr, 'Array');
 			eq_(arr.length, 1);
 			eq_(arr[0], 1);
 		})
+	},
+	'evaluate getters': {
+		'simple correct getter' () {
+			[
+				'foo.bar.gaz',
+				'foo["bar"].gaz',
+				'foo["bar"]["gaz"]',
+				`foo [ "bar" ] [ 'gaz' ]`,
+				'foo .bar . gaz',
+				'foo?.bar?.gaz',
+				'foo ?.bar ?. gaz'				
+			]
+			.forEach(x => {
+				var x = run(x, { foo: { bar: { gaz: 'abc' }} });
+				eq_(x, 'abc');
+			})
+		}
+	},
+	'!elvis opearotr': {
+		$teardown () {
+			mask.on('warn', null);
+		},
+		'should silently return null' () {
+			mask.on('warn', assert.avoid());
+			var x = run('foo?.bar.gaz', { });
+			eq_(x, null);
+		},
+		'should drop warning' () {
+			mask.on('warn', assert.avoid());
+			var x = run('foo.bar.gaz', { });
+			eq_(x, null);
+		}
 	}
-})
+});
+function run (expr, model) {
+	return Mask.Utils.Expression.eval(expr, model);	
+}
 // vim: set ft=js:

@@ -20,6 +20,7 @@ var Ast_Body,
 			this.body = [];
 			this.join = null;
 			this.node = node;
+			this.source = null;
 		},
 		toString: function(){
 			var imax = this.body,
@@ -110,23 +111,27 @@ var Ast_Body,
 		}
 	});
 
-	Ast_SymbolRef = class_create({
+	var Ast_AccessorBase = {
+		optional: false,
+		sourceIndex: null,
+		next: null
+	};
+	
+	Ast_SymbolRef = class_create(Ast_AccessorBase, {
+		type: type_SymbolRef,
 		constructor: function(parent, ref) {
-			this.type = type_SymbolRef;
 			this.parent = parent;
 			this.body = ref;
-			this.next = null;
 		},
 		toString: function(){
 			return this.body + (this.next == null ? '' : this.next.toString());
 		}
 	});
-	Ast_Accessor = class_create({
+	Ast_Accessor = class_create(Ast_AccessorBase, {
+		type: type_Accessor,
 		constructor: function(parent, ref) {
-			this.type = type_Accessor;
 			this.parent = parent;
 			this.body = ref;
-			this.next = null;
 		},
 		toString: function(){
 			return '.' 
@@ -135,13 +140,12 @@ var Ast_Body,
 		}
 	});
 	Ast_AccessorExpr = class_create({
+		type: type_AccessorExpr,
 		constructor: function(parent){
 			this.parent = parent;
 			this.body = new Ast_Statement(this);
 			this.body.body = new Ast_Body(this.body);
-			this.next = null;
 		},
-		type: type_AccessorExpr,
 		getBody: function(){
 			return this.body.body;
 		},
@@ -151,12 +155,12 @@ var Ast_Body,
 	});
 
 	Ast_UnaryPrefix = class_create({
+		type: type_UnaryPrefix,
+		body: null,
 		constructor: function Ast_UnaryPrefix (parent, prefix) {
 			this.parent = parent;
 			this.prefix = prefix;
 		},
-		type: type_UnaryPrefix,
-		body: null
 	});
 
 

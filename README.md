@@ -16,7 +16,7 @@
 		</a>
 	</p>
 
-MaskJS — is a markup | template | **HMVC** engine for
+MaskJS — is a markup | template | modular **HMVC** engine for
 modern and fast web(_Browser_), server(_NodeJS_) or mobile(_PhoneGap_) applications. Component-based architecture
 simplifies defining, implementing and composing loosely coupled independent elements into a single application.
 
@@ -98,7 +98,7 @@ import CustomComponent from 'Foo.mask'
 
 ##### `1.2` HTML Syntax
 
-Here is nothing new for you. Old good HTML syntax to define the templates. But we highly encourage the use of the mask syntax, as the templates are smaller, cleaner and with additional features.
+Here is nothing new for you. Old good HTML syntax to define the templates. But we highly encourage to use the mask syntax, as the templates are smaller, cleaner and with additional features.
 
 ```html
 <h4>~[name]</h4>
@@ -172,15 +172,12 @@ Simple bindings sample:
 h4 > '~[bind: fooDate.getSeconds() * barAge ]'
 
 input type=date >
-	:dualbind value='fooDate';
+	dualbind value='fooDate';
 
 input type=number >
-	:dualbind
-		value='barAge'
-		x-signal='dom: ageChanged';
-/*
- * `ageChanged` is emitted in this sample each time `barAge` changes
- * `:dualbind` component also supports much more properties and configurations
+	dualbind value='barAge';
+/*\
+ * `dualbind` component also supports much more properties and configurations
 \*/
 ```
 
@@ -215,7 +212,7 @@ You can annotate arguments for `define` declaration or for its constructor and i
 The library is not include, you can use any other DI library. MaskJS only requires an IoC container with a single method: `.resolve(Type):Any`. 
 
 ```mask
-import * as IStore from '/services/IStore.js';
+import * as IStore from services;
 
 define UserList (store: IStore) {
 	
@@ -274,47 +271,45 @@ Most simple MaskJS sample to show where you could start from:
 <!DOCTYPE html>
 <html>
 	<body>
-		<header>
-			<!-- e.g add menu into header -->
-			<script type='text/mask' data-run='true'>
-				ul {
-					for(page of pages) {
-						log('Rendering item:', page);
-						li > a
-							href='/~[page].html'
-							x-tap='fooAction' > '~[page]'
-					}
-					// nested components
-					BazCompo > QuxCompo;
-				}
-			</script>
-		</header>
-		<!-- ... other html, or mask blocks -->
-		<!--
-			usually you would have only one Mask block, which is the entry point
-			for the app, and you would use nested component composition to
-			encapsulate logic, models, templates and the behaviour
-		-->
+		<script type='text/mask' data-run='auto'>
+			import Counter from './Counter';
+
+			h4 > 'Counter with 1 second step'
+			Counter x-interval=1;
+
+			h4 > 'Counter with 5 seconds step'
+			Counter x-interval=5;
+		</script>		
 		<script src='http://cdn.jsdelivr.net/g/maskjs'></script>
-		<script type='text/javascript'>
-			var App = mask.Compo({
-				model: {
-					pages: [ 'blog', 'about', 'contact' ]
-				},
-				slots: {
-					fooAction: function(event){
-						event.preventDefault();
-						console.log(this instanceof App);
-						// ...
-					}
-				}
-			});
-			mask.registerHandler('BazCompo', mask.Compo({/*implement*/}));
-			mask.registerHandler('QuxCompo', mask.Compo({/*implement*/}));
-			mask.run(App);
-		</script>
 	</body>
 </html>
+```
+```mask
+// Create the file `Counter.mask`
+define Counter {
+	var meta = {
+		attributes: {
+			'x-interval': 'number'
+		}
+	};
+
+	var scope = {
+		counter: 0,
+		timer: null
+	};
+
+	slot domInsert () {
+		this.scope.timer = setTimeout(() => {
+			++this.scope.counter;						
+		}, this.xInterval)
+	}
+
+	function dispose () {
+		clearTimeout(this.scope.timer);
+	}
+
+	div > '~[bind: this.scope.counter]
+}
 ```
 
 # `8` Contribute
@@ -342,7 +337,7 @@ _`@latest`_
 	
 	```mask
 	[IsAuthorized]
-	div;
+	div > 'Hello ~user'
 
 	[LogCall]
 	function doSmth () {
