@@ -164,7 +164,7 @@ var util_resolveRef,
 			if (value == null) {
 				if (current == null || (current.next != null && current.optional !== true)){
 					// notify that value is not in model, ctx, controller;
-					log_warn(
+					warn_(
 						'<mask:expression> Is undefined:'
 						, key
 						, util_getNodeStack(astRef)

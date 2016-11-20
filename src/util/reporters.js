@@ -1,9 +1,11 @@
 var throw_,
 	parser_error,
 	parser_warn,
+	error_,
 	error_withSource,
 	error_withNode,
 	error_withCompo,
+	warn_,
 	warn_withSource,
 	warn_withNode,
 	warn_withCompo,
@@ -40,10 +42,12 @@ var throw_,
 		listeners_emit('error', error);
 	};
 
+	error_ = delegate_notify(MaskError, 'error');
 	error_withSource = delegate_withSource(MaskError, 'error');
 	error_withNode   = delegate_withNode  (MaskError, 'error');
 	error_withCompo  = delegate_withCompo (error_withNode);
 
+	warn_ = delegate_notify(MaskWarn, 'warn');
 	warn_withSource = delegate_withSource(MaskWarn, 'warn');
 	warn_withNode   = delegate_withNode  (MaskWarn, 'warn');
 	warn_withCompo  = delegate_withCompo (warn_withNode);
@@ -114,6 +118,12 @@ var throw_,
 			var error = new Ctor(stringifyError);
 			error.message = '\n' + error_formatSource(source, index, file);
 			report(error, type);
+		};
+	}
+	function delegate_notify(Ctor, type){
+		return function(){
+			var str = _Array_slice.call(arguments).join(' ');
+			report(new Ctor(str), type);
 		};
 	}
 	function delegate_withNode(Ctor, type){
