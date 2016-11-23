@@ -56,8 +56,8 @@ function _evaluateAst(ast, model, ctx, ctr) {
 				if (result){
 					break outer;
 				}
-				if (value) {
-					result = value;
+				result = value;
+				if (result) {
 					break outer;
 				}
 			}
@@ -116,9 +116,9 @@ function _evaluateAst(ast, model, ctx, ctr) {
 				result = result <= value;
 				break;
 			}
-
 			prev = x;
 		}
+		return result;		
 	}
 	if (type_Statement === type) {
 		result = _evaluateAst(ast.body, model, ctx, ctr);

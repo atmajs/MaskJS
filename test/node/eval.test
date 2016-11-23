@@ -68,6 +68,11 @@ UTest({
 			var x = run('foo.bar.gaz', { });
 			eq_(x, null);
 		}
+	},
+	'expressions': {
+		'Or Statements' () {
+			eq_(run('null || ""'), '');		
+		}
 	}
 });
 function run (expr, model) {
