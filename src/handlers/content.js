@@ -49,8 +49,8 @@
 	var manager_get;
 	(function(){
 		manager_get = function (ctx, el) {
-			if (ctx == null) {
-				return manager || new Manager(document.body);
+			if (ctx == null || is_DOM) {
+				return manager || (manager = new Manager(document.body));
 			}
 			var KEY = '__contentManager';
 			return ctx[KEY] || (ctx[KEY] = new Manager(el));
