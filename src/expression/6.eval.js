@@ -32,6 +32,10 @@ function _evaluateAst(ast, model, ctx, ctr) {
 		outer: for (i = 0, length = ast.body.length; i < length; i++) {
 			x = ast.body[i];
 
+			if (prev != null && prev.join === op_LogicalOr && result) {				
+				return result;
+			}
+
 			value = _evaluateAst(x, model, ctx, ctr);
 
 			if (prev == null || prev.join == null) {
@@ -51,17 +55,14 @@ function _evaluateAst(ast, model, ctx, ctr) {
 					result = value;
 				}
 			}
-
 			if (prev.join === op_LogicalOr) {
-				if (result){
-					break outer;
+				if (value) {
+					return value;
 				}
 				result = value;
-				if (result) {
-					break outer;
-				}
+				prev = x;
+				continue;
 			}
-
 			switch (prev.join) {
 			case op_Minus:
 				result -= value;

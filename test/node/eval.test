@@ -69,9 +69,23 @@ UTest({
 			eq_(x, null);
 		}
 	},
-	'expressions': {
-		'Or Statements' () {
+	'Or Statements': {
+		'Should return last empty string, though it is falsy' () {
 			eq_(run('null || ""'), '');		
+		},
+		'Second expression should not be called' () {
+			var model = {
+				baz: '',
+				qux: 'Baz',
+				unexpect: assert.avoid()
+			};
+			eq_(run('qux || unexpect()', model), 'Baz')
+		},
+		'Should use proper precedence' () {
+			eq_(run('1 + "Hello" || 10'), '1Hello');
+			eq_(run('(1 + "Hello") || 10'), '1Hello');
+			eq_(run('1 + ("Hello" || 10)'), '1Hello');
+			eq_(run('1 + "Hello" && 10'), 10);
 		}
 	}
 });
