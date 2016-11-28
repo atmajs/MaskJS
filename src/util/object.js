@@ -10,15 +10,15 @@ var obj_getPropertyEx,
             key = props[0]
             ;
 
-        if ('$c' === key) {
-            reporter_deprecated('accessor.compo', 'Use `$` instead of `$c`');
+        if ('$c' === key || '$' === key) {
+            reporter_deprecated('accessor.compo', 'Use `this` instead of `$c` or `$`');
             key = '$';
         }
         if ('$u' === key) {
             reporter_deprecated('accessor.util', 'Use `_` instead of `$u`');
             key = '_';
         }
-        if ('$' === key) {
+        if ('this' === key) {
             return getProperty_(ctr, props, 1, imax);
         }
         if ('$a' === key) {
@@ -33,12 +33,13 @@ var obj_getPropertyEx,
         if ('$scope' === key) {
             return getFromScope_(ctr, props, 1, imax);
         }
-
+        if ('global' === key) {
+            return getProperty_(global, props, 0, imax);
+        }
         var x = getProperty_(model, props, 0, imax);
         if (x != null) {
             return x;
         }
-
         return getFromScope_(ctr, props, 0, imax);
     };
 
@@ -55,9 +56,7 @@ var obj_getPropertyEx,
         }
         return array;
     };
-
     // = private
-
     function getProperty_(obj, props, startIndex, imax) {
         var i = startIndex,
             val = obj;
@@ -67,8 +66,8 @@ var obj_getPropertyEx,
         }
         return val;
     }
-
-    function getFromScope_(ctr, props, startIndex, imax) {
+    function getFromScope_(ctr_, props, startIndex, imax) {
+        var ctx = ctr_;
         while (ctr != null){
             var scope = ctr.scope;
             if (scope != null) {

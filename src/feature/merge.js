@@ -21,6 +21,9 @@ var mask_merge;
 		if (a == null || (is_ArrayLike(a) && a.length === 0)) {
 			return b;
 		}
+		// - if (b == null || (is_ArrayLike(b) && b.length === 0)) {
+		// 	return a;
+		// }
 
 		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b, opts));
 		var out = _merge(a, placeholders, owner);

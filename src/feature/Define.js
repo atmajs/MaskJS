@@ -29,12 +29,12 @@ var Define;
 			meta: {
 				template: 'merge'
 			},
-			renderStart: function(model, ctx){
-				var args = _Array_slice.call(arguments);
+			renderStart: function(model_, ctx, el){
+				var model = model_;
 				if (fnModelResolver != null) {
-					args[0] = this.model = fnModelResolver(this.expression, model, ctx, this);
+					model = this.model = fnModelResolver(this.expression, model, ctx, this);
 				}
-				Compo.prototype.renderStart.apply(this, args);
+				Compo.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template) {
 					this.nodes = mask_merge(this.nodes, [], this);
 				}
