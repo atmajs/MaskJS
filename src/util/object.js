@@ -67,7 +67,7 @@ var obj_getPropertyEx,
         return val;
     }
     function getFromScope_(ctr_, props, startIndex, imax) {
-        var ctx = ctr_;
+        var ctr = ctr_;
         while (ctr != null){
             var scope = ctr.scope;
             if (scope != null) {

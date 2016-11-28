@@ -151,11 +151,12 @@ function _parse(expr, earlyExit, node) {
 
 
 			case punc_Dot:
-				index++;
-				c = parser_skipWhitespace();
+				c = template.charCodeAt(index + 1);				
 				if (c >= 48 && c <= 57) {
 					directive = go_number;
 				} else {
+					index++;
+					c = c > 32 ? c : parser_skipWhitespace();
 					directive = current.type === type_Body
 						? go_ref
 						: go_acs
