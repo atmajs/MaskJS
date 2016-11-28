@@ -25,6 +25,7 @@
     "atma": "^0.10.59",
     "atma-io-middleware-uglify": "^1.0.19",
     "atma-loader-babel": "^1.1.26",
+    "babel-preset-es2015": "^6.18.0",
     "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
   },
   "scripts": {
@@ -45,7 +46,12 @@
         "extensions": [
           "es6",
           "test"
-        ]
+        ],
+        "babel": {
+          "presets": [
+            "es2015"
+          ]
+        }
       },
       "atma-io-middleware-uglify": {}
     }
