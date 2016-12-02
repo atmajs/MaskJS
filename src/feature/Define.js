@@ -35,8 +35,11 @@ var Define;
 					model = this.model = fnModelResolver(this.expression, model, ctx, this);
 				}
 				Compo.prototype.renderStart.call(this, model, ctx, el);
-				if (this.nodes === this.template) {
-					this.nodes = mask_merge(this.nodes, [], this);
+				if (this.nodes === this.template && this.meta.template !== 'copy') {					
+					this.nodes = mask_merge(this.nodes, [], this, null, mergeStats);
+					if (mergeStats.placeholders.$isEmpty) {
+						this.meta.template = 'copy';
+					}
 				}
 			},
 			getHandler: null
@@ -75,7 +78,7 @@ var Define;
 				if (fns == null) {
 					fns = Proto[type] = {};
 				}
-				fns[x.name] = x.fn;
+				fns[x.name] = x.private ? slot_privateWrap(x.fn) : x.fn;
 				continue;
 			}
 			if ('pipe' === name) {
@@ -245,4 +248,12 @@ var Define;
 		}
 		return null;
 	}
+
+	function slot_privateWrap(fn) {
+		return function () {
+			fn.apply(this, arguments)
+			return false;
+		};
+	}
+	var mergeStats = { placeholders: null };
 }());

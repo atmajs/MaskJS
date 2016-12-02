@@ -531,6 +531,30 @@ UTest({
 			}
 		}
 	},
+	'stats': {
+		'should inline placeholders store': {
+			'store should be empty' () {
+				var a = `div > 'Hello' if (foo) { span .hidden }`
+				var stats = {};
+				var result = mask.merge(a, [], null, null, stats);				
+				eq_(stats.placeholders.$isEmpty, true);
+			},
+			'store should not be empty': {
+				'by tag' () {
+					var a = `div > 'Hello' if (foo) { @body; }`
+					var stats = {};
+					var result = mask.merge(a, [], null, null, stats);				
+					eq_(stats.placeholders.$isEmpty, false);
+				},
+				'by attribute' () {
+					var a = `div > 'Hello' if (foo) { span name='@[attr.key]'; }`
+					var stats = {};
+					var result = mask.merge(a, [], { attr: {key: 'baz'} }, null, stats);				
+					eq_(stats.placeholders.$isEmpty, false);
+				}
+			}
+		}
+	},
 	'components': {
 		'should merge components in a seperate merge flow' () {
 			// Mergin @letter in `A` component only from "ALetters > A > @letter"

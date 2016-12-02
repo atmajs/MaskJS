@@ -7,11 +7,12 @@ var mask_merge;
 	 * @param {(MaskNode|Component)} [owner]
 	 * @param {object} [opts]
 	 * @param {bool} [opts.extending=false] - Clean the merged tree from all unused placeholders
+	 * @param {obj} [stats] - Output holder, if merge info is requred
 	 * @returns {MaskNode} New joined Mask DOM tree
 	 * @memberOf mask
 	 * @method merge
 	 */
-	mask_merge = function(a, b, owner, opts){
+	mask_merge = function(a, b, owner, opts, stats){
 		if (typeof a === 'string') {
 			a = parser_parse(a);
 		}
@@ -23,6 +24,10 @@ var mask_merge;
 		}		
 		var placeholders = _resolvePlaceholders(b, b, new Placeholders(null, b, opts));
 		var out = _merge(a, placeholders, owner);
+		if (stats != null) {
+			stats.placeholders = placeholders;
+		}
+
 		var extra = placeholders.$extra;
 		if (extra != null && extra.length !== 0) {
 			if (is_Array(out)) {
@@ -129,7 +134,7 @@ var mask_merge;
 			// @
 			return _cloneNode(node, placeholders, tmplNode, clonedParent);
 		}
-
+		placeholders.$isEmpty = false;
 		var id = node.attr.id;
 		if (tagName === tag_PLACEHOLDER && id == null) {
 			if (tmplNode != null) {
@@ -345,6 +350,10 @@ var mask_merge;
 		if (typeof str !== 'string' || (index = str.indexOf('@')) === -1)
 			return mix;
 
+		if (placeholders != null) {
+			placeholders.$isEmpty = false;
+		}
+
 		var result = str.substring(0, index),
 			length = str.length,
 			isBlockEntry = str.charCodeAt(index + 1) === 91, // [
@@ -550,14 +559,14 @@ var mask_merge;
 				break;
 
 			var p = {
-					type: parent.type,
-					tagName: parent.tagName,
-					attr: parent.attr,
-					controller: parent.controller,
-					expression: parent.expression,
-					nodes: null,
-					parent: null
-				};
+				type: parent.type,
+				tagName: parent.tagName,
+				attr: parent.attr,
+				controller: parent.controller,
+				expression: parent.expression,
+				nodes: null,
+				parent: null
+			};
 
 			if (parents == null) {
 				current = parents = p;
@@ -622,6 +631,7 @@ var mask_merge;
 		$root: null,
 		$extra: null,
 		$count: 0,
+		$isEmpty: true,
 		$getNode: function(id, filter){
 			var ctx = this, node;
 			while(ctx != null){
