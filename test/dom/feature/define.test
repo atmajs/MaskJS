@@ -70,7 +70,7 @@ UTest({
 		},
 		'should parse attributes for `as`' () {
 			var tmpl = mask.parse(`
-				define _1 as (section.foo name='~[: baz()]') extends a , b , c.y.z {
+				define _1 as (section.foo name='~[baz()]') extends a , b , c.y.z {
 					h4;
 				}
 				:qux;
@@ -78,7 +78,7 @@ UTest({
 			var node = tmpl.nodes[0];
 			eq_(node.tagName, 'define');
 			eq_(node.name, '_1');
-			eq_(node.as, "section.foo name='~[: baz()]'");
+			eq_(node.as, "section.foo name='~[baz()]'");
 			deepEq_(node.extends,  [
 				{ compo: 'a' },
 				{ compo: 'b' },

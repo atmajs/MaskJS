@@ -78,7 +78,7 @@ var Define;
 				if (fns == null) {
 					fns = Proto[type] = {};
 				}
-				fns[x.name] = x.private ? slot_privateWrap(x.fn) : x.fn;
+				fns[x.name] = x.flagPrivate ? slot_privateWrap(x.fn) : x.fn;
 				continue;
 			}
 			if ('pipe' === name) {

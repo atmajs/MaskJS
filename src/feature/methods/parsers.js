@@ -13,7 +13,7 @@
 				body = str.substring(start, end),
 				node = head == null
 					? null
-					: new MethodNode(tagName, head.name, head.args, head.types, body, parent)
+					: new MethodNode(tagName, head, body, parent)
 				;
 			return [ node, end + 1, 0 ];
 		};
@@ -22,17 +22,16 @@
 	(function(){
 		var lex_ = parser_ObjectLexer('?($$flags{async:async;binding:private|public})$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
 		parseHead = function (name, str, i, imax) {
-			var obj = {};
-			var end = lex_(str, i, imax, obj, true);
-			if (end === i)
-				return null;
-					
-			return new MethodHead(obj.methodName, obj.args);
+			var head = new MethodHead();
+			var end = lex_(str, i, imax, head, true);
+			return end === i ? null : head;
 		}
 	}());
-	function MethodHead(name, args) {
-		this.name = name;
-		this.args = args;
+	function MethodHead() {
+		this.methodName = null;
+		this.args = null;
+		this.async = null;
+		this.binding = null;
 	}
 	
 	var MethodNode = class_create(Dom.Component.prototype, {
@@ -46,12 +45,16 @@
 		'flagAsync': false,
 		'flagPrivate': false,
 		'flagPublic': false,
+		'flagStatic': false,
 
-		constructor: function(tagName, name, args, types, body, parent){
+		constructor: function(tagName, head, body, parent){
 			this.tagName = tagName;
-			this.name = name;
-			this.args = args;
-			this.types = types;
+			this.name = head.methodName;
+			this.args = head.args;
+			this.types = head.types;
+			this.flagPrivate = head.binding === 'private';
+			this.flagAsync = head.async === 'async';
+
 			this.body = body;
 			this.parent = parent;
 		},
