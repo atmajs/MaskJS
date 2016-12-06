@@ -42,5 +42,17 @@ UTest({
 			var str = Mask.stringify(ast, 4);
 			has_(str, 'foo (someArg: ISome, boo: Boo) {')
 		})
+	},
+	'should parse method bindings' () {
+		[
+			`function private foo () {}`			
+		].forEach(template => {
+			var ast =	Mask.parse(template);
+			var def = Mask.jmask(ast).filter('function').get(0);
+			eq_(def.name, 'foo');
+		
+			var str = Mask.stringify(ast);
+			has_(str, 'function private foo');					
+		})
 	}
 })
