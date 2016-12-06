@@ -250,8 +250,12 @@ var Define;
 	}
 
 	function slot_privateWrap(fn) {
-		return function () {
-			fn.apply(this, arguments)
+		return function (mix) {
+			if (mix != null) {
+				mix.preventDefault && mix.preventDefault();
+				mix.stopPropagation && mix.stopPropagation();
+			}
+			fn.apply(this, arguments);
 			return false;
 		};
 	}
