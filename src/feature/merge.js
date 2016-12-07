@@ -276,12 +276,13 @@ var mask_merge;
 					var proto = handler.prototype;
 					var tmpl  = proto.template || proto.nodes;
 
-					placeholders = _resolvePlaceholders(
+					placeholders.$isEmpty = false;
+					var next = _resolvePlaceholders(
 						node.nodes,
 						node.nodes,
 						new Placeholders(placeholders, node.nodes)
 					);
-					return _merge(tmpl, placeholders, tmplNode, clonedParent);
+					return _merge(tmpl, next, tmplNode, clonedParent);
 				}
 				break;
 			default:
