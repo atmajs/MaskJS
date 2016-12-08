@@ -84,7 +84,7 @@ UTest({
 			}
 		})
 	},
-	'!should parse signal definition' () {
+	'should parse signal definition' () {
 		Test({
 			pattern: '$$definitions[?($$source<token>:)$$signal<token>](;)',
 			template: 'esc:foo',
