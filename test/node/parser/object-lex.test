@@ -106,7 +106,8 @@ UTest({
 
 		[
 			'async private foo()',
-			'private async foo()'
+			'private async foo()',
+			'private async foo ( 	 )'
 		]
 		.forEach(str => {
 			var obj = parse(syntax, str);
@@ -117,6 +118,20 @@ UTest({
 				binding: 'private'
 			});
 		});
+	},
+	'//should parse signal definition' () {
+		var syntax = '$$definitions[?($$source<token>:)$$signal<token>](;)';
+		[
+			'esc:foo',
+			// 'esc:foo',
+			// 'esc	: foo'
+		]
+		.forEach(str => {
+			var obj = parse(syntax, str);
+			deepEq_(obj, {
+				definitions: [ {source: 'esc', signal: 'foo'} ]
+			});
+		});	
 	}
 })
 

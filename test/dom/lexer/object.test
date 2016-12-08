@@ -83,6 +83,18 @@ UTest({
 				arr: 'users'
 			}
 		})
+	},
+	'!should parse signal definition' () {
+		Test({
+			pattern: '$$definitions[?($$source<token>:)$$signal<token>](;)',
+			template: 'esc:foo',
+			expect: {
+				definitions: [{
+					source: 'esc',
+					signal: 'foo'
+				}]
+			}
+		});	
 	}
 })
 

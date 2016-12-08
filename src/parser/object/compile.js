@@ -89,7 +89,7 @@ var _compile;
 
 			while(i < imax) {
 				c = str.charCodeAt(++i);
-				if (c > 32 && c !== 34 && c !== 39 && c !== 36 && c !== 44 && c !== 63) {
+				if (c > 32 && c !== 34 && c !== 39 && c !== 36 && c !== 44 && c !== 63 && i !== imax) {
 					continue;
 				}
 				tokens.push(new token_Const(str.substring(start, i)));
