@@ -84,7 +84,7 @@ UTest({
 			}
 		})
 	},
-	'should parse signal definition' () {
+	'should parse an array with conditional group and the const char inside' () {
 		Test({
 			pattern: '$$definitions[?($$source<token>:)$$signal<token>](;)',
 			template: 'esc:foo',
