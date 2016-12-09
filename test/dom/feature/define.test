@@ -130,6 +130,24 @@ UTest({
 				find (h5) > text rewritten;
 			`);
 		}
+	},
+	'should created binded function' () {
+		var template = `
+			let Foo {
+				function self test () {
+					this.testy = 'Lorem';
+				}
+				div;
+			}
+			Foo;
+		`;
+		var root = Compo.initialize(template);
+		var foo = root.find('Foo');
+		is_(foo.test, 'Function');
+		var fn = foo.test;
+
+		fn.call(null);
+		eq_(foo.testy, 'Lorem');
 	}
 });
 

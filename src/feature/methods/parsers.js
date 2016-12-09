@@ -20,7 +20,7 @@
 	}
 	var parseHead;
 	(function(){
-		var lex_ = parser_ObjectLexer('?($$flags{async:async;binding:private|public})$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
+		var lex_ = parser_ObjectLexer('?($$flags{async:async;binding:private|public;self:self;static:static})$$methodName<accessor>? (?$$args[$$prop<token>?(? :? $$type<accessor>)](,))? ');
 		parseHead = function (name, str, i, imax) {
 			var head = new MethodHead();
 			var end = lex_(str, i, imax, head, true);
@@ -46,14 +46,18 @@
 		'flagPrivate': false,
 		'flagPublic': false,
 		'flagStatic': false,
+		'flagSelf': false,
 
 		constructor: function(tagName, head, body, parent){
 			this.tagName = tagName;
 			this.name = head.methodName;
 			this.args = head.args;
 			this.types = head.types;
-			this.flagPrivate = head.binding === 'private';
+			this.flagSelf = head.self === 'self';
 			this.flagAsync = head.async === 'async';
+			this.flagStatic = head.static === 'static';
+			this.flagPublic = head.binding === 'public';
+			this.flagPrivate = head.binding === 'private';
 
 			this.body = body;
 			this.parent = parent;
@@ -70,9 +74,11 @@
 		},
 		stringify: function(stream){
 			var str = this.tagName + ' ';
+			if (this.flagSelf) str += 'self ';
 			if (this.flagAsync) str += 'async ';
-			if (this.flagPrivate) str += 'private ';
 			if (this.flagPublic) str += 'public ';
+			if (this.flagStatic) str += 'static ';
+			if (this.flagPrivate) str += 'private ';
 
 			stream.write(str + this.name);
 			stream.format(' ');

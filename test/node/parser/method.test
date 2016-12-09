@@ -53,6 +53,16 @@ UTest({
 		
 			var str = Mask.stringify(ast);
 			has_(str, 'function private foo');					
+		});
+
+		[
+			[`function public async self myFn () {}`, [ ' async ', ' public ', ' self ', ' myFn']]
+		].forEach(x => {
+			var [template, expects] = x;
+			var ast =	Mask.parse(template);
+			var str = Mask.stringify(ast);
+
+			expects.forEach(expect => has_(str, expect));
 		})
 	}
 })

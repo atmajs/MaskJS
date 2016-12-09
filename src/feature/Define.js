@@ -20,6 +20,7 @@ var Define;
 
 	function compo_prototype(node, compoName, tagName, attr, fnModelResolver, nodes, owner, model, Base) {
 		var arr = [];
+		var selfFns = null;
 		var Proto = obj_extend({
 			tagName: tagName,
 			compoName: compoName,
@@ -33,6 +34,13 @@ var Define;
 				var model = model_;
 				if (fnModelResolver != null) {
 					model = this.model = fnModelResolver(this.expression, model, ctx, this);
+				}
+				if (selfFns != null) {
+					var i = selfFns.length;
+					while(--i !== -1) {
+						var key = selfFns[i];
+						this[key] = this[key].bind(this);
+					}
 				}
 				Compo.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template && this.meta.template !== 'copy') {					
@@ -65,6 +73,10 @@ var Define;
 			name = x.tagName;
 			if ('function' === name) {
 				Proto[x.name] = x.fn;
+				if (x.flagSelf) {
+					selfFns = selfFns || [];
+					selfFns.push(x.name);
+				}
 				continue;
 			}
 			if ('slot' === name || 'event' === name) {
