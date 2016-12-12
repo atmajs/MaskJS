@@ -119,21 +119,45 @@ UTest({
 			});
 		});
 	},
-	'//should parse signal definition' () {
-		var syntax = '$$definitions[?($$source<token>:)$$signal<token>](;)';
-		[
+	'should parse signal definition' () {
+		var syntax = '$$definitions[?($$source<token>?(($$sourceParam<token>))? :? )$$signal<token>](;)';
+
+		//deepEq_(parse(syntax, 'foo'), {definitions: [ { signal: 'foo'}] });
+		test([
 			'esc:foo',
-			// 'esc:foo',
-			// 'esc	: foo'
-		]
-		.forEach(str => {
-			var obj = parse(syntax, str);
-			deepEq_(obj, {
+			'esc : foo',
+		], syntax, {
 				definitions: [ {source: 'esc', signal: 'foo'} ]
-			});
-		});	
+		})
+
+		test([
+			'esc:foo;space:qux',
+			'esc : foo ; space: qux',
+		], syntax, {
+				definitions: [ 
+					{source: 'esc', signal: 'foo'} ,
+					{source: 'space', signal: 'qux'} 
+				]
+		});
+		
+		test([
+			'press(esc):foo',
+			'press( esc ):foo',
+			'press ( esc ) :foo',
+		], syntax, {
+				definitions: [ { source: 'press', sourceParam: 'esc', signal: 'foo'}  ]
+		})
+
 	}
 })
+
+function test(strings, syntax, expect) {
+	strings
+		.forEach(str => {
+			var obj = parse(syntax, str);
+			deepEq_(obj, expect);
+		});	
+}
 
 function parse(syntax, str) {	
 	var lex = Mask.parser.ObjectLexer(syntax);
