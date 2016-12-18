@@ -31,7 +31,7 @@ var listeners_on,
 		}
 		arr_remove(bin[event], fn);
 	};
-	listeners_emit = function(event, v1, v2, v3, v4){
+	listeners_emit = function(event, v1, v2, v3, v4, v5){
 		var fns = bin[event];
 		if (fns == null) {
 			return false;
@@ -39,7 +39,7 @@ var listeners_on,
 		var imax = fns.length,
 			i = -1;
 		while ( ++i < imax) {
-			fns[i](v1, v2, v3, v4);
+			fns[i](v1, v2, v3, v4, v5);
 		}
 		return i !== 0;
 	};

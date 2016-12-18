@@ -56,6 +56,7 @@ var build_compo;
 			, model
 			, ctx
 			, container
+			, node
 		);
 
 		if (is_Function(compo.renderStart))

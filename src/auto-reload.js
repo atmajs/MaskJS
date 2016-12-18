@@ -11,6 +11,25 @@
 		_signal_emitIn = (Compo || mask.Compo)
 			.signal.emitIn;
 
+	mask.Module.reload = function (path) {
+		var key = mask.Module.resolvePath({ path: path });
+		var cache = mask.Module.getCache();
+		var module = cache[key];
+		if (module == null) {
+			return false;
+		}
+		
+		var compos = Object.keys(module.exports.__handlers__);
+		module.state = 0;
+		module.defer();
+		module.loadModule().then(function(){
+			compos.forEach(function (name) {
+				reload(name);
+			})
+		});
+		return true;
+	};
+
 
 	function reload(compoName) {
 		var cache = _cache[compoName];
@@ -49,11 +68,8 @@
 
 			compo_remove(_instance);
 
-
-
-			compo_insert( //
-			compo_render(compoName, _parent, handler, x), $placeholder, _parent);
-
+			var frag = _mask_render(x.node, x.model, x.ctx, null, _parent);			
+			compo_insert(frag, $placeholder, _parent);
 		}
 	}
 
@@ -67,7 +83,7 @@
 		node.attr = data.attr;
 		node.nodes = data.nodes;
 
-		fragment = _mask_render(node, data.model, data.cntx, null, parent);
+		fragment = _mask_render(node, data.model, data.ctx, null, parent);
 
 		return fragment;
 	}
@@ -99,17 +115,16 @@
 
 	/* < Reload Helpers */
 
-	mask.on('compoCreated', function(custom, model, cntx, container) {
-
+	mask.on('compoCreated', function(custom, model, ctx, container, node) {
 		(_cache[custom.compoName] || (_cache[custom.compoName] = []))
 			.push({
-			nodes: custom.nodes,
-			attr: custom.attr,
-			model: model,
-			instance: custom,
-			cntx: cntx
-		});
-
+				node: node,
+				nodes: custom.nodes,
+				attr: custom.attr,
+				model: model,
+				instance: custom,
+				ctx: ctx
+			});
 	});
 
 	mask.delegateReload = function() {
