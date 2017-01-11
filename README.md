@@ -448,4 +448,4 @@ import FooCompo from './Foo';
 		```
 
 ----
-:copyright: MIT - 2016 Atma.js Project
+:copyright: MIT - 2017 Atma.js Project
