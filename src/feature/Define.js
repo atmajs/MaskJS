@@ -30,7 +30,7 @@ var Define;
 			meta: {
 				template: 'merge'
 			},
-			constructor: function () {
+			constructor: function CompoBase() {
 				if (selfFns != null) {
 					var i = selfFns.length;
 					while(--i !== -1) {
