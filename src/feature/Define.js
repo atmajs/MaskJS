@@ -30,11 +30,7 @@ var Define;
 			meta: {
 				template: 'merge'
 			},
-			renderStart: function(model_, ctx, el){
-				var model = model_;
-				if (fnModelResolver != null) {
-					model = this.model = fnModelResolver(this.expression, model, ctx, this);
-				}
+			constructor: function () {
 				if (selfFns != null) {
 					var i = selfFns.length;
 					while(--i !== -1) {
@@ -42,6 +38,12 @@ var Define;
 						this[key] = this[key].bind(this);
 					}
 				}
+			},			
+			renderStart: function(model_, ctx, el){
+				var model = model_;
+				if (fnModelResolver != null) {
+					model = this.model = fnModelResolver(this.expression, model, ctx, this);
+				}				
 				Compo.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template && this.meta.template !== 'copy') {					
 					this.nodes = mask_merge(this.nodes, [], this, null, mergeStats);
