@@ -23,15 +23,15 @@
 		module.state = 0;
 		module.defer();
 		module.loadModule().then(function(){
-			compos.forEach(function (name) {
-				reload(name);
+			compos.forEach(function (name, index) {
+				reload(name, compos.slice(0, index));
 			})
 		});
 		return true;
 	};
 
 
-	function reload(compoName) {
+	function reload(compoName, reloadedCompoNames) {
 		var cache = _cache[compoName];
 
 		_cache[compoName] = [];
@@ -42,53 +42,50 @@
 			return;
 		}
 
-		var i = 0,
-			length = cache.length,
-			handler = _mask_getHandler(compoName),
-			_instance,
-			_parent,
-			$placeholder,
+		var imax = cache.length,
+			i = -1;
+		while (++i < imax) {
 
-			x;
-
-
-		for (; i < length; i++) {
-
-			x = cache[i];
-
-			_instance = x.instance;
-			_parent = _instance.parent;
+			var x = cache[i],
+				_instance = x.instance;
+				_parent = _instance.parent;
 
 			if (_instance == null || !_instance.$) {
 				console.error('Mask.Reload - no instance', x);
 				continue;
 			}
 
-			$placeholder = dom_createPlaceholder(_instance);
+			if (wasReloadedViaParent(_instance, reloadedCompoNames)) {
+				_cache[compoName].push(x);
+				continue;
+			}
 
+			var $placeholder = dom_createPlaceholder(_instance);
 			compo_remove(_instance);
 
 			var frag = _mask_render(x.node, x.model, x.ctx, null, _parent);			
 			compo_insert(frag, $placeholder, _parent);
 		}
+
+		
+	}
+
+	function wasReloadedViaParent (compo, names) {
+		var parent = compo.parent;
+		while(parent != null) {
+			if (names.indexOf(parent.compoName) !== -1) {
+				return true;
+			}
+			parent = parent.parent;
+		}
+		return false;
 	}
 
 
 	/** Reload Helpers > */
 
-	function compo_render(compoName, parent, handler, data) {
-		var node = new _mask_Component(compoName, parent, handler),
-			fragment;
-
-		node.attr = data.attr;
-		node.nodes = data.nodes;
-
-		fragment = _mask_render(node, data.model, data.ctx, null, parent);
-
-		return fragment;
-	}
-
 	function compo_remove(instance) {
+		cache_remove(instance);
 		if (instance.remove) {
 			instance.remove();
 			return;
@@ -113,6 +110,13 @@
 		}
 	}
 
+	function cache_remove (compo) {
+		var arr = _cache[compo.compoName];
+		var i = arr.indexOf(compo);
+		arr.splice(i, 1);
+	}
+
+
 	/* < Reload Helpers */
 
 	mask.on('compoCreated', function(custom, model, ctx, container, node) {
@@ -125,6 +129,14 @@
 				instance: custom,
 				ctx: ctx
 			});
+
+		var dispose = custom.dispose;
+		custom.dispose = function () {
+			cache_remove(custom);
+			if (dispose) {
+				dispose.apply(custom, arguments);
+			}			
+		};
 	});
 
 	mask.delegateReload = function() {

@@ -309,6 +309,7 @@ var mask_merge;
 			attr: interpolate_obj_(node.attr, placeholders, tmplNode),
 			expression: interpolate_str_(node.expression, placeholders, tmplNode),
 			controller: node.controller,
+			// use original parent, to preserve the module scope for the node of each template
 			parent: node.parent || clonedParent,
 			nodes: node.nodes,
 			sourceIndex: node.sourceIndex,
