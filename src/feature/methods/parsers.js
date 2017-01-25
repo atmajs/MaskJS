@@ -65,6 +65,9 @@
 		getFnSource: function(){
 			return nodeMethod_getSource(this, null, this.parent);
 		},
+		compile: function(model, owner) {
+			return  nodeMethod_compile(this, model, owner);
+		},
 		getFnName: function(){
 			var tag = this.tagName, 
 				name = this.name;
