@@ -83,6 +83,9 @@ var Mask;
 		// feature/Module.js
 		Module: Module,
 
+		// feature/scoped-css/exports.js
+		ScopedCss: ScopedCss,
+
 		File: {
 			get: file_get,
 			getScript: file_getScript,

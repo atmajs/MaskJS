@@ -1,0 +1,17 @@
+UTest({
+	'should transform normal css' () {
+		var css = `
+
+			:host {
+				color: red;
+			}
+
+			.my-el {
+				background: cayn
+			}
+		`;
+
+		var scopedCss = Mask.ScopedCss.transformCss(css);
+		console.log(scopedCss);
+	}
+})
