@@ -28,17 +28,15 @@ var u_resolveLocation,
 				path = path_normalize(ctx.dirname + '/');
 			}
 		}
-		var base = u_resolveBase();
-		if (path != null) {
-			if (path_isRelative(path) === false) {
-				if (path.charCodeAt(0) === 47 /*/*/) {
-					return path_normalize(path_combine(base, path));
-				}
-				return path;
-			}
-			return path_combine(base, path);
+		if (path == null) {
+			return path_resolveCurrent();
 		}
-		return base;
+		if (path_isRelative(path) === false) {
+			return path;
+		}
+		return path_combine(u_resolveBase(), path);
+	
+		
 	};
 
 	u_resolveBase = function(){
