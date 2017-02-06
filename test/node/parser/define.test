@@ -93,6 +93,13 @@ UTest({
 
 		var back = Mask.stringify(ast, 4);
 		has_(back, "define Foo (a, b) as (div) extends Xy, Bar {");
+	},
+	'should parse minified' () {
+		Mask.on('error', assert.avoid());
+		var ast = Mask.parse(`define Foo{span>'Hello'}`);
+		var def = jmask(ast).filter('define').get(0);
+		deepEq_(def.name, 'Foo');
+		Mask.off('error');
 	}
 })
 

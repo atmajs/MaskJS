@@ -11,7 +11,7 @@
 	}
 	var lex_ = ObjectLexer(
 		'$name'
-		, ' ?(($$arguments[$$prop<token>?(? :? $$type<accessor>)](,)))?(as $$as(*()))?(extends $$extends[$$compo<accessor>](,))'
+		, '? ?(($$arguments[$$prop<token>?(? :? $$type<accessor>)](,)))?(as $$as(*()))?(extends $$extends[$$compo<accessor>](,))'
 		, '{'
 	);
 	var DefineNode = class_create(Dom.Node, {
