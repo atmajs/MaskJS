@@ -393,6 +393,10 @@ var mask_merge;
 				x = fn(expr, placeholders, node);
 
 			if (x != null) {
+				if (is_Function(x)) {
+					isFn = true;
+					x = x();
+				}
 				result += x;
 			}
 			else if (placeholders.opts.extending === true) {
