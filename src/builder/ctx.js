@@ -21,4 +21,14 @@
 		_redirect: null,
 		_rewrite: null
 	});
+
+	builder_Ctx.clone = function(ctx){
+		var data = {};
+		for(var key in ctx) {
+			if (builder_Ctx.prototype[key] === void 0) {
+				data[key] = ctx[key];
+			}
+		}
+		return new builder_Ctx(data);
+	};
 }());

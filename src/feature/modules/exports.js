@@ -56,6 +56,7 @@ var Module;
 	// import Module/ModuleText
 
 	// import components
+	// import await
 	// import tools/dependencies
 	// import tools/build
 

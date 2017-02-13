@@ -332,6 +332,42 @@ $ npm test
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 
 _`@latest`_
+- `0.60.0`
+- **Await** statements, components and also modules
+
+	```mask
+	define Foo {
+		function async onRenderStart () {
+			this.model = await LoadUserExample();
+		}
+		h4 > '~userName'
+	}
+
+	// Component
+	await Foo {
+		@progress > i > 'Loading user';
+	}
+
+	// Promises
+	await (this.getCurrentUser()) {
+		@progress > i > 'Loading user';
+		@done (user) {
+			h4 > '~user.userName'
+		}
+		@fail (error) {
+			.danger > '~error.message'
+		}
+	}
+
+	// Modules 
+	import async Foo from './Foo';
+
+	heading > 'Some heading'
+	await Foo {
+		@progress > 'Loading and initilizing the module'
+	}
+	```
+
 - `0.58.0`
 - **Decorators** for methods and nodes
 	

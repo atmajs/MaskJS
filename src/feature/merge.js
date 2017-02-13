@@ -263,6 +263,7 @@ var mask_merge;
 			case 'style':
 			case 'slot':
 			case 'event':
+			case 'await':
 				return node;
 			case 'include':
 				var tagName = node.attr.id;
