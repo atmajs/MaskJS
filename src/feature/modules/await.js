@@ -76,7 +76,7 @@
 					return;
 				}
 				if (this.keys.length > 1 && expr == null) {
-					this.strategy = new MultiComponentStrategy(this);
+					this.strategy = new RefOrImportStrategy(this);
 					return;
 				}
 			}
@@ -196,7 +196,10 @@
 	var RefOrImportStrategy = class_create(IStrategy, {
 		process: function(){
 			var self = this;
-			var refs = _getNames(this.awaiter.expression);
+			var refs = this.awaiter.expression 
+				? _getNames(this.awaiter.expression) 
+				: this.awaiter.keys;
+				
 			var arr = refs.map(function(ref){
 				var module = self.awaiter.getModuleFor(ref);
 				if (module != null) {
