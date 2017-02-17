@@ -99,7 +99,12 @@
 			this.progress_(ctx, container);			
 			this.strategy.process(model, ctx, container);
 
-			var resume = Compo.pause(this, ctx);
+			var resume = builder_resumeDelegate(
+				this
+				, model
+				, ctx
+				, container
+			);
 			var self = this;
 			this
 				.strategy
@@ -152,7 +157,7 @@
 			if (this.completeNodesExpr != null) {
 				this.initScope(this.completeNodesExpr, this.strategy.getExports());	
 			}
-			this.nodes = this.strategy.getNodes();
+			this.nodes = this.strategy.getNodes();			
 		},
 		initScope: function(expr, exports){
 			this.scope = {};

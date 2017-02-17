@@ -1,5 +1,4 @@
-var builder_resumeDelegate,
-	builder_pushCompo,
+var builder_pushCompo,
 	builder_setCompoAttributes;
 
 (function(){
