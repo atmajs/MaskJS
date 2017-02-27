@@ -18,7 +18,7 @@ function _evaluate (mix, model, ctx, ctr, node) {
 		}
 		ast = cache.hasOwnProperty(mix) === true
 			? (cache[mix])
-			: (cache[mix] = _parse(mix, false, node))
+			: (cache[mix] = _parse(mix, false, node_))
 			;
 	} else {
 		ast = mix;
