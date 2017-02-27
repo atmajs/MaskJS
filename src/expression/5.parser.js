@@ -268,8 +268,9 @@ function _parse(expr, earlyExit, node) {
 
 			case go_ref:
 			case go_acs:
-				var ref = parser_getRef();
-
+				var start = index,
+					ref = parser_getRef();
+					
 				if (directive === go_ref) {
 
 					if (ref === 'null')
@@ -312,7 +313,7 @@ function _parse(expr, earlyExit, node) {
 					? Ast_SymbolRef
 					: Ast_Accessor
 				current = ast_append(current, new Ctor(current, ref));
-				current.sourceIndex = index;
+				current.sourceIndex = start;
 				break;
 			case go_objectKey:
 				if (parser_skipWhitespace() === 125)

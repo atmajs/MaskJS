@@ -165,9 +165,9 @@ var util_resolveRef,
 				if (current == null || (current.next != null && current.optional !== true)){
 					// notify that value is not in model, ctx, controller;
 					warn_(
-						'<mask:expression> Is undefined:'
+						"Cannot read property '" + current.next.body + "' of undefined"
 						, key
-						, util_getNodeStack(astRef)
+						, util_getNodeStack(current.next)
 					);
 				}
 				return null;
