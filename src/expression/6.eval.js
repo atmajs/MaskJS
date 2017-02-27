@@ -8,6 +8,14 @@ function _evaluate (mix, model, ctx, ctr, node) {
 		return model;
 
 	if (typeof mix === 'string'){
+		var node_ = node;
+		if (node_ == null && ctr != null) {
+			var x = ctr;
+			while(node_ == null && x != null) {
+				node_ = x.node;
+				x = x.parent;
+			}
+		}
 		ast = cache.hasOwnProperty(mix) === true
 			? (cache[mix])
 			: (cache[mix] = _parse(mix, false, node))
