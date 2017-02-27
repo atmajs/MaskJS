@@ -51,10 +51,10 @@
 					this.model.status = 'testSlotHandled';
 				},
 				
-				descriptionChanged: function(value){
+				descriptionChanged: function(sender, value){
 					this.model.status = 'descriptionChanged ' + value;
 				},
-				usernameChanged: function(value){
+				usernameChanged: function(sender, value){
 					this.model.status = 'usernameChanged ' + value;
 				}
 			},
