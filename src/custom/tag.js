@@ -243,6 +243,7 @@
 		expression: null,
 		ID: null,
 		meta: null,
+		node: null,
 		model: null,
 		nodes: null,
 		parent: null,
@@ -271,6 +272,7 @@
 	function wrapStatic(proto) {
 		function Ctor(node, parent) {
 			this.ID = null;
+			this.node = null;
 			this.tagName = node.tagName;
 			this.attr = obj_create(node.attr);
 			this.expression = node.expression;

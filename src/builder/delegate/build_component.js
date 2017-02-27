@@ -38,6 +38,7 @@ var build_compo;
 		compo.ID = ++builder_componentID;
 		compo.parent = ctr;
 		compo.expression = node.expression;
+		compo.node = node;
 
 		if (compo.compoName == null)
 			compo.compoName = node.tagName;
