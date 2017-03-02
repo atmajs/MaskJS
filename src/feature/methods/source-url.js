@@ -16,9 +16,11 @@ var sourceUrl_get;
 			url += '_' + i;
 		}
 		_sourceUrls[url] = 1;
-		return '\n//# sourceURL=dynamic://MaskJS/' + url;
+		return '\n//# sourceURL=' + ORIGIN + '/controllers/' + url;
 		//endif
 	};
+	var ORIGIN = global.location && global.location.origin || 'dynamic://MaskJS'
+
 	//if DEBUG
 	function forDefine (node) {
 		var x = node, 
