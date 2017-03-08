@@ -219,10 +219,16 @@
 	 * but also any HTMLElement, then TextNode will be splitted and HTMLElements will be inserted within.
 	 * So in that case we return array where we hold strings and that HTMLElements.
 	 *
+	 * If we interpolate the string in a components attribute and we have only one expression,
+	 * then return raw value
+	 * 
 	 * If custom utils returns only strings, then String will be returned by this function
 	 * @returns {(array|string)}
 	 */
 	function _interpolate(arr, type, model, ctx, el, ctr, name) {
+		if (type === 'compo-attr' && arr.length === 2 && arr[0] === '') {
+			return arr[1].process(model, ctx, el, ctr, name, type);
+		}
 		var imax = arr.length,
 			i = -1,
 			array = null,
