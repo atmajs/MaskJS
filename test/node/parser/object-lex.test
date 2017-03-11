@@ -148,7 +148,7 @@ UTest({
 			definitions: [ { source: 'press', sourceParam: 'esc', signal: 'foo'}  ]
 		})
 	},
-	'!should parse import loaders' () {
+	'should parse import loaders' () {
 		var syntax = 'from |("$path"$$namespace<accessor>)?(is $$flags{link:dynamic|static})?(with $$loaders[$name](,))';
 		test([
 			'from foo is dynamic with bem',
