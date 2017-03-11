@@ -127,17 +127,17 @@ UTest({
 			'esc:foo',
 			'esc : foo',
 		], syntax, {
-				definitions: [ {source: 'esc', signal: 'foo'} ]
+			definitions: [ {source: 'esc', signal: 'foo'} ]
 		})
 
 		test([
 			'esc:foo;space:qux',
 			'esc : foo ; space: qux',
 		], syntax, {
-				definitions: [ 
-					{source: 'esc', signal: 'foo'} ,
-					{source: 'space', signal: 'qux'} 
-				]
+			definitions: [ 
+				{source: 'esc', signal: 'foo'} ,
+				{source: 'space', signal: 'qux'} 
+			]
 		});
 		
 		test([
@@ -145,9 +145,21 @@ UTest({
 			'press( esc ):foo',
 			'press ( esc ) :foo',
 		], syntax, {
-				definitions: [ { source: 'press', sourceParam: 'esc', signal: 'foo'}  ]
+			definitions: [ { source: 'press', sourceParam: 'esc', signal: 'foo'}  ]
 		})
-
+	},
+	'!should parse import loaders' () {
+		var syntax = 'from |("$path"$$namespace<accessor>)?(is $$flags{link:dynamic|static})?(with $$loaders[$name](,))';
+		test([
+			'from foo is dynamic with bem',
+			'from 	foo  is dynamic with bem',			
+		], syntax, {
+			namespace: 'foo',
+			link: 'dynamic',
+			loaders: [
+				{name: 'bem'}
+			]
+		})
 	}
 })
 

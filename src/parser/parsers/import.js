@@ -22,14 +22,15 @@
 		return imports;
 	};
 
-	var meta = '?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})'
-	var default_LINK = 'static',
+	var meta = '?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})',
+		with_= '?(with $$loaders[$name](,))',
+		default_LINK = 'static',
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
-		[ '?($$async(async|sync) )from |("$path"$$namespace<accessor>)' + meta
-		, '?($$async(async|sync) )* as $alias from |("$path"$$namespace<accessor>)' + meta
-		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)' + meta
+		[ '?($$async(async|sync) )from |("$path"$$namespace<accessor>)' + meta + with_
+		, '?($$async(async|sync) )* as $alias from |("$path"$$namespace<accessor>)' + meta + with_
+		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)' + meta + with_
 		]
 	);
 
