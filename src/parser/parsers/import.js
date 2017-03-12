@@ -52,6 +52,7 @@
 		contentType: null,
 		link: default_LINK,
 		mode: default_MODE,
+		loaders: null,
 
 		constructor: function(parent, data){
 			this.path = data.path;
@@ -60,6 +61,7 @@
 			this.exports = data.exports;
 			this.namespace = data.namespace;
 			this.contentType = data.contentType;
+			this.loaders = data.loaders;
 			this.link = data.link || this.link;
 			this.mode = data.mode || this.mode;
 			this.parent = parent;
@@ -81,6 +83,13 @@
 				if (type != null) from += ' ' + type;
 				if (link !== default_LINK) from += ' ' + link;
 				if (mode !== default_MODE) from += ' ' + mode;
+			}
+
+			if (this.loaders != null && this.loaders.length > 0) {
+				from += ' with ' + this.loaders
+					.map(function (x) { return x.name; })
+					.join(',')
+					;
 			}
 			if (this.async != null) {
 				importStr += ' ' + this.async;
