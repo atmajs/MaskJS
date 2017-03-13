@@ -35,8 +35,6 @@ var u_resolveLocation,
 			return path;
 		}
 		return path_combine(u_resolveBase(), path);
-	
-		
 	};
 
 	u_resolveBase = function(){
@@ -80,7 +78,7 @@ var u_resolveLocation,
             } else if (u_isNpmPath(path)) {
 				return path;
 			}
-		}
+		}		
 		return makeAbs === false
 			? path
 			: toAbsolute(path, ctx, ctr, module);

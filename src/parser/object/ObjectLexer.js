@@ -24,26 +24,33 @@ var ObjectLexer;
 		ObjectLexer_sequance = function(args) {
 			var jmax = args.length,
 				j = -1;
+
 			while( ++j < jmax ) {
 				args[j] = __createConsumer(args[j]);
 			}
-			return function(str, i, imax, out, optional){
-				var start;
-				j = -1;
+			return function(str, i_, imax, out, optional){
+				var j = -1, i = i_;
 				while( ++j < jmax ) {
-					start = i;
-					i = __consume(args[j], str, i, imax, out, optional);
-					if (i === start)
+					var start = i,
+						x = args[j];
+
+					i = __consume(x, str, i, imax, out, optional || x.optional);
+					if (i === start && x.optional !== true)
 						return start;
 				}
 				return i;
 			}
 		};
 		function __consume(x, str, i, imax, out, optional) {
-			if (typeof x === 'function') {
-				return x(str, i, imax, out, optional);
-			}
-			return __consumeOptionals(x, str, i, imax, out, optional);
+			switch (x.type) {
+				case 'single':
+					var start = i;
+					return x.consumer(str, i, imax, out, optional);
+				case 'any':
+					return __consumeOptionals(x.consumer, str, i, imax, out, optional);	
+				default:
+					throw Error('Unknown sequence consumer type: ' + x.type);
+			}			
 		}
 		function __consumeOptionals(arr, str, i, imax, out, optional) {
 			var start = i,
@@ -62,12 +69,20 @@ var ObjectLexer;
 		}
 		function __createConsumer(mix) {
 			if (typeof mix === 'string') {
-				return ObjectLexer_single(mix);
+				return {
+					type: 'single',
+					optional: mix[0] === '?',
+					consumer: ObjectLexer_single(mix)
+				};
 			}
 			// else Array<string>
 			var i = mix.length;
 			while(--i > -1) mix[i] = ObjectLexer_single(mix[i]);
-			return mix;
+			return {
+				type: 'any',
+				consumer: mix,
+				optional: false,
+			};
 		}
 	}());
 

@@ -1,4 +1,13 @@
 UTest({
+	'simple imports' () {
+		var import_ = parse(`
+				import "foo.js";
+		`);
+		eq_(import_.path, 'foo.js');
+		eq_(import_.exports, null);
+		var str = Mask.stringify(import_);
+		eq_(str, "import from 'foo.js';");
+	},
 	'exports': {
 		'should parse export' () {
 			var import_ = parse(`
@@ -27,12 +36,22 @@ UTest({
 			])
 		}
 	},
-	'as content type' () {
-		var import_ = parse('import from "baz" is script;');
-		has_(import_, {
-			path: 'baz',
-			contentType: 'script'
-		});
+	'as content type': {
+		'by is keyword' () {
+			var import_ = parse('import from "baz" is script;');
+			has_(import_, {
+				path: 'baz',
+				contentType: 'script'
+			});
+		},
+		'by as keyword' () {
+			var import_ = parse('import from "baz" is style as bem;');
+			has_(import_, {
+				path: 'baz',
+				//contentType: 'style',
+				loader: 'bem'
+			});	
+		}
 	},
 	'serializations' () {
 		[

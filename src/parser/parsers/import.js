@@ -23,15 +23,20 @@
 	};
 
 	var meta = '?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})',
-		with_= '?(with $$loaders[$name](,))',
+		as_ = '?(as $loader)',
 		default_LINK = 'static',
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
-		[ '?($$async(async|sync) )from |("$path"$$namespace<accessor>)' + meta + with_
-		, '?($$async(async|sync) )* as $alias from |("$path"$$namespace<accessor>)' + meta + with_
-		, '?($$async(async|sync) )$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)' + meta + with_
-		]
+		'?($$async(async|sync) )',
+		[ 
+			'"$path"',
+			'from |("$path"$$namespace<accessor>)',
+			'* as $alias from |("$path"$$namespace<accessor>)',
+			'$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)'
+		],
+		meta,
+		as_
 	);
 
 	var ImportsNode = class_create(Dom.Node, {
@@ -44,26 +49,26 @@
 		type: Dom.COMPONENT,
 		tagName: IMPORT,
 
-		path: null,
+		contentType: null,
 		namespace: null,
+		exports: null,
+		loader: null,
 		alias: null,
 		async: null,
-		exports: null,
-		contentType: null,
-		link: default_LINK,
-		mode: default_MODE,
-		loaders: null,
+		path: null,
+		link: null,
+		mode: null,
 
-		constructor: function(parent, data){
-			this.path = data.path;
-			this.alias = data.alias;
-			this.async = data.async;
-			this.exports = data.exports;
-			this.namespace = data.namespace;
-			this.contentType = data.contentType;
-			this.loaders = data.loaders;
-			this.link = data.link || this.link;
-			this.mode = data.mode || this.mode;
+		constructor: function(parent, obj){
+			this.path = obj.path;
+			this.alias = obj.alias;
+			this.async = obj.async;
+			this.loader = obj.loader;
+			this.exports = obj.exports;
+			this.namespace = obj.namespace;
+			this.contentType = obj.contentType;
+			this.link = obj.link || default_LINK;
+			this.mode = obj.mode || default_MODE;
 			this.parent = parent;
 		},
 		stringify: function(){
@@ -84,12 +89,9 @@
 				if (link !== default_LINK) from += ' ' + link;
 				if (mode !== default_MODE) from += ' ' + mode;
 			}
-
-			if (this.loaders != null && this.loaders.length > 0) {
-				from += ' with ' + this.loaders
-					.map(function (x) { return x.name; })
-					.join(',')
-					;
+			
+			if (this.loader != null) {
+				from += ' with ' + this.loader;
 			}
 			if (this.async != null) {
 				importStr += ' ' + this.async;

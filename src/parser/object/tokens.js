@@ -196,7 +196,7 @@ var token_Const,
 							break;
 						}
 						var token = str.substring(i, end);
-						var idx = this.token.indexOf(token);
+						var idx = this.token.indexOf('|' + token + '|');
 						if (idx === -1) {
 							break;
 						}
