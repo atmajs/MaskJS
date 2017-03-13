@@ -196,10 +196,10 @@ var token_Const,
 							break;
 						}
 						var token = str.substring(i, end);
-						var idx = this.token.indexOf('|' + token + '|');
-						if (idx === -1) {
+						var idx = this.token.indexOf('|' + token + '|') + 1;						
+						if (idx === 0) {
 							break;
-						}
+						}						
 						for (var key in this.flags) {
 							var range = this.flags[key];
 							var min = range[0];

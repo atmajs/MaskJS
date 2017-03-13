@@ -1,8 +1,6 @@
-var Module;
+var Module = {};
 (function(){
-	Module = {};
-	var _cache = {},
-		_opts = {
+	var _opts = {
 			base: null,
 			nsBase: '/',
 			version: null,
@@ -36,6 +34,7 @@ var Module;
 		};
 
 	// import utils
+	// import cache
 	// import loaders
 
 	// import class/Endpoint
@@ -65,10 +64,10 @@ var Module;
 		Endpoint: Endpoint,
 		createModule: function(node, ctx, ctr, parent) {
 			var path   = u_resolvePathFromImport(node, ctx, ctr, parent),
-				module = _cache[path];
-			if (module == null) {
-				var endpoint = new Endpoint(path, node.contentType);
-				module = _cache[path] = IModule.create(endpoint, parent);
+				endpoint = new Endpoint(path, node.contentType, node.loader),
+				module = cache_get(endpoint);
+			if (module == null) {				
+				module = cache_set(endpoint, IModule.create(endpoint, parent));
 			}
 			return module;
 		},
@@ -112,6 +111,9 @@ var Module;
 			}
 			return _typeMappings[ext];
 		},
+		getModuleType: function (endpoint) {
+			return endpoint.loaderType || Module.getType(endpoint);
+		},
 		cfg: function(name, val){
 			if (arguments.length === 1) {
 				return obj_getProperty(_opts, name);
@@ -138,16 +140,10 @@ var Module;
 		resolveLocation: u_resolveLocation,
 		resolvePath: u_resolvePathFromImport,
 		getDependencies: tools_getDependencies,
-		build: tools_build,
-		clearCache: function (path) {
-			if (path == null) {
-				_cache = {};
-				return;
-			}
-			delete _cache[path]
-		},
-		getCache: function() {
-			return _cache;
-		}
+		build: tools_build,		
+		clearCache: cache_clear,
+		getCache: cache_get,
+
+		types: IModule.types,
 	});
 }());

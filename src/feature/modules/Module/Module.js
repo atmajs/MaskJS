@@ -80,7 +80,7 @@ var IModule = class_create(class_Dfr, {
 	IModule.types = {};
 
 	function Factory(endpoint) {
-		var type = Module.getType(endpoint);
+		var type = Module.getModuleType(endpoint);
 		var Ctor = IModule.types[type];
 		if (Ctor == null) {
 			throw Error('Import is not supported for type ' + type + ' and the path ' + endpoint.path);

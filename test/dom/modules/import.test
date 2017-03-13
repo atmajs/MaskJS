@@ -461,7 +461,7 @@ UTest({
 			return mask
 					.renderAsync(`
 						import * as data from '/test/tmpl/modules/ext-less/myinfo' is json;
-						import meta from '/test/tmpl/modules/ext-less/mymeta' is js;
+						import meta from '/test/tmpl/modules/ext-less/mymeta' is script;
 						.json > '~[$scope.data.name]'
 						.js > '~[$scope.meta.name]'
 

@@ -91,7 +91,7 @@
 			}
 			
 			if (this.loader != null) {
-				from += ' with ' + this.loader;
+				from += ' as ' + this.loader;
 			}
 			if (this.async != null) {
 				importStr += ' ' + this.async;

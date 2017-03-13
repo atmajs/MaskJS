@@ -48,9 +48,16 @@ UTest({
 			var import_ = parse('import from "baz" is style as bem;');
 			has_(import_, {
 				path: 'baz',
-				//contentType: 'style',
+				contentType: 'style',
 				loader: 'bem'
 			});	
+		},
+		'should parse the content type' () {
+			var import_ = parse(`import * as bazIni from '/test/tmpl/modules/baz.ini' is text`);
+			has_(import_, {
+				path: '/test/tmpl/modules/baz.ini',
+				contentType: 'text'
+			});
 		}
 	},
 	'serializations' () {
