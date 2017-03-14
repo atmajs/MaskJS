@@ -282,6 +282,12 @@ function _parse(expr, earlyExit, node) {
 					if (ref === 'true')
 						ref = true;
 
+					if (ref === 'async' && current.type === type_Body) {
+						ast.async = true;
+						current.async = true;
+						continue;
+					}
+
 					if (typeof ref !== 'string') {
 						ast_append(current, new Ast_Value(ref));
 						continue;

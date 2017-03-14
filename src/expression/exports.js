@@ -16,6 +16,7 @@ var expression_eval,
 	// import 4.parser.helper.js
 	// import 5.parser.js
 	// import 6.eval.js
+	// import 6.eval_async.js
 	// import 7.eval_statements.js
 	// import 8.vars.helper.js
 

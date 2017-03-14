@@ -21,6 +21,7 @@ var Ast_Body,
 			this.join = null;
 			this.node = node;
 			this.source = null;
+			this.async = false;
 		},
 		toString: function(){
 			var imax = this.body,
