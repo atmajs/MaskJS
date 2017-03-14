@@ -49,7 +49,7 @@ UTest({
 			has_(import_, {
 				path: 'baz',
 				contentType: 'style',
-				loader: 'bem'
+				moduleType: 'bem'
 			});	
 		},
 		'should parse the content type' () {
