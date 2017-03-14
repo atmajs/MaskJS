@@ -64,9 +64,9 @@ var Module = {};
 		Endpoint: Endpoint,
 		createModule: function(node, ctx, ctr, parent) {
 			var path   = u_resolvePathFromImport(node, ctx, ctr, parent),
-				endpoint = new Endpoint(path, node.contentType, node.loader),
+				endpoint = new Endpoint(path, node.contentType, node.moduleType),
 				module = cache_get(endpoint);
-			if (module == null) {				
+			if (module == null) {
 				module = cache_set(endpoint, IModule.create(endpoint, parent));
 			}
 			return module;
@@ -89,13 +89,16 @@ var Module = {};
 			module.resolve(module);
 			return module;
 		},
-
+		registerModuleType: function (baseModuleType, newType, mix) {
+			_typeMappings[newType] = baseModuleType;
+			IModule.types[newType] = class_create(IModule.types[baseModuleType], mix);
+		},
 		createImport: function(node, ctx, ctr, module){
 			var path    = u_resolvePathFromImport(node, ctx, ctr, module),
 				alias   = node.alias,
 				exports = node.exports,
 				async   = node.async,
-				endpoint = new Endpoint(path, node.contentType);
+				endpoint = new Endpoint(path, node.contentType, node.moduleType);			
 			return IImport.create(endpoint, async, alias, exports, module);
 		},
 		isMask: function(endpoint){
@@ -105,14 +108,20 @@ var Module = {};
 		},
 		getType: function(endpoint) {
 			var type = endpoint.contentType;
+			if (type == null && endpoint.moduleType != null) {
+				var x = _typeMappings[endpoint.moduleType];
+				if (x != null) {
+					return x;
+				}
+			}
 			var ext = type || path_getExtension(endpoint.path);
-			if (ext === '' || ext === 'mask'){
+			if (ext === '' || ext === 'mask'){ 
 				return 'mask';
 			}
 			return _typeMappings[ext];
 		},
 		getModuleType: function (endpoint) {
-			return endpoint.loaderType || Module.getType(endpoint);
+			return endpoint.moduleType || Module.getType(endpoint);
 		},
 		cfg: function(name, val){
 			if (arguments.length === 1) {

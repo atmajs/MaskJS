@@ -22,9 +22,7 @@
 		return imports;
 	};
 
-	var meta = '?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})',
-		as_ = '?(as $loader)',
-		default_LINK = 'static',
+	var default_LINK = 'static',
 		default_MODE = 'both';
 
 	var lex_ = ObjectLexer(
@@ -35,8 +33,8 @@
 			'* as $alias from |("$path"$$namespace<accessor>)',
 			'$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)'
 		],
-		meta,
-		as_
+		'?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})',
+		'?(as $moduleType)'
 	);
 
 	var ImportsNode = class_create(Dom.Node, {
@@ -50,9 +48,9 @@
 		tagName: IMPORT,
 
 		contentType: null,
+		moduleType: null,
 		namespace: null,
 		exports: null,
-		loader: null,
 		alias: null,
 		async: null,
 		path: null,
@@ -63,9 +61,9 @@
 			this.path = obj.path;
 			this.alias = obj.alias;
 			this.async = obj.async;
-			this.loader = obj.loader;
 			this.exports = obj.exports;
 			this.namespace = obj.namespace;
+			this.moduleType = obj.moduleType;
 			this.contentType = obj.contentType;
 			this.link = obj.link || default_LINK;
 			this.mode = obj.mode || default_MODE;
@@ -90,8 +88,8 @@
 				if (mode !== default_MODE) from += ' ' + mode;
 			}
 			
-			if (this.loader != null) {
-				from += ' as ' + this.loader;
+			if (this.moduleType != null) {
+				from += ' as ' + this.moduleType;
 			}
 			if (this.async != null) {
 				importStr += ' ' + this.async;

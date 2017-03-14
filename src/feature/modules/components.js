@@ -90,7 +90,7 @@
 					var onReady = x.async === 'sync' 
 						? process 
 						: done;
-
+						
 					x.loadImport(onReady);
 					if (x.async === 'sync') 
 						break;
