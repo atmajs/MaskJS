@@ -23,10 +23,14 @@ function _evaluate (mix, model, ctx, ctr, node) {
 	} else {
 		ast = mix;
 	}
-
-	return _evaluateAst(ast, model, ctx, ctr);
+	if (ast == null) {
+		return null;
+	}
+	return ast.async === true 
+		? _evaluateAstAsync(ast, model, ctx, ctr)
+		: _evaluateAst(ast, model, ctx, ctr, null);
 }
-function _evaluateAst(ast, model, ctx, ctr) {
+function _evaluateAst(ast, model, ctx, ctr, preResults) {
 
 	if (ast == null)
 		return null;
@@ -42,7 +46,7 @@ function _evaluateAst(ast, model, ctx, ctr) {
 			if (prev != null && prev.join === op_LogicalOr && result) {				
 				return result;
 			}					
-			value = _evaluateAst(x, model, ctx, ctr);
+			value = _evaluateAst(x, model, ctx, ctr, preResults);
 
 			if (prev == null || prev.join == null) {
 				prev = x;
@@ -129,11 +133,16 @@ function _evaluateAst(ast, model, ctx, ctr) {
 		return result;		
 	}
 	if (type_Statement === type) {
-		result = _evaluateAst(ast.body, model, ctx, ctr);
+		if (ast.async === true && ast.preResultIndex > -1 && preResults != null) {
+			var x = preResults[ast.preResultIndex];
+			result = x == null ? null : x.result;
+		} else {
+			result = _evaluateAst(ast.body, model, ctx, ctr, preResults);
+		}
 		if (ast.next == null)
 			return result;
-
-		return util_resolveRef(ast.next, result);
+		
+		return util_resolveAcc(result, ast.next, model, ctx, ctr, preResults);
 	}
 	if (type_Value === type) {
 		return ast.body;
@@ -145,7 +154,7 @@ function _evaluateAst(ast, model, ctx, ctr) {
 
 		result = new Array(imax);
 		while( ++i < imax ){
-			result[i] = _evaluateAst(body[i], model, ctx, ctr);
+			result[i] = _evaluateAst(body[i], model, ctx, ctr, preResults);
 		}
 		return result;
 	}
@@ -153,18 +162,35 @@ function _evaluateAst(ast, model, ctx, ctr) {
 		result = {};
 		var props = ast.props;
 		for(var key in props){
-			result[key] = _evaluateAst(props[key], model, ctx, ctr);
+			result[key] = _evaluateAst(props[key], model, ctx, ctr, preResults);
 		}
 		return result;
 	}
-	if (type_SymbolRef 		=== type ||
-		type_FunctionRef 	=== type ||
-		type_AccessorExpr 	=== type ||
-		type_Accessor 		=== type) {
+	if (type_SymbolRef === type || type_FunctionRef === type) {
+		result = util_resolveRefValue(ast, model, ctx, ctr, preResults);
+		if (type === type_FunctionRef) {
+			if (is_Function(result)) {
+				var args = Ast_FunctionRefUtil.evalArguments(ast, model, ctx, ctr, preResults);
+				result = result.apply(null, args);
+			} else {
+				error_(
+					ast.body + " is not a function", 
+					util_getNodeStack(ast)
+				);
+			}
+		}
+		if (ast.next != null) {
+			return util_resolveAcc(result, ast.next, model, ctx, ctr, preResults);
+		}
+		return result;
+	}
+
+	if (type_AccessorExpr 	=== type ||
+		type_Accessor 		=== type) {		
 		return util_resolveRef(ast, model, ctx, ctr);
 	}
 	if (type_UnaryPrefix === type) {
-		result = _evaluateAst(ast.body, model, ctx, ctr);
+		result = _evaluateAst(ast.body, model, ctx, ctr, preResults);
 		switch (ast.prefix) {
 		case op_Minus:
 			result = -result;
@@ -175,8 +201,8 @@ function _evaluateAst(ast, model, ctx, ctr) {
 		}
 	}
 	if (type_Ternary === type){
-		result = _evaluateAst(ast.body, model, ctx, ctr);
-		result = _evaluateAst(result ? ast.case1 : ast.case2, model, ctx, ctr);
+		result = _evaluateAst(ast.body, model, ctx, ctr, preResults);
+		result = _evaluateAst(result ? ast.case1 : ast.case2, model, ctx, ctr, preResults);
 	}
 	return result;
 }

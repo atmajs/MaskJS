@@ -282,7 +282,7 @@ function _parse(expr, earlyExit, node) {
 					if (ref === 'true')
 						ref = true;
 
-					if (ref === 'async' && current.type === type_Body) {
+					if (ref === 'await' && (current.type === type_Body || current.type === type_Statement)) {
 						ast.async = true;
 						current.async = true;
 						continue;

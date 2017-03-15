@@ -11,6 +11,7 @@ var expression_eval,
 
 	// import 1.scope-vars.js
 	// import 2.ast.js
+	// import 2.astNode.utils.js
 	// import 2.ast.utils.js
 	// import 3.util.js
 	// import 4.parser.helper.js

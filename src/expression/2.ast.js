@@ -21,7 +21,6 @@ var Ast_Body,
 			this.join = null;
 			this.node = node;
 			this.source = null;
-			this.async = false;
 		},
 		toString: function(){
 			var imax = this.body,
@@ -39,7 +38,9 @@ var Ast_Body,
 
 	Ast_Statement = class_create({
 		constructor: function Ast_Statement (parent) {
-			this.parent = parent;
+			this.parent = parent;			
+			this.async = false;
+			this.preResultIndex = -1;
 		},
 		type: type_Statement,
 		join: null,

@@ -1,0 +1,128 @@
+var Expression = mask.Utils.Expression,
+	$eval = Expression.eval,
+	$refs = Expression.varRefs,
+	$parse = Expression.parse,
+	template, node, attr;
+
+UTest({
+	$config: {
+		breakOnError: true
+	},
+	async 'should parse and evaluate simple expression' () {
+
+		var ast = $parse('await someFn()');		
+		eq_(ast.async, true);
+
+
+		var someFn = assert.await(function(){
+			return mask.class.Deferred.run (resolve => resolve({ foo: 'Foo'}));
+		})
+		var dfr = $eval(ast, { someFn })
+		is_(dfr.then, 'Function');
+
+		var result = await dfr;
+		deepEq_(result, {foo: 'Foo'});
+	},
+	'getters on statements': {
+		'should run getter on SYNC statement' () {
+
+			var someFn = assert.await(function(){
+				return { foo: 'Foo'};
+			});
+
+			var ast = $parse('(someFn()).foo');
+			var result =  $eval(ast, { someFn });
+			eq_(result, 'Foo');
+		},
+		'should run getter on SYNC statement and call a function on result' () {
+
+			var someFn = assert.await(function(){
+				return { foo: 'Foo'};
+			});
+
+			var ast = $parse('(someFn()).foo.toLowerCase()');
+			var result =  $eval(ast, { someFn });
+			eq_(result, 'foo');
+		},
+		async 'should run getter on ASYNC statement' () {
+
+			var someFn = assert.await(function(){
+				return mask.class.Deferred.run (resolve => resolve({ foo: 'Foo'}));
+			})
+
+			var ast = $parse('(await someFn()).foo');
+			var result =  await $eval(ast, { someFn });
+			eq_(result, 'Foo');
+		},		
+	},
+	'function calls': {
+		'should log error for undefined function call' () {
+			mask.on('error', assert.await(error => has_(error.message, 'is not a function')));
+			var result =  $eval('someFn()');
+			eq_(result, null);
+			mask.off('error')
+		},
+		async 'should evaluate async in fn arguments' () {
+
+			var model = { 
+				someFn () {
+					return mask
+						.class
+						.Deferred
+						.run (resolve => resolve({ foo: 'FoO'}))
+				},
+				toLowerCase (str) {
+					return str.toLowerCase()
+				}
+			};
+			var result =  await $eval('toLowerCase((await someFn()).foo)', model);
+			eq_(result, 'foo');
+		},
+	},
+	'multiple statements': {
+		async 'multiple SYNC statements' () {
+			var quxDfr = new mask.class.Deferred;
+			var model = { 
+					getFoo () {
+						return { foo: 'FoO'};
+					},
+					getBar () {
+						return { bar: 'bar'};
+					},
+					qux: {qux: 'meQux'}
+				};
+				var expr = `
+					((getFoo()).foo.toLowerCase() + '_' +
+					((getBar()).bar + '_' +
+					qux.qux
+				`
+				var result =  $eval(expr, model);
+				eq_(result, 'foo_bar_meQux');
+		},
+		async 'multiple ASYNC statements' () {
+			var quxDfr = new mask.class.Deferred;
+			var model = { 
+					getFoo () {
+						return mask
+							.class
+							.Deferred
+							.run (resolve => resolve({ foo: 'FoO'}))
+					},
+					getBar () {
+						return mask
+							.class
+							.Deferred
+							.run (resolve => resolve({ bar: 'bar'}))
+					},
+					qux: quxDfr.resolve({quxProp: 'meQux'})
+				};
+				var expr = `
+					((await getFoo()).foo.toLowerCase() + '_' +
+					((await getBar()).bar + '_' +
+					(await qux).quxProp
+				`
+				var result =  await $eval(expr, model);
+				eq_(result, 'foo_bar_meQux');
+		}
+	}
+})

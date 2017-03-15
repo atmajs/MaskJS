@@ -34,8 +34,8 @@ UTest({
 		"'' + 5 + 'hello'", "'' + 5 + 'h' + 'e' + \"l\" + 'l' + 'o'", "'' + ('5' + 'h' + 'e') + (\"l\" + 'l' + 'o')", //
 		"'' + ('5' + ('h' + 'e') + (\"l\" ) +  'l' + 'o')", //
 		"5 + fn()", //
-		"5 + $.parent.fn2()",
-		"5 + $.closest(':test').value",
+		"5 + this.parent.fn2()",
+		"5 + this.closest(':test').value",
 		"5 + var_", //
 		"1 + 2*2 + var_"], '5hello', {
 			var_: "hello",
@@ -320,10 +320,10 @@ UTest({
 
 	'predefined accessors': function(){
 		expression([
-		'$.three * 3 - 5',
+		'this.three * 3 - 5',
 		'$ctx.number.two - two + 4',
-		'0 + $.attr.four - 0',
-		'$.attr.four + two - $.three + 1'
+		'0 + this.attr.four - 0',
+		'this.attr.four + two - this.three + 1'
 		], 4, {
 			two: 2
 		}, {
