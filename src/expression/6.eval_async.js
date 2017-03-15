@@ -1,8 +1,8 @@
 var _evaluateAstAsync;
 (function (){
 	_evaluateAstAsync = function (root, model, ctx, ctr) {
-		var awaitables = [];
-		var dfr = new class_Dfr;
+		var awaitables = [],
+			dfr = new class_Dfr;
 		getAwaitables(root.body, awaitables);
 		if (awaitables.length === 0) {
 			var result = _evaluateAst(root, model, ctx, ctr);
@@ -17,8 +17,6 @@ var _evaluateAstAsync;
 				.process(model, ctx, ctr)
 				.then(done, fail);
 		}
-
-		
 		function done(){
 			if (--count === 0 && error == null) {				
 				var result = _evaluateAst(root, model, ctx, ctr, awaitables);
