@@ -2,10 +2,7 @@ var _getDecorator,
 	_getDecoType;
 (function () {
 	_getDecorator = function(decoNode, model, ctx, ctr) {
-		var deco = expression_eval(decoNode.expression, model, ctx, ctr);
-		if (deco == null) {
-			deco = expression_eval(decoNode.expression, _store);
-		}
+		var deco = expression_eval(decoNode.expression, _store, null, ctr);
 		if (deco != null) {
 			return deco;
 		}

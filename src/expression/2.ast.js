@@ -96,10 +96,16 @@ var Ast_Body,
 			this.arguments = [];
 			this.next = null;
 		},
-		newArgument: function() {
+		newArg: function() {
 			var body = new Ast_Body(this);
 			this.arguments.push(body);
 			return body;
+		},
+		closeArgs: function (){
+			var last = this.arguments[this.arguments.length - 1];			
+			if (last.body.length === 0) {
+				this.arguments.pop();
+			}
 		},
 		toString: function(){
 			var args = this

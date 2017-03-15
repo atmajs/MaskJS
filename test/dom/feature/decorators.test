@@ -16,8 +16,8 @@ UTest({
 						return (str || '') + 'x';
 					}
 
-					h1 > '~[$.letter("a")]'
-					h2 > '~[$.letter("c")]'
+					h1 > '~[this.letter("a")]'
+					h2 > '~[this.letter("c")]'
 				`;
 
 				var spyDecorator, spyInner;
@@ -49,7 +49,7 @@ UTest({
 					function letter (str) {
 						return (str || '') + 'x';
 					}
-					h1 > '~[$.letter("p")]'
+					h1 > '~[this.letter("p")]'
 				`;
 
 				var spyFactory, spyDecorator, spyInner;
@@ -86,7 +86,7 @@ UTest({
 						return (str || '') + 'x';
 					}
 
-					h1 > '~[$.letter("a")]'
+					h1 > '~[this.letter("a")]'
 				`;
 
 				var spyBefore, spyAfter;
@@ -173,7 +173,7 @@ UTest({
 					function getName () {
 						return 'foo';
 					}
-					h1 > '~[$.getName()]'
+					h1 > '~[this.getName()]'
 				}
 				Foo;
 			`;
@@ -196,7 +196,7 @@ UTest({
 						return 'bar';
 					}
 					[UpperCase]
-					h1 > '~[$.getName()]'
+					h1 > '~[this.getName()]'
 				}
 				Bar;
 			`;

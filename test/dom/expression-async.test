@@ -14,7 +14,7 @@ UTest({
 		eq_(ast.async, true);
 
 
-		var someFn = assert.await(function(){
+		var someFn = sinon.spy(function(){
 			return mask.class.Deferred.run (resolve => resolve({ foo: 'Foo'}));
 		})
 		var dfr = $eval(ast, { someFn })
@@ -22,6 +22,9 @@ UTest({
 
 		var result = await dfr;
 		deepEq_(result, {foo: 'Foo'});
+
+		eq_(someFn.callCount, 1);
+		eq_(someFn.args[0].length, 0);
 	},
 	'getters on statements': {
 		'should run getter on SYNC statement' () {

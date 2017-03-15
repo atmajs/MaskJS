@@ -62,7 +62,7 @@ function _parse(expr, earlyExit, node) {
 				var closest = type_Body;
 				if (state === state_arguments) {
 					state = state_body;
-					closest = type_FunctionRef;
+					closest = type_FunctionRef;					
 				}
 
 				do {
@@ -71,6 +71,9 @@ function _parse(expr, earlyExit, node) {
 
 				if (closest === type_Body) {
 					current = current.parent;
+				}
+				if (current.type === type_FunctionRef) {
+					current.closeArgs();
 				}
 
 				if (current == null) {
@@ -123,7 +126,7 @@ function _parse(expr, earlyExit, node) {
 					break outer;
 				}
 
-				current = current.newArgument();
+				current = current.newArg();
 
 				index++;
 				continue;
@@ -311,7 +314,7 @@ function _parse(expr, earlyExit, node) {
 
 					var fn = ast_append(current, new Ast_FunctionRef(current, ref));
 
-					current = fn.newArgument();
+					current = fn.newArg();					
 					continue;
 				}
 

@@ -297,7 +297,7 @@ UTest({
 					.renderAsync(`
 						import * as X from '/test/tmpl/modules/data_foo.js';
 						define Bar extends X {
-							h4 > '~[:$.foo.name]'
+							h4 > '~[this.foo.name]'
 						}
 						Bar;
 					`)
@@ -312,7 +312,7 @@ UTest({
 					.renderAsync(`
 						import * as X from '/test/tmpl/modules/data_foo.js';
 						define Bar extends X.foo {
-							h4 > '~[:$.name]'
+							h4 > '~[this.name]'
 						}
 						Bar;
 					`)
