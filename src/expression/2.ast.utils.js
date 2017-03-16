@@ -33,13 +33,15 @@ var ast_handlePrecedence,
 		}
 	};
 	ast_findPrev = function (node, nodeType) {
-		if (node.type === nodeType) {
-			return node;
+		var x = node;
+		while (x != null) {
+			if (x.type === nodeType) {
+				return x;
+			}
+			x = x.parent;
 		}
-
-		var parent = node.parent;
-		var arr = parent.body;
 		debugger;
+		return null;
 	};
 	ast_handlePrecedence = function(ast) {
 		if (ast.type !== type_Body){

@@ -7,7 +7,7 @@ var util_resolveRef,
 (function(){
 
 	util_throw = function(msg, token, astNode){
-			return parser_error(msg + util_getNodeStack(astNode)
+		return parser_error(msg + util_getNodeStack(astNode)
 			, template
 			, index
 			, token

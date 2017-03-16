@@ -128,15 +128,40 @@ UTest({
 				eq_(result, 'foo_bar_meQux');
 		}
 	},
-	async '!should parse and evaluate simple "ARROW accesor" expression' () {
+	'should parse and evaluate simple "ARROW accesor"': {
+		async 'should parse and evaluate simple statement' () {
 
-		var ast = $parse('user->name.toLowerCase()');
-		eq_(ast.async, true);
+			var ast = $parse('user->name.toLowerCase()');
+			eq_(ast.async, true);
 
-		var user = new mask.class.Deferred;
-		user.resolve({name: 'John'});
-		
-		var result = await $eval(ast, { user });
-		deepEq_(result, 'john');		
-	},
+			var user = new mask.class.Deferred;
+			user.resolve({name: 'John'});
+			
+			var result = await $eval(ast, { user });
+			deepEq_(result, 'john');		
+		},
+		async 'should parse and evaluate simple expression' () {
+
+			var ast = $parse('"I`m " + user->name');
+			eq_(ast.async, true);
+
+			var user = new mask.class.Deferred;
+			user.resolve({name: 'John'});
+			
+			var result = await $eval(ast, { user });
+			deepEq_(result, 'I`m John');
+		},
+		async 'should evaluate with deep accesors' () {
+
+			var ast = $parse('"Deep " + foo.my.bar.user->name[0]');
+			eq_(ast.async, true);
+
+			var user = new mask.class.Deferred;
+			user.resolve({name: 'John'});
+			
+			
+			var result = await $eval(ast, { foo: { my: { bar: { user }}}});
+			deepEq_(result, 'Deep J');
+		},
+	}
 })

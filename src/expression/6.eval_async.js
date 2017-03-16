@@ -6,6 +6,9 @@ var _evaluateAstAsync;
 		getAwaitables(root.body, awaitables);
 		if (awaitables.length === 0) {
 			var result = _evaluateAst(root, model, ctx, ctr);
+			if (result == null) {
+				util_throw('Awaitable is undefined', null, root);
+			}
 			return dfr.resolve(result);
 		}
 
@@ -71,20 +74,19 @@ var _evaluateAstAsync;
 			var self = this,
 				contextDfr = _evaluateAstAsync(this.node, model, ctx, ctr);
 
-
 			contextDfr
 				.then(function(context){					
 					if (context != null && is_Function(context.then)) {
-						context.then(function(result) {
+						context.then(function(result) {							
 							self.result = result;
-							self.resolve();							
+							self.resolve(self);							
 						}, function (error) {
 							self.reject(error);
 						});
 						return;
 					}
 					self.result = context;
-					self.resolve();
+					self.resolve(self);
 				}, function (error) {
 					self.reject(error);
 				});

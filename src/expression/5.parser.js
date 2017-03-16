@@ -173,8 +173,11 @@ function _parse(expr, earlyExit, node) {
 				}
 				var ref = ast_findPrev(current, type_SymbolRef);
 				var parent = ref.parent;
-				ast_remove(parent, ref);
+				if (parent.type !== type_Statement) {
+					return util_throw('Ref is not in a statement');	
+				}
 				
+				ast_remove(parent, ref);
 				var statement = new Ast_Statement(parent);
 				var inner = new Ast_Statement(statement);
 				inner.async = true;
@@ -183,10 +186,6 @@ function _parse(expr, earlyExit, node) {
 				ast_append(statement, inner);
 				ast_append(parent, statement);				
 				
-				var parent = current.parent;
-				if (parent.type !== type_Statement) {
-					return util_throw('Ref is not in a statement');	
-				}
 				index++;
 				
 				ast.async = true;
