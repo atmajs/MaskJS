@@ -127,5 +127,16 @@ UTest({
 				var result =  await $eval(expr, model);
 				eq_(result, 'foo_bar_meQux');
 		}
-	}
+	},
+	async '!should parse and evaluate simple "ARROW accesor" expression' () {
+
+		var ast = $parse('user->name.toLowerCase()');
+		eq_(ast.async, true);
+
+		var user = new mask.class.Deferred;
+		user.resolve({name: 'John'});
+		
+		var result = await $eval(ast, { user });
+		deepEq_(result, 'john');		
+	},
 })

@@ -1,5 +1,7 @@
 var ast_handlePrecedence,
-	ast_append;
+	ast_findPrev,
+	ast_append,
+	ast_remove;
 
 (function(){
 	ast_append = function(current, next) {
@@ -24,6 +26,20 @@ var ast_handlePrecedence,
 		}
 
 		return util_throw('Invalid expression');
+	};
+	ast_remove = function (parent, child) {
+		if (parent.type === type_Statement) {			
+			parent.body = null;
+		}
+	};
+	ast_findPrev = function (node, nodeType) {
+		if (node.type === nodeType) {
+			return node;
+		}
+
+		var parent = node.parent;
+		var arr = parent.body;
+		debugger;
 	};
 	ast_handlePrecedence = function(ast) {
 		if (ast.type !== type_Body){

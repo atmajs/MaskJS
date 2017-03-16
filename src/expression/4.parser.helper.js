@@ -138,6 +138,10 @@ var parser_skipWhitespace,
 				return op_Plus;
 			case 45:
 				// -
+				if (template.charCodeAt(index + 1) === 62 /*>*/) {
+					index++;
+					return op_AsyncAccessor;
+				}
 				return op_Minus;
 			case 42:
 				// *

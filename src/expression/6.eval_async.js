@@ -18,7 +18,7 @@ var _evaluateAstAsync;
 				.then(done, fail);
 		}
 		function done(){
-			if (--count === 0 && error == null) {				
+			if (--count === 0 && error == null) {
 				var result = _evaluateAst(root, model, ctx, ctr, awaitables);
 				dfr.resolve(result);
 			}
@@ -31,7 +31,6 @@ var _evaluateAstAsync;
 		}
 		return dfr;
 	};
-
 	function getAwaitables (mix, out) {
 		if (is_Array(mix)) {
 			for(var i = 0; i < mix.length; i++) {

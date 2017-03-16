@@ -154,7 +154,7 @@ function _parse(expr, earlyExit, node) {
 
 
 			case punc_Dot:
-				c = template.charCodeAt(index + 1);				
+				c = template.charCodeAt(index + 1);
 				if (c >= 48 && c <= 57) {
 					directive = go_number;
 				} else {
@@ -165,6 +165,34 @@ function _parse(expr, earlyExit, node) {
 						: go_acs
 						;					
 				}
+				break;
+			case op_AsyncAccessor:
+				t = current.type;
+				if (t !== type_SymbolRef && t !== type_Accessor) {
+					return util_throw('Unexpected async accessor');
+				}
+				var ref = ast_findPrev(current, type_SymbolRef);
+				var parent = ref.parent;
+				ast_remove(parent, ref);
+				
+				var statement = new Ast_Statement(parent);
+				var inner = new Ast_Statement(statement);
+				inner.async = true;
+				ref.parent = inner;
+				ast_append(inner, ref);
+				ast_append(statement, inner);
+				ast_append(parent, statement);				
+				
+				var parent = current.parent;
+				if (parent.type !== type_Statement) {
+					return util_throw('Ref is not in a statement');	
+				}
+				index++;
+				
+				ast.async = true;
+				c = parser_skipWhitespace();
+				directive = go_acs;
+				current = statement;				
 				break;
 			case punc_BracketOpen:
 				t = current.type;
