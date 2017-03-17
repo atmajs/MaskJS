@@ -31,7 +31,6 @@ function _evaluate (mix, model, ctx, ctr, node) {
 		: _evaluateAst(ast, model, ctx, ctr, null);
 }
 function _evaluateAst(ast, model, ctx, ctr, preResults) {
-
 	if (ast == null)
 		return null;
 

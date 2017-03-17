@@ -168,10 +168,16 @@ function _parse(expr, earlyExit, node) {
 				break;
 			case op_AsyncAccessor:
 				t = current.type;
-				if (t !== type_SymbolRef && t !== type_Accessor) {
+				if (t !== type_SymbolRef && t !== type_Accessor && t !== type_FunctionRef) {
 					return util_throw('Unexpected async accessor');
 				}
 				var ref = ast_findPrev(current, type_SymbolRef);
+				if (ref == null) {
+					ref = ast_findPrev(current, type_FunctionRef);
+				}
+				if (ref == null) {
+					return util_throw('Ref not found');	
+				}
 				var parent = ref.parent;
 				if (parent.type !== type_Statement) {
 					return util_throw('Ref is not in a statement');	
@@ -191,7 +197,7 @@ function _parse(expr, earlyExit, node) {
 				ast.async = true;
 				c = parser_skipWhitespace();
 				directive = go_acs;
-				current = statement;				
+				current = statement.parent;
 				break;
 			case punc_BracketOpen:
 				t = current.type;

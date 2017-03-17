@@ -40,7 +40,6 @@ var ast_handlePrecedence,
 			}
 			x = x.parent;
 		}
-		debugger;
 		return null;
 	};
 	ast_handlePrecedence = function(ast) {

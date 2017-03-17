@@ -140,16 +140,40 @@ UTest({
 			var result = await $eval(ast, { user });
 			deepEq_(result, 'john');		
 		},
-		async 'should parse and evaluate simple expression' () {
+		'should concat Sync statements' () {
+			var arr = [
+				'"I`m " + user.name + user.name',
+				'"I`m " + (user) .name + user.name',
+				'"I`m " + (((user).name) + (user . name))'
+			];
 
-			var ast = $parse('"I`m " + user->name');
-			eq_(ast.async, true);
+			arr.forEach(x => {
+				var user = {name: 'John'};
+				var result = $eval(x, { user });
+				deepEq_(result, 'I`m JohnJohn');
+			});
+		},
+		async 'should parse and concat multiple Async statements' () {
+			var arr = [
+				'"I`m " + user->name + user->name',
+				'"I`m " + (user) ->name + user->name',
+				'"I`m " + (((user)->name) + (user -> name))',
+				'"I`m " + (await user) .name + (await user ).name',
+				'"I`m " + ((await user)) .name + (await user) ->name'
+			];
 
-			var user = new mask.class.Deferred;
-			user.resolve({name: 'John'});
-			
-			var result = await $eval(ast, { user });
-			deepEq_(result, 'I`m John');
+			var awaiters = arr.map(async str => {
+				var ast = $parse('"I`m " + user->name + user->name');
+				eq_(ast.async, true);
+
+				var user = new mask.class.Deferred;
+				user.resolve({name: 'John'});
+				
+				var result = await $eval(ast, { user });
+				deepEq_(result, 'I`m JohnJohn');	
+			});
+
+			await mask.class.Deferred.all(awaiters);
 		},
 		async 'should evaluate with deep accesors' () {
 
@@ -162,6 +186,18 @@ UTest({
 			
 			var result = await $eval(ast, { foo: { my: { bar: { user }}}});
 			deepEq_(result, 'Deep J');
+		},
+		async 'should evaluate for function accesor' () {
+
+			var ast = $parse('"Fn " + getUser()->name[0] + root.getUser()->name');
+			eq_(ast.async, true);
+
+			var user = new mask.class.Deferred;
+			user.resolve({name: 'Qux'});
+			
+			
+			var result = await $eval(ast, { getUser: () => user, root: { getUser: () => user } });
+			deepEq_(result, 'Fn QQux');
 		},
 	}
 })
