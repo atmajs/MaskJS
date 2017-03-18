@@ -128,7 +128,7 @@ UTest({
 				eq_(result, 'foo_bar_meQux');
 		}
 	},
-	'should parse and evaluate simple "ARROW accesor"': {
+	'should parse and evaluate simple "ARROW accessor"': {
 		async 'should parse and evaluate simple statement' () {
 
 			var ast = $parse('user->name.toLowerCase()');
@@ -161,7 +161,6 @@ UTest({
 				'"I`m " + (await user) .name + (await user ).name',
 				'"I`m " + ((await user)) .name + (await user) ->name'
 			];
-
 			var awaiters = arr.map(async str => {
 				var ast = $parse('"I`m " + user->name + user->name');
 				eq_(ast.async, true);
@@ -172,22 +171,17 @@ UTest({
 				var result = await $eval(ast, { user });
 				deepEq_(result, 'I`m JohnJohn');	
 			});
-
 			await mask.class.Deferred.all(awaiters);
 		},
-		async 'should evaluate with deep accesors' () {
-
+		async 'should evaluate with deep accessors' () {
 			var ast = $parse('"Deep " + foo.my.bar.user->name[0]');
-			eq_(ast.async, true);
-
 			var user = new mask.class.Deferred;
 			user.resolve({name: 'John'});
-			
-			
+						
 			var result = await $eval(ast, { foo: { my: { bar: { user }}}});
 			deepEq_(result, 'Deep J');
 		},
-		async 'should evaluate for function accesor' () {
+		async 'should evaluate for function accessor' () {
 
 			var ast = $parse('"Fn " + getUser()->name[0] + root.getUser()->name');
 			eq_(ast.async, true);
@@ -199,5 +193,24 @@ UTest({
 			var result = await $eval(ast, { getUser: () => user, root: { getUser: () => user } });
 			deepEq_(result, 'Fn QQux');
 		},
+	},
+	async 'should support simple sync values' () {
+		var arr = [
+			'"I`m " + user->name + user->name',
+			'"I`m " + (user) ->name + user->name',
+			'"I`m " + (((user)->name) + (user -> name))',
+			'"I`m " + (await user) .name + (await user ).name',
+			'"I`m " + ((await user)) .name + (await user) ->name'
+		];
+		var awaiters = arr.map(async str => {
+			var ast = $parse('"I`m " + user->name + user->name');
+			eq_(ast.async, true);
+
+			var user = {name: 'John'};
+			
+			var result = await $eval(ast, { user });
+			deepEq_(result, 'I`m JohnJohn');	
+		});
+		await mask.class.Deferred.all(awaiters);
 	}
 })

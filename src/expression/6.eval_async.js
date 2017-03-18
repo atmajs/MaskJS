@@ -1,15 +1,16 @@
 var _evaluateAstAsync;
 (function (){
 	_evaluateAstAsync = function (root, model, ctx, ctr) {
-		var awaitables = [],
-			dfr = new class_Dfr;
+		var awaitables = [];
 		getAwaitables(root.body, awaitables);
+		var asyncExp = new AsyncExp(awaitables);
+
 		if (awaitables.length === 0) {
 			var result = _evaluateAst(root, model, ctx, ctr);
 			if (result == null) {
 				util_throw('Awaitable is undefined', null, root);
 			}
-			return dfr.resolve(result);
+			return asyncExp.resolve(result);
 		}
 
 		var count = awaitables.length,
@@ -23,16 +24,16 @@ var _evaluateAstAsync;
 		function done(){
 			if (--count === 0 && error == null) {
 				var result = _evaluateAst(root, model, ctx, ctr, awaitables);
-				dfr.resolve(result);
+				asyncExp.resolve(result);
 			}
 		}
 		function fail(err){
 			error = err;
 			if (error === err) {
-				dfr.reject(error);
+				asyncExp.reject(error);
 			}
 		}
-		return dfr;
+		return asyncExp;
 	};
 	function getAwaitables (mix, out) {
 		if (is_Array(mix)) {
@@ -45,7 +46,7 @@ var _evaluateAstAsync;
 		var type = expr.type;
 		if (type === type_Statement && expr.async === true) {
 			expr.preResultIndex = out.length;
-			out.push(new Awaitable(expr));
+			out.push(new AsyncStat(expr));
 			return;
 		}
 		if (type === type_Body) {
@@ -65,32 +66,100 @@ var _evaluateAstAsync;
 				return;
 		}
 	}
-	var Awaitable = class_create(class_Dfr, {
+	var AsyncExp = class_create(class_Dfr, {
+		constructor: function (asyncStats) {
+			this.asyncStats = asyncStats;
+		},
+		cancel: function () {
+			this.asyncStats.map(function (x) { x.cancel() });
+		}
+	});
+	var AsyncStat = class_create(class_Dfr, {
 		constructor: function (statement) {
 			this.node = statement;
 			this.result = null;
+			this.asyncExp = null;
+			this.ctx = null;
 		},
 		process: function (model, ctx, ctr, out) {
-			var self = this,
-				contextDfr = _evaluateAstAsync(this.node, model, ctx, ctr);
-
-			contextDfr
-				.then(function(context){					
-					if (context != null && is_Function(context.then)) {
-						context.then(function(result) {							
-							self.result = result;
-							self.resolve(self);							
-						}, function (error) {
-							self.reject(error);
-						});
-						return;
-					}
-					self.result = context;
-					self.resolve(self);
+			var self = this;
+			this.asyncExp = _evaluateAstAsync(this.node, model, ctx, ctr);
+			this.asyncExp.then(function(context){
+					self.ctx = new AwaitableCtx(context);
+					self.ctx.then(function(result) {							
+						self.result = result;
+						self.resolve(self);							
+					}, function (error) {
+						self.reject(error);
+					});
 				}, function (error) {
 					self.reject(error);
 				});
 			return self;
+		},
+		cancel: function () {
+			this.asyncExp && this.asyncExp.cancel();
+			this.ctx && this.ctx.cancel();
 		}
 	});
+	var AwaitableCtx;
+	(function(){
+		AwaitableCtx = function (context) {
+			if (context == null || typeof context !== 'object') {
+				return new ValueCtx(context);
+			}
+			if (typeof context.then === 'function') {
+				return new PromiseCtx(context);	
+			}
+			if (typeof context.subscribe === 'function') {
+				return new ObservableCtx(context);	
+			}
+			return new ValueCtx(context);
+		};
+		var IAwaitableCtx = class_create(class_Dfr, {
+			constructor: function (ctx) {
+				this.ctx = ctx;
+			},
+			cancel: function () {}
+		});
+		var ValueCtx = class_create(IAwaitableCtx, {
+			constructor: function (ctx) {
+				this.resolve(ctx);
+			}
+		});
+		var PromiseCtx = class_create(IAwaitableCtx, {
+			constructor: function (ctx) {
+				this.onSuccess = this.onSuccess.bind(this);
+				this.onFail = this.onFail.bind(this);
+				this.canceled = false;
+				ctx.then(this.onSuccess, this.onFail);
+			},
+			onSuccess: function (val) {
+				if (this.canceled) return;
+				this.resolve(val);
+			},
+			onFail: function (err) {
+				if (this.canceled) return;
+				this.reject(err);
+			},
+			cancel: function () {
+				this.canceled = true;
+			}
+		});
+		var ObservableCtx = class_create(IAwaitableCtx, {
+			constructor: function (ctx) {
+				this.onValue = this.onValue.bind(this);
+				ctx.subscribe(this.onValue);
+			},
+			onValue: function (val) {
+				if (this.canceled) return;
+				this.cancel();
+				this.resolve(val);
+			},
+			cancel: function () {
+				this.canceled = true;
+				this.ctx.unsubscribe(this.onValue);
+			}
+		});
+	}());
 }()); 
