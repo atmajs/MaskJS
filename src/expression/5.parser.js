@@ -63,8 +63,10 @@ function _parse(expr, earlyExit, node) {
 				if (state === state_arguments) {
 					state = state_body;
 					closest = type_FunctionRef;					
-				}
-
+				}				
+				if (current.type === type_FunctionRef) {
+					current.closeArgs();
+				}				
 				do {
 					current = current.parent;
 				} while (current != null && current.type !== closest);
@@ -72,10 +74,7 @@ function _parse(expr, earlyExit, node) {
 				if (closest === type_Body) {
 					current = current.parent;
 				}
-				if (current.type === type_FunctionRef) {
-					current.closeArgs();
-				}
-
+				
 				if (current == null) {
 					util_throw('OutOfAst Exception', c);
 					break outer;
@@ -337,16 +336,17 @@ function _parse(expr, earlyExit, node) {
 					}
 					break;
 				}
-
 				if (c === 40) {
-
 					// (
 					// function ref
 					state = state_arguments;
 					index++;
-
-					var fn = ast_append(current, new Ast_FunctionRef(current, ref));
-
+					var fn = new Ast_FunctionRef(current, ref);
+					if (directive === go_acs && current.type === type_Statement) {
+						current.next = fn;
+					} else {
+						ast_append(current, fn);
+					}
 					current = fn.newArg();					
 					continue;
 				}

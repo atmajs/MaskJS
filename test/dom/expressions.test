@@ -374,6 +374,27 @@ UTest({
 
 		x = Expression.evalStatements('1+1, 10 - 2 * 3');
 		deepEq_(x, [2, 4]);
+	},
+
+	'methods': {
+		'should call controllers method and resolve property from controllers scope' () {
+			var ctr = {
+				doSmth: sinon.spy(),
+				scope: {
+					foo: 'foo'
+				}
+			};
+			$eval('this.doSmth(foo, foo.substring(1))', {}, null, ctr);
+			eq_(ctr.doSmth.callCount, 1);
+			deepEq_(ctr.doSmth.args[0], ['foo', 'oo'])
+		},
+		'should call method on a statement' () {
+			var model = {
+				date: new Date(2017, 1, 1)
+			};
+			var x = $eval("('fi' + date.getFullYear()).substring(1)", model);
+			eq_(x, 'i2017');
+		}
 	}
 });
 
