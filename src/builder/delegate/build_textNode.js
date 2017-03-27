@@ -5,7 +5,7 @@ var build_textNode;
 		var content = node.content;
 		if (is_Function(content)) {
 			var result = content(
-				'node', model, ctx, el, ctr
+				'node', model, ctx, el, ctr, null, node
 			);
 			if (typeof result === 'string') {
 				append_textNode(el, result);

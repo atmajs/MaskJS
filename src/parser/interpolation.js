@@ -9,7 +9,7 @@
 			return mix;
 		}
 		var array = mix;
-		return function(type, model, ctx, element, ctr, name) {
+		return function(type, model, ctx, element, ctr, name, node) {
 			if (type === void 0) {
 				return template;
 			}
@@ -21,6 +21,7 @@
 				, element
 				, ctr
 				, name
+				, node
 			);
 		};
 	};
@@ -183,7 +184,7 @@
 		this.prop = prop;
 		this.expr = expr;
 	}
-	InterpolationModel.prototype.process = function(model, ctx, el, ctr, name, type){
+	InterpolationModel.prototype.process = function(model, ctx, el, ctr, name, type, node){
 		if (this.prop != null) {
 			return obj_getPropertyEx(this.prop, model, ctx, ctr);
 		}
@@ -211,7 +212,7 @@
 			log_error('Undefined custom util:', util);
 			return null;
 		}
-		return fn(expr, model, ctx, el, ctr, name, type);
+		return fn(expr, model, ctx, el, ctr, name, type, node);
 	};
 
 	/**
@@ -225,7 +226,7 @@
 	 * If custom utils returns only strings, then String will be returned by this function
 	 * @returns {(array|string)}
 	 */
-	function _interpolate(arr, type, model, ctx, el, ctr, name) {
+	function _interpolate(arr, type, model, ctx, el, ctr, name, node) {
 		if (type === 'compo-attr' && arr.length === 2 && arr[0] === '') {
 			return arr[1].process(model, ctx, el, ctr, name, type);
 		}
@@ -243,7 +244,7 @@
 				}
 			} else {
 				var interp = arr[i],
-					mix = interp.process(model, ctx, el, ctr, name, type);
+					mix = interp.process(model, ctx, el, ctr, name, type, node);
 				if (mix != null) {
 					if (typeof mix === 'object' && array == null){
 						array = [ string ];

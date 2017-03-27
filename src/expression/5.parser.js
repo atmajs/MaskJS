@@ -64,12 +64,13 @@ function _parse(expr, earlyExit, node) {
 					state = state_body;
 					closest = type_FunctionRef;					
 				}				
-				if (current.type === type_FunctionRef) {
-					current.closeArgs();
-				}				
 				do {
 					current = current.parent;
 				} while (current != null && current.type !== closest);
+
+				if (current.type === type_FunctionRef) {
+					current.closeArgs();
+				}
 
 				if (closest === type_Body) {
 					current = current.parent;

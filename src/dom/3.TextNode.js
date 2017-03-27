@@ -13,5 +13,6 @@ var TextNode = class_create({
 	},
 	type: dom_TEXTNODE,
 	content: null,
-	parent: null
+	parent: null,
+	sourceIndex: -1
 });

@@ -33,7 +33,7 @@ function _evaluate (mix, model, ctx, ctr, node) {
 function _evaluateAst(ast, model, ctx, ctr, preResults) {
 	if (ast == null)
 		return null;
-
+	
 	var type = ast.type,
 		result, i, x, length;
 

@@ -303,7 +303,7 @@ var mask_merge;
 
 		return outnode;
 	}
-	function _cloneNodeShallow(node, clonedParent, placeholders, tmplNode) {
+	function _cloneNodeShallow(node, clonedParent, placeholders, tmplNode) {		
 		return {
 			type: node.type,
 			tagName: node.tagName,
@@ -320,7 +320,8 @@ var mask_merge;
 		return {
 			type: node.type,
 			content: interpolate_str_(node.content, placeholders, tmplNode),
-			parent: clonedParent
+			parent: node.parent || clonedParent,
+			sourceIndex: node.sourceIndex
 		};
 	}
 	function _cloneDecorator(node, placeholders, tmplNode, clonedParent){

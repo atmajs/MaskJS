@@ -22,7 +22,8 @@
 			next,
 			c, // charCode
 			start,
-			nextC;
+			nextC,
+			sourceIndex;
 
 		fragment.source = template;
 		fragment.filename = filename;
@@ -151,6 +152,7 @@
 				} else if (last === state_literal) {
 
 					next = new TextNode(token, current);
+					next.sourceIndex = sourceIndex;
 					current.appendChild(next);
 
 					if (current.__single === true) {
@@ -260,7 +262,7 @@
 					isUnescapedBlock = false,
 					_char = c === 39 ? "'" : '"';
 
-				start = index;
+				sourceIndex = start = index;
 
 				while ((index = template.indexOf(_char, index)) > -1) {
 					if (template.charCodeAt(index - 1) !== 92 /*'\\'*/ ) {

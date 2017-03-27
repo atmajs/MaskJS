@@ -71,8 +71,8 @@
 	};
 
 	custom_Utils = {
-		expression: function(value, model, ctx, element, ctr){
-			return expression_eval(value, model, ctx, ctr);
+		expression: function(value, model, ctx, element, ctr, name, type, node){
+			return expression_eval(value, model, ctx, ctr, node);
 		},
 	};
 	custom_Optimizers   = {};
