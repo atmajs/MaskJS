@@ -273,5 +273,5 @@ var Define;
 			return false;
 		};
 	}
-	var mergeStats = { placeholders: null };
+	var mergeStats = { placeholders: { $isEmpty: true } };
 }());
