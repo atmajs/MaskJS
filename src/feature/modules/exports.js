@@ -135,6 +135,9 @@ var Module = {};
 				if (path[path.length - 1] !== '/') {
 					path += '/';
 				}
+				if (path[0] === '/') {
+					path = path_combine(path_resolveRoot(), path);
+				}
 				_opts[name] = path;
 				return this;
 			}

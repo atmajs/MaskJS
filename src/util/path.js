@@ -2,6 +2,7 @@ var path_getDir,
 	path_getFile,
 	path_getExtension,
 	path_resolveCurrent,
+	path_resolveRoot,
 	path_normalize,
 	path_resolveUrl,
 	path_combine,
@@ -98,6 +99,37 @@ var path_getDir,
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
 			return (current_ = path_win32Normalize(process.cwd()));
+		};
+		// endif
+	}());
+
+	(function(){
+		var root_;
+
+		// if (BROWSER)
+		path_resolveRoot = function(){
+			if (root_ != null) return root_;
+
+			var fn = 'baseURI' in global.document
+					? fromBase
+					: fromLocation;
+			return root_ = fn();
+		};
+		function fromBase() {
+			var path = global.document.baseURI;
+			var protocol = /^\w+:\/+/.exec(path);
+			var i = path.indexOf('/', protocol && protocol[0].length);
+			return i === -1 ? path : path.substring(0, i);
+		}
+		function fromLocation() {
+			return global.location.origin;
+		}
+		// endif
+
+		// if (NODE)
+		path_resolveRoot = function(){
+			if (root_ != null) return root_;
+			return (root_ = path_win32Normalize(process.cwd()));
 		};
 		// endif
 	}());
