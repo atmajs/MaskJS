@@ -161,7 +161,13 @@ var Mask;
 			getStackTrace: reporter_getNodeStack,
 			defineContentTag: parser_defineContentTag
 		},
-
+		log: {
+			info: log,
+			error: log_error,
+			errorWithNode: error_withNode,
+			warn: log_warn,
+			warnWithNode: warn_withNode,
+		},
 		// util/listeners.js
 		on: listeners_on,
 		off: listeners_off,
