@@ -39,7 +39,7 @@ var _wrapMany,
 
 				return result;
 			};
-		}
+		}				
 		error_withNode('Invalid function decorator', decoNode);
 	};
 
@@ -58,8 +58,7 @@ var _wrapMany,
 			if (beforeRender || afterRender) {				
 				return create(decoCtx, beforeRender, afterRender, builderFn);
 			}
-
-			error_withNode('Invalid function decorator', decoNode);
+			error_withNode('Invalid node decorator', decoNode);
 		};
 
 		function create(decoCtx, beforeFn, afterFn, builderFn) {

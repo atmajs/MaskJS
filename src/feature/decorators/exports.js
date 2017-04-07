@@ -8,7 +8,19 @@ var Decorator;
 
 	Decorator = {
 		getDecoType: _getDecoType,
-		define: function(key, mix) {
+		define: function(key, mix) {			
+			if (is_Object(mix)) {
+				mix = class_create(mix);
+				mix.isFactory = true;
+			}
+			if (is_Function(mix) && mix.isFactory) {
+				// Wrap the function, as it could be a class, and decorator expression cann`t contain 'new' keyword.
+				_store[key] = function () {
+					return new (mix.bind.apply(mix, [null].concat(_Array_slice.call(arguments))));
+				};
+				_store[key].isFactory = true;
+				return;
+			}
 			_store[key] = mix;
 		},
 

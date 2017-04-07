@@ -163,7 +163,7 @@ UTest({
 				}
 			`);	
 		},
-		'!decorator Factory': {
+		'decorator Factory as a class': {
 			$before () {
 				mask.defineDecorator ('appender', class Appender {
 					static get isFactory () {
@@ -172,14 +172,13 @@ UTest({
 					constructor (text) {
 						this.text = text || 'FooDefault'
 					}
-					beforRender (node) {
+					beforeRender (node) {
 						mask.j(node).text(mask.j(node).text() + ' ' + this.text);
 					}
 				});
 			},
 			'test default behaviour' () {
 				var template = `
-
 					[appender]
 					div > 'Hello';				
 				`;
@@ -187,6 +186,55 @@ UTest({
 				return UTest.domtest(dom, `
 					find(div) {
 						text ('Hello FooDefault');
+					}
+				`);	
+			},
+			'test passed value' () {
+				var template = `
+					[appender ("Quxy") ]
+					div > 'Hello';				
+				`;
+				var dom = mask.render(template);
+				return UTest.domtest(dom, `
+					find(div) {
+						text ('Hello Quxy');
+					}
+				`);	
+			}
+		},
+		'decorator Factory as an object': {
+			$before () {
+				mask.defineDecorator ('appender2', {
+					isFactory: true,
+					constructor (text) {
+						this.text = text || 'FooDefault'
+					},
+					beforeRender (node) {
+						mask.j(node).text(mask.j(node).text() + ' ' + this.text);
+					}
+				});
+			},
+			'test default behaviour' () {
+				var template = `
+					[appender2]
+					div > 'Hello';				
+				`;
+				var dom = mask.render(template);
+				return UTest.domtest(dom, `
+					find(div) {
+						text ('Hello FooDefault');
+					}
+				`);	
+			},
+			'test passed value' () {
+				var template = `
+					[appender2 ("Quxy") ]
+					div > 'Hello';				
+				`;
+				var dom = mask.render(template);
+				return UTest.domtest(dom, `
+					find(div) {
+						text ('Hello Quxy');
 					}
 				`);	
 			}
