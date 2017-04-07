@@ -45,7 +45,7 @@ var _wrapMany,
 
 	(function () {
 		_wrapper_NodeBuilder = function (decoNode, deco, builderFn) {
-			var beforeRender, afterRender;
+			var beforeRender, afterRender, decoCtx;
 
 			if (is_Function(deco)) {
 				afterRender = deco;
@@ -53,33 +53,33 @@ var _wrapMany,
 			else if (is_Object(deco)) {
 				beforeRender = deco.beforeRender;
 				afterRender = deco.afterRender;	
-			}			
+				decoCtx = deco;
+			}
 			if (beforeRender || afterRender) {				
-				return create(beforeRender, afterRender, builderFn);
+				return create(decoCtx, beforeRender, afterRender, builderFn);
 			}
 
 			error_withNode('Invalid function decorator', decoNode);
 		};
 
-		function create(beforeFn, afterFn, builderFn) {
+		function create(decoCtx, beforeFn, afterFn, builderFn) {
 			return function (node, model, ctx, el, ctr, els) {
-				var args = _Array_slice.call(arguments);
 				if (beforeFn != null) {
-					beforeFn(node, model, ctx, el, ctr, els);
+					var newNode = beforeFn.call(decoCtx, node, model, ctx, el, ctr, els);
+					if (newNode != null) {
+						node = newNode;
+					}
 				}
 				if (els == null) {
 					els = [];
 				}
 				builderFn(node, model, ctx, el, ctr, els);
 				if (afterFn != null) {
-					afterFn(els[els.length - 1], model, ctr);
+					afterFn.call(decoCtx, els[els.length - 1], model, ctr);
 				}
 			};
 		}
-
 	}());
-	
-
 
 	function wrap (wrapperFn, decoratorNode, innerFn, model, ctx, ctr) {
 		var deco = _getDecorator(decoratorNode, model, ctx, ctr);

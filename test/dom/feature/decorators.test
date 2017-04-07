@@ -162,6 +162,34 @@ UTest({
 					text ('HelloGR');
 				}
 			`);	
+		},
+		'!decorator Factory': {
+			$before () {
+				mask.defineDecorator ('appender', class Appender {
+					static get isFactory () {
+						return true;
+					}
+					constructor (text) {
+						this.text = text || 'FooDefault'
+					}
+					beforRender (node) {
+						mask.j(node).text(mask.j(node).text() + ' ' + this.text);
+					}
+				});
+			},
+			'test default behaviour' () {
+				var template = `
+
+					[appender]
+					div > 'Hello';				
+				`;
+				var dom = mask.render(template);
+				return UTest.domtest(dom, `
+					find(div) {
+						text ('Hello FooDefault');
+					}
+				`);	
+			}
 		}
 	},
 

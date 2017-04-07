@@ -2,7 +2,7 @@ var Decorator;
 (function(){
 
 	// import utils.js
-	// import method.js
+	// import wrappers.js
 
 	var _store = {};
 
