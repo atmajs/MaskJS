@@ -157,5 +157,11 @@ var Module = {};
 		getCache: cache_get,
 
 		types: IModule.types,
+		File: {
+			get: _file_get,
+			getScript: _file_getScript,
+			getStyle: _file_getStyle,
+			getJson: _file_getJson
+		}
 	});
 }());

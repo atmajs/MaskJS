@@ -82,12 +82,7 @@ var Mask;
 		TreeWalker: mask_TreeWalker,
 		// feature/Module.js
 		Module: Module,
-		File: {
-			get: file_get,
-			getScript: file_getScript,
-			getStyle: file_getStyle,
-			getJson: file_getJson
-		},
+		File: Module.File,
 		// feature/Di.js
 		Di: Di,
 		// custom/tag.js
