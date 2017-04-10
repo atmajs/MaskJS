@@ -12,13 +12,12 @@
 			.signal.emitIn;
 
 	mask.Module.reload = function (path) {
-		var key = mask.Module.resolvePath({ path: path });
-		var cache = mask.Module.getCache();
-		var module = cache[key];
+		var filename = mask.Module.resolvePath({ path: path });
+		var endpoint = new mask.Module.Endpoint(filename);
+		var module = mask.Module.getCache(endpoint);
 		if (module == null) {
 			return false;
-		}
-		
+		}		
 		var compos = Object.keys(module.exports.__handlers__);
 		module.state = 0;
 		module.defer();
