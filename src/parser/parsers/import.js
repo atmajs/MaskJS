@@ -8,7 +8,12 @@
 			alias: null,
 			path: null,
 			namespace: null,
-			async: null
+			async: null,
+			link: null,
+			mode: null,
+			moduleType: null,
+			contentType: null,
+			attr: null
 		};
 		var end = lex_(str, i, imax, obj);
 		return [ new ImportNode(parent, obj),  end, 0 ];
@@ -34,7 +39,8 @@
 			'$$exports[$name?(as $alias)](,) from |("$path"$$namespace<accessor>)'
 		],
 		'?(is $$flags{link:dynamic|static;contentType:mask|script|style|json|text;mode:client|server|both})',
-		'?(as $moduleType)'
+		'?(as $moduleType)',
+		'?(($$attr[$key? =? "$value"]( )))'
 	);
 
 	var ImportsNode = class_create(Dom.Node, {
@@ -65,6 +71,7 @@
 			this.namespace = obj.namespace;
 			this.moduleType = obj.moduleType;
 			this.contentType = obj.contentType;
+			this.attr = obj.attr == null ? null : this.toObject(obj.attr);
 			this.link = obj.link || default_LINK;
 			this.mode = obj.mode || default_MODE;
 			this.parent = parent;
@@ -94,6 +101,16 @@
 			if (this.async != null) {
 				importStr += ' ' + this.async;
 			}
+			if (this.attr != null) {
+				var initAttr = '(',
+					attr = initAttr;
+				for (var key in this.attr) {
+					if (attr !== initAttr) attr +=' ';
+					attr += key + "='" + this.attr[key] + "'";
+				}
+				attr += ')';
+				from += ' ' + attr;
+			}
 			from += ';';
 
 			if (this.alias != null) {
@@ -117,6 +134,14 @@
 				return importStr + ' ' + str + from;
 			}
 			return importStr + from;
+		},
+		toObject: function (arr) {
+			var obj = {},
+				i = arr.length;
+			while(--i > -1) {
+				obj[arr[i].key] = arr[i].value;
+			}
+			return obj;
 		}
 	});
 

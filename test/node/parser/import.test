@@ -185,8 +185,49 @@ UTest({
 
 				var str = Mask.stringify(node);
 				eq_(template, str);
-			})	
+			})
 		}	
+	},
+	'attributes': {
+		'should parse attributes' () {
+			[
+				{
+					template: "import from baz (name='Foo');",
+					expect (node) {
+						deepEq_(node.attr, { name: 'Foo' });
+					}
+				},
+				{
+					template: "import from baz ( name = 'Foo'  	);",
+					serialized: "import from baz (name='Foo');",
+					expect (node) {
+						deepEq_(node.attr, { name: 'Foo' });
+					}
+				},
+				,
+				{
+					template: "import from baz as bem ( id ='qux12');",
+					serialized: "import from baz as bem (id='qux12');",
+					expect (node) {
+						deepEq_(node.attr, { id: 'qux12' });
+						eq_(node.moduleType, 'bem');
+					}
+				}
+			]
+			.forEach(data => {
+				var {template, expect, serialized} = data;
+
+				var nodes = Mask.parse(template);
+				var node = Mask.jmask(nodes).find('import').get(0);
+				is_(node, 'Object');
+
+				expect(node);
+				var str = Mask.stringify(node);
+				eq_(str, serialized || template);
+			
+				
+			})
+		}
 	}
 	
 
