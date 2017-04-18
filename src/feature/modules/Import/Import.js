@@ -2,14 +2,12 @@ var IImport = class_create({
 	type: null,
 	moduleType: null,
 	contentType: null,
-	constructor: function(path, async, alias, exports, moduleType, module){
-		this.path = path;
-		this.alias = alias;
-		this.exports = exports;
-		this.async = async;
-		this.moduleType = moduleType;
-
-		var endpoint = new Endpoint(path, this.contentType, this.moduleType);
+	constructor: function(endpoint, node, module){
+		this.path = endpoint.path;
+		this.alias = node.alias;
+		this.exports = node.exports;
+		this.async = node.async;
+		this.contentType = node.contentType;		
 		this.module = Module.createModule(endpoint, null, null, module);
 		this.parent = module;
 	},
@@ -95,8 +93,8 @@ var IImport = class_create({
 
 
 (function(){
-	IImport.create = function(endpoint, async, alias, exports, parent){
-		return new (Factory(endpoint))(endpoint.path, async, alias, exports, endpoint.moduleType, parent);
+	IImport.create = function(endpoint, node, parent){
+		return new (Factory(endpoint))(endpoint, node, parent);
 	};
 	IImport.types = {};
 

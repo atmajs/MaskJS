@@ -95,11 +95,8 @@ var Module = {};
 		},
 		createImport: function(node, ctx, ctr, module){
 			var path    = u_resolvePathFromImport(node, ctx, ctr, module),
-				alias   = node.alias,
-				exports = node.exports,
-				async   = node.async,
 				endpoint = new Endpoint(path, node.contentType, node.moduleType);			
-			return IImport.create(endpoint, async, alias, exports, module);
+			return IImport.create(endpoint, node, module);
 		},
 		isMask: function(endpoint){
 			var type = endpoint.contentType,
