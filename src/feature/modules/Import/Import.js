@@ -6,7 +6,8 @@ var IImport = class_create({
 		this.alias = node.alias;
 		this.exports = node.exports;
 		this.async = node.async;
-		this.contentType = node.contentType;		
+		this.contentType = node.contentType;
+		this.moduleType = node.moduleType;	
 		this.module = Module.createModule(endpoint, null, null, module);
 		this.parent = module;
 	},

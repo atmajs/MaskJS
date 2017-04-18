@@ -130,22 +130,22 @@
 				while( --i > -1 ){
 					x = this.nodes[i];
 					if (x.tagName === IMPORT) {
-						arr.push(x);
+						arr.unshift(x);
 					}
 				}
 			}
 			else {
 				i = this.imports_.length;
 				while( --i > -1 ){
-					x = this.nodes[i];
+					x = this.imports_[i];
 					if (x.module && x.module.stringifyImport) {
 						var result = x.module.stringifyImport(x.node);
 						if (result != null) {
-							arr.push(result);
+							arr.unshift(result);
 						}
 						continue;
 					}
-					arr.push(x.node);
+					arr.unshift(x.node);
 				}
 			}
 			return mask_stringify(arr);
