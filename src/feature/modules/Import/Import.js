@@ -1,8 +1,7 @@
 var IImport = class_create({
 	type: null,
-	moduleType: null,
-	contentType: null,
 	constructor: function(endpoint, node, module){
+		this.node = node;
 		this.path = endpoint.path;
 		this.alias = node.alias;
 		this.exports = node.exports;

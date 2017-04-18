@@ -124,12 +124,28 @@
 			serializeNodes: true
 		},
 		serializeNodes: function(){
-			var arr = [],
-				i = this.nodes.length, x;
-			while( --i > -1 ){
-				x = this.nodes[i];
-				if (x.tagName === IMPORT) {
-					arr.push(x);
+			var arr = [], i, x;
+			if (this.imports_ == null || this.imports_.length === 0) {
+				i = this.nodes.length;
+				while( --i > -1 ){
+					x = this.nodes[i];
+					if (x.tagName === IMPORT) {
+						arr.push(x);
+					}
+				}
+			}
+			else {
+				i = this.imports_.length;
+				while( --i > -1 ){
+					x = this.nodes[i];
+					if (x.module && x.module.stringifyImport) {
+						var result = x.module.stringifyImport(x.node);
+						if (result != null) {
+							arr.push(result);
+						}
+						continue;
+					}
+					arr.push(x.node);
 				}
 			}
 			return mask_stringify(arr);
