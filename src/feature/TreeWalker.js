@@ -31,6 +31,12 @@ var mask_TreeWalker;
 		walkAsync: function(root, fn, done){
 			root = prepairRoot(root);
 			new AsyncWalker(root, fn, done);
+		},
+		map: function (root, fn) {
+			return new SyncMapper().map(root, fn);
+		},
+		superpose: function (rootA, rootB, fn) {
+			return new SyncSuperposer().join(rootA, rootB, fn);	
 		}
 	};
 
@@ -231,6 +237,122 @@ var mask_TreeWalker;
 				}
 			}
 		};
+	}());
+
+	var SyncMapper;
+	(function(){
+		SyncMapper = class_create({
+			map: function(node, fn) {
+				var mapper = getMapper(node);
+				return mapper(node, fn);
+			}
+		});
+		function getMapper (node) {
+			/* not strict */
+			if (node.compoName) {
+				return mapCompo;
+			}
+			return mapNode;
+		}
+		function mapNode(node, fn, parent, index) {
+			if (node == null)
+				return null;
+
+			var nextNode = isFragment(node) 
+				? new Dom.Fragment 
+				: fn(node);
+			if (nextNode == null) {
+				return null;
+			}
+			var nodes = safe_getNodes(node);
+			if (nodes == null) {
+				return nextNode;
+			}
+			nextNode.nodes = coll_map(nodes, function (x) { 
+				return mapNode(x, fn, node) 
+			});
+			return nextNode;
+		}
+		function mapCompo(compo, fn, parent) {
+			if (compo == null)
+				return null;
+
+			var next = fn(compo);
+			if (next == null || compo.components == null) {
+				return next;
+			}
+			next.components = coll_map(compo.components, function (x) { 
+				return mapCompo(x, fn, compo)
+			});
+			return next;
+		}
+	}());
+
+	var SyncSuperposer;
+	(function(){
+		SyncSuperposer = class_create({
+			join: function(rootA, rootB, fn) {
+				var superposer = getSuperposer(rootA);
+				return superposer(rootA, rootB, fn);
+			}
+		});
+		function getSuperposer (node) {
+			/* not strict */
+			if (node.compoName) {
+				return superposeCompos;
+			}
+			return superposeNodes;
+		}
+		function superposeNodes(nodeA, nodeB, fn) {
+			var typeA = safe_getType(nodeA),
+				typeB = safe_getType(nodeB);
+			if (typeA !== typeB) {
+				return;
+			}
+			if (typeA !== Node.FRAGMENT) {
+				fn(nodeA, nodeB);
+			}
+			var arrA = safe_getNodes(nodeA),
+				arrB = safe_getNodes(nodeB);
+			
+			if (arrA == null || arrB == null) {
+				return;
+			}
+			var aL = arrA.length,
+				bL = arrB.length,
+				i = -1;
+			
+			while(++i < aL && i < bL) {
+				var a = arrA[i],
+					b = arrB[i];
+				if (a.tagName != null && a.tagName !== b.tagName) {
+					continue;
+				}
+				superposeNodes(a, b, fn);
+			}
+			return nodeA;
+		}
+		function superposeCompos(compoA, compoB, fn) {
+			fn(compoA, compoB);
+			var arrA = compoA.components,
+				arrB = compoB.components;
+			
+			if (arrA == null || arrB == null) {
+				return;
+			}
+			var	aL = arrA.length,
+				bL = arrB.length,
+				i = -1;
+			
+			while(++i < aL && i < bL) {
+				var a = arrA[i],
+					b = arrB[i];
+				if (a.compoName != null && a.compoName !== b.compoName) {
+					continue;
+				}
+				superposeCompos(a, b, fn);
+			}
+		}
 	}());
 
 	var Step = function (node, parent, index) {

@@ -47,7 +47,8 @@
 
 			var x = cache[i],
 				_instance = x.instance;
-				_parent = _instance.parent;
+				_parent = _instance.parent,
+				_stateTree = null;
 
 			if (_instance == null || !_instance.$) {
 				console.error('Mask.Reload - no instance', x);
@@ -58,15 +59,31 @@
 				_cache[compoName].push(x);
 				continue;
 			}
+			_stateTree = serializeStateTree(_instance);
 
 			var $placeholder = dom_createPlaceholder(_instance);
 			compo_remove(_instance);
 
 			var frag = _mask_render(x.node, x.model, x.ctx, null, _parent);			
-			compo_insert(frag, $placeholder, _parent);
+			compo_insert(frag, $placeholder, _parent, _stateTree);
 		}
+	}
 
-		
+	function serializeStateTree (compo) {
+		mask.TreeWalker.map(compo, function (x) {
+			return {
+				compoName: x.compoName,
+				state: x.serializeState && component.serializeState(),
+				components: null
+			};
+		});
+	}
+	function deserializeStateTree (compo, stateTree) {
+		mask.TreeWalker.superpose(compo, stateTree, function (x, stateNode) {
+			if (stateNode.state != null) {
+				x.deserializeState(stateNode.state);
+			}
+		});
 	}
 
 	function wasReloadedViaParent (compo, names) {
@@ -93,19 +110,27 @@
 	}
 
 	function dom_createPlaceholder(instance) {
-		var element = instance.$[0],
-			placeholder = document.createComment('');
+		var element = instance.$[0];
+		if (element == null) {
+			return null;
+		}
 
+		var placeholder = document.createComment('');
 		element.parentNode.insertBefore(placeholder, element);
 		return placeholder;
 	}
 
-	function compo_insert(fragment, placeholder, parentController) {
-		placeholder.parentNode.insertBefore(fragment, placeholder);
+	function compo_insert(fragment, placeholder, parentController, stateTree) {
+		if (placeholder) {
+			placeholder.parentNode.insertBefore(fragment, placeholder);
+		}
 
 		var last = parentController.components[parentController.components.length - 1];
 		if (last) {
 			_signal_emitIn(last, 'domInsert');
+			if (stateTree) {
+				deserializeStateTree(last, stateTree);
+			}
 		}
 	}
 
