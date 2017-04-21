@@ -70,7 +70,7 @@
 	}
 
 	function serializeStateTree (compo) {
-		mask.TreeWalker.map(compo, function (x) {
+		return mask.TreeWalker.map(compo, function (x) {
 			return {
 				compoName: x.compoName,
 				state: x.serializeState && component.serializeState(),
