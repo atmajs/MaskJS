@@ -80,7 +80,7 @@
 	}
 	function deserializeStateTree (compo, stateTree) {
 		mask.TreeWalker.superpose(compo, stateTree, function (x, stateNode) {
-			if (stateNode.state != null) {
+			if (stateNode.state != null && x.deserializeState) {
 				x.deserializeState(stateNode.state);
 			}
 		});
