@@ -74,6 +74,10 @@ var Define;
 			
 			name = x.tagName;
 			if ('function' === name) {
+				if (name === 'constructor') {
+					Proto.constructor = joinFns(Proto.constructor, x.fn);
+					continue;
+				}
 				Proto[x.name] = x.fn;
 				if (x.flagSelf) {
 					selfFns = selfFns || [];
@@ -265,12 +269,21 @@ var Define;
 
 	function slot_privateWrap(fn) {
 		return function (mix) {
-			if (mix != null) {
-				mix.preventDefault && mix.preventDefault();
-				mix.stopPropagation && mix.stopPropagation();
+			if (mix != null && mix.stopPropagation != null) {
+				mix.stopPropagation();
 			}
 			fn.apply(this, arguments);
 			return false;
+		};
+	}
+	function joinFns (fns) {
+		return function () {
+			var args = _Array_slice.call(arguments),
+				imax = fns.length,
+				i = -1;
+			while (++i < imax) {
+				fns[i].apply(this, args);
+			}
 		};
 	}
 	var mergeStats = { placeholders: { $isEmpty: true } };

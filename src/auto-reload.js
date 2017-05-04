@@ -64,7 +64,7 @@
 			var $placeholder = dom_createPlaceholder(_instance);
 			compo_remove(_instance);
 
-			var frag = _mask_render(x.node, x.model, x.ctx, null, _parent);			
+			var frag = _mask_render(x.node, x.model, x.ctx, $placeholder && $placeholder.container, _parent);			
 			compo_insert(frag, $placeholder, _parent, _stateTree);
 		}
 	}
@@ -73,15 +73,16 @@
 		return mask.TreeWalker.map(compo, function (x) {
 			return {
 				compoName: x.compoName,
-				state: x.serializeState && component.serializeState(),
+				state: x.serializeState && (x.serializeState() || {}),
 				components: null
 			};
 		});
 	}
 	function deserializeStateTree (compo, stateTree) {
+		var ctx = {};
 		mask.TreeWalker.superpose(compo, stateTree, function (x, stateNode) {
 			if (stateNode.state != null && x.deserializeState) {
-				x.deserializeState(stateNode.state);
+				x.deserializeState(stateNode.state, ctx, compo);
 			}
 		});
 	}
@@ -114,14 +115,21 @@
 		if (element == null) {
 			return null;
 		}
+		var parentNode = element.parentNode;
+		if (parentNode == null) {
+			return null;
+		}
+		if (parentNode.lastElementChild === element) {
+			return { container: parentNode, anchor: null };
+		}
 
-		var placeholder = document.createComment('');
-		element.parentNode.insertBefore(placeholder, element);
-		return placeholder;
+		var anchor = document.createComment('');
+		parentNode.insertBefore(anchor, element);
+		return { container: null, anchor: anchor };
 	}
 
 	function compo_insert(fragment, placeholder, parentController, stateTree) {
-		if (placeholder) {
+		if (placeholder && placeholder.anchor) {
 			placeholder.parentNode.insertBefore(fragment, placeholder);
 		}
 
