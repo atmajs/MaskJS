@@ -65,7 +65,7 @@
 			compo_remove(_instance);
 
 			var frag = _mask_render(x.node, x.model, x.ctx, $placeholder && $placeholder.container, _parent);			
-			compo_insert(frag, $placeholder, _parent, _stateTree);
+			compo_insert(frag, $placeholder, _parent, _stateTree, _instance);
 		}
 	}
 
@@ -128,7 +128,7 @@
 		return { container: null, anchor: anchor };
 	}
 
-	function compo_insert(fragment, placeholder, parentController, stateTree) {
+	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance) {
 		if (placeholder && placeholder.anchor) {
 			placeholder.parentNode.insertBefore(fragment, placeholder);
 		}
@@ -138,6 +138,17 @@
 			_signal_emitIn(last, 'domInsert');
 			if (stateTree) {
 				deserializeStateTree(last, stateTree);
+			}
+		}
+		for(var x = parentController; x != null; x = x.parent) {
+			var compos = x.compos;
+			if (compos == null) {
+				continue;
+			}
+			for (var key in compos) {
+				if (compos[key] === prevInstance) {					
+					compos[key] = last;
+				}
 			}
 		}
 	}
