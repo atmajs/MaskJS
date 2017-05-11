@@ -130,7 +130,7 @@
 
 	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance) {
 		if (placeholder && placeholder.anchor) {
-			placeholder.parentNode.insertBefore(fragment, placeholder);
+			placeholder.anchor.parentNode.insertBefore(fragment, placeholder.anchor);
 		}
 
 		var last = parentController.components[parentController.components.length - 1];
