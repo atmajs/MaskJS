@@ -27,7 +27,7 @@ UTest({
     'component attribute util' () {
         mask.registerUtil('attrTest', {
             process: assert.await(function(str, model, ctx, el, ctr, attrName, utilType){
-                eq_(ctr.compoName, 'Foo');
+                eq_(ctr.compoName, 'MyParent');
                 eq_(str, 'TestVal');
                 eq_(attrName, 'data-baz');
                 eq_(utilType, 'compo-attr');
@@ -35,7 +35,8 @@ UTest({
         });
 
         mask.define('Foo', mask.Compo());
-        mask.render('Foo data-baz="~[attrTest:TestVal]";');
+        mask.define('MyParent', mask.Compo());
+        mask.render('MyParent > Foo data-baz="~[attrTest:TestVal]";');
     }
 
 })
