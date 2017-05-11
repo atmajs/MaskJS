@@ -72,7 +72,8 @@
 
 	custom_Utils = {
 		expression: function(value, model, ctx, element, ctr, name, type, node){
-			return expression_eval(value, model, ctx, ctr, node);
+			var owner = type === 'compo-attr' ? ctr.parent : ctr;
+			return expression_eval(value, model, ctx, owner, node);
 		},
 	};
 	custom_Optimizers   = {};

@@ -72,7 +72,7 @@ UTest({
 			'> get from global'
 			var x = mask.getHandler('2_Y_Define');
 			is_(x, 'Function');
-			eq_(x.name, 'CompoBase');
+			eq_(x.name, 'DefineBase');
 			
 			'> should be scoped'
 			var x = mask.getHandler('2_Y_Let');
@@ -81,7 +81,7 @@ UTest({
 			'> get from scope'
 			var x = mask.getHandler('2_Y_Let', Foo);
 			is_(x, 'Function');
-			eq_(x.name, 'CompoBase');
+			eq_(x.name, 'DefineBase');
 			
 			'> render with the children'
 			var foo = Compo.initialize(Foo);

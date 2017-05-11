@@ -1,0 +1,22 @@
+UTest({
+	'attributes': {
+		'components' : {
+			'should use parent as `this` in expressions' () {
+				mask.define('Foo', mask.Compo({
+					myNum: 5
+				}));
+		        mask.define('Bar', mask.Compo({
+		        	myNum: 7
+		        }));
+		        var compo = mask.Compo.initialize('Bar > Foo test=~[this.myNum] > div test="~[this.myNum]"');
+		        var foo = compo.find('Foo');
+		        is_(foo.attr.test, 'Number');
+		        eq_(foo.attr.test, 7);
+
+		        var divAttrVal = compo.$.filter('div').attr('test');
+		        is_(divAttrVal, 'String');
+		        eq_(divAttrVal, '5');
+			}
+		}
+	}
+})

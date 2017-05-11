@@ -27,7 +27,7 @@ UTest({
     'component attribute util' () {
         mask.registerUtil('attrTest', {
             process: assert.await(function(str, model, ctx, el, ctr, attrName, utilType){
-                eq_(ctr.compoName, 'MyParent');
+                eq_(ctr.compoName, 'Foo');
                 eq_(str, 'TestVal');
                 eq_(attrName, 'data-baz');
                 eq_(utilType, 'compo-attr');

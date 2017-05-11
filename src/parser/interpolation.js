@@ -227,12 +227,8 @@
 	 * @returns {(array|string)}
 	 */
 	function _interpolate(arr, type, model, ctx, el, ctr, name, node) {
-		var owner = ctr;
-		if (type === 'compo-attr') {
-			owner = ctr.parent;
-			if (arr.length === 2 && arr[0] === '') {
-				return arr[1].process(model, ctx, el, owner, name, type);
-			}
+		if (type === 'compo-attr' && arr.length === 2 && arr[0] === '') {
+			return arr[1].process(model, ctx, el, ctr, name, type);
 		}
 		var imax = arr.length,
 			i = -1,
@@ -248,7 +244,7 @@
 				}
 			} else {
 				var interp = arr[i],
-					mix = interp.process(model, ctx, el, owner, name, type, node);
+					mix = interp.process(model, ctx, el, ctr, name, type, node);
 				if (mix != null) {
 					if (typeof mix === 'object' && array == null){
 						array = [ string ];
@@ -262,6 +258,7 @@
 			}
 			even = !even;
 		}
+
 		return array == null
 			? string
 			: array
