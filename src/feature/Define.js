@@ -18,7 +18,7 @@ var Define;
 		}
 	};
 
-	function compo_prototype(node, compoName, tagName, attr, fnModelResolver, nodes, owner, model, Base) {
+	function compo_prototype(node, compoName, tagName, attr, nodes, owner, model, Base) {
 		var arr = [];
 		var selfFns = null;
 		var Proto = obj_extend({
@@ -28,7 +28,8 @@ var Define;
 			attr: attr,
 			location: trav_location(owner),
 			meta: {
-				template: 'merge'
+				template: 'merge',
+				arguments: node.arguments
 			},
 			constructor: function DefineBase() {
 				if (selfFns != null) {
@@ -41,9 +42,6 @@ var Define;
 			},			
 			renderStart: function(model_, ctx, el){
 				var model = model_;
-				if (fnModelResolver != null) {
-					model = this.model = fnModelResolver(this.expression, model, ctx, this);
-				}				
 				Compo.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template && this.meta.template !== 'copy') {					
 					this.nodes = mask_merge(this.nodes, [], this, null, mergeStats);
@@ -175,83 +173,20 @@ var Define;
 			args_ = node['arguments'],
 			as_ = node['as'],
 			tagName,
-			attr,
-			modelResolver;
+			attr;
 		if (as_ != null) {
 			var x = parser_parse(as_);
 			tagName = x.tagName;
 			attr = obj_extend(node.attr, x.attr);
 		}
-		if (args_ != null) {
-			modelResolver = compo_modelArgsBinding_Delegate(
-				args_,
-				compo_getInjections(node, args_, model, ctr)
-			);
-		}
-
+		
 		var name = node.name,
-			Proto = compo_prototype(node, name, tagName, attr, modelResolver, node.nodes, ctr, model, Base),
+			Proto = compo_prototype(node, name, tagName, attr, node.nodes, ctr, model, Base),
 			args = compo_extends(extends_, model, ctr)
 			;
 
 		args.push(Proto);
 		return Compo.apply(null, args);
-	}
-
-	function compo_getInjections (node, args, model, ctr) {
-		var imax = args.length,
-			i = -1,
-			out = null;
-
-		while(++i < imax) {
-			var type = args[i].type;
-			if (type == null) {
-				continue
-			}
-			var val = expression_eval(type, model, null, ctr);
-			if (val == null) {
-				error_withNode(type + ' was not resolved', node);
-				continue;
-			}
-			var x = Di.resolve(val);
-			if (out == null) {
-				out = new Array(imax);
-			}			
-			out[i] = x;
-		}
-		return out;
-	}
-
-	function compo_modelArgsBinding_Delegate(args, injections) {
-		return function(expr, model, ctx, ctr){
-			var arr = null;
-			if (expr == null) {
-				arr = args.map(function(x){
-					expression_eval(x.prop, model, ctx, ctr);
-				});
-			} else {
-				arr = expression_evalStatements(expr, model, ctx, ctr);
-			}
-			var out = {},
-				arrMax = arr.length,
-				argsMax = args.length,
-				i = -1;
-			while ( ++i < arrMax && i < argsMax ){
-				out[args[i].prop] = arr[i]
-			}
-
-			if (injections != null) {
-				arr = injections;
-				i = -1;
-				while(++i < argsMax) {
-					var key = args[i].prop;
-					if (out[key] == null &&  arr[i] != null) {
-						out[key] = injections[i];
-					}
-				}
-			}
-			return out;
-		};
 	}
 
 	function trav_location(ctr) {

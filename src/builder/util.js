@@ -1,5 +1,6 @@
 var builder_pushCompo,
-	builder_setCompoAttributes;
+	builder_setCompoAttributes,
+	builder_setCompoModel;
 
 (function(){
 
@@ -18,7 +19,15 @@ var builder_pushCompo,
 		}
 		compos.push(compo);
 	};
-
+	builder_setCompoModel = function(compo, model, ctx, ctr){
+		if (compo.model != null) {
+			return;
+		}
+		var readModel = compo.meta && compo.meta.readArguments;
+		return compo.model = readModel == null 
+			? model
+			: readModel(compo.expression, model, ctx, ctr);
+	};
 	builder_setCompoAttributes = function(compo, node, model, ctx, container){
 		var attr = node.attr;
 		if (attr == null) {

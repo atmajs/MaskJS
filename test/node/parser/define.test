@@ -49,7 +49,7 @@ UTest({
 			}
 		`);
 		var def = jmask(ast).filter('define').get(0);
-		deepEq_(def.arguments, [ { prop: 'foo'}, { prop: '$qu_x'} ]);
+		deepEq_(def.arguments, [ { name: 'foo'}, { name: '$qu_x'} ]);
 
 		var back = Mask.stringify(ast, 4);
 		has_(back, "define Foo (foo, $qu_x)");		
@@ -61,7 +61,7 @@ UTest({
 			}
 		`);
 		var def = jmask(ast).filter('define').get(0);
-		deepEq_(def.arguments, [ { prop: 'store', type: 'IStore'}]);
+		deepEq_(def.arguments, [ { name: 'store', type: 'IStore'}]);
 
 		var back = Mask.stringify(ast, 4);
 		has_(back, "define Foo (store: IStore)");
@@ -74,7 +74,7 @@ UTest({
 			}
 		`);
 		var def = jmask(ast).filter('define').get(0);
-		deepEq_(def.arguments, [ { prop: 'a'}, { prop: 'b'} ]);
+		deepEq_(def.arguments, [ { name: 'a'}, { name: 'b'} ]);
 		deepEq_(def.extends, [ { compo:'Bar' } ]);
 		Mask.off('error');
 	},
@@ -86,7 +86,7 @@ UTest({
 			}
 		`);
 		var def = jmask(ast).filter('define').get(0);
-		deepEq_(def.arguments, [ { prop: 'a'}, { prop: 'b'} ]);
+		deepEq_(def.arguments, [ { name: 'a'}, { name: 'b'} ]);
 		deepEq_(def.extends, [ { compo:'Xy' }, { compo:'Bar' } ]);
 		deepEq_(def.as, 'div');
 		Mask.off('error');

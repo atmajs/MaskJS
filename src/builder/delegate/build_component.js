@@ -32,7 +32,7 @@ var build_compo;
 
 	// PRIVATE
 
-	function build_Component(compo, node, model, ctx, container, ctr, children){
+	function build_Component(compo, node, model_, ctx, container, ctr, children){
 		var attr, key;
 
 		compo.ID = ++builder_componentID;
@@ -43,12 +43,10 @@ var build_compo;
 		if (compo.compoName == null)
 			compo.compoName = node.tagName;
 
-		if (compo.model == null)
-			compo.model = model;
-
 		if (compo.nodes == null)
 			compo.nodes = node.nodes;
 
+		var model = builder_setCompoModel(compo, model_, ctx, ctr);
 		builder_setCompoAttributes(compo, node, model, ctx, container);
 
 		listeners_emit(

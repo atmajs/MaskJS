@@ -103,7 +103,7 @@ var defMethods_getSource,
 		}
 		var str = 'var ', prop;
 		while(++i < imax) {
-			prop = args[i].prop;
+			prop = args[i].name;
 			str += prop + ' = this.model.' + prop;
 			str += i === imax - 1 ? ';\n' : ',\n    '; 
 		}
