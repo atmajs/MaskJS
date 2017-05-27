@@ -22,9 +22,9 @@ UTest({
 			eq_(node.attr.var, `{a:1}`);
 		},
 		'should parse function call' () {
-			var template = `var var =  $.getFoo(a,b,'string');`;
+			var template = `var var =  this.getFoo(a,b,'string');`;
 			var node = mask.parse(template);
-			eq_(node.attr.var, `$.getFoo(a,b,'string')`);
+			eq_(node.attr.var, `this.getFoo(a,b,'string')`);
 		},
 	}
 });

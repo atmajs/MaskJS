@@ -1,7 +1,7 @@
 // use default module loader
 mask.config('modules', 'default');
 UTest({
-	'should test sync module loading' (done) {
+	async 'should test sync module loading' (done) {
 		var Files = {
 			'MyComponents.mask': `
 				module path='A.mask' {
@@ -14,7 +14,7 @@ UTest({
 					h1 > 'C'
 				}
 			`,
-			'MyNumber.mask': `
+			'MyLetter.mask': `
 				import * as Template from './B';
 				Template;
 			`
@@ -35,17 +35,19 @@ UTest({
 			return dfr.resolve(str);
 		});
 
-		mask
-			.renderAsync(`
-				import sync from './MyComponents';
-				import Number from './MyNumber';
-			`)
-			.done(() => {
-				mask.cfg('getFile', null);
+		let dom = await mask.renderAsync(`
+			import sync from './MyComponents';
+			import './MyLetter';
+		`);
+		
+		mask.cfg('getFile', null);
+		deepEq_(_queue, ['MyComponents.mask', 'MyLetter.mask']);
 
-				deepEq_(_queue, ['MyComponents.mask', 'MyNumber.mask']);
-				done();
-			})
+		await UTest.domtest(dom, `
+			find ('h1') > text ('B');
+		`)
+		done();
+			
 	},
 	'should load async javascripts scope' (done) {
 		mask.define('TestAsync', mask.Compo({

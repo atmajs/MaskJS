@@ -10,7 +10,7 @@
 
 		keys: null,
 		strategy: null,
-		imports: null,
+		importItems: null,
 		
 		splitNodes_: function(){
 			var map = {
@@ -53,7 +53,7 @@
 		prepairImports_: function(){
 			var imports = Compo.closest(this, 'imports');
 			if (imports != null) {
-				return this.imports = imports.imports_;
+				return this.importItems = imports.importItems;
 			}
 		},
 		initStrategy_: function(){
@@ -87,10 +87,10 @@
 			throw new Error(msg)
 		},		
 		getModuleFor: function(name){
-			if (this.imports == null) {
+			if (this.importItems == null) {
 				return null;
 			}
-			var import_ = this.imports.find(function(x) {
+			var import_ = this.importItems.find(function(x) {
 				return x.hasExport(name);
 			});
 			return import_ && import_.module || null;

@@ -1,12 +1,6 @@
 var ImportMask = IImport.types['mask'] = class_create(IImport, {
 	type: 'mask',
 	contentType: 'mask',
-	constructor: function(){
-		this.eachExport(function(compoName){
-			if (compoName !== '*')
-				customTag_registerResolver(compoName);
-		});
-	},
 	getHandler: function(name){
 		var module = this.module;
 		if (module == null) {
@@ -19,11 +13,11 @@ var ImportMask = IImport.types['mask'] = class_create(IImport, {
 			}
 			return null
 		}
-		var orig = this.getOriginal(name);
-		if (orig == null) {
+		var x = this.getExportedName(name);
+		if (x == null) {
 			return null;
 		}
-		return module.exports[orig] || module.queryHandler(orig);
+		return module.exports[x] || module.queryHandler(x);
 	},
 	empty: function EmptyCompo () {}
 });

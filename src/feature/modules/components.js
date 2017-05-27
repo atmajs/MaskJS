@@ -54,9 +54,9 @@
 	});
 
 	custom_Tags[IMPORTS] = class_create({
-		imports_: null,
+		importItems: null,
 		load_: function(ctx, cb){
-			var arr = this.imports_,
+			var arr = this.importItems,
 				self = this,
 				imax = arr.length,
 				await = imax,
@@ -104,7 +104,7 @@
 				imax = nodes.length,
 				i = -1, x
 				;
-			var arr = this.imports_ = [];
+			var arr = this.importItems = [];
 			while( ++i < imax ){
 				x = nodes[i];
 				if (x.tagName === IMPORT) {
@@ -125,7 +125,7 @@
 		},
 		serializeNodes: function(){
 			var arr = [], i, x;
-			if (this.imports_ == null || this.imports_.length === 0) {
+			if (this.importItems == null || this.importItems.length === 0) {
 				i = this.nodes.length;
 				while( --i > -1 ){
 					x = this.nodes[i];
@@ -135,9 +135,9 @@
 				}
 			}
 			else {
-				i = this.imports_.length;
+				i = this.importItems.length;
 				while( --i > -1 ){
-					x = this.imports_[i];
+					x = this.importItems[i];
 					if (x.module && x.module.stringifyImport) {
 						var result = x.module.stringifyImport(x.node);
 						if (result != null) {
@@ -158,15 +158,19 @@
 			this.start_(model, ctx);
 		},
 		getHandler: function(name){
-			var arr = this.imports_,
+			var arr = this.importItems,
 				imax = arr.length,
 				i = -1, import_, x;
 			while ( ++i < imax ){
 				import_ = arr[i];
-				if (import_.type !== 'mask') {
-					continue;
+				switch (import_.type) {
+					case 'mask':
+						x = import_.getHandler(name);
+						break;
+					case 'script':
+						x = import_.getExport(name);
+						break;
 				}
-				x = import_.getHandler(name);
 				if (x != null) {
 					return x;
 				}
@@ -175,7 +179,7 @@
 		},
 		getHandlers: function(){
 			var handlers = {};
-			var arr = this.imports_,
+			var arr = this.importItems,
 				imax = arr.length,
 				i = -1, import_, x;
 			while ( ++i < imax ){

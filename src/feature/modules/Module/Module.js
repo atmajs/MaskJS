@@ -71,6 +71,13 @@ var IModule = class_create(class_Dfr, {
 	preprocess_: null,
 	preprocessError_: null,
 	register: fn_doNothing,
+	getExport: function(property) {
+		var obj = this.exports;
+		return property !== '*'
+			? obj_getProperty(obj, property)
+			: obj
+			;
+	}
 });
 
 (function(){

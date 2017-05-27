@@ -94,7 +94,7 @@ UTest({
 					return $('<button>').text('Foo1').get(0);
 				}
 				
-				span > '~[$.getButton()]';
+				span > '~[this.getButton()]';
 			}
 			Foo;
 		`;

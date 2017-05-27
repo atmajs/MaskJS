@@ -10,6 +10,7 @@ var IImport = class_create({
 		this.moduleType = node.moduleType;	
 		this.module = Module.createModule(endpoint, null, null, module);
 		this.parent = module;
+		this.imports = null;
 	},
 	eachExport: function(fn){
 		var alias = this.alias;
@@ -32,7 +33,6 @@ var IImport = class_create({
 			}
 		}
 	},
-
 	hasExport: function(name) {
 		if (this.alias === name) {
 			return true;
@@ -51,8 +51,10 @@ var IImport = class_create({
 		}
 		return false;
 	},
-
-	getOriginal: function(alias){
+	getExport (name) {
+		return this.imports[name];
+	},
+	getExportedName: function(alias){
 		if (this.alias === alias) {
 			return '*';
 		}
@@ -69,7 +71,6 @@ var IImport = class_create({
 		}
 		return null;
 	},
-
 	loadImport: function(cb){
 		var self = this;
 		this
@@ -80,9 +81,29 @@ var IImport = class_create({
 				cb(null, self);
 			});
 	},
-
-	registerScope: null,
-
+	registerScope: function(ctr){
+		this.imports = {};
+		this.eachExport(function(exportName, name, alias) {
+			this.registerExport_(ctr, exportName, name, alias)
+		});
+	},
+	registerExport_: function(ctr, exportName, name, alias){
+		var prop = alias || name;
+		var obj = this.module.getExport(name);
+		if (obj == null) {
+			this.logError_('Exported property is undefined: ' + name);
+			return;				
+		}
+		if (ctr.scope == null) {
+			ctr.scope = {};
+		}
+		if (exportName === '*') {
+			throw new Error('Obsolete: unexpected exportName');
+		}
+		this.imports[exportName] = obj;
+		obj_setProperty(ctr.scope, prop, obj);
+		customTag_registerResolver(prop);
+	},
 	logError_: function(msg){
 		var str = '\n(Module) ' + (this.parent || {path: 'root'}).path
 		str += '\n  (Import) ' + this.path

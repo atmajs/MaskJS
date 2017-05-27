@@ -6,7 +6,7 @@ var ModuleMask;
 		source: null,
 		modules: null,
 		exports: null,
-		imports: null,
+		importItems: null,
 
 		load_: _file_get,
 		preprocessError_: function(error, next) {
@@ -26,7 +26,7 @@ var ModuleMask;
 
 			this.scope = {};
 			this.source = ast;
-			this.imports = [];
+			this.importItems = [];
 			this.exports = {
 				'__nodes__': [],
 				'__handlers__': {}
@@ -42,7 +42,7 @@ var ModuleMask;
 				switch (x.tagName) {
 					case 'import':
 						importNodes.push(x);
-						this.imports.push(Module.createImport(
+						this.importItems.push(Module.createImport(
 							x, null, null, this
 						));
 						break;
@@ -84,6 +84,9 @@ var ModuleMask;
 				: null
 				;
 		},
+		getExport: function (misc) {
+			return this.getHandler(misc) || this.queryHandler(misc);
+		}
 	});
 
 	// Also flattern all `imports` tags
@@ -128,14 +131,14 @@ var ModuleMask;
 	}
 	function _createExports(nodes, model, module) {
 		var exports = module.exports,
-			imports = module.imports,
+			items = module.importItems,
 			scope   = module.scope,
 			getHandler = _module_getHandlerDelegate(module);
 
 		var i = -1,
-			imax = imports.length;
+			imax = items.length;
 		while ( ++i < imax ) {
-			var x = imports[i];
+			var x = items[i];
 			if (x.registerScope) {
 				x.registerScope(module);
 			}
@@ -186,15 +189,15 @@ var ModuleMask;
 	}
 
 	function _loadImports(module, importNodes, done) {
-		var imports = module.imports,
-			count = imports.length;
+		var items = module.importItems,
+			count = items.length;
 		if (count === 0) {
 			return done.call(module);
 		}
 		var imax = count,
 			i = -1;
 		while( ++i < imax ) {
-			_loadImport(module, imports[i], importNodes[i], await);
+			_loadImport(module, items[i], importNodes[i], await);
 		}
 		function await(error){
 			if (--count > 0) {
@@ -217,21 +220,22 @@ var ModuleMask;
 		};
 	}
 	function _module_getHandler(module, name) {
-		var Ctor;
-
+		if (module.error != null) {
+			return;
+		}
 		// check public exports
 		var exports = module.exports;
-		if (exports != null && (Ctor = exports[name]) != null) {
+		var Ctor = exports[name];
+		if (Ctor != null) {
 			return Ctor;
 		}
-
 		// check private components store
 		var handlers = exports.__handlers__;
 		if (handlers != null && (Ctor = handlers[name]) != null) {
 			return Ctor;
 		}
 
-		var arr = module.imports,
+		var arr = module.importItems,
 			i = arr.length,
 			x, type;
 		while( --i > -1) {
