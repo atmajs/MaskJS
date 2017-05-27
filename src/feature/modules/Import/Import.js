@@ -51,7 +51,7 @@ var IImport = class_create({
 		}
 		return false;
 	},
-	getExport (name) {
+	getExport: function(name) {
 		return this.imports[name];
 	},
 	getExportedName: function(alias){
