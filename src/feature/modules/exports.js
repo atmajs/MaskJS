@@ -120,30 +120,19 @@ var Module = {};
 		getModuleType: function (endpoint) {
 			return endpoint.moduleType || Module.getType(endpoint);
 		},
-		cfg: function(name, val){
+		cfg: function(mix, val){
 			if (arguments.length === 1) {
-				return obj_getProperty(_opts, name);
-			}
-			if (val == null) {
-				return this;
-			}
-			if (name === 'base' || name === 'nsBase') {
-				var path = path_normalize(val);
-				if (path[path.length - 1] !== '/') {
-					path += '/';
+				if (is_String(mix)) {
+					return obj_getProperty(_opts, mix);
 				}
-				if (path[0] === '/') {
-					path = path_combine(path_resolveRoot(), path);
+				if (is_Object(mix)) {
+					for (var key in mix) {
+						u_setOption(_opts, key, mix[key]);
+					}
 				}
-				_opts[name] = path;
 				return this;
 			}
-			var current = obj_getProperty(_opts, name);
-			if (is_Object(current) && is_Object(val)) {
-				obj_extend(current, val);
-				return this;
-			}
-			obj_setProperty(_opts, name, val);
+			u_setOption(mix, val);			
 			return this;
 		},
 		resolveLocation: u_resolveLocation,

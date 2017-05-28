@@ -4,7 +4,8 @@ var u_resolveLocation,
 	u_resolvePathFromImport,
 	u_isNpmPath,
 	u_resolveNpmPath,
-	u_handler_getDelegate;
+	u_handler_getDelegate, 
+	u_setOption;
 (function(){
 	u_resolveLocation = function(ctx, ctr, module) {
 		if (module != null) {
@@ -35,6 +36,26 @@ var u_resolveLocation,
 			return path;
 		}
 		return path_combine(u_resolveBase(), path);
+	};
+
+	u_setOption = function(options, key, val) {
+		if (key === 'base' || key === 'nsBase') {
+			var path = path_normalize(val);
+			if (path[path.length - 1] !== '/') {
+				path += '/';
+			}
+			if (path[0] === '/') {
+				path = path_combine(path_resolveRoot(), path);
+			}
+			options[key] = path;
+			return this;
+		}
+		var current = obj_getProperty(options, key);
+		if (is_Object(current) && is_Object(val)) {
+			obj_extend(current, val);
+			return this;
+		}
+		obj_setProperty(options, key, val);
 	};
 
 	u_resolveBase = function(){

@@ -1,62 +1,74 @@
+/// <reference path="class.d.ts" />
+/// <reference path="node.d.ts" />
+
 declare module mask {
 	
-	abstract class IComponent implements IComponentDeclaration {
-        $?: any
-        parent: IComponent
-        components: IComponent[]
-        find: (selector: string) => IComponent
-        closest: (selector: string) => IComponent
-        findAll: (selector: string) => IComponent[]
-        remove: Function
+    class Component {
+        constructor (node?: mask.ast.IElement, model?: any, ctx?:any, el?: HTMLElement, parent?: Component)
+        $: any
+        compoName: string        
+        tagName?: string
+        template?: string | mask.ast.IElement        
+        parent: Component
+        components: Component[]
+        nodes: ast.IElement[]
+        node: ast.IElement
+              
+        find: (selector: string) => Component
+        closest: (selector: string) => Component
+        findAll: (selector: string) => Component[]
+        remove: () => void
         slotState: (slot: string, state: boolean) => void | any
         signalState: (slot: string, state: boolean) => void | any
         emitIn: (signal: string, ...args: any[]) => void | any
         emitOut: (signal: string, ...args: any[]) => void | any
         attach (functionName: string, fn: Function)
+        setAttribute?: (key: string, val: any) => void
+        getAttribute?: (key: string) => any
+        [x: string]: any
     }
-    
-    interface IComponentFactory {
-        (ComponentDeclaration: IComponentDeclaration): IComponent,
-        new (ComponentDeclaration: IComponentDeclaration): IComponent
+
+    interface IComponentFactory  {
+        <T>(prototype: IComponentDeclaration & T): new () => Component & T
     }
 
     interface IComponentDeclaration {
-        tagName?: string,
-        template?: string | any,
+        tagName?: string
+        template?: string | mask.ast.IElement
+        meta?: ComponentMeta
         slots?: {
-        	[x: string]: (this: IComponent) => void | any
-        },
+        	[x: string]: (this: Component, ...args: any[]) => void | boolean | any
+        }
         pipes?: {
         	[x: string]: {
-        		[x: string]: (this: IComponent) => void | any
+        		[x: string]: (this: Component, ...args: any[]) => void | boolean | any
         	}
-        },
+        }
         events?: {
-        	[x: string]: (this: IComponent, event: any) => void | any
-        },
+        	[x: string]: (this: Component, event: Event, ...args: any[]) => void | any
+        }
         compos?: {
-        	[x: string]: void | any
-        },
+        	[x: string]: string
+        }
         attr?: {
         	[x: string]: void | any
-        },
-        onRenderStart?: (model: any, ctx: any, container: generic.IAppendChild, parent: IComponent) => void | any | generic.IPromise,
-        render?: (model: any, ctx: any, container: generic.IAppendChild, parent: IComponent) => void | any,
-        onRenderEnd?: (elements: generic.DOMElement[], model: any, ctx: any, container: generic.IAppendChild, parent: IComponent) => void | any,
+        }
+        onRenderStart?: (model?: any, ctx?: any, container?: generic.IAppendChild, parent?: Component) => void | any | classes.ADeferred
+        render?: (model?: any, ctx?: any, container?: generic.IAppendChild, parent?: Component) => void | any
+        onRenderEnd?: (elements?: HTMLElement[], model?: any, ctx?: any, container?: generic.IAppendChild, parent?: Component) => void | any
 
-        dispose?: () => void,
-        setAttribute?: (key: string, val: any) => void,
-        getAttribute?: (key: string) => any,
-        onAttributeSet?: (key: string, val: any) => void,
-        meta?: IComponentMeta,
+        dispose?: () => void
+        setAttribute?: (key: string, val: any) => void
+        getAttribute?: (key: string) => any
+        onAttributeSet?: (key: string, val: any) => void
         [x: string]: void | any
     }
 
-    interface IComponentMeta {
+    interface ComponentMeta {
     	attributes?: {
     		[x: string]: void | any	
-    	},
-    	template?: 'replace' | 'merge' | 'join' | 'copy',
+    	}
+    	template?: 'replace' | 'merge' | 'join' | 'copy'
     	mode?: 'client' | 'server' | 'both',
     	[x: string]: void | any
     }

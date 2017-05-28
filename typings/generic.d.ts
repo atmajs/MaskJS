@@ -5,10 +5,6 @@ declare module mask {
 	        appnedChild (node: any)
 	    }
 
-	    interface IPromise {
-	    	then: Function
-	    }
-
 	    interface DOMElement {
 	    	
 	    }
