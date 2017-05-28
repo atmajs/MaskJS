@@ -1,7 +1,7 @@
 {
   "name": "maskjs",
   "description": "Template / Markup / HMVC Engine",
-  "version": "0.63.2",
+  "version": "0.63.3",
   "homepage": "http://atmajs.com/mask",
   "contributors": [
     {
@@ -38,6 +38,14 @@
   },
   "keywords": [],
   "atma": {
+    "release": [
+      "lib/**",
+      "wiki/**",
+      "typings/**",
+      "readme.md",
+      "package.json",
+      "bower.json"
+    ],
     "plugins": [
       "atma-loader-babel",
       "atma-io-middleware-uglify"
