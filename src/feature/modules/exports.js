@@ -132,7 +132,7 @@ var Module = {};
 				}
 				return this;
 			}
-			u_setOption(mix, val);			
+			u_setOption(_opts, mix, val);
 			return this;
 		},
 		resolveLocation: u_resolveLocation,
