@@ -61,6 +61,9 @@ declare class mask {
 
  	static run (model?: any, el?: HTMLElement): mask.Component
 
+    static registerAttrHandler(name: string, handler: mask.IAttrHandler): void
+    static registerUtil(name: string, handler: mask.IUtilHandlerMethodRaw | mask.IUtilDeclaration): void
+
  	static TreeWalker: mask.feature.TreeWalker
 
  	static Module: mask.feature.Module
@@ -80,5 +83,28 @@ declare class mask {
 
 declare module mask {
 
-    
+    interface IAttrHandler {
+        (
+            node?: mask.ast.INode, 
+            val?: string, 
+            model?: any, 
+            ctx?: any, 
+            el?: HTMLElement, 
+            ctr?: mask.Component, 
+            container?: HTMLElement
+        ):void
+    }
+    interface IUtilHandlerMethodRaw {
+        (
+           val:string,
+           model?:any,
+           ctx?:any,
+           el?:HTMLElement,
+           ctr?: Component
+        ):any
+    }
+    interface IUtilDeclaration {
+        arguments?: 'parsed' | 'raw'
+        process?: IUtilHandlerMethodRaw | ((...args:any[]) => any)
+    }
 }
