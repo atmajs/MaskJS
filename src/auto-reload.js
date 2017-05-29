@@ -62,10 +62,11 @@
 			_stateTree = serializeStateTree(_instance);
 
 			var $placeholder = dom_createPlaceholder(_instance);
-			compo_remove(_instance);
+			var elements = compo_remove(_instance);
 
-			var frag = _mask_render(x.node, x.model, x.ctx, $placeholder && $placeholder.container, _parent);			
-			compo_insert(frag, $placeholder, _parent, _stateTree, _instance);
+			var frag = _mask_render(x.node, x.model, x.ctx, $placeholder && $placeholder.container, _parent);
+
+			compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements);
 		}
 	}
 
@@ -102,12 +103,17 @@
 	/** Reload Helpers > */
 
 	function compo_remove(instance) {
+		var elements = null;
+		if (instance.$ && instance.$.length) {
+			elements = instance.$.toArray();
+		}
 		cache_remove(instance);
 		if (instance.remove) {
 			instance.remove();
-			return;
+			return elements;
 		}
 		instance.$ && instance.$.remove();
+		return elements;
 	}
 
 	function dom_createPlaceholder(instance) {
@@ -128,7 +134,23 @@
 		return { container: null, anchor: anchor };
 	}
 
-	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance) {
+	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance, removedElements) {
+		if (removedElements && fragment) {
+			var arrivedElements = fragment.nodeType === Node.DOCUMENT_FRAGMENT_NODE
+				? fragment.children
+				: [ fragment ];
+
+			var imax = removedElements.length,
+				jmax = arrivedElements.length,
+				max = Math.min(imax, jmax),
+				i = -1;
+			while (++i < max) {
+				var removed = removedElements[i],
+					arrived = arrivedElements[i];
+				el_copyProperties(arrived, removed);
+			}
+		}
+		
 		if (placeholder && placeholder.anchor) {
 			placeholder.anchor.parentNode.insertBefore(fragment, placeholder.anchor);
 		}
@@ -150,7 +172,17 @@
 					compos[key] = last;
 				}
 			}
-		}
+		}		
+	}
+
+	function el_copyProperties (elArrived, elRemoved) {
+		elRemoved.classList.forEach(function (name) {
+			if (elArrived.classList.contains(name)) {
+				return;
+			}
+			elArrived.classList.add(name);
+		});
+		elArrived.style.cssText = elRemoved.style.cssText;
 	}
 
 	function cache_remove (compo) {
