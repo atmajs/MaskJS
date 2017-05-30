@@ -18,8 +18,8 @@ var scopeRefs_getImportVars;
 			}
 			import_.eachExport(register);
 		}
-		function register(varName, origName) {
-			var val = this.module.getExport(origName);
+		function register(varName) {
+			var val = this.getExport(varName);
 			out[0].push(varName);
 			out[1].push(val);
 		}

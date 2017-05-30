@@ -89,11 +89,24 @@ var IImport = class_create({
 	},
 	registerExport_: function(ctr, exportName, name, alias){
 		var prop = alias || name;
-		var obj = this.module.getExport(name);
+		var obj = this.module.getExport(name);		
 		if (obj == null) {
 			this.logError_('Exported property is undefined: ' + name);
 			return;				
 		}
+		if (name === '*' && _opts.es6Modules && obj.default != null) {
+			var defaultOnly = true;
+			for (var key in obj) {
+				if (key === 'default' || key[0] === '_') continue;
+				defaultOnly = false;
+				break;
+			}
+			if (defaultOnly) {
+				warn_withNode('Default ONLY export is deprecated: `import * as foo from X`. Use `import foo from X`', this.node);
+				obj = obj.default;
+			}
+		}
+
 		if (ctr.scope == null) {
 			ctr.scope = {};
 		}

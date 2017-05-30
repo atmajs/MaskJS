@@ -4,6 +4,7 @@ var Module = {};
 			base: null,
 			nsBase: '/',
 			version: null,
+			es6Modules: false,
 			moduleResolution: 'classic',
 			ext: {
 				'mask': 'mask',
