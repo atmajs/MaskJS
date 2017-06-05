@@ -86,7 +86,9 @@ var u_resolveLocation,
 				path = node.path;
 				warn_withNode('Prefix not defined: ' + path, node);
 			}
-
+		}
+		if (path[path.length - 1] === '/' && node.exports != null) {
+			path += node.exports[0].name;
 		}
 		if (false === hasExt(path)) {
 			var c = path.charCodeAt(0);
@@ -136,9 +138,13 @@ var u_resolveLocation,
     function fromNs(node) {
     	var type = node.contentType || 'script';
     	var path = node.namespace.replace(/\./g, '/');
-		var base = _opts.nsBase;
-		if (base != null) {
-			path = path_combine(base, path);
+    	if (path[0] === '/') {
+    		path = '.' + path;
+    	} else {
+			var base = _opts.nsBase;
+			if (base != null) {
+				path = path_combine(base, path);
+			}
 		}
 		var exports = node.exports;
 		if (exports == null) {
@@ -149,15 +155,13 @@ var u_resolveLocation,
 			var name = exp.name;
 			path += '/' + name;
 
-			if (type === 'script') {
+			if (type === 'script' && _opts.es6Modules !== true) {
 				node.alias = exp.alias || name;
 				node.exports = null;
 			}
-		}
-		
+		}		
 		var default_ = _opts.ext[type] || type;
 		path += '.' + default_;
-
 		return path;
     }
 	u_resolveNpmPath = function (contentType, path, parentLocation, cb){
