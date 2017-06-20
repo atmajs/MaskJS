@@ -64,9 +64,12 @@
 			var $placeholder = dom_createPlaceholder(_instance);
 			var elements = compo_remove(_instance);
 
-			var frag = _mask_render(x.node, x.model, x.ctx, $placeholder && $placeholder.container, _parent);
+			var container = $placeholder && $placeholder.container;
+			var lastElement = container && container.lastElementChild;
+			var frag = _mask_render(x.node, x.model, x.ctx, container, _parent);
+			var arrivedElements = el_getArrivedElements(container, lastElement, frag);
 
-			compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements);
+			compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements, arrivedElements);
 		}
 	}
 
@@ -134,12 +137,11 @@
 		return { container: null, anchor: anchor };
 	}
 
-	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance, removedElements) {
-		if (removedElements && fragment) {
-			var arrivedElements = fragment.nodeType === Node.DOCUMENT_FRAGMENT_NODE
-				? fragment.children
-				: [ fragment ];
-
+	function compo_insert(fragment, placeholder, parentController, stateTree, prevInstance, removedElements, arrivedElements) {
+		if (removedElements && arrivedElements) {
+			if (arrivedElements.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+				arrivedElements = arrivedElements.children;
+			}
 			var imax = removedElements.length,
 				jmax = arrivedElements.length,
 				max = Math.min(imax, jmax),
@@ -183,6 +185,19 @@
 			elArrived.classList.add(name);
 		});
 		elArrived.style.cssText = elRemoved.style.cssText;
+	}
+	function el_getArrivedElements(container, lastElement, renderReturnValue) {
+		if (container != null) {
+			if (lastElement == null) {
+				return container.children;
+			}
+			var arr = [];
+			for(var el = lastElement.nextElementSibling; el != null; el = el.nextElementSibling) {
+				arr.push(el);
+			}
+			return arr;
+		}
+		return renderReturnValue;
 	}
 
 	function cache_remove (compo) {
