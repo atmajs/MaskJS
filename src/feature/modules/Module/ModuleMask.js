@@ -23,8 +23,7 @@ var ModuleMask;
 				? parser_parse(mix, this.path)
 				: mix
 				;
-
-			this.scope = {};
+			
 			this.source = ast;
 			this.importItems = [];
 			this.exports = {
@@ -132,7 +131,6 @@ var ModuleMask;
 	function _createExports(nodes, model, module) {
 		var exports = module.exports,
 			items = module.importItems,
-			scope   = module.scope,
 			getHandler = _module_getHandlerDelegate(module);
 
 		var i = -1,
@@ -156,8 +154,9 @@ var ModuleMask;
 				};
 				var Ctor = Define.create(node, model, module, Base);
 				var Proto = Ctor.prototype;
-				Proto.scope  = obj_extend(Proto.scope, scope);
-
+				if (Proto.scope != null || module.scope != null) {
+					Proto.scope  = obj_extend(Proto.scope, module.scope);
+				}
 
 				var compoName = node.name;
 				if (name === 'define') {
@@ -174,7 +173,7 @@ var ModuleMask;
 			getHandler: getHandler,
 			location: module.location,
 			nodes: exports.__nodes__,
-			scope: scope
+			scope: module.scope
 		});
 
 		return exports;
