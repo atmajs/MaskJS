@@ -200,7 +200,7 @@ UTest({
 		.forEach(template => {
 			var ast = Mask.parse(template);
 			var str = mask.stringify(ast);
-			eq_(str, '!DOCTYPE html;');
+			eq_(str, '<!DOCTYPE html>');
 		});
 	}
 });
