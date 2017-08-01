@@ -29,7 +29,8 @@ var Define;
 			location: trav_location(owner),
 			meta: {
 				template: 'merge',
-				arguments: node.arguments
+				arguments: node.arguments,
+				statics: null
 			},
 			constructor: function DefineBase() {
 				if (selfFns != null) {
@@ -55,14 +56,13 @@ var Define;
 
 		Methods.compileForDefine(node, Proto, model, owner);
 
-		var imax = nodes == null ? 0 : nodes.length,
-			i = 0, x, name, decorators;
-		for(; i < imax; i++) {
-			decorators = null;
-			x = nodes[i];
-			if (x == null)
+		var imax = nodes == null ? 0 : nodes.length;
+		for(var i = 0; i < imax; i++) {
+			var decorators = null;
+			var x = nodes[i];
+			if (x == null) {
 				continue;
-
+			}
 			if (x.type === Dom.DECORATOR) {
 				var start = i;
 				i = Decorator.goToNode(nodes, i, imax);
@@ -70,7 +70,7 @@ var Define;
 				x = nodes[i];
 			}
 			
-			name = x.tagName;
+			var name = x.tagName;
 			if ('function' === name) {
 				if (name === 'constructor') {
 					Proto.constructor = joinFns(Proto.constructor, x.fn);
@@ -80,6 +80,12 @@ var Define;
 				if (x.flagSelf) {
 					selfFns = selfFns || [];
 					selfFns.push(x.name);
+				}
+				if (x.flagStatic) {
+					if (Proto.meta.statics == null) {
+						Proto.meta.statics = {};
+					}
+					Proto.meta.statics[x.name] = x.fn;
 				}
 				continue;
 			}
@@ -186,7 +192,11 @@ var Define;
 			;
 
 		args.push(Proto);
-		return Compo.apply(null, args);
+		var Ctor = Compo.apply(null, args);
+		if (Proto.meta.statics) {
+			obj_extend(Ctor, Proto.meta.statics);
+		}
+		return Ctor;
 	}
 
 	function trav_location(ctr) {
