@@ -1,0 +1,6 @@
+define FooStatics {
+
+    function static transform (str) {
+        return str.toUpperCase();
+    }
+}

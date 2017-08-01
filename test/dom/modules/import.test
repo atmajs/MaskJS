@@ -437,6 +437,32 @@ UTest({
 			},
 		},
 
+		'should import component and use its static method' () {
+			return mask
+					.renderAsync(`
+						import FooStatics from '/test/tmpl/modules/static.mask';
+						
+						h4 > '~[FooStatics.transform("hello")]';
+
+						define FooUsage {
+							function onRenderStart () {
+								this.model = {
+									test: FooStatics.transform('baz')
+								};
+							}
+
+							h3 > '~test'
+						}
+						FooUsage;
+					`)
+					.pipe(dom => {
+						return UTest.domtest(dom, `
+							filter('h4') > text ('HELLO');
+							filter('h3') > text ('BAZ');
+						`);
+					});
+		},
+
 		//< packages
 
 		'version' () {
