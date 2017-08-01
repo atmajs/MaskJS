@@ -108,10 +108,10 @@ var parser_skipWhitespace,
 		switch (code) {
 			case 40:
 				// (
-				return punc_ParantheseOpen;
+				return punc_ParenthesisOpen;
 			case 41:
 				// )
-				return punc_ParantheseClose;
+				return punc_ParenthesisClose;
 			case 123:
 				// {
 				return punc_BraceOpen;

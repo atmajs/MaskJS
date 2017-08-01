@@ -52,13 +52,13 @@ function _parse(expr, earlyExit, node) {
 		}
 
 		switch (directive) {
-			case punc_ParantheseOpen:
+			case punc_ParenthesisOpen:
 				current = ast_append(current, new Ast_Statement(current));
 				current = ast_append(current, new Ast_Body(current));
 
 				index++;
 				continue;
-			case punc_ParantheseClose:
+			case punc_ParenthesisClose:
 				var closest = type_Body;
 				if (state === state_arguments) {
 					state = state_body;
