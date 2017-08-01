@@ -6,6 +6,7 @@ var _getDecorator,
 			deco = expression_eval(expr, _store, null, ctr);
 		if (deco == null) {
 			error_withNode('Decorator not resolved', decoNode);
+			return null;
 		}
 		if (expr.indexOf('(') === -1 && isFactory(deco)) {
 			return initialize(deco);
