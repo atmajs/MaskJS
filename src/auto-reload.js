@@ -66,7 +66,7 @@
 
 			var container = $placeholder && $placeholder.container;
 			var lastElement = container && container.lastElementChild;
-			var frag = _mask_render(x.node, x.model, x.ctx, container, _parent);
+			var frag = _mask_render(x.node, _parent.model || x.model, x.ctx, container, _parent);
 			var arrivedElements = el_getArrivedElements(container, lastElement, frag);
 
 			compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements, arrivedElements);

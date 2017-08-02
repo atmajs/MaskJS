@@ -106,55 +106,40 @@ var parser_skipWhitespace,
 			return null;
 
 		switch (code) {
-			case 40:
-				// (
+			case 40/*(*/:
 				return punc_ParenthesisOpen;
-			case 41:
-				// )
+			case 41/*)*/:
 				return punc_ParenthesisClose;
-			case 123:
-				// {
+			case 123/*{*/:
 				return punc_BraceOpen;
-			case 125:
-				// }
+			case 125/*}*/:
 				return punc_BraceClose;
-			case 91:
-				// [
+			case 91/*[*/:
 				return punc_BracketOpen;
-			case 93:
-				// ]
+			case 93/*]*/:
 				return punc_BracketClose;
-			case 44:
-				// ,
+			case 44/*,*/:
 				return punc_Comma;
-			case 46:
-				// .
+			case 46/*.*/:
 				return punc_Dot;
-			case 59:
-				// ;
+			case 59/*;*/:
 				return punc_Semicolon;
-			case 43:
-				// +
+			case 43/*+*/:
 				return op_Plus;
-			case 45:
-				// -
+			case 45/*-*/:
 				if (template.charCodeAt(index + 1) === 62 /*>*/) {
 					index++;
 					return op_AsyncAccessor;
 				}
 				return op_Minus;
-			case 42:
-				// *
+			case 42/* * */:
 				return op_Multip;
-			case 47:
-				// /
+			case 47/*/*/:
 				return op_Divide;
-			case 37:
-				// %
+			case 37/*%*/:
 				return op_Modulo;
 
-			case 61:
-				// =
+			case 61/*=*/:
 				if (template.charCodeAt(++index) !== code) {
 					util_throw(
 						'Assignment violation: View can only access model/controllers', '='
@@ -166,8 +151,7 @@ var parser_skipWhitespace,
 					return op_LogicalEqual_Strict;
 				}
 				return op_LogicalEqual;
-			case 33:
-				// !
+			case 33/*!*/:
 				if (template.charCodeAt(index + 1) === 61) {
 					// =
 					index++;
@@ -181,40 +165,38 @@ var parser_skipWhitespace,
 					return op_LogicalNotEqual;
 				}
 				return op_LogicalNot;
-			case 62:
-				// >
-				if (template.charCodeAt(index + 1) === 61) {
+			case 62 /*>*/ :
+				var next = template.charCodeAt(index + 1);
+				if (next === 61/*=*/) {
 					index++;
 					return op_LogicalGreaterEqual;
 				}
+				if (next === 62/*>*/) {
+					index++;
+					return op_ObserveAccessor;
+				}
 				return op_LogicalGreater;
-			case 60:
-				// <
+			case 60/*<*/:
 				if (template.charCodeAt(index + 1) === 61) {
 					index++;
 					return op_LogicalLessEqual;
 				}
 				return op_LogicalLess;
-			case 38:
-				// &
+			case 38/*&*/:
 				if (template.charCodeAt(++index) !== code) {
 					return op_BitAnd;
 				}
 				return op_LogicalAnd;
-			case 124:
-				// |
+			case 124/*|*/:
 				if (template.charCodeAt(++index) !== code) {
 					return op_BitOr;
 				}
 				return op_LogicalOr;
-			case 94:
-				// ^
+			case 94/*^*/:
 				return op_BitXOr;
-			case 63:
-				// ?
+			case 63/*?*/:
 				return punc_Question;
-			case 58:
-				// :
+			case 58/*:*/:
 				return punc_Colon;
 		}
 

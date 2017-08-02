@@ -23,6 +23,7 @@ var op_Minus = '-', //1,
 	op_LogicalLessEqual = '<=', //15,
 	op_Member = '.', // 16
 	op_AsyncAccessor = '->',
+	op_ObserveAccessor = '>>',
 
 	op_BitOr = '|',
 	op_BitXOr = '^',

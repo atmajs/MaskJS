@@ -167,9 +167,10 @@ function _parse(expr, earlyExit, node) {
 				}
 				break;
 			case op_AsyncAccessor:
+			case op_ObserveAccessor:
 				t = current.type;
 				if (t !== type_SymbolRef && t !== type_Accessor && t !== type_FunctionRef) {
-					return util_throw('Unexpected async accessor');
+					return util_throw('Unexpected accessor:' + directive);
 				}
 				var ref = ast_findPrev(current, type_SymbolRef);
 				if (ref == null) {
@@ -186,15 +187,22 @@ function _parse(expr, earlyExit, node) {
 				ast_remove(parent, ref);
 				var statement = new Ast_Statement(parent);
 				var inner = new Ast_Statement(statement);
-				inner.async = true;
+				if (directive === op_AsyncAccessor) {
+					inner.async = true;
+				} else {
+					inner.observe = true;
+				}
 				ref.parent = inner;
 				ast_append(inner, ref);
 				ast_append(statement, inner);
-				ast_append(parent, statement);				
-				
+				ast_append(parent, statement);
+
 				index++;
-				
-				ast.async = true;
+				if (directive === op_AsyncAccessor) {
+					ast.async = true;
+				} else {
+					ast.observe = true;
+				}
 				c = parser_skipWhitespace();
 				directive = go_acs;
 				current = statement.parent;
@@ -318,10 +326,17 @@ function _parse(expr, earlyExit, node) {
 					if (ref === 'true')
 						ref = true;
 
-					if (ref === 'await' && (current.type === type_Body || current.type === type_Statement)) {
-						ast.async = true;
-						current.async = true;
-						continue;
+					if (current.type === type_Body || current.type === type_Statement) {
+						if (ref === 'await') {
+							ast.async = true;
+							current.async = true;
+							continue;
+						}
+						if (ref === 'observe') {
+							ast.observe = true;
+							current.observe = true;
+							continue;
+						}
 					}
 
 					if (typeof ref !== 'string') {
