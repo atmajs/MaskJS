@@ -7,6 +7,9 @@ var builder_pushCompo,
 	builder_resumeDelegate = function (ctr, model, ctx, container, children, finilizeFn){
 		var anchor = document.createComment('');
 		container.appendChild(anchor);
+		if (children != null) {
+			children.push(anchor);
+		}
 		return function(){
 			return _resume(ctr, model, ctx, anchor, children, finilizeFn);
 		};
@@ -104,6 +107,27 @@ var builder_pushCompo,
 
 			anchorEl.parentNode.insertBefore(fragment, anchorEl);
 		}
+		if (children != null && elements.length > 0) {
+			var args = [0, 1].concat(elements);
+			var i = coll_indexOf(children, anchorEl);
+			if (i > -1) {
+				args[0] = i;
+				children.splice.apply(children, args);
+			}
+			var parent = ctr.parent;
+			while(parent != null) {
+				var arr = parent.$ || parent.elements;
+				if (arr != null) {
+					var i = coll_indexOf(arr, anchorEl);
+					if (i === -1) {
+						break;
+					}
+					args[0] = i;
+					arr.splice.apply(arr, args);
+				}
+				parent = parent.parent;					
+			}
+		}
 
 
 		// use or override custom attr handlers
@@ -139,17 +163,6 @@ var builder_pushCompo,
 				, ctx
 				, anchorEl.parentNode
 			);
-		}
-
-
-		if (children != null && children !== elements){
-			var il = children.length,
-				jl = elements.length,
-				j  = -1;
-
-			while(++j < jl){
-				children[il + j] = elements[j];
-			}
 		}
 	}
 
