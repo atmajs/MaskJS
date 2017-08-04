@@ -5,6 +5,10 @@ var css_ensureScopedStyles;
 		if (attr.scoped == null && attr[KEY] == null) {
 			return str;
 		}
+		if (is_String(str) === false) {
+			error_withNode('Scoped style can`t have interpolations', node);
+			return str;
+		}
 		// Remove `scoped` attribute to exclude supported browsers.
 		// Redefine custom attribute to use same template later
 		attr.scoped = null;
