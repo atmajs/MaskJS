@@ -128,7 +128,7 @@ var throw_,
 	}
 	function delegate_withNode(Ctor, type){
 		return function(mix, node){
-			var error = new Ctor(stringifyError(mix));
+			var error = mix instanceof Error ? mix : new Ctor(stringifyError(mix));
 			if (node != null) {
 				error.message += '\n' + reporter_getNodeStack(node);
 			}
