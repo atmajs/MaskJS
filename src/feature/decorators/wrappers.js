@@ -4,17 +4,32 @@ var _wrapMany,
 
 (function(){
 
-	_wrapMany = function (wrapperFn, decorators, fn, model, ctx, ctr) {
+	_wrapMany = function (wrapperFn, decorators, fn, target, key, model, ctx, ctr) {
 		var _fn = fn,
 			i = decorators.length;
 		while(--i !== -1) {
-			_fn = wrap(wrapperFn, decorators[i], _fn, model, ctx, ctr);
+			_fn = wrap(wrapperFn, decorators[i], _fn, target, key, model, ctx, ctr);
 		}
 		return _fn;
 	};
 
-	_wrapper_Fn = function (decoNode, deco, innerFn) {
+	_wrapper_Fn = function (decoNode, deco, innerFn, target, key) {
 		if (is_Function(deco)) {
+			if (deco.length > 1) {
+				var descriptor = { value: innerFn };
+				var result = deco(target, key, descriptor);
+				if (result == null) {
+					if (target[key] !== innerFn) {
+						return target[key];
+					}
+					return descriptor.value;
+				}
+				if (result.value == null) {
+					error_withNode('Decorator should return value descriptor', decoNode);
+					return innerFn;
+				}
+				return result.value;
+			}
 			return deco(innerFn) || innerFn;
 		}
 
@@ -80,11 +95,11 @@ var _wrapMany,
 		}
 	}());
 
-	function wrap (wrapperFn, decoratorNode, innerFn, model, ctx, ctr) {
+	function wrap (wrapperFn, decoratorNode, innerFn, target, key, model, ctx, ctr) {
 		var deco = _getDecorator(decoratorNode, model, ctx, ctr);
 		if (deco == null) {
 			return innerFn;
 		}
-		return wrapperFn(decoratorNode, deco, innerFn) || innerFn;
+		return wrapperFn(decoratorNode, deco, innerFn, target, key) || innerFn;
 	};
 }());

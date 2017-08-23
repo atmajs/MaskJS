@@ -151,10 +151,7 @@ var throw_,
 			return;
 		}
 		var fn = type === 'error' ? log_error : log_warn;
-		var stack = error.stack;
-		if (stack) {
-			stack = stack.split('\n')[0];
-		}
+		var stack = error.stack || '';
 		fn(error.message + '\n' + stack);
 	}	
 	function stringifyError(mix) {

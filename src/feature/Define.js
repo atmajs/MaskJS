@@ -76,7 +76,14 @@ var Define;
 					Proto.constructor = joinFns(Proto.constructor, x.fn);
 					continue;
 				}
-				Proto[x.name] = x.fn;
+				var fn = x.fn;
+				Proto[x.name] = fn;
+				if (x.decorators != null) {
+					var result = Decorator.wrapMethod(x.decorators, fn, Proto, x.name, model, null, owner);
+					if (is_Function(result)) {
+						Proto[x.name] = result;
+					}
+				}
 				if (x.flagSelf) {
 					selfFns = selfFns || [];
 					selfFns.push(x.name);
@@ -85,7 +92,7 @@ var Define;
 					if (Proto.meta.statics == null) {
 						Proto.meta.statics = {};
 					}
-					Proto.meta.statics[x.name] = x.fn;
+					Proto.meta.statics[x.name] = fn;
 				}
 				continue;
 			}
@@ -101,6 +108,12 @@ var Define;
 					fns = Proto[type] = {};
 				}
 				fns[x.name] = x.flagPrivate ? slot_privateWrap(x.fn) : x.fn;
+				if (x.decorators != null) {
+					var result = Decorator.wrapMethod(x.decorators, x.fn, fns, x.name, model, null, owner);
+					if (is_Function(result)) {
+						fns[x.name] = result;
+					}
+				}
 				continue;
 			}
 			if ('pipe' === name) {

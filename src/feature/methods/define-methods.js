@@ -42,9 +42,6 @@ var defMethods_getSource,
 			if (node.name === 'constructor') {
 				fn = wrapDi(fn, node);
 			}
-			if (node.decorators != null) {
-				fn = Decorator.wrapMethod(node.decorators, fn, model, null, owner);
-			}
 			node.fn = fn;
 		}
 	};

@@ -37,15 +37,15 @@ var Decorator;
 		wrapMethodNode: function (decorators, node, model, ctx, ctr) {
 			if (node.fn) return node.fn;
 			var fn = Methods.compileForNode(node, model, ctr);
-			return (node.fn = this.wrapMethod(decorators, fn, model, ctx, ctr));
+			return (node.fn = this.wrapMethod(decorators, fn, node, 'fn', model, ctx, ctr));
 		},
 
-		wrapMethod: function (decorators, fn, model, ctx, ctr) {
+		wrapMethod: function (decorators, fn, target, key, model, ctx, ctr) {
 			return _wrapMany(_wrapper_Fn, decorators, fn, model, ctx, ctr)
 		},
 
 		wrapNodeBuilder: function (decorators, builderFn, model, ctx, ctr) {
-			return _wrapMany(_wrapper_NodeBuilder, decorators, builderFn, model, ctx, ctr)
+			return _wrapMany(_wrapper_NodeBuilder, decorators, builderFn, null, null, model, ctx, ctr)
 		},		
 	};
 
