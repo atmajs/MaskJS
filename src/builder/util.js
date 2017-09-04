@@ -23,13 +23,14 @@ var builder_pushCompo,
 		compos.push(compo);
 	};
 	builder_setCompoModel = function(compo, model, ctx, ctr){
-		if (compo.model != null) {
-			return;
-		}
-		var readModel = compo.meta && compo.meta.readArguments;
-		return compo.model = readModel == null 
-			? model
-			: readModel(compo.expression, model, ctx, ctr);
+		var readModel = compo.meta != null && compo.meta.readArguments || null;
+		var argsModel = readModel == null
+			? null
+			: readModel(compo.expression, model, ctx, ctr);		
+		if (compo.model != null) {			
+			return obj_extend(compo.model, argsModel)
+		}		
+		return (compo.model = argsModel || model);
 	};
 	builder_setCompoAttributes = function(compo, node, model, ctx, container){
 		var attr = node.attr;

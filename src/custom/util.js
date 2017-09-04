@@ -47,19 +47,19 @@
 		fn.util = obj;
 		return fn;
 	}
-	function processRawFn(expr, model, ctx, el, ctr, attrName, type) {
+	function processRawFn(expr, model, ctx, el, ctr, attrName, type, node) {
 		if ('node' === type) {
-			this.nodeRenderStart(expr, model, ctx, el, ctr);
-			return this.node(expr, model, ctx, el, ctr);
+			this.nodeRenderStart(expr, model, ctx, el, ctr, type, node);
+			return this.node(expr, model, ctx, el, ctr, type, node);
 		}
 		// `attr`, `compo-attr`
-		this.attrRenderStart(expr, model, ctx, el, ctr, attrName, type);
-		return this.attr(expr, model, ctx, el, ctr, attrName, type);
+		this.attrRenderStart(expr, model, ctx, el, ctr, attrName, type, node);
+		return this.attr(expr, model, ctx, el, ctr, attrName, type, node);
 	}
 	function processParsedDelegate(fn) {
-		return function(expr, model, ctx, el, ctr) {
+		return function(expr, model, ctx, el, ctr, type, node) {
 			var args = expression_evalStatements(
-				expr, model, ctx, ctr
+				expr, model, ctx, ctr, node
 			);
 			return fn.apply(null, args);
 		};

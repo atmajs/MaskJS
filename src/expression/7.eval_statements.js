@@ -1,6 +1,6 @@
-function _evaluateStatements(expr, model, ctx, ctr){
+function _evaluateStatements(expr, model, ctx, ctr, node){
 
-	var body = _parse(expr).body,
+	var body = _parse(expr, false, node).body,
 		args = [],
 		imax = body.length,
 		i = -1
