@@ -72,7 +72,7 @@
 
 	custom_Utils = {
 		expression: function(value, model, ctx, element, ctr, name, type, node){
-			var owner = type === 'compo-attr' ? ctr.parent : ctr;
+			var owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
 			return expression_eval(value, model, ctx, owner, node);
 		},
 	};

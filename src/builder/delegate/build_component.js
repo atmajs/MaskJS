@@ -48,7 +48,7 @@ var build_compo;
 
 		var model = builder_setCompoModel(compo, model_, ctx, ctr);
 		builder_setCompoAttributes(compo, node, model, ctx, container);
-
+		builder_setCompoProps(compo, node, model, ctx, container);
 		listeners_emit(
 			'compoCreated'
 			, compo

@@ -19,5 +19,29 @@ UTest({
 
 		var str = Mask.stringify(ast);
 		eq_(str, '[Colorize]div;')
+	},
+	'should parse multiple decorators' () {
+		var template = `
+		
+			[RedBackground]
+			[GreenColor]
+			div > 'Hello';				
+		`;
+		var ast = Mask.parse(template);
+		var nodes = ast.nodes;
+		eq_(nodes.length, 3);
+		
+		eq_(nodes[0].expression, 'RedBackground');
+		eq_(nodes[0].type, Mask.Dom.DECORATOR);
+		eq_(nodes[1].expression, 'GreenColor');
+		eq_(nodes[1].type, Mask.Dom.DECORATOR);
+
+		eq_(nodes[2].tagName, 'div');
+		eq_(nodes[2].type, Mask.Dom.NODE);
+
+		'> serialize'
+
+		var str = Mask.stringify(ast);
+		eq_(str, `[RedBackground][GreenColor]div>'Hello'`)
 	}
 })

@@ -147,6 +147,27 @@
 				id, cls, expr
 				;
 
+			var props = node.props;
+			if (props != null) {
+				for (var key in props) {
+					var val = props[key];
+					if (val == null) {
+						continue;
+					}
+					str += ' [' + key;
+					
+					if (is_Function(val)) {
+						val = val();
+					}
+					if (is_String(val)) {
+						if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
+							val = wrapString(val);
+						}
+					}
+
+					str += '] = ' + val;
+				}
+			}
 			var attr = node.attr;
 			if (attr != null) {
 				id  = getString(attr['id']);

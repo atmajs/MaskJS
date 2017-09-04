@@ -227,7 +227,7 @@
 	 * @returns {(array|string)}
 	 */
 	function _interpolate(arr, type, model, ctx, el, ctr, name, node) {
-		if (type === 'compo-attr' && arr.length === 2 && arr[0] === '') {
+		if ((type === 'compo-attr' || type === 'compo-prop') && arr.length === 2 && arr[0] === '') {
 			return arr[1].process(model, ctx, el, ctr, name, type);
 		}
 		var imax = arr.length,

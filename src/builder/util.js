@@ -1,5 +1,6 @@
 var builder_pushCompo,
 	builder_setCompoAttributes,
+	builder_setCompoProps,
 	builder_setCompoModel;
 
 (function(){
@@ -72,6 +73,21 @@ var builder_pushCompo,
 			attr[key] = val;
 		}
 		return (compo.attr = attr);
+	};
+
+	builder_setCompoProps = function(compo, node, model, ctx, container){
+		var props = node.props;		
+		var readProps = compo.meta && compo.meta.readProperties;
+		if (readProps != null) {
+			props = readProps.call(compo, compo, props, model, container);
+		}
+		for(var key in props) {
+			var val = props[key];
+			var x = is_Function(val)
+				? val('compo-prop', model, ctx, container, compo, key)
+				: val;
+			obj_setProperty(compo, key, x);
+		}
 	};
 
 	// == private

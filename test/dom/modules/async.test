@@ -1,7 +1,7 @@
 // use default module loader
 mask.config('modules', 'default');
 UTest({
-	async 'should test sync module loading' (done) {
+	async 'should test sync module loading' () {
 		var Files = {
 			'MyComponents.mask': `
 				module path='A.mask' {
@@ -45,9 +45,7 @@ UTest({
 
 		await UTest.domtest(dom, `
 			find ('h1') > text ('B');
-		`)
-		done();
-			
+		`);	
 	},
 	'should load async javascripts scope' (done) {
 		mask.define('TestAsync', mask.Compo({

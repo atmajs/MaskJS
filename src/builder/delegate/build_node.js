@@ -22,16 +22,21 @@ var build_node;
 		if (attr != null) {
 			el_writeAttributes(el, node, attr, model, ctx, container, ctr);
 		}
+		var props = node.props;
+		if (props != null) {
+			el_writeProps(el, node, props, model, ctx, container, ctr);
+		}
 		return el;
 	};
 
-	var el_writeAttributes;
+	var el_writeAttributes,
+		el_writeProps;
 	(function(){
 		el_writeAttributes = function (el, node, attr, model, ctx, container, ctr) {
 			for(var key in attr) {
 				var mix = attr[key],
 					val = is_Function(mix)
-					? getValByFn(mix, key, model, ctx, el, ctr)
+					? getValByFn('attr', mix, key, model, ctx, el, ctr)
 					: mix;
 
 				if (val == null || val === '') {
@@ -45,8 +50,24 @@ var build_node;
 				}
 			}
 		};
-		function getValByFn(fn, key, model, ctx, el, ctr){
-			var result = fn('attr', model, ctx, el, ctr, key);
+		el_writeProps = function (el, node, props, model, ctx, container, ctr) {
+			for(var key in props) {
+				// if (key.indexOf('style.') === 0) {
+				// 	key = prepairStyleProperty(el, key)
+				// }
+				var mix = props[key],
+					val = is_Function(mix)
+						? getValByFn('prop', mix, key, model, ctx, el, ctr)
+						: mix;
+						
+				if (val == null) {
+					continue;
+				}
+				obj_setProperty(el, key, val);
+			}
+		};
+		function getValByFn(type, fn, key, model, ctx, el, ctr){
+			var result = fn(type, model, ctx, el, ctr, key);
 			if (result == null) {
 				return null;
 			}
@@ -61,6 +82,12 @@ var build_node;
 			}
 			return result;
 		};
+		// function prepairStyleProperty (el, prop) {
+		// 	var key = prop.substring(6);
+		// 	if (key in el.style) {
+		// 		return prop;
+		// 	}
+		// }
 	}());
 
 	var el_create;

@@ -137,15 +137,15 @@ UTest({
 					find(div) > text ('HELLO');
 				`);			
 		},
-		'should change bg and fore color' () {
+		'!should change bg and fore color' () {
 			var template = `
 
 				[RedBackground]
 				[GreenColor]
 				div > 'Hello';				
 			`;
-
-			mask.defineDecorator ('RedBackground', function (el) {
+			
+			mask.defineDecorator ('RedBackground', function (el) {				
 				el.style.backgroundColor = 'red';
 				el.textContent += 'R';
 			});
@@ -154,6 +154,7 @@ UTest({
 				el.textContent += 'G';
 			});
 
+			
 			var dom = mask.render(template);
 			return UTest.domtest(dom, `
 				find(div) {

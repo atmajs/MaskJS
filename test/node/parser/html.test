@@ -79,8 +79,8 @@ UTest({
 				.process(node, `
 					find('ul') > children('li') {
 						length 2;
-						eq(0) > equal ($.text().trim(), 'A');
-						eq(1) > children('div') > equal ($.text().trim(), 'B');
+						eq(0) > equal (this.text().trim(), 'A');
+						eq(1) > children('div') > equal (this.text().trim(), 'B');
 					}
 				`);
 		}

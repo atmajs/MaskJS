@@ -173,11 +173,11 @@ var throw_,
 
 	function formatState(state){
 		var states = {
-			'2': 'tag',
+			'10': 'tag',
 			'3': 'tag',
-			'5': 'attribute key',
-			'6': 'attribute value',
-			'8': 'literal',
+			'4': 'attribute key',
+			'12': 'attribute value',
+			'6': 'literal',
 			'var': 'VarStatement',
 			'expr': 'Expression'
 		};

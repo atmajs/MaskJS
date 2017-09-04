@@ -20,6 +20,7 @@ var Node = class_create({
 	__single: null,
 	appendChild: _appendChild,
 	attr: null,
+	props: null,
 	expression: null,
 	nodes: null,
 	parent: null,
