@@ -308,6 +308,7 @@ var mask_merge;
 			type: node.type,
 			tagName: node.tagName,
 			attr: interpolate_obj_(node.attr, placeholders, tmplNode),
+			props: node.props == null ? null : interpolate_obj_(node.props, placeholders, tmplNode),
 			expression: interpolate_str_(node.expression, placeholders, tmplNode),
 			controller: node.controller,
 			// use original parent, to preserve the module scope for the node of each template
