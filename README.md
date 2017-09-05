@@ -330,6 +330,14 @@ $ npm test
 ------------
 
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
+_`@latest`_
+- `0.64.0`
+- **Properties** 
+	
+	```mask
+	div [style.backgroundColor] = 'red';
+	```
+
 
 _`@latest`_
 - `0.60.0`

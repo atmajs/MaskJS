@@ -1,6 +1,70 @@
 # Changelog
 
-_`0.57.13`_
+- `0.64.0`
+	+ **Properties** 
+		
+		```mask
+		div [style.backgroundColor] = 'red';
+		```
+
+
+- `0.60.0`
+	+ **Await** statements, components and also modules
+
+		```mask
+		define Foo {
+			function async onRenderStart () {
+				this.model = await LoadUserExample();
+			}
+			h4 > '~userName'
+		}
+
+		// Component
+		await Foo {
+			@progress > i > 'Loading user';
+		}
+
+		// Promises
+		await (this.getCurrentUser()) {
+			@progress > i > 'Loading user';
+			@done (user) {
+				h4 > '~user.userName'
+			}
+			@fail (error) {
+				.danger > '~error.message'
+			}
+		}
+
+		// Modules 
+		import async Foo from './Foo';
+
+		heading > 'Some heading'
+		await Foo {
+			@progress > 'Loading and initilizing the module'
+		}
+		```
+
+- `0.58.0`
+	+ **Decorators** for methods and nodes
+		
+		```mask
+		[IsAuthorized]
+		div > 'Hello ~user'
+
+		[LogCall]
+		function doSmth () {
+			// ...
+		}
+		```
+	+ Async and Private methods. For browsers which do not yet support `async/await` es2017 feature, please use `postmask-babel` plugin.
+		
+		```mask
+		slot private async upload () {
+			await MyService.doSmth();
+		} 
+		```
+
+-`0.57.13`
 
 	+ **Modules**
 		+ Namespace routing
