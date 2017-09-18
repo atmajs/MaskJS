@@ -240,8 +240,14 @@ var ModuleMask;
 		while( --i > -1) {
 			x = arr[i];
 			type = x.type;
-			if (type === 'mask' && (Ctor = x.getHandler(name)) != null) {
-				return Ctor;
+			if (type === 'mask') {
+				if ((Ctor = x.getHandler(name)) != null) {
+					return Ctor;
+				}
+			} else {
+				if ((Ctor = x.imports && x.imports[name]) != null) {
+					return Ctor;
+				}
 			}
 		}
 		return null;
