@@ -46,9 +46,8 @@ var build_compo;
 		if (compo.nodes == null)
 			compo.nodes = node.nodes;
 
-		var model = builder_setCompoModel(compo, model_, ctx, ctr);
-		builder_setCompoAttributes(compo, node, model, ctx, container);
-		builder_setCompoProps(compo, node, model, ctx, container);
+		builder_setCompoAttributes(compo, node, model_, ctx, container);
+		builder_setCompoProps(compo, node, model_, ctx, container);
 		listeners_emit(
 			'compoCreated'
 			, compo
@@ -58,6 +57,7 @@ var build_compo;
 			, node
 		);
 
+		var model = builder_setCompoModel(compo, model_, ctx, ctr);
 		if (is_Function(compo.renderStart))
 			compo.renderStart(model, ctx, container);
 

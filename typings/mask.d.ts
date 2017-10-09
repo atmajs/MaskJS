@@ -48,7 +48,7 @@ declare class mask {
 		elements?: mask.generic.DOMElement[]
 	): SVGElement
 
-    static Compo: mask.IComponentFactory    
+    static Compo: mask.IComponentFactory
     static parse(maskTemplate: string): mask.ast.IElement   
     static parseHtml(htmlTemplate: string): mask.ast.IElement
 
@@ -77,6 +77,8 @@ declare class mask {
     }
 
     static obj: mask.ObjUtils
+
+    static injectable<T> (Ctor: new (...args) => T): new (...args) => T
 
     [x: string]: any
 }

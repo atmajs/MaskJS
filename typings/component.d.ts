@@ -35,7 +35,8 @@ declare module mask {
 
     interface IComponentFactory  {
         <T>(prototype: IComponentDeclaration & T): new () => Component & T
-    }
+        pipe (name: string): classes.IEventEmitter
+    }   
 
     interface IComponentDeclaration {
         tagName?: string

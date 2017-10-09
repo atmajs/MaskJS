@@ -211,9 +211,10 @@ var Mask;
 			factory(global, Compo.config.getDOMLibrary(), function(compo){
 				customTag_register(compoName, compo);
 			});
-		}
-	};
+		},
 
+		injectable: Di.deco.injectableClass
+	};
 
 	var __templates = {};
 }());
