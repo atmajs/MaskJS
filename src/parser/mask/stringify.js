@@ -477,7 +477,7 @@
 				i = -1;
 
 			while (++i < imax) {
-				var start = i = cursor_skipWhitespace(cls, i, imax);
+				var start = (i = cursor_skipWhitespace(cls, i, imax));
 				for(; i < imax; i++) {
 					var c = cls.charCodeAt(i);
 					if (c === 91) {
