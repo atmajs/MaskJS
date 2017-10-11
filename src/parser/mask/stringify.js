@@ -469,38 +469,32 @@
 	(function() {
 		var C = '[';
 		format_Classes = function(cls){
-			var i = cls.indexOf(C);
-			if (i === -1) {
+			if (cls.indexOf(C) === -1) {
 				return raw(cls);
 			}
-			var last = 0,
+			var str = '',
 				imax = cls.length,
-				str = '';
-			do {
-				i--;
-				if (last < i - 1) {
-					str += raw(cls.substring(last, i));
+				i = -1;
+
+			while (++i < imax) {
+				var start = i = cursor_skipWhitespace(cls, i, imax);
+				for(; i < imax; i++) {
+					var c = cls.charCodeAt(i);
+					if (c === 91) {
+						i = cursor_groupEnd(cls, i + 1, imax, 91 /*[*/, 93 /*]*/);
+					}
+					if (cls.charCodeAt(i) < 33) {
+						break;
+					}
 				}
-				last = i;
-				i = cursor_groupEnd(cls, i + 2, imax, 91 /*[*/, 93 /*]*/) + 1;
-				str += '.' + cls.substring(last, i);
-
-				last = i + 1;
-				i = cls.indexOf(C, last);
-			}
-			while (i < imax && i !== -1);
-
-			if (last < imax - 1) {
-				str += raw(cls.substring(last));
-			}
+				str += '.' + cls.substring(start, i);
+			}					
 			return str;
 		};
 		function raw(str) {
 			return '.' + str.trim().replace(/\s+/g, '.');
 		}
 	}());
-
-
 
 	var html_isVoid,
 		html_isSemiVoid;
