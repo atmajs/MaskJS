@@ -456,7 +456,7 @@
 							template
 							, index + 2
 							, length
-							, interp_code_START
+							, interp_code_OPEN
 							, interp_code_CLOSE
 						);
 						c = template.charCodeAt(index);
