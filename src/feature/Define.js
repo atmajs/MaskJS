@@ -147,6 +147,7 @@ var Define;
 						Proto.scope = scope = {};
 					}
 					scope[key] = val;
+					Proto[key] = val;
 				}
 				continue;
 			}
