@@ -100,12 +100,6 @@
                     break;
             }
 
-            if (token === '' && state !== state_VAL) {
-                parser_warn('Token not readable', str, i);
-                i++;
-                continue;
-            }
-
             if (state === state_VAL) {
                 attr[key] = token;
                 state = state_KEY;
