@@ -146,7 +146,7 @@ UTest({
 					;
 				
 				'> app'
-				var profile = win.app.find(':user-profile');
+				var profile = win.app.find('UserProfile');
 				notEq_(profile, null);
 				
 				'> dualbind:input'

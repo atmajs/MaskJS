@@ -3,16 +3,16 @@
 <head>
 	
 	<script type='text/mask' id='layout'>
-		:user-profile;
+		UserProfile;
 	</script>
 	
 	<script type='text/mask' id='user-template'>
 		div >
 			input type=text >
-				:dualbind
+				dualbind
 					value=username
 					// override event, @defaut: `change`
-					changeEvent=keyup
+					change-event=keyup
 					
 					// emit signal on every change
 					x-signal='dom: usernameChanged'
@@ -20,9 +20,9 @@
 		
 		div >
 			textarea >
-				:dualbind
+				dualbind
 					value=description
-					changeEvent=keyup
+					chage-event=keyup
 					x-signal='dom: descriptionChanged'
 					;
 		
@@ -38,7 +38,7 @@
 	<script src='../lib/mask.js'></script>
 	<script>
 		
-		mask.registerHandler(':user-profile', Compo({
+		mask.registerHandler('UserProfile', Compo({
 			template: document.querySelector('#user-template').textContent,
 			
 			events: {
