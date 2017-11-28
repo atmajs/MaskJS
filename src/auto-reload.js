@@ -22,9 +22,15 @@
 		module.state = 0;
 		module.defer();
 		module.loadModule().then(function(){
+			var hasReloaded = false;
 			compos.forEach(function (name, index) {
-				reload(name, compos.slice(0, index));
-			})
+				if (name in module.exports) {
+					hasReloaded = reload(name, compos.slice(0, index)) || hasReloaded;
+				}
+			});
+			if (hasReloaded === false) {
+				window.location.reload();
+			}
 		});
 		return true;
 	};
@@ -36,13 +42,12 @@
 		_cache[compoName] = [];
 
 		if (!cache) {
-			console.log('No compos', compoName, _cache);
-			window.location.reload();
-			return;
+			return false;
 		}
 
 		var imax = cache.length,
-			i = -1;
+			i = -1,
+			hasReloaded = false;
 		while (++i < imax) {
 
 			var x = cache[i],
@@ -70,7 +75,9 @@
 			var arrivedElements = el_getArrivedElements(container, lastElement, frag);
 
 			compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements, arrivedElements);
+			hasReloaded = true;
 		}
+		return hasReloaded;
 	}
 
 	function serializeStateTree (compo) {
