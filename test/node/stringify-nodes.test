@@ -1,9 +1,0 @@
-UTest({
-    'should stringify head' () {
-        var str = 'span.head@[attr.type]-sub;';
-        eq_(str, Mask.stringify(Mask.parse(str)));
-
-        var str = 'span.head~[bind: attr.type ]-sub ._isVisible         .yo       .~[ testy ] ;';
-        eq_(Mask.stringify(Mask.parse(str)), 'span.head~[bind: attr.type ]-sub._isVisible.yo.~[ testy ];');
-    }
-})
