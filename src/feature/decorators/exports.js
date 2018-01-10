@@ -41,11 +41,11 @@ var Decorator;
 		},
 
 		wrapMethod: function (decorators, fn, target, key, model, ctx, ctr) {
-			return _wrapMany(_wrapper_Fn, decorators, fn, model, ctx, ctr)
+			return _wrapMany(_wrapper_Fn, decorators, fn, target, key, model, ctx, ctr);
 		},
 
 		wrapNodeBuilder: function (decorators, builderFn, model, ctx, ctr) {
-			return _wrapMany(_wrapper_NodeBuilder, decorators, builderFn, null, null, model, ctx, ctr)
+			return _wrapMany(_wrapper_NodeBuilder, decorators, builderFn, null, null, model, ctx, ctr);
 		},		
 	};
 
