@@ -45,16 +45,13 @@
 	};
 
 	mask_stringifyAttr = function(attr){
-		var str = '',
-			key, x, part;
-		for (key in attr) {
-			x = getString(attr[key]);
-
+		var str = '';
+		for (var key in attr) {
 			if (str.length !== 0) {
 				str += ' ';
 			}
 			str += key;
-
+			var x = getString(attr[key]);
 			if (x !== key) {
 				str += "=" + wrapString(x);
 			}
@@ -181,11 +178,10 @@
 						val = val();
 					}
 					if (is_String(val)) {
-						if (stream.minify === false || /[^\w_$\-\.]/.test(val)){
+						if (stream.minify === false || val === '' || /[^\w_$\-\.]/.test(val)){
 							val = wrapString(val);
 						}
 					}
-
 					str += '=' + val;
 				}
 			}

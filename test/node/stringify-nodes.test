@@ -5,5 +5,10 @@ UTest({
 
         var str = 'span.head~[bind: attr.type ]-sub ._isVisible         .yo       .~[ testy ] ;';
         eq_(Mask.stringify(Mask.parse(str)), 'span.head~[bind: attr.type ]-sub._isVisible.yo.~[ testy ];');
+    },
+    'should stringify empty attribute values' () {
+        let str = Mask.stringify(Mask.parse('div foo="" bar="1"'));
+
+        eq_(str, "div foo='' bar=1;");
     }
 })
