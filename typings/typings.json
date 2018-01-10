@@ -1,6 +1,0 @@
-{
-    "name": "mask",
-    "main": "mask.d.ts",
-    "files": ["generic.d.ts", "component.d.ts", "node.d.ts"],
-    "global": true
-}
