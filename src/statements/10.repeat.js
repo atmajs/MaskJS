@@ -4,26 +4,26 @@
 			var run = expression_eval,
 				str = node.expression,
 				repeat = str.split('..'),
-				index = + run(repeat[0] || '', model, ctx, ctr),
-				length = + run(repeat[1] || '', model, ctx, ctr);
+				start = + run(repeat[0] || '', model, ctx, ctr),
+				end = + run(repeat[1] || '', model, ctx, ctr);
 
-			if (index !== index || length !== length) {
+			if (start !== start || end !== end) {
 				log_error('Repeat attribute(from..to) invalid', str);
 				return;
 			}
 
 			var nodes = node.nodes;
 			var arr = [];
-			var i = -1;
-			while (++i < length) {
-				arr[i] = compo_init(
+			var i = start - 1;
+			while (++i < end) {
+				arr.push(compo_init(
 					'repeat::item',
 					nodes,
 					model,
 					i,
 					container,
 					ctr
-				);
+				));
 			}
 
 			var els = [];
