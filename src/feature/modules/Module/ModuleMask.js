@@ -75,7 +75,7 @@ var ModuleMask;
 				}
 			}
 
-			_loadImports(this, arr, function(){
+			_loadImports(this, importNodes, function(){
 				next.call(this, null, _createExports(arr, null, this));
 			});
 		},
