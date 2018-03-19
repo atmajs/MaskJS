@@ -9,6 +9,20 @@ var ModuleMask;
 		importItems: null,
 
 		load_: _file_get,
+		loadModule: function(){
+			if (this.state === 0) {
+				return IModule.prototype.loadModule.call(this);
+			}
+			if (this.state === 2) {
+				this.state = 3;
+				var self = this;
+				self.preprocess_(this.source, function(){
+					self.state = 4;
+					self.resolve(self);
+				});
+			}
+			return this;
+		},
 		preprocessError_: function(error, next) {
 			var msg = 'Load error: ' + this.path;
 			if (error && error.status) {
@@ -189,20 +203,42 @@ var ModuleMask;
 
 	function _loadImports(module, importNodes, done) {
 		var items = module.importItems,
-			count = items.length;
+			count = items.length,
+			imax = count,
+			i = -1;
 		if (count === 0) {
 			return done.call(module);
 		}
-		var imax = count,
-			i = -1;
-		while( ++i < imax ) {
-			_loadImport(module, items[i], importNodes[i], await);
-		}
-		function await(error){
+		process();
+		//= private
+		function awaiter(){
 			if (--count > 0) {
 				return;
 			}
 			done.call(module);
+		}
+		function process () {
+			if (i > -1) {
+				// resume from sync
+				awaiter();
+			}
+			while( ++i < imax ) {
+				var node = importNodes[i];
+				var resumer = awaiter;
+				if ('async' === node.async) {
+					resumer = null;
+				}
+				if ('sync' === node.async) {
+					resumer = process;
+				}
+				_loadImport(module, items[i], node, resumer);
+				if ('async' === node.async) {
+					awaiter();
+				}
+				if ('sync' === node.async) {
+					return;
+				}
+			}
 		}
 	}
 	function _loadImport(module, import_, node, done) {
@@ -210,7 +246,7 @@ var ModuleMask;
 			if (error) {
 				error_withNode(error, node);
 			}
-			done();
+			done && done();
 		});
 	}
 	function _module_getHandlerDelegate(module) {

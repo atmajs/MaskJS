@@ -77,11 +77,9 @@ var Module = {};
 
 			var module = Module.createModule(endpoint, ctx, ctr, parent);
 			module.state = 1;
-			if (Module.isMask(endpoint)) {
-				module.preprocess_(mix, function(){
-					module.state = 4;
-					module.resolve(module);
-				});
+			if (Module.isMask(endpoint)) {				
+				module.state = 2;
+				module.source = mix;
 				return module;
 			}
 			// assume others and is loaded
