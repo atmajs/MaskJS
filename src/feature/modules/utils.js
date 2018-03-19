@@ -44,9 +44,11 @@ var u_resolveLocation,
 			if (path[path.length - 1] !== '/') {
 				path += '/';
 			}
-			if (path[0] === '/') {
-				path = path_combine(path_resolveRoot(), path);
-			}
+			// Do not resolve root, as it will be resolved by base later
+			// @NextIteration: remove also path_resolveRoot, use instead resolveCurrent
+			// if (path[0] === '/') {
+			// 	path = path_combine(path_resolveRoot(), path);
+			// }
 			options[key] = path;
 			return this;
 		}
