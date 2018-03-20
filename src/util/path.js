@@ -82,7 +82,7 @@ var path_getDir,
 
 			var fn = 'baseURI' in global.document
 					? fromBase
-					: fromLocation;
+					: fromBaseTag;
 			return (current_ = path_sliceFilename(fn()));
 		};
 		function fromBase() {
@@ -92,6 +92,17 @@ var path_getDir,
 		}
 		function fromLocation() {
 			return global.location.origin + global.location.pathname;
+		}
+		function fromBaseTag() {
+			var h = global.document.head;
+			if (h == null) {
+				return fromLocation();
+			}
+			var b = h.querySelector('base');
+			if (b == null) {
+				return fromLocation();
+			}
+			return b.href;
 		}
 		// endif
 
