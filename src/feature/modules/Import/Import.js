@@ -88,8 +88,28 @@ var IImport = class_create({
 		});
 	},
 	registerExport_: function(ctr, exportName, name, alias){
+		var module = this.module;
 		var prop = alias || name;
-		var obj = this.module.getExport(name);		
+		var obj = null;
+		if (this.async === 'async' && module.isBusy()) {
+			var dfr = new class_Dfr;
+			var that = this;
+			module.then(
+				function(){
+					var val = module.getExport(name);
+					if (val == null) {
+						that.logError_('Exported property is undefined: ' + name);
+					}
+					dfr.resolve(val);
+				},
+				function (error) {
+					dfr.reject(error)
+				}
+			);
+			obj = dfr;
+		} else {
+			obj = module.getExport(name);
+		}
 		if (obj == null) {
 			this.logError_('Exported property is undefined: ' + name);
 			return;				

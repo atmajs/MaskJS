@@ -87,10 +87,17 @@
 			throw new Error(msg)
 		},		
 		getModuleFor: function(name){
-			if (this.importItems == null) {
+			var parent = this.parent;
+			var module;
+			while (parent != null && module == null) {
+				module = parent.getModule();
+				parent = parent.parent;
+			}
+			if (module == null || module.importItems == null) {
+				log_error('Module not found for import ' + name);
 				return null;
 			}
-			var import_ = this.importItems.find(function(x) {
+			var import_ = module.importItems.find(function(x) {
 				return x.hasExport(name);
 			});
 			return import_ && import_.module || null;

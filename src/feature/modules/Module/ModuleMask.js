@@ -164,6 +164,7 @@ var ModuleMask;
 			if (name === 'define' || name === 'let') {
 				var Base = {
 					getHandler: _fn_wrap(customTag_Compo_getHandler, getHandler),
+					getModule: _module_getModuleDelegate(module),
 					location: module.location
 				};
 				var Ctor = Define.create(node, model, module, Base);
@@ -248,6 +249,11 @@ var ModuleMask;
 			}
 			done && done();
 		});
+	}
+	function _module_getModuleDelegate(module) {
+		return function(name) {
+			return module;
+		};
 	}
 	function _module_getHandlerDelegate(module) {
 		return function(name) {
