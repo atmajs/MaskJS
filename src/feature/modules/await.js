@@ -90,7 +90,7 @@
 			var parent = this.parent;
 			var module;
 			while (parent != null && module == null) {
-				module = parent.getModule();
+				module = parent.getModule && parent.getModule() || null;
 				parent = parent.parent;
 			}
 			if (module == null || module.importItems == null) {
