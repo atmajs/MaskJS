@@ -39,7 +39,7 @@ var build_node;
 					? getValByFn('attr', mix, key, model, ctx, el, ctr)
 					: mix;
 
-				if (val == null || val === '') {
+				if (val == null) {
 					continue;
 				}
 				var fn = custom_Attributes[key];
