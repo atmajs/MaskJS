@@ -42,6 +42,10 @@ var build_node;
 				if (val == null) {
 					continue;
 				}
+				/** When not setting empty string as value to option tag, the inner text is used for value*/
+				if (val === '' && key !== 'value') {
+					continue;
+				}
 				var fn = custom_Attributes[key];
 				if (fn != null) {
 					fn(node, val, model, ctx, el, ctr, container);
