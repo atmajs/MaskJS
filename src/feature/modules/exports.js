@@ -76,10 +76,8 @@ var Module = {};
 			endpoint.path = u_resolvePath(endpoint.path, ctx, ctr, parent);
 
 			var module = Module.createModule(endpoint, ctx, ctr, parent);
-			module.state = 1;
 			if (Module.isMask(endpoint)) {				
-				module.state = 2;
-				module.source = mix;
+				module.onLoadSuccess_(mix);
 				return module;
 			}
 			// assume others and is loaded
