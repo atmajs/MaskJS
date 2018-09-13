@@ -77,7 +77,7 @@ var builder_build = function(node, model_, ctx, container_, ctr_, children_) {
 	if (type === 15) {
 		var Handler = custom_Statements[tagName];
 		if (Handler == null) {
-			if (custom_Tags[tagName] != null) {
+			if (custom_Tags[tagName] != null || builder_findAndRegisterCompo(ctr, tagName)) {
 				// Dom.COMPONENT
 				type = 4;
 			} else {

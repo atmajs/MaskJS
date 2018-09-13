@@ -1,9 +1,25 @@
 var builder_pushCompo,
+	builder_findAndRegisterCompo,
 	builder_setCompoAttributes,
 	builder_setCompoProps,
 	builder_setCompoModel;
 
 (function(){
+
+	builder_findAndRegisterCompo = function (ctr, name) {
+		for (var compo = ctr; compo != null; compo = compo.parent) {
+			if (compo.handlers == null) {
+				continue;
+			}
+			var Ctor = compo.handlers[name];
+			if (Ctor == null) {
+				continue;
+			}
+			customTag_registerScoped(compo, name, Ctor);
+			return true;
+		}
+		return false;
+	};
 
 	builder_resumeDelegate = function (ctr, model, ctx, container, children, finilizeFn){
 		var anchor = document.createComment('');

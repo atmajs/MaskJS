@@ -11,11 +11,14 @@ var build_compo;
 		if (Handler == null)
 			Handler = custom_Tags[compoName];
 
+		if (Handler == null && builder_findAndRegisterCompo(ctr, compoName)) {
+			Handler = custom_Tags[compoName];
+		}
 		if (Handler == null)
 			return build_NodeAsCompo(node, model, ctx, container, ctr, children);
 
 		var isStatic = false,
-			handler, attr, key;
+			handler;
 
 		if (typeof Handler === 'function') {
 			handler = new Handler(node, model, ctx, container, ctr);
@@ -33,8 +36,7 @@ var build_compo;
 	// PRIVATE
 
 	function build_Component(compo, node, model_, ctx, container, ctr, children){
-		var attr, key;
-
+		
 		compo.ID = ++builder_componentID;
 		compo.parent = ctr;
 		compo.expression = node.expression;
