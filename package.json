@@ -1,7 +1,7 @@
 {
   "name": "maskjs",
   "description": "Template / Markup / HMVC Engine",
-  "version": "0.64.58",
+  "version": "0.65.1",
   "homepage": "http://atmajs.com/mask",
   "contributors": [
     {
@@ -22,7 +22,7 @@
     "MIT"
   ],
   "devDependencies": {
-    "atma": "^0.10.85",
+    "atma": "^0.11.8",
     "atma-io-middleware-uglify": "^1.1.21",
     "atma-loader-babel": "^1.1.26",
     "babel-plugin-async-to-promises": "^1.0.5",

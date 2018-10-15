@@ -135,6 +135,16 @@ var mask_merge;
 			return _cloneNode(node, placeholders, tmplNode, clonedParent);
 		}
 		placeholders.$isEmpty = false;
+		
+		var parentIsCompo = clonedParent && placeholders.$compos[clonedParent.tagName] != null;
+		if (parentIsCompo) {
+			var isSimpleNode = node.nodes == null || node.nodes.length === 0;
+			if (isSimpleNode === false) {
+				// Interpolate component slots
+				return _cloneNode(node, placeholders, tmplNode, clonedParent);
+			}
+		}
+	
 		var id = node.attr.id;
 		if (tagName === tag_PLACEHOLDER && id == null) {
 			if (tmplNode != null) {
@@ -245,6 +255,7 @@ var mask_merge;
 
 	function _cloneNode(node, placeholders, tmplNode, clonedParent){
 		var tagName = node.tagName || node.compoName;
+		var deepClone = true;
 		switch (tagName) {
 			case ':template':
 				var id = interpolate_str_(node.attr.id, placeholders, tmplNode);
@@ -289,18 +300,20 @@ var mask_merge;
 			default:
 				var handler = customTag_get(tagName, tmplNode);
 				if (handler != null) {
+					placeholders.$compos[tagName] = handler;
+
 					var proto = handler.prototype;
-					if (proto && proto.meta != null && proto.meta.template === 'merge') {
-						return _cloneNodeShallow(node, clonedParent, placeholders, tmplNode)
+					if (proto && proto.meta != null && proto.meta.template !== 'merge') {
+						deepClone = false;
 					}
 				}
 				break;
 		}
 
 		var outnode = _cloneNodeShallow(node, clonedParent, placeholders, tmplNode);
-		if (outnode.nodes)
+		if (deepClone === true && outnode.nodes) {
 			outnode.nodes = _merge(node.nodes, placeholders, tmplNode, outnode);
-
+		}
 		return outnode;
 	}
 	function _cloneNodeShallow(node, clonedParent, placeholders, tmplNode) {		
@@ -622,6 +635,7 @@ var mask_merge;
 		this.parent = parent;
 		this.$root = $root || (parent && parent.$root);
 		this.$extra = [];
+		this.$compos = {};
 
 		if (opts != null) {
 			this.opts = opts;
@@ -641,6 +655,7 @@ var mask_merge;
 		$extra: null,
 		$count: 0,
 		$isEmpty: true,
+		$compos: null,
 		$getNode: function(id, filter){
 			var ctx = this, node;
 			while(ctx != null){

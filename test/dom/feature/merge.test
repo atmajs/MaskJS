@@ -556,15 +556,17 @@ UTest({
 		}
 	},
 	'components': {
-		'should merge components in a seperate merge flow' () {
-			// Mergin @letter in `A` component only from "ALetters > A > @letter"
+		'should merge components in a seperate merge flow with same name' () {
+			// 
 			var dom = mask.render(`
 				define A {
 					h1 > @letter;
 				}
 				define ALetters {
 					@header;
-					section > A > @letter > 'a'
+					section > A {
+						@letter > @letter;
+					}
 				}
 
 				ALetters {
@@ -574,8 +576,47 @@ UTest({
 			`);
 			return UTest.domtest(dom,`
 				filter (b) > text ('Head');
-				find ('section > h1') > text ('a');
-				hasNot ('em')
+				find ('section > h1') > text ('c');
+				//hasNot ('em')
+			`)
+		},
+		'should merge components in a seperate merge flow with other name' () {
+			// 
+			var dom = mask.render(`
+				define A {
+					h1 > @letter;
+				}
+				define ALetters {
+					section > A {
+						@letter > @fooLetter;
+					}
+				}
+
+				ALetters {
+					@fooLetter > em > 'f'
+				}
+			`);
+			return UTest.domtest(dom,`
+				find ('section > h1') > text ('f');
+			`)
+		},
+		'should merge components in a seperate merge flow using simple node interpolation' () {
+			// 
+			var dom = mask.render(`
+				define A {
+					function onRenderStart () {}
+				}
+				define ALetters {
+					section > A {
+						@letter;
+					}
+				}
+				ALetters {
+					@letter > em > 'x'
+				}
+			`);
+			return UTest.domtest(dom,`
+				find ('section > em') > text ('x');
 			`)
 		},
 		'should merge components attributes in a first merge flow' () {
