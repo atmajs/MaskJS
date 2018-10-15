@@ -1,5 +1,0 @@
-module.exports = {
-	meta: {
-		name: 'mymeta'
-	}
-};
