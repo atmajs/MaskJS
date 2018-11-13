@@ -26,7 +26,10 @@ var _getDecorator,
 		}
 		if (type === 1) {
 			return 'NODE';
-		}
+        }
+        if (type === 4) {
+            return 'COMPO';
+        }
 		if (tagName === 'function' || tagName === 'slot' || tagName === 'event' || tagName === 'pipe') {
 			return 'METHOD';
 		}

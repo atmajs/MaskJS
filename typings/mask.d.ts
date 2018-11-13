@@ -13,6 +13,7 @@ declare module "mask" {
     export = mask;
 }
 
+
 declare class mask {
     static render(
 		template: string | mask.ast.IElement, 
@@ -79,6 +80,7 @@ declare class mask {
     static obj: mask.ObjUtils
 
     static injectable<T> (Ctor: new (...args) => T): new (...args) => T
+    static singleton<T> (closest: string): new (...args) => T
 
     [x: string]: any
 }

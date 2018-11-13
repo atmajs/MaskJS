@@ -1,10 +1,12 @@
 var Decorator;
 (function(){
 
+    var _store = {};
+
 	// import utils.js
 	// import wrappers.js
-
-	var _store = {};
+    // import decos/singleton.js
+	
 
 	Decorator = {
 		getDecoType: _getDecoType,
@@ -23,7 +25,6 @@ var Decorator;
 			}
 			_store[key] = mix;
 		},
-
 		goToNode: function (nodes, start, imax){
 			var i = start;
 			while(++i < imax && nodes[i].type === 16);
@@ -33,20 +34,20 @@ var Decorator;
 			}
 			return i;
 		},
-
 		wrapMethodNode: function (decorators, node, model, ctx, ctr) {
 			if (node.fn) return node.fn;
 			var fn = Methods.compileForNode(node, model, ctr);
 			return (node.fn = this.wrapMethod(decorators, fn, node, 'fn', model, ctx, ctr));
 		},
-
 		wrapMethod: function (decorators, fn, target, key, model, ctx, ctr) {
 			return _wrapMany(_wrapper_Fn, decorators, fn, target, key, model, ctx, ctr);
 		},
-
 		wrapNodeBuilder: function (decorators, builderFn, model, ctx, ctr) {
 			return _wrapMany(_wrapper_NodeBuilder, decorators, builderFn, null, null, model, ctx, ctr);
-		},		
+        },
+        wrapCompoBuilder: function (decorators, builderFn, model, ctx, ctr) {
+            return _wrapMany(_wrapper_CompoBuilder, decorators, builderFn, null, null, model, ctx, ctr);
+        }
 	};
 
 }());

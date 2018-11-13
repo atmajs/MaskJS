@@ -9,6 +9,10 @@ var decorators_build;
 		if (type === 'NODE') {
 			var builder = Decorator.wrapNodeBuilder(decorators, builder_build, model, ctx, ctr);
 			return builder(node, model, ctx, el, ctr, els);
+        }
+        if (type === 'COMPO') {
+			var builder = Decorator.wrapCompoBuilder(decorators, builder_build, model, ctx, ctr);
+			return builder(node, model, ctx, el, ctr, els);
 		}
 		if (type === 'METHOD') {
 			Decorator.wrapMethodNode(decorators, node, model, ctx, ctr);

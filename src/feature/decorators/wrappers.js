@@ -1,6 +1,7 @@
 var _wrapMany,
 	_wrapper_Fn,
-	_wrapper_NodeBuilder;
+    _wrapper_NodeBuilder,
+    _wrapper_CompoBuilder;
 
 (function(){
 
@@ -64,6 +65,43 @@ var _wrapMany,
 
 			if (is_Function(deco)) {
 				afterRender = deco;
+			}
+			else if (is_Object(deco)) {
+				beforeRender = deco.beforeRender;
+				afterRender = deco.afterRender;	
+				decoCtx = deco;
+			}
+			if (beforeRender || afterRender) {				
+				return create(decoCtx, beforeRender, afterRender, builderFn);
+			}
+			error_withNode('Invalid node decorator', decoNode);
+		};
+
+		function create(decoCtx, beforeFn, afterFn, builderFn) {
+			return function (node, model, ctx, el, ctr, els) {
+				if (beforeFn != null) {
+					var newNode = beforeFn.call(decoCtx, node, model, ctx, el, ctr, els);
+					if (newNode != null) {
+						node = newNode;
+					}
+				}
+				if (els == null) {
+					els = [];
+				}
+				builderFn(node, model, ctx, el, ctr, els);
+				if (afterFn != null) {
+					afterFn.call(decoCtx, els[els.length - 1], model, ctr);
+				}
+			};
+		}
+    }());
+    
+    (function () {
+		_wrapper_CompoBuilder = function (decoNode, deco, builderFn) {
+			var beforeRender, afterRender, decoCtx;
+
+			if (is_Function(deco)) {
+				beforeRender = deco;
 			}
 			else if (is_Object(deco)) {
 				beforeRender = deco.beforeRender;

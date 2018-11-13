@@ -213,7 +213,7 @@ var Mask;
 			});
 		},
 
-		injectable: Di.deco.injectableClass
+        injectable: Di.deco.injectableClass
 	};
 
 	var __templates = {};

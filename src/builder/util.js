@@ -129,19 +129,8 @@ var builder_pushCompo,
 		var nodes = ctr.nodes,
 			elements = [];
 		if (nodes != null) {
-
-			var isarray = nodes instanceof Array,
-				length = isarray === true ? nodes.length : 1,
-				i = 0,
-				childNode = null,
-				fragment = document.createDocumentFragment();
-
-			for (; i < length; i++) {
-				childNode = isarray === true ? nodes[i] : nodes;
-
-				builder_build(childNode, model, ctx, fragment, ctr, elements);
-			}
-
+            var fragment = document.createDocumentFragment();
+            builder_build(nodes, model, ctx, fragment, ctr, elements);
 			anchorEl.parentNode.insertBefore(fragment, anchorEl);
 		}
 		if (children != null && elements.length > 0) {
