@@ -202,7 +202,7 @@ var mask_merge;
 
 		var content = placeholders.$getNode(id, node.expression);
 		if (content == null) {
-			if (placeholders.opts.extending === true) {
+			if (placeholders.opts.extending === true || parentIsCompo) {
 				return node;
 			}
 			return null;
