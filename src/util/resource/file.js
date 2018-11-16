@@ -34,16 +34,16 @@ var file_get,
 
 	// import transports/json
 
-	// if BROWSER
+	//#if (BROWSER)
 	// import transports/script
 	// import transports/style
 	// import transports/xhr
-	// endif
+	//#endif
 
-	// if NODE
+	//#if (NODE)
 	// import transports/script_node
 	// import transports/style_node
 	// import transports/xhr_node
-	// endif
+	//#endif
 
 }());

@@ -119,7 +119,7 @@
 			}
 			this.load_(ctx, resume);
 		},
-		// if (NODE)
+		//#if (NODE)
 		meta: {
 			serializeNodes: true
 		},
@@ -150,7 +150,7 @@
 			}
 			return mask_stringify(arr);
 		},
-		// endif
+		//#endif
 		renderStart: function(model, ctx){
 			this.start_(model, ctx);
 		},

@@ -76,7 +76,7 @@ var path_getDir,
 	(function(){
 		var current_;
 
-		// if (BROWSER)
+		//#if (BROWSER)
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
 
@@ -104,20 +104,20 @@ var path_getDir,
 			}
 			return b.href;
 		}
-		// endif
+		//#endif
 
-		// if (NODE)
+		//#if (NODE)
 		path_resolveCurrent = function(){
 			if (current_ != null) return current_;
 			return (current_ = path_win32Normalize(process.cwd()));
 		};
-		// endif
+		//#endif
 	}());
 
 	(function(){
 		var root_;
 
-		// if (BROWSER)
+		//#if (BROWSER)
 		path_resolveRoot = function(){
 			if (root_ != null) return root_;
 
@@ -137,12 +137,12 @@ var path_getDir,
 		}
 		// endif
 
-		// if (NODE)
+		//#if (NODE)
 		path_resolveRoot = function(){
 			if (root_ != null) return root_;
 			return (root_ = path_win32Normalize(process.cwd()));
 		};
-		// endif
+		//#endif
 	}());
 
 
@@ -224,7 +224,7 @@ var path_getDir,
 		return path_collapse(out);
 	};
 
-	// if NODE
+	//#if (NODE)
 	(function(){
 		path_toLocalFile = function(path){
 			path = path_normalize(path);
@@ -248,7 +248,7 @@ var path_getDir,
 			return _cwd || (_cwd = path_normalize(process.cwd()));
 		}
 	}());
-	// endif
+	//#endif
 
 	var rgx_PROTOCOL = /^(file|https?):/i,
 		rgx_SUB_DIR  = /[^\/\.]+\/\.\.\//,

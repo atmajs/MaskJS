@@ -82,9 +82,9 @@ var parser_parseHtmlPartial;
 						//-- COMMENT
 						i = str.indexOf('-->', i + 3) + 3;
 						if (i === 2) {
-							// if DEBUG
+							//#if (DEBUG)
 							parser_warn('Comment has no ending', str, i);
-							// endif
+							//#endif
 							i = imax;
 						}
 						state = state_literal;
@@ -259,7 +259,7 @@ var parser_parseHtmlPartial;
 	var entity_toChar;
 	(function (d) {
 
-		//if BROWSER
+		//#if (BROWSER)
 		if (d == null) {
 			return;
 		}
@@ -268,9 +268,9 @@ var parser_parseHtmlPartial;
 			i.innerHTML = '&' + ent + ';';
 			return i.textContent;
 		};
-		//endif
+		//#endif
 
-		// if NODE
+		//#if (NODE)
 		var HtmlEntities;
 		entity_toChar = function(ent){
 			if (HtmlEntities == null) {
@@ -278,7 +278,7 @@ var parser_parseHtmlPartial;
 			}
 			return HtmlEntities[ent];
 		};
-		// endif
+		//#endif
 	}(document));
 
 	var SINGLE_TAGS = {
