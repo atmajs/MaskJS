@@ -8,13 +8,16 @@
  */
 
 module.exports = {
-	'settings': {
-		io: {
-			extensions: {
-				js: ['condcomments:read', 'importer:read']
-			}
-		}
-	},
+	// 'settings': {
+	// 	io: {
+	// 		extensions: {
+	// 			js: [
+    //                 'atma-io-middleware-condcomments:read', 
+    //                 'atma-io-middleware-importer:read'
+    //             ]
+	// 		}
+	// 	}
+	// },
 	'build_mask': {
 		action: 'import',
 		files: 'builds/**',

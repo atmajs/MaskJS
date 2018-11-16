@@ -22,7 +22,9 @@
     "MIT"
   ],
   "devDependencies": {
-    "atma": "^0.11.8",
+    "atma": "^0.11.14",
+    "atma-io-middleware-condcomments": "^1.2.6",
+    "atma-io-middleware-importer": "^1.1.37",
     "atma-io-middleware-uglify": "^1.1.21",
     "atma-loader-babel": "^1.1.26",
     "babel-plugin-async-to-promises": "^1.0.5",
@@ -32,6 +34,7 @@
   "scripts": {
     "test": "atma test",
     "build": "atma",
+    "debug-build": "atma --inspect-brk",
     "release": "atma release",
     "server": "atma server",
     "examples": "atma server"
@@ -48,9 +51,18 @@
     ],
     "plugins": [
       "atma-loader-babel",
+      "atma-io-middleware-condcomments",
       "atma-io-middleware-uglify"
     ],
     "settings": {
+      "io": {
+        "extensions": {
+          "js": [
+                "atma-io-middleware-condcomments:read",
+                "atma-io-middleware-importer:read"
+          ]
+        }
+      },
       "atma-loader-babel": {
         "extensions": [
           "es6",
@@ -65,7 +77,11 @@
           ]
         }
       },
-      "atma-io-middleware-uglify": {}
+      "atma-io-middleware-uglify": {},
+      "atma-io-middleware-importer": {
+        "inlineJsImports": true,
+        "extension": "ts"
+      }
     }
   }
 }
