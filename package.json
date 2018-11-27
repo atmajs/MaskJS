@@ -58,8 +58,8 @@
       "io": {
         "extensions": {
           "js": [
-                "atma-io-middleware-condcomments:read",
-                "atma-io-middleware-importer:read"
+            "atma-io-middleware-condcomments:read",
+            "atma-io-middleware-importer:read"
           ]
         }
       },
