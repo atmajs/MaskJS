@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@core/*": [ "src/*" ],
+            "@utils/*": [ "ref-utils/src/*" ],
+            "@mask-j/*": [ "projects/mask-j/src/jmask/*" ]
+        }
+    }
+}
