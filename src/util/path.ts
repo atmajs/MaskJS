@@ -1,3 +1,5 @@
+import { __cfg } from '@core/api/config';
+
 declare var global, process;
 
 var isWeb = true;
@@ -165,7 +167,7 @@ export function path_isRelative(path) {
     }
     return true;
 }
-export function path_toRelative(path, anchor, base) {
+export function path_toRelative(path, anchor, base?) {
     var path_ = path_resolveUrl(path_normalize(path), base),
         absolute_ = path_resolveUrl(path_normalize(anchor), base);
 

@@ -1,7 +1,8 @@
 import { IImport } from './Import';
+import { i_Types } from './ImportTypes';
 import { class_create } from '@utils/class';
 
-export const ImportMask = (IImport as any).types['mask'] = class_create(IImport, {
+export const ImportMask = i_Types['mask'] = class_create(IImport, {
 	type: 'mask',
 	contentType: 'mask',
 	getHandler: function(name){

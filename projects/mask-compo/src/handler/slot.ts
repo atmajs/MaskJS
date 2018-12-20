@@ -1,5 +1,5 @@
-import { customTag_register } from '@core/custom/tag';
-import { expression_eval } from '../scope-vars';
+import { customTag_register } from '@core/custom/exports';
+import { expression_eval } from '@core/expression/exports';
 
 declare var global;
 

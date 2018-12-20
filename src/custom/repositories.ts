@@ -1,4 +1,5 @@
 import { obj_extend } from '@utils/obj';
+import { expression_eval } from '@core/expression/exports';
 
 var _HtmlTags = {
     /*

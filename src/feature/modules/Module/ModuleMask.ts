@@ -1,4 +1,5 @@
 import { IModule } from './Module';
+import { m_Types } from './ModuleTypes';
 import { class_create } from '@utils/class';
 import { _file_get } from '../loaders';
 import { reporter_createErrorNode, error_withNode } from '@core/util/reporters';
@@ -8,9 +9,11 @@ import { Dom } from '@core/dom/exports';
 import { customTag_Compo_getHandler, customTag_register, customTag_registerResolver, customTag_Base } from '@core/custom/exports';
 import { Define } from '@core/feature/Define';
 import { obj_extend } from '@utils/obj';
-import { Module } from '../exports';
+import { m_registerModule } from './utils';
+import { i_createImport } from '../Import/utils';
+import { Endpoint } from '../class/Endpoint';
 
-export const ModuleMask = (IModule as any).types['mask'] = class_create(IModule, {
+export const ModuleMask = m_Types['mask'] = class_create(IModule, {
 		type: 'mask',
 		scope: null,
 		source: null,
@@ -65,16 +68,16 @@ export const ModuleMask = (IModule as any).types['mask'] = class_create(IModule,
 				switch (x.tagName) {
 					case 'import':
 						importNodes.push(x);
-						this.importItems.push(Module.createImport(
+						this.importItems.push(i_createImport(
 							x, null, null, this
 						));
 						break;
 					case 'module':
 						var path = u_resolvePath(x.attr.path, null, null, this),
 							type = x.attr.contentType,
-							endpoint = new Module.Endpoint(path, type)
+							endpoint = new Endpoint(path, type)
 							;
-						Module.registerModule(x.nodes, endpoint);
+						m_registerModule(x.nodes, endpoint);
 						break;
 					case 'define':
 					case 'let':

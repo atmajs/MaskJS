@@ -1,19 +1,17 @@
-import { domLib, Dom } from '../scope-vars';
+import { domLib } from '../scope-vars';
 import { Anchor } from '../compo/anchor';
 import { log_warn } from '@core/util/reporters';
 import { node_tryDispose, node_tryDisposeChildren } from '../util/dom';
 import { Component } from '../compo/Component';
+import { find_findSingle } from '@compo/util/traverse';
+import { selector_parse } from '@compo/util/selector';
+import { Dom } from '@core/dom/exports';
 
-// try to initialize the dom lib, or is then called from `setDOMLibrary`
-domLib_initialize();
 
 export function domLib_initialize(){
 	if (domLib == null || domLib.fn == null)
 		return;
     
-    //@TODO reference the Mask namespace
-	(mask as any).$ = domLib;
-	
 	domLib.fn.compo = function(selector){
 		if (this.length === 0)
 			return null;
@@ -147,3 +145,6 @@ export function domLib_initialize(){
 		
 	}());
 }
+
+// try to initialize the dom lib, or is then called from `setDOMLibrary`
+domLib_initialize();

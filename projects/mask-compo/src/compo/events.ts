@@ -1,4 +1,7 @@
-var Events_ = {
+import { fn_proxy } from '@utils/fn';
+import { domLib_on } from '../util/domLib';
+
+export const Events_ = {
 	on: function(component, events, $element?) {
 		if ($element == null) {
 			$element = component.$;
@@ -42,6 +45,11 @@ var Events_ = {
 				domLib_on($element, type, selector, fn_proxy(fn, component));
 			}
 		}
-	}
-},
-	EventDecorator = null;
+    },
+    setEventDecorator (x) {
+        EventDecorator = x;
+    }
+};
+
+
+let EventDecorator = null;

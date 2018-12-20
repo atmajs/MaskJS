@@ -1,5 +1,9 @@
-import { coll_remove } from '@utils/coll'
+import { coll_remove, coll_indexOf } from '@utils/coll'
 import { is_String } from '@utils/is'
+import { Anchor } from '../compo/anchor';
+import { mask_merge } from '@core/feature/merge';
+import { error_withCompo, reporter_createErrorNode } from '@core/util/reporters';
+import { CompoStaticsAsync } from '../compo/async';
 
 declare var log_warn, log_error;
 
@@ -125,7 +129,7 @@ export function compo_cleanElements(compo) {
 }
 
 export function compo_prepairAsync(dfr, compo, ctx) {
-    var resume = Compo.pause(compo, ctx);
+    var resume = CompoStaticsAsync.pause(compo, ctx);
     var x = dfr.then(resume, onError);
     function onError(error) {
         compo_errored(compo, error);

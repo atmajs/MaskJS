@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script src='lib/mask.js'></script>
+<script>
+     mask.registerUtil('test', {
+            arguments: 'parsed',
+            process: function(foo, str, bar){
+                return foo + str + bar;
+            }
+        });
+
+        var tmpl = ` div > "~[test: foo, 'test', bar.bar]" `;
+        var model = { foo: 2, bar: { bar: 3 } };
+        var dom = mask.render(tmpl, model);
+        console.log(dom);
+
+        var tmpl = ` div > "~[: 'foo' + _.test(a,2,3) ]" `;
+        var model = { a : 10 };
+        var dom = mask.render(tmpl, model);
+        
+        //<
+            mask.registerFromTemplate(`
+				define FooFromTmpl {
+					h4 > 'FooFromTmpl'
+				}
+			`)
+			
+			var compo = mask.getHandler('FooFromTmpl');
+			console.log(compo);
+			
+			var dom = mask.render('FooFromTmpl');
+			console.log(dom);
+        //<
+        
+        var Foo = mask.Compo({});
+        mask.registerHandler('Foo', Foo);
+        
+        mask.registerFromTemplate(`
+            let LetBaz {
+                h4 > 'LetBaz'
+            }
+        `, Foo);
+        
+        
+        var dom = mask.render(`
+            Foo {
+                LetBaz;
+            }
+            LetBaz;
+        `);
+        console.log(dom);
+</script>

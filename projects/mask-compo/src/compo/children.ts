@@ -1,4 +1,8 @@
-var Children_ = {
+import { log_error, log_warn } from '@core/util/reporters';
+import { Component } from '@compo/exports';
+import { Events_ } from './events';
+
+export const Children_ = {
 
 	/**
 	 *	Component children. Example:
@@ -37,7 +41,7 @@ var Children_ = {
 			var index = selector.indexOf(':'),
 				engine = selector.substring(0, index);
 
-			engine = Compo.config.selectors[engine];
+			engine = Component.config.selectors[engine];
 
 			if (engine == null) {
 				component.compos[name] = component.$[0].querySelector(selector);

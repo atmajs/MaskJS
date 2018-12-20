@@ -3,7 +3,7 @@ import { class_Dfr } from '@utils/class/Dfr';
 import { parser_parse } from '@core/parser/exports';
 import { path_getDir, path_getExtension, path_isRelative, path_combine, path_normalize } from '@core/util/path';
 import { mask_TreeWalker } from '@core/feature/TreeWalker';
-import { Module } from '../exports';
+import { m_getType } from '../Module/utils';
 import { _file_get } from '../loaders';
 
 
@@ -52,7 +52,7 @@ export function tools_getDependencies (template, path, opts_){
 				return next();
 			}
 			var path = resolvePath(node, location);
-			var type = Module.getType(node);
+			var type = m_getType(node);
 			if (opts.deep === false) {
 				dependency[type].push(path);
 				return next();

@@ -1,222 +1,286 @@
-import { parser_ensureTemplateFunction } from './parser/exports';
 
+import { _Object_hasOwnProp, _Array_slice } from '@utils/refs';
+
+import { class_Dfr } from '@utils/class/Dfr';
+import { obj_getProperty, obj_setProperty, obj_extend } from '@utils/obj';
+import { str_dedent } from '@utils/str';
+import {
+    is_Function,
+    is_String,
+    is_ArrayLike,
+    is_Object,
+    is_Date,
+    is_NODE,
+    is_DOM
+} from '@utils/is';
+import { class_create } from '@utils/class';
+import { error_createClass } from '@utils/error';
+import { class_EventEmitter } from '@utils/class/EventEmitter';
+import { listeners_on, listeners_off } from './util/listeners';
+import {
+    log_error,
+    reporter_getNodeStack,
+    log,
+    error_withNode,
+    log_warn,
+    warn_withNode
+} from './util/reporters';
+
+import { Dom } from './dom/exports';
+
+import {
+    customTag_register,
+    customTag_registerFromTemplate,
+    customTag_define,
+    customTag_get,
+    customTag_getAll,
+    customStatement_register,
+    customStatement_get,
+    customAttr_register,
+    customAttr_get,
+    customUtil_register,
+    customUtil_get,
+    customUtil_$utils,
+    custom_optimize
+} from './custom/exports';
+
+import { ExpressionUtil } from './expression/exports';
+import { mask_config } from './api/config';
+import { Templates } from './handlers/template';
+
+import {
+    parser_ensureTemplateFunction,
+    parser_parse,
+    parser_parseHtml,
+    mask_stringify,
+    parser_ObjectLexer,
+    parser_defineContentTag,
+    parser_setInterpolationQuotes
+} from './parser/exports';
+
+import {
+    builder_build,
+    builder_buildSVG,
+    BuilderData
+} from './builder/exports';
+
+import { mask_run } from './feature/run';
+import { mask_merge } from './feature/merge';
+import { mask_optimize, mask_registerOptimizer } from './feature/optimize';
+import { mask_TreeWalker } from './feature/TreeWalker';
+import { Module } from './feature/modules/exports';
+import { Di } from './feature/Di';
+
+import { Decorator } from './feature/decorators/exports';
+
+import {
+    obj_addObserver,
+    obj_removeObserver,
+    Validators,
+    registerValidator,
+    BindingProviders,
+    registerBinding
+} from '@binding/exports';
+
+import { Component, Compo, domLib } from '@compo/exports';
+import { jMask } from '@mask-j/jMask';
+import { renderer_clearCache, renderer_renderAsync, renderer_render } from './renderer/exports';
+
+import './statements/exports';
+import './handlers/exports';
+
+declare var global;
 /**
  * @namespace mask
  */
 
-	Mask = {
-		/**
-		 * Render the mask template to document fragment or single html node
-		 * @param {(string|MaskDom)} template - Mask string template or Mask Ast to render from.
-		 * @param {*} [model] - Model Object.
-		 * @param {Object} [ctx] - Context can store any additional information, that custom handler may need
-		 * @param {IAppendChild} [container]  - Container Html Node where template is rendered into
-		 * @param {Object} [controller] - Component that should own this template
-		 * @returns {(IAppendChild|Node|DocumentFragment)} container
-		 * @memberOf mask
-		 */
-		render: function (mix, model, ctx, container, controller) {
+export const Mask = {
+    /**
+     * Render the mask template to document fragment or single html node
+     * @param {(string|MaskDom)} template - Mask string template or Mask Ast to render from.
+     * @param {*} [model] - Model Object.
+     * @param {Object} [ctx] - Context can store any additional information, that custom handler may need
+     * @param {IAppendChild} [container]  - Container Html Node where template is rendered into
+     * @param {Object} [controller] - Component that should own this template
+     * @returns {(IAppendChild|Node|DocumentFragment)} container
+     * @memberOf mask
+     */
+    render: renderer_render,
+    /**
+     * Same to `mask.render` but returns the promise, which is resolved when all async components
+     * are resolved, or is in resolved state, when all components are synchronous.
+     * For the parameters doc @see {@link mask.render}
+     * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
+     * @memberOf mask
+     */
+    renderAsync: renderer_renderAsync,
+    // parser/mask/parse.js
+    parse: parser_parse,
+    // parser/html/parse.js
+    parseHtml: parser_parseHtml,
+    // formatter/stringify.js
+    stringify: mask_stringify,
+    // builder/delegate/build.js
+    build: builder_build,
+    // builder/svg/exports.js
+    buildSVG: builder_buildSVG,
+    // feature/run.js
+    run: mask_run,
+    // feature/merge.js
+    merge: mask_merge,
+    // feature/optimize.js
+    optimize: mask_optimize,
+    registerOptimizer: mask_registerOptimizer,
+    // feature/TreeWalker.js
+    TreeWalker: mask_TreeWalker,
+    // feature/Module.js
+    Module: Module,
+    File: Module.File,
+    // feature/Di.js
+    Di: Di,
+    // custom/tag.js
+    registerHandler: customTag_register,
+    registerFromTemplate: customTag_registerFromTemplate,
+    define: customTag_define,
+    getHandler: customTag_get,
+    getHandlers: customTag_getAll,
+    // custom/statement.js
+    registerStatement: customStatement_register,
+    getStatement: customStatement_get,
+    // custom/attribute.js
+    registerAttrHandler: customAttr_register,
+    getAttrHandler: customAttr_get,
+    // custom/util.js
+    registerUtil: customUtil_register,
+    getUtil: customUtil_get,
+    $utils: customUtil_$utils,
+    _: customUtil_$utils,
 
-			// if DEBUG
-			if (container != null && typeof container.appendChild !== 'function'){
-				log_error('.render(template[, model, ctx, container, controller]', 'Container should implement .appendChild method');
-			}
-			// endif
-			if (ctx == null || ctx.constructor !== builder_Ctx) {
-				ctx = new builder_Ctx(ctx);
-			}
-			var template = mix;
-			if (typeof mix === 'string') {
-				if (_Object_hasOwnProp.call(__templates, mix)){
-					/* if Object doesnt contains property that check is faster
-					then "!=null" http://jsperf.com/not-in-vs-null/2 */
-					template = __templates[mix];
-				}else{
-					template = __templates[mix] = parser_parse(mix, ctx.filename);
-				}
-			}			
-			return builder_build(template, model, ctx, container, controller);
-		},
-		/**
-		 * Same to `mask.render` but returns the promise, which is resolved when all async components
-		 * are resolved, or is in resolved state, when all components are synchronous.
-		 * For the parameters doc @see {@link mask.render}
-		 * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
-		 * @memberOf mask
-		 */
-		renderAsync: function(template, model, ctx, container, ctr) {
-			if (ctx == null || ctx.constructor !== builder_Ctx)
-				ctx = new builder_Ctx(ctx);
-			if (ctr == null)
-				ctr = new Compo;
+    defineDecorator: Decorator.define,
+    // dom/exports.js
+    Dom: Dom,
+    /**
+     * Is present only in DEBUG (not minified) version
+     * Evaluates script in masks library scope
+     * @param {string} script
+     */
+    plugin: function(source) {
+        //if DEBUG
+        eval(source);
+        //endif
+    },
+    clearCache: renderer_clearCache,
+    Utils: {
+        Expression: ExpressionUtil,
+        ensureTmplFn: parser_ensureTemplateFunction
+    },
+    obj: {
+        get: obj_getProperty,
+        set: obj_setProperty,
+        extend: obj_extend,
+        addObserver: obj_addObserver,
+        removeObserver: obj_removeObserver
+    },
+    str: {
+        dedent: str_dedent
+    },
+    is: {
+        Function: is_Function,
+        String: is_String,
+        ArrayLike: is_ArrayLike,
+        Array: is_ArrayLike,
+        Object: is_Object,
+        Date: is_Date,
+        NODE: is_NODE,
+        DOM: is_DOM
+    },
+    class: {
+        create: class_create,
+        createError: error_createClass,
+        Deferred: class_Dfr,
+        EventEmitter: class_EventEmitter
+    },
+    parser: {
+        ObjectLexer: parser_ObjectLexer,
+        getStackTrace: reporter_getNodeStack,
+        defineContentTag: parser_defineContentTag
+    },
+    log: {
+        info: log,
+        error: log_error,
+        errorWithNode: error_withNode,
+        warn: log_warn,
+        warnWithNode: warn_withNode
+    },
+    // util/listeners.js
+    on: listeners_on,
+    off: listeners_off,
 
-			var dom = this.render(template, model, ctx, container, ctr),
-				dfr = new class_Dfr;
+    // Stub for the reload.js, which will be used by includejs.autoreload
+    delegateReload: function() {},
 
-			if (ctx.async === true) {
-				ctx.done(function(){
-					dfr.resolve(dom, ctr);
-				});
-			} else {
-				dfr.resolve(dom, ctr);
-			}
-			return dfr;
-		},
-		// parser/mask/parse.js
-		parse: parser_parse,
-		// parser/html/parse.js
-		parseHtml: parser_parseHtml,
-		// formatter/stringify.js
-		stringify: mask_stringify,
-		// builder/delegate/build.js
-		build: builder_build,
-		// builder/svg/exports.js
-		buildSVG: builder_buildSVG,
-		// feature/run.js
-		run: mask_run,
-		// feature/merge.js
-		merge: mask_merge,
-		// feature/optimize.js
-		optimize: mask_optimize,
-		registerOptimizer: mask_registerOptimizer,
-		// feature/TreeWalker.js
-		TreeWalker: mask_TreeWalker,
-		// feature/Module.js
-		Module: Module,
-		File: Module.File,
-		// feature/Di.js
-		Di: Di,
-		// custom/tag.js
-		registerHandler: customTag_register,
-		registerFromTemplate: customTag_registerFromTemplate,
-		define: customTag_define,
-		getHandler: customTag_get,
-		getHandlers: customTag_getAll,
-		// custom/statement.js
-		registerStatement: customStatement_register,
-		getStatement: customStatement_get,
-		// custom/attribute.js
-		registerAttrHandler: customAttr_register,
-		getAttrHandler: customAttr_get,
-		// custom/util.js
-		registerUtil: customUtil_register,
-		getUtil: customUtil_get,
-		$utils: customUtil_$utils,
-		_     : customUtil_$utils,
+    /**
+     * Define interpolation quotes for the parser
+     * Starting from 0.6.9 mask uses ~[] for string interpolation.
+     * Old '#{}' was changed to '~[]', while template is already overloaded with #, { and } usage.
+     * @param {string} start - Must contain 2 Characters
+     * @param {string} end - Must contain 1 Character
+     **/
+    setInterpolationQuotes: parser_setInterpolationQuotes,
 
-		defineDecorator: Decorator.define,
-		// dom/exports.js
-		Dom: Dom,
-		/**
-		 * Is present only in DEBUG (not minified) version
-		 * Evaluates script in masks library scope
-		 * @param {string} script
-		 */
-		plugin: function(source){
-			//if DEBUG
-			eval(source);
-			//endif
-		},
-		clearCache: function(key){
-			if (arguments.length === 0) {
-				__templates = {};
-				return;
-			}
-			delete __templates[key];
-		},
-		Utils: {
-			Expression: ExpressionUtil,
-			ensureTmplFn: parser_ensureTemplateFunction
-		},
-		obj: {
-			get: obj_getProperty,
-			set: obj_setProperty,
-			extend: obj_extend,
-		},
-		str: {
-			dedent: str_dedent
-		},
-		is: {
-			Function: is_Function,
-			String: is_String,
-			ArrayLike: is_ArrayLike,
-			Array: is_ArrayLike,
-			Object: is_Object,
-			Date: is_Date,
-			NODE: is_NODE,
-			DOM: is_DOM
-		},
-		'class': {
-			create: class_create,
-			createError: error_createClass,
-			Deferred: class_Dfr,
-			EventEmitter: class_EventEmitter,
-		},
-		parser: {
-			ObjectLexer: parser_ObjectLexer,
-			getStackTrace: reporter_getNodeStack,
-			defineContentTag: parser_defineContentTag
-		},
-		log: {
-			info: log,
-			error: log_error,
-			errorWithNode: error_withNode,
-			warn: log_warn,
-			warnWithNode: warn_withNode,
-		},
-		// util/listeners.js
-		on: listeners_on,
-		off: listeners_off,
+    setCompoIndex: function(index) {
+        BuilderData.id = index;
+    },
+
+    cfg: mask_config,
+    config: mask_config,
+
+    // For the consistence with the NodeJS
+    toHtml: function(dom) {
+        return ($(dom) as any).outerHtml();
+    },
+
+    factory: function(compoName) {
+        var params_ = _Array_slice.call(arguments, 1),
+            factory = params_.pop(),
+            mode = 'both';
+        if (params_.length !== 0) {
+            var x = params_[0];
+            if (x === 'client' || x === 'server') {
+                mode = x;
+            }
+        }
+        if ((mode === 'client' && is_NODE) || (mode === 'server' && is_DOM)) {
+            customTag_register(compoName, {
+                meta: { mode: mode }
+            });
+            return;
+        }
+        factory(global, Component.config.getDOMLibrary(), function(compo) {
+            customTag_register(compoName, compo);
+        });
+    },
+
+    injectable: Di.deco.injectableClass,
+
+    templates: Templates,
+
+    /* from binding */
+    Validators: Validators,
+    registerValidator: registerValidator,
+    BindingProviders: BindingProviders,
+    registerBinding: registerBinding,
 
 
-		// Stub for the reload.js, which will be used by includejs.autoreload
-		delegateReload: function(){},
+    Compo: Compo,
+    Component: Component,
+    jmask: jMask,
+    version: '%IMPORT(version)%',
+    $: domLib,
+    j: jMask
+};
 
-		/**
-		 * Define interpolation quotes for the parser
-		 * Starting from 0.6.9 mask uses ~[] for string interpolation.
-		 * Old '#{}' was changed to '~[]', while template is already overloaded with #, { and } usage.
-		 * @param {string} start - Must contain 2 Characters
-		 * @param {string} end - Must contain 1 Character
-		 **/
-		setInterpolationQuotes: parser_setInterpolationQuotes,
 
-		setCompoIndex: function(index){
-			builder_componentID = index;
-		},
 
-		cfg: mask_config,
-		config: mask_config,
-
-		// For the consistence with the NodeJS
-		toHtml: function(dom) {
-			return $(dom).outerHtml();
-		},
-
-		factory: function(compoName){
-			var params_ = _Array_slice.call(arguments, 1),
-				factory = params_.pop(),
-				mode = 'both';
-			if (params_.length !== 0) {
-				var x = params_[0];
-				if (x === 'client' || x === 'server') {
-					mode = x;
-				}
-			}
-			if ((mode === 'client' && is_NODE) || (mode === 'server' && is_DOM) ) {
-				customTag_register(compoName, {
-					meta: { mode: mode }
-				});
-				return;
-			}
-			factory(global, Compo.config.getDOMLibrary(), function(compo){
-				customTag_register(compoName, compo);
-			});
-		},
-
-        injectable: Di.deco.injectableClass,
-
-        templates: Templates
-	};
-
-	var __templates = {};
+//> make fast properties
+custom_optimize();

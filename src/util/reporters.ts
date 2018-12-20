@@ -3,6 +3,7 @@ import { error_createClass, error_formatSource } from '@utils/error';
 import { listeners_emit } from './listeners';
 import { is_String } from '@utils/is';
 import { _Array_slice } from '@utils/refs';
+import { parser_parse } from '@core/parser/exports';
 
 const noConsole = typeof console !== 'undefined';
 

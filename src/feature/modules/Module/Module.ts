@@ -4,7 +4,7 @@ import { path_getDir } from '@core/util/path';
 import { class_create } from '@utils/class';
 import { class_Dfr } from '@utils/class/Dfr';
 import { u_isNpmPath, u_resolveNpmPath } from '../utils';
-import { Module } from '../exports';
+import { m_getModuleType } from './utils';
 
 export const IModule = class_create(class_Dfr, {
 	type: null,
@@ -87,19 +87,3 @@ export const IModule = class_create(class_Dfr, {
 			;
 	}
 });
-
-(function(){
-	(IModule as any).create = function(endpoint, parent, contentType){
-		return new (Factory(endpoint))(endpoint.path, parent);
-	};
-	(IModule as any).types = {};
-
-	function Factory(endpoint) {
-		var type = Module.getModuleType(endpoint);
-		var Ctor = (IModule as any).types[type];
-		if (Ctor == null) {
-			throw Error('Import is not supported for type ' + type + ' and the path ' + endpoint.path);
-		}
-		return Ctor;
-	}
-}());

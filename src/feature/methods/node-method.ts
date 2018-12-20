@@ -1,7 +1,7 @@
 import { sourceUrl_get } from './source-url';
 import { _args_toCode } from './utils';
-import { __cfg } from '@core/scope-vars';
 import { scopeRefs_getImportVars } from './scope-refs';
+import { __cfg } from '@core/api/config';
 
 export function nodeMethod_getSource (node, model, owner){
 

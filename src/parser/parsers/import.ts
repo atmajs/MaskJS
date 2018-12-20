@@ -1,8 +1,6 @@
-import { custom_Parsers, custom_Parsers_Transform } from '@core/custom/exports';
-
-import { class_create } from 'atma-utils';
-
+import { class_create } from '@utils/class';
 import { Dom } from '@core/dom/exports';
+import { custom_Parsers, custom_Parsers_Transform } from '@core/custom/exports';
 import { parser_ObjectLexer } from '../object/ObjectLexer';
 
 (function(){

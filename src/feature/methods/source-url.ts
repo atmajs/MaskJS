@@ -1,3 +1,4 @@
+declare var global;
 
 export function sourceUrl_get (node){
 		//if DEBUG

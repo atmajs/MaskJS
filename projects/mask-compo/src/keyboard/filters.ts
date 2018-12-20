@@ -35,4 +35,4 @@ export function filter_isKeyboardInput  (el) {
     return TYPELESS_INPUT.indexOf(' ' + el.type + ' ') === -1;
 };
 
-var TYPELESS_INPUT = ' button submit checkbox file hidden image radio range reset ';
+const TYPELESS_INPUT = ' button submit checkbox file hidden image radio range reset ';

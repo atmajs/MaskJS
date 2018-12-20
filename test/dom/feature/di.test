@@ -34,7 +34,7 @@ UTest({
 		});		
 
 	},
-	'should get instance from define constructor' () {
+	'!should get instance from define constructor' () {
 		class Foo {
 			load () {
 				return 'Hello'
@@ -51,7 +51,7 @@ UTest({
 
 			define FooCompo  {
 				function constructor (foo: IFoo) {
-					this.foo = foo;
+                    this.foo = foo;
 				}
 				function onRenderStart () {
 					this.emitOut('fooSignal', this.foo.load());	

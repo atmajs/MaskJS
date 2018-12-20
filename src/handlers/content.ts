@@ -4,7 +4,7 @@ import { customTag_Base } from '@core/custom/exports';
 import { Dom } from '@core/dom/exports';
 import { custom_Tags } from '@core/custom/exports';
 import { css_ensureScopedStyles } from '@core/util/css';
-import { jMask } from '@mask-j/jmask';
+import { jMask } from '@mask-j/jMask';
 
 var BaseContent = class_create(customTag_Base, {
     meta: {

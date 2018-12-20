@@ -1,6 +1,3 @@
-import { customTag_get } from '@core/custom/tag';
-import { class_create } from '@utils/class';
-import { fn_doNothing } from '@utils/fn';
 
 function deco_singletonCompo (selector) {
     var instance = null;

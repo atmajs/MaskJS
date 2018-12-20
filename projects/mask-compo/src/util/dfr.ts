@@ -1,3 +1,8 @@
+import { is_Function } from '@utils/is';
+import { log_warn } from '@core/util/reporters';
+
+declare var global;
+
 export function dfr_isBusy(dfr) {
     if (dfr == null || typeof dfr.then !== 'function') return false;
 

@@ -1,9 +1,11 @@
 import { Dom } from '@core/dom/exports';
-import { Proto } from './jmask-proto'
-import './manip_attr'
-import './manip_class'
-import './manip_dom'
-import './traverse'
+import { Proto } from './proto'
+import { ManipAttr } from './manip_attr'
+import { ManipClass } from './manip_class'
+import { ManipDom} from './manip_dom'
+import { Traverse } from './traverse'
+import { obj_extendMany } from '@utils/obj';
+
 
 export function jMask (mix) {
 	if (this instanceof jMask === false) 
@@ -15,6 +17,13 @@ export function jMask (mix) {
 	return this.add(mix);
 }
 
-Proto.constructor = jMask;
+obj_extendMany(
+    Proto, 
+    ManipAttr, 
+    ManipClass, 
+    ManipDom, 
+    Traverse, 
+    { constructor: jMask }
+);
 
 jMask.prototype = Proto;

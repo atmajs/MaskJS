@@ -1,13 +1,21 @@
+import { domLib, setDomLib } from './scope-vars';
+import { is_Array } from '@utils/is';
+import { log_warn, log_error } from '@core/util/reporters';
+import { domLib_initialize } from './jcompo/jCompo';
+
+declare var global;
+
 /*
  * Extrem simple Dom Library. If (jQuery | Kimbo | Zepto) is not used.
  * Only methods, required for the Compo library are implemented.
  */
-var DomLite;
+export var DomLite;
+
 (function(document){
 	if (document == null) 
 		return;
 	
-	Compo.DomLite = DomLite = function(mix){
+	DomLite = function(mix){
 		if (this instanceof DomLite === false) {
 			return new DomLite(mix);
 		}
@@ -18,7 +26,7 @@ var DomLite;
 	};
 	
 	if (domLib == null) 
-		domLib = DomLite;
+		setDomLib(DomLite);
 	
 	var Proto = DomLite.fn = {
 		constructor: DomLite,
@@ -190,7 +198,7 @@ var DomLite;
 	}());
 	
 	
-	function each(arr, fn, ctx){
+	function each(arr, fn, ctx?){
 		if (arr == null) 
 			return ctx || arr;
 		var imax = arr.length,
@@ -200,13 +208,13 @@ var DomLite;
 		}
 		return ctx || arr;
 	}
-	function aggr(seed, arr, fn, ctx) {
+	function aggr(seed, arr, fn, ctx?) {
 		each(arr, function(x, i){
 			seed = fn.call(ctx || arr, seed, arr[i], i);
 		});
 		return seed;
 	}
-	function indexOf(arr, fn, ctx){
+	function indexOf(arr, fn, ctx?){
 		if (arr == null) 
 			return -1;
 		var imax = arr.length,
@@ -236,8 +244,9 @@ var DomLite;
 	}());
 	
 	/* Events */
-	
-export function binder (bind, bindSelector, args){
+	var binder, on, off, delegate, undelegate;
+	(function(){
+		binder = function(bind, bindSelector, args){
 			var length = args.length,
 				fn;
 			if (2 === length) 
@@ -253,13 +262,13 @@ export function binder (bind, bindSelector, args){
 			log_error('`DomLite.on|off` - invalid arguments count');
 			return this;
 		};
-export function on (type, fn){
+		on = function(type, fn){
 			return run(this, _addEvent, type, fn);
 		};
-export function off (type, fn){
+		off = function(type, fn){
 			return run(this, _remEvent, type, fn);
 		};
-export function delegate (type, selector, fn){
+		delegate = function(type, selector, fn){
 			function guard(event){
 				var el = event.target,
 					current = event.currentTarget;
@@ -276,7 +285,7 @@ export function delegate (type, selector, fn){
 			(fn._guards || (fn._guards = [])).push(guard);
 			return on.call(this, type, guard);
 		};
-export function undelegate (type, selector, fn){
+		undelegate = function(type, selector, fn){
 			return each(fn._quards, function(guard){
 				off.call(this, type, guard);
 			}, this);
@@ -301,7 +310,7 @@ export function undelegate (type, selector, fn){
 			: function(node, klass) {
 				return -1 !== (' ' + node.className + ' ').indexOf(' ' + klass + ' ');
 			};
-		Proto.hasClass = function(klass){
+		Proto['hasClass'] = function(klass){
 			return -1 !== indexOf(this, function(node){
 				return hasClass(node, klass)
 			});
@@ -390,10 +399,10 @@ export function undelegate (type, selector, fn){
 		};
 	}());
 	
-	if (Object.setPrototypeOf) 
-		Object.setPrototypeOf(Proto, Array.prototype);
-	else if (Proto.__proto__) 
-		Proto.__proto__ = Array.prototype;
+	if ((Object as any).setPrototypeOf) 
+		(Object as any).setPrototypeOf(Proto, Array.prototype);
+	else if ((Proto as any).__proto__) 
+		(Proto as any).__proto__ = Array.prototype;
 	
 	DomLite.prototype = Proto;
 	domLib_initialize();

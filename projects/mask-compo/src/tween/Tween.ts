@@ -1,6 +1,5 @@
-import { is_Function } from '../../ref-utils/src/is'
-
-declare var log_error;
+import { log_error } from '@core/util/reporters';
+import { is_Function } from '@utils/is';
 
 export class Tween {
     timing: (d: number, start: number, diff: number, duration: number) => number

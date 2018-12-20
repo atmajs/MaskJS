@@ -1,0 +1,1299 @@
+{
+    "url": "/projects/mask-binding/src/exports.ts",
+    "resources": [
+        {
+            "url": "/projects/mask-binding/src/attributes/exports.ts",
+            "resources": [
+                {
+                    "url": "/projects/mask-binding/src/attributes/xxVisible.ts",
+                    "resources": [
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/attributes/xToggle.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/vars.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-compo/src/compo/Component.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/obj.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/attributes/xClassToggle.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/vars.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-compo/src/compo/Component.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-compo/src/scope-vars.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/dom/exports.ts"
+                                },
+                                {
+                                    "url": "/src/feature/Di.ts"
+                                },
+                                {
+                                    "url": "/src/parser/exports.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/handlers/exports.ts",
+            "resources": [
+                {
+                    "url": "/projects/mask-binding/src/handlers/visible.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/projects/mask-binding/src/handlers/validate.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/projects/mask-binding/src/handlers/validate_group.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/projects/mask-binding/src/handlers/bind.ts",
+                    "resources": [
+                        {
+                            "url": "/projects/mask-binding/src/BindingProvider.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/class.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/DomObjectTransport.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/signal.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/scope-vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/ValidatorProvider.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/handlers/dualbind.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/class.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/ValidatorProvider.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/scope-vars.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/BindingProvider.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/class.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/DomObjectTransport.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/signal.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/scope-vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/ValidatorProvider.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/statements/exports.ts",
+            "resources": [
+                {
+                    "url": "/projects/mask-binding/src/statements/utils.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/statements/if.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/tag.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/class/Dfr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/src/custom/repositories.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/statements/utils.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/custom/exports.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/parser/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/dom.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/statements/switch.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/statements/utils.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/custom/exports.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/dom.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/statements/with.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/statements/utils.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/custom/exports.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/statements/visible.ts",
+                    "resources": [
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/builder/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/statements/listen.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/class.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/binders/exports.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/binders/EventEmitterBinder.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/binders/ExpressionBinder.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/binders/RxBinder.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/statements/utils.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/custom/exports.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/expression.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-compo/src/compo/Component.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/class.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/src/custom/tag.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/compo/CompoProto.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/scope-vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/compo/anchor.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/compo.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/dom.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/signal/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/jcompo/jCompo.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/DomLite.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/traverse.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/selector.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/domLib.ts"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/utilities/exports.ts",
+            "resources": [
+                {
+                    "url": "/projects/mask-binding/src/utilities/bind.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/obj.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/compo.ts",
+                            "resources": [
+                                {
+                                    "url": "/projects/mask-binding/src/utils/dom.ts"
+                                },
+                                {
+                                    "url": "/src/builder/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/vars.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/custom/exports.ts",
+                            "resources": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/BindingProvider.ts",
+            "resources": [
+                {
+                    "url": "/ref-utils/src/class.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/obj.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/DomObjectTransport.ts",
+                    "resources": [
+                        {
+                            "url": "/src/expression/exports.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/eval.ts"
+                                },
+                                {
+                                    "url": "/src/expression/eval_statements.ts"
+                                },
+                                {
+                                    "url": "/src/expression/parser.ts"
+                                },
+                                {
+                                    "url": "/src/expression/vars_helper.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/expression.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object_observe.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-binding/src/utils/object.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/obj.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/date.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/coll.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/utils/signal.ts",
+                    "resources": [
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "url": "/src/util/reporters.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/error.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/str.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/util/listeners.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/vars.ts",
+                    "resources": [
+                        {
+                            "url": "/projects/mask-compo/src/compo/Component.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/class.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/src/custom/tag.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/compo/CompoProto.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/scope-vars.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/compo/anchor.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/compo.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/dom.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/signal/exports.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/jcompo/jCompo.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/DomLite.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/traverse.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/selector.ts"
+                                },
+                                {
+                                    "url": "/projects/mask-compo/src/util/domLib.ts"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-compo/src/scope-vars.ts",
+                    "resources": [
+                        {
+                            "url": "/src/dom/exports.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/dom/TextNode.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Fragment.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Node.ts"
+                                },
+                                {
+                                    "url": "/src/dom/DecoratorNode.ts"
+                                },
+                                {
+                                    "url": "/src/dom/NodeType.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Component.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/feature/Di.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/parser/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-binding/src/utils/expression.ts",
+                    "resources": [
+                        {
+                            "url": "/src/expression/exports.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/expression/eval.ts"
+                                },
+                                {
+                                    "url": "/src/expression/eval_statements.ts"
+                                },
+                                {
+                                    "url": "/src/expression/parser.ts"
+                                },
+                                {
+                                    "url": "/src/expression/vars_helper.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/object_observe.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-binding/src/utils/object.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "url": "/ref-utils/src/is.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/ref-utils/src/obj.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/projects/mask-binding/src/ValidatorProvider.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/projects/mask-compo/src/scope-vars.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/dom/exports.ts"
+                                },
+                                {
+                                    "url": "/src/feature/Di.ts"
+                                },
+                                {
+                                    "url": "/src/parser/exports.ts"
+                                },
+                                {
+                                    "url": "/src/util/reporters.ts"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/ValidatorProvider.ts",
+            "resources": [
+                {
+                    "url": "/ref-utils/src/is.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/src/util/reporters.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/error.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/str.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/util/listeners.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/projects/mask-compo/src/scope-vars.ts",
+                    "resources": [
+                        {
+                            "url": "/src/dom/exports.ts",
+                            "resources": [
+                                {
+                                    "url": "/src/dom/TextNode.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Fragment.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Node.ts"
+                                },
+                                {
+                                    "url": "/src/dom/DecoratorNode.ts"
+                                },
+                                {
+                                    "url": "/src/dom/NodeType.ts"
+                                },
+                                {
+                                    "url": "/src/dom/Component.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/feature/Di.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/parser/exports.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/src/util/reporters.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/fn.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/error.ts"
+                                },
+                                {
+                                    "url": "/src/util/listeners.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/is.ts"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "/projects/mask-binding/src/utils/object_observe.ts",
+            "resources": [
+                {
+                    "url": "/src/util/reporters.ts",
+                    "resources": [
+                        {
+                            "url": "/ref-utils/src/fn.ts",
+                            "resources": []
+                        },
+                        {
+                            "url": "/ref-utils/src/error.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/obj.ts"
+                                },
+                                {
+                                    "url": "/ref-utils/src/str.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/src/util/listeners.ts",
+                            "resources": [
+                                {
+                                    "url": "/ref-utils/src/arr.ts"
+                                }
+                            ]
+                        },
+                        {
+                            "url": "/ref-utils/src/is.ts",
+                            "resources": []
+                        }
+                    ]
+                },
+                {
+                    "url": "/ref-utils/src/obj.ts",
+                    "resources": []
+                },
+                {
+                    "url": "/ref-utils/src/arr.ts",
+                    "resources": []
+                }
+            ]
+        }
+    ]
+}

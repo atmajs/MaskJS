@@ -1,10 +1,10 @@
 import { __rgxEscapedChar } from '@core/scope-vars';
-import { DecoratorNode } from '@core/dom/6.DecoratorNode';
-import { Fragment } from '@core/dom/5.Fragment';
-import { Node } from '@core/dom/2.Node';
+import { DecoratorNode } from '@core/dom/DecoratorNode';
+import { Fragment } from '@core/dom/Fragment';
+import { Node } from '@core/dom/Node';
 import { parser_warn, parser_error } from '@core/util/reporters';
 import { custom_Parsers, custom_Parsers_Transform } from '@core/custom/exports';
-import { TextNode } from '@core/dom/3.TextNode';
+import { TextNode } from '@core/dom/TextNode';
 import { cursor_skipWhitespaceBack, cursor_groupEnd, cursor_skipWhitespace, cursor_refEnd } from '../cursor';
 import { parser_parseHtmlPartial } from '../html/parser';
 import { Dom } from '@core/dom/exports';

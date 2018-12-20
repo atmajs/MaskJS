@@ -4,8 +4,8 @@ import { tools_getDependencies } from './dependencies';
 import { _file_get } from '../loaders';
 import { mask_TreeWalker } from '@core/feature/TreeWalker';
 import { mask_stringify } from '@core/parser/exports';
-import { __cfg } from '@core/scope-vars';
-import { jMask } from '@mask-j/jmask';
+import { jMask } from '@mask-j/jMask';
+import { __cfg } from '@core/api/config';
 
 
 export function tools_build (template, path, opts_){

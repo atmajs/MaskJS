@@ -10,12 +10,10 @@ UTest({
 			'should decorate with simple method' () {
 
 				var template = `
-
-					[LetterB]
+                    [LetterB]
 					function letter (str) {
 						return (str || '') + 'x';
-					}
-
+                    }                    
 					h1 > '~[this.letter("a")]'
 					h2 > '~[this.letter("c")]'
 				`;
@@ -24,12 +22,11 @@ UTest({
 
 				spyDecorator = sinon.spy(function (fn) {
 					return spyInner = sinon.spy(function (str) {
-						str = (str || '') + 'b';
+                        str = (str || '') + 'b';
 						return fn(str);
 					});
 				});
-				mask.defineDecorator ('LetterB', spyDecorator)
-
+				mask.defineDecorator ('LetterB', spyDecorator)                
 				var dom = mask.render(template);
 
 				eq_(spyDecorator.callCount, 1);
@@ -137,7 +134,7 @@ UTest({
 					find(div) > text ('HELLO');
 				`);			
 		},
-		'!should change bg and fore color' () {
+		'should change bg and fore color' () {
 			var template = `
 
 				[RedBackground]
@@ -295,9 +292,9 @@ UTest({
 				define Bar {
 					var test = true;
 					[UpperCase]
-					if (test) {
+					if (this.test) {
 						h1 > 'OK'
-					}
+                    }                    
 				}
 				Bar;
 			`;
@@ -310,7 +307,7 @@ UTest({
 			mask.on('error', assert.await(error => {
 				var msg = error.message;
 				has_(msg, 'UpperCase');
-				has_(msg, 'support');
+                has_(msg, 'support');
 			}))
 			var dom = mask.render(template);
 			return UTest.domtest(dom, `

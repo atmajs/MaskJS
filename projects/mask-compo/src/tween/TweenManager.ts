@@ -1,5 +1,9 @@
+import { class_create } from '@utils/class';
+import { compo_attachDisposer } from '@compo/util/compo';
+import { Tween } from './Tween';
+import { ani_requestFrame, ani_clearFrame } from '@compo/util/ani';
 
-var TweenManager = class_create({
+export const TweenManager = class_create({
 	animating: false,
 	frame: null,
 	constructor: function (compo) {

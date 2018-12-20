@@ -1,4 +1,3 @@
-import { __cfg } from '@core/scope-vars';
 import { file_get, file_getScript, file_getStyle, file_getJson } from '@core/util/resource/file';
 import { listeners_on } from '@core/util/listeners';
 import { is_Function } from '@utils/is';
@@ -6,7 +5,7 @@ import { class_Dfr } from '@utils/class/Dfr';
 import { log_warn } from '@core/util/reporters';
 import { _opts } from './Opts';
 import { path_appendQuery } from '@core/util/path';
-import { mask_config } from '@core/api/config';
+import { mask_config, __cfg } from '@core/api/config';
 
 declare var include;
 

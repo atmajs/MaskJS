@@ -1,7 +1,6 @@
 import { custom_Tags } from '@core/custom/exports';
 import { expression_eval, expression_evalStatements } from '@core/expression/exports';
 import { class_create } from '@utils/class';
-import { Module } from './exports';
 import { fn_doNothing } from '@utils/fn';
 import { path_resolveUrl } from '@core/util/path';
 import { u_resolveLocation } from './utils';
@@ -9,6 +8,11 @@ import { error_withCompo } from '@core/util/reporters';
 import { parser_ensureTemplateFunction, mask_stringify } from '@core/parser/exports';
 import { is_Function } from '@utils/is';
 import { obj_extend } from '@utils/obj';
+import { Component } from '@compo/exports';
+import { i_createImport } from './Import/utils';
+import { m_createModule, m_isMask, m_registerModule } from './Module/utils';
+import { Endpoint } from './class/Endpoint';
+import { m_cfg } from './config';
 
 (function() {
 	var IMPORT  = 'import',
@@ -18,34 +22,34 @@ import { obj_extend } from '@utils/obj';
 		constructor: function(node, model, ctx, container, ctr) {
 			var path = path_resolveUrl(node.attr.path, u_resolveLocation(ctx, ctr)),
 				type = node.attr.type,
-				endpoint = new Module.Endpoint(path, type);
-			Module.registerModule(node.nodes, endpoint, ctx, ctr);
+				endpoint = new Endpoint(path, type);
+			m_registerModule(node.nodes, endpoint, ctx, ctr);
 		},
 		render: fn_doNothing
 	});
 	custom_Tags['import:base'] = function(node, model, ctx, el, ctr){
 		var x = expression_eval(node.expression, model, ctx, ctr);
-		Module.cfg('base', x);
+		m_cfg('base', x);
 	};
 	custom_Tags['import:cfg'] = function(node, model, ctx, el, ctr){
 		var args = expression_evalStatements(node.expression, model, ctx, ctr);
-		Module.cfg.apply(null, args);
+		m_cfg.apply(null, args);
 	};
 	custom_Tags[IMPORT] = class_create({
 		meta: {
 			serializeNodes: true
 		},
 		constructor: function(node, model, ctx, el, ctr) {
-			if (node.alias == null && node.exports == null && Module.isMask(node)) {
+			if (node.alias == null && node.exports == null && m_isMask(node)) {
 				// embedding
-				this.module = Module.createModule(node, ctx, ctr);
+				this.module = m_createModule(node, ctx, ctr);
 			}
 		},
 		renderStart: function(model, ctx){
 			if (this.module == null) {
 				return;
 			}
-			var resume = Compo.pause(this, ctx);
+			var resume = Component.pause(this, ctx);
 			var self   = this;
 			this
 				.module
@@ -110,7 +114,7 @@ import { obj_extend } from '@utils/obj';
 			process();
 		},
 		start_: function(model, ctx){
-			var resume = Compo.pause(this, ctx),
+			var resume = Component.pause(this, ctx),
 				nodes = this.nodes,
 				imax = nodes.length,
 				i = -1, x
@@ -125,7 +129,7 @@ import { obj_extend } from '@utils/obj';
 							x.path = fn('attr', model, ctx, null, this);
 						}
 					}
-					arr.push(Module.createImport(x, ctx, this));
+					arr.push(i_createImport(x, ctx, this));
 				}
 			}
 			this.load_(ctx, resume);

@@ -19,7 +19,7 @@ UTest({
 			}
 		`);
 
-		var compo = mask.Compo.initialize('FooParent > Foo');
+        var compo = mask.Compo.initialize('FooParent > Foo');        
 		return UTest
 			.domtest(compo.$, `
 				find(button) > click;

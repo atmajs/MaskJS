@@ -1,4 +1,5 @@
 import { is_Object } from '@utils/is';
+import { TweenManager } from '@compo/tween/TweenManager';
 
 declare var global: Window
 

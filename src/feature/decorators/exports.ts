@@ -7,9 +7,6 @@ import { _getDecoType } from './utils';
 import { class_create } from '@utils/class';
 import { _store } from './store';
 
-
-
-
 export const Decorator = {
     getDecoType: _getDecoType,
     define: function(key, mix) {			

@@ -1,6 +1,6 @@
-import { CompoStatics } from '../compo/CompoStatics';
+import { Component } from '../compo/Component';
 import { class_create } from '@utils/class';
-import { expression_varRefs, expression_eval } from '../scope-vars';
+import { expression_eval, expression_varRefs } from '@core/expression/exports';
 
 
 export function _compound  (ctr, slotExpression, cb) {
@@ -11,7 +11,7 @@ export function _compound  (ctr, slotExpression, cb) {
     var handler = new SlotExpression(slotExpression, cb);
     for (var i = 0; i < handler.slots.length; i++) {
         var name = handler.slots[i].name;
-        CompoStatics.attach(ctr, 'slots.' + name, handler.signalDelegate(name));
+        Component.attach(ctr, 'slots.' + name, handler.signalDelegate(name));
     }  
     return handler;     
 };

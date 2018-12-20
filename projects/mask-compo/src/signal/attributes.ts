@@ -3,8 +3,8 @@ import { log_error, log_warn } from '@core/util/reporters';
 import { dom_addEventListener } from '../util/dom';
 import { _hasSlot, _fire } from './utils';
 import { _Array_slice } from '@utils/refs';
-import { expression_evalStatements } from '../scope-vars';
-import { CompoStatics } from '../compo/CompoStatics';
+import { Component } from '../compo/Component';
+import { expression_evalStatements } from '@core/expression/exports';
 
 	
 _create('signal');
@@ -78,7 +78,7 @@ function _handleDefinition (el, ctr, definition, asEvent, isSlot) {
         return null;
     }
     if (isSlot) {
-        CompoStatics.attach(ctr, 'slots.' + source, fn);
+        Component.attach(ctr, 'slots.' + source, fn);
         return;
     }
 

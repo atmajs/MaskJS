@@ -4,6 +4,7 @@ import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { class_Dfr } from '@utils/class/Dfr';
 import { fn_createByPattern } from '@utils/fn';
 import { custom_Tags, custom_Tags_global } from './repositories';
+import { Module } from '@core/feature/modules/exports';
 
 /**
  * Get Components constructor from the global repository or the scope

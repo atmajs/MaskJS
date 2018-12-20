@@ -1,4 +1,7 @@
-export function selector_parse(selector, type, direction) {
+import { Dom } from '@core/dom/exports';
+import { log_error } from '@core/util/reporters';
+
+export function selector_parse(selector, type, direction?) {
     if (selector == null) log_error('selector is null for the type', type);
 
     var _type = typeof selector;
@@ -161,7 +164,7 @@ export function selector_parse(selector, type, direction) {
     return root;
 }
 
-export function selector_match(node, selector, type) {
+export function selector_match(node, selector, type?) {
     if (typeof selector === 'string') {
         if (type == null) {
             type = Dom[node.compoName ? 'CONTROLLER' : 'SET'];
@@ -224,7 +227,7 @@ function sel_hasClassDelegate(matchClass) {
 }
 
 // [perf] http://jsperf.com/match-classname-indexof-vs-regexp/2
-function sel_hasClass(className, matchClass, index) {
+function sel_hasClass(className, matchClass, index?) {
     if (typeof className !== 'string') return false;
 
     if (index == null) index = 0;
@@ -286,7 +289,7 @@ function selector_moveToBreak(selector, index, length) {
 
 var PseudoSelectors;
 (function() {
-    export function PseudoSelectors(name, expr) {
+    PseudoSelectors = function (name, expr) {
         var fn = Fns[name];
         if (fn !== void 0) return fn;
 

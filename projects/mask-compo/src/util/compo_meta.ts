@@ -1,9 +1,18 @@
+import { log_error, error_withCompo } from '@core/util/reporters';
+import { compo_errored } from './compo';
+import { is_Function } from '@utils/is';
+import { obj_create } from '@utils/obj';
+import { Component } from '../compo/Component';
+import { expression_evalStatements, expression_eval } from '@core/expression/exports';
+import { Di } from '@core/feature/Di';
+
+
 // == Meta Attribute and Property Handler
 
 export const compo_meta_toAttributeKey = _getProperty;
 export function compo_meta_prepairAttributesHandler(
     Proto,
-    type /* attributes | properties */
+    type? /* attributes | properties */
 ) {
     var meta = getMetaProp_(Proto);
     var attr = meta.attributes;
@@ -223,7 +232,7 @@ function _modelArgsBinding_Delegate(args) {
         return _modelArgsBinding(args, expr, model, ctx, ctr);
     };
 }
-function _modelArgsBinding(args, expr, model, ctx, ctr) {
+function _modelArgsBinding(args: any[], expr, model, ctx, ctr) {
     var arr = null;
     if (expr == null) {
         var i = args.length;
@@ -262,7 +271,7 @@ function _modelArgsBinding(args, expr, model, ctx, ctr) {
 function getMetaProp_(Proto) {
     var meta = Proto.meta;
     if (meta == null) {
-        meta = Proto.meta = obj_create(Compo.prototype.meta);
+        meta = Proto.meta = obj_create(Component.prototype.meta);
     }
     return meta;
 }

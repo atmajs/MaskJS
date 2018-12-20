@@ -3,8 +3,8 @@ UTest({
 		'define' () {
 			var compo = mask.getHandler('FooFromTmpl');
 			eq_(compo, null);
-			
-			mask.registerFromTemplate(`
+            
+            mask.registerFromTemplate(`
 				define FooFromTmpl {
 					h4 > 'FooFromTmpl'
 				}
@@ -60,7 +60,7 @@ UTest({
 			is_(x, 'Function');
 		},
 		'Scoped Template' () {
-			var Foo = Compo({
+			var Foo = mask.Compo({
 				template: '2_Y_Define; 2_Y_Let;'
 			});
 			mask.registerHandler('RTFoo', Foo);
@@ -83,8 +83,8 @@ UTest({
 			is_(x, 'Function');
 			eq_(x.name, 'CompoBase');
 			
-			'> render with the children'
-			var foo = Compo.initialize(Foo);
+			'> render with the children'            
+            var foo = mask.Compo.initialize(Foo);
 			is_(foo.find('2_Y_Let'), 'Object');
 		}
 	}

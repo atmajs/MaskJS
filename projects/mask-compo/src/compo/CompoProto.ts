@@ -1,17 +1,23 @@
-import { compo_create, compo_prepairProperties } from '../util/compo_create';
 import { is_Function, is_String, is_Array } from '@utils/is';
-import { obj_create, obj_extend } from '@utils/obj';
+import { obj_extend } from '@utils/obj';
 import { compo_meta_toAttributeKey } from '../util/compo_meta';
 import { ani_updateAttr } from '../util/ani';
 import { compo_ensureTemplate, compo_prepairAsync, compo_cleanElements, compo_removeElements, compo_detachChild, compo_dispose } from '../util/compo';
 import { dfr_isBusy } from '../util/dfr';
 import { log_error } from '@core/util/reporters';
 import { _Array_slice } from '@utils/refs';
-import { Dom, domLib, expression_eval } from '../scope-vars';
+
 import { Anchor } from './anchor';
 import { CompoSignals } from '../signal/exports';
 import { KeyboardHandler } from '../keyboard/Handler';
 import { Component } from './Component';
+import { selector_parse } from '../util/selector';
+import { find_findSingle } from '../util/traverse';
+import { Dom } from '@core/dom/exports';
+import { expression_eval } from '@core/expression/exports';
+import { domLib } from '@compo/scope-vars';
+import { Children_ } from './children';
+import { Events_ } from './events';
 
 
 export const CompoProto = {

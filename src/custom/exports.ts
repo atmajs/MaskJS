@@ -10,8 +10,10 @@ export {
     custom_Parsers_Transform,
     custom_Optimizers
 } from './repositories';
-
-export { customAttr_register, customAttr_get } from './attribute';
+export { 
+    customAttr_register, 
+    customAttr_get 
+} from './attribute';
 export {
     customTag_get,
     customTag_getAll,

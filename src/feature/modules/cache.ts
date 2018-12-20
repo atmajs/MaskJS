@@ -1,5 +1,5 @@
-import { Module } from './exports';
 import { obj_extend } from '@utils/obj';
+import { m_getModuleType } from './Module/utils';
 
 var _cache = {};
 
@@ -26,7 +26,7 @@ export function cache_toMap  () {
     return out;
 };
 function ensure (endpoint) {
-    var type = Module.getModuleType(endpoint);
+    var type = m_getModuleType(endpoint);
     var hash = _cache[type];
     if (hash == null) {
         hash = _cache[type] = {};

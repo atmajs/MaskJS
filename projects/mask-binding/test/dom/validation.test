@@ -1,0 +1,108 @@
+UTest({
+	'validation component': {
+		'predefined validation' () {
+			var tmpl = ':validate value=name minLength=4';
+			var model = { name: 'foo' };
+			var app  = Compo.initialize(tmpl, model);
+			var compo = app.find(':validate');
+			
+			var error = compo.validate();
+			eq_(error.message, 'Invalid value of `name` Validation: `minLength`');
+			eq_(error.actual, 'foo');
+		},
+		'define message' () {
+			var tmpl = ':validate value=name match="fo[abc]"';
+			var model = { name: 'foo' };
+			var app  = Compo.initialize(tmpl, model);
+			var compo = app.find(':validate');
+			
+			var error = compo.validate();
+			eq_(error.message, 'Invalid value of `name` Validation: `match`');
+			eq_(error.actual, 'foo');
+		},
+		'model validation' () {
+			var tmpl = ':validate value=name';
+			var model = {
+				name: 'foo',
+				Validate: {
+					name: function(x){
+						return 'Baz Error';
+					}
+				}
+			};
+			var app  = Compo.initialize(tmpl, model);
+			var compo = app.find(':validate');
+			
+			var error = compo.validate();
+			eq_(error.message, 'Baz Error');
+			eq_(error.actual, 'foo');
+			eq_(error.property, 'name');
+			eq_(error.ctx, model);
+		},
+		'ui' () {
+			var tmpl = 'div > input > :validate value=name match="fo[abc]" message="Testy"';
+			var model = { name: 'foo' };
+			var app  = Compo.initialize(tmpl, model);
+			var compo = app.find(':validate');
+			
+			var error = compo.validate();
+			app
+				.$
+				.find('.-validate__invalid')
+				.eq_('length', 1)
+				.has_('button')
+				.has_('span')
+				.children('span')
+				.eq_('text', 'Testy')
+				;
+		}
+	},
+	'dualbind component': {
+		'model validation' () {
+			var tmpl = `
+				div > input > :dualbind value=name change-event=keypress
+			`;
+			var model = {
+				name: '',
+				Validate: {
+					name: function(val){
+						return /^[ab]*$/.test(val) ? null : 'LetterError';
+					}
+				}
+			};
+			var app = Compo.initialize(tmpl, model);
+			model.name = 'abba';
+			eq_(model.name, 'abba');
+			
+			model.name = 'acd';
+			
+			var compo = app.find(':dualbind');
+			var error = compo.provider.validate();
+			eq_(error.message, 'LetterError');
+		},
+		'ui validation' () {
+			var tmpl = `
+				div > input > :dualbind value=name change-event=keypress
+			`;
+			var model = {
+				name: '',
+				Validate: {
+					name: function(val){
+						return /^[ab]*$/.test(val) ? null : 'LetterError';
+					}
+				}
+			};
+			var dom = mask.render(tmpl, model);
+			return UTest
+				.domtest(dom, `
+					find('input') {
+						do type ababcd;
+					}
+					find('.-validate__invalid span') {
+						text ('LetterError');
+					}
+				`)
+				.done(() => eq_(model.name, 'abab'))
+		}
+	}
+})

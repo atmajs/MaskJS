@@ -1,6 +1,8 @@
-import { is_Function } from '@utils/is';
+import { is_Function, is_ArrayLike } from '@utils/is';
 import { log_error } from '@core/util/reporters';
 import { IBuilderConfig } from './IBuilderConfig';
+import { custom_Attributes } from '@core/custom/exports';
+import { obj_setProperty } from '@utils/obj';
 
 export function build_nodeFactory(config: IBuilderConfig) {
     var el_create;
@@ -20,7 +22,7 @@ export function build_nodeFactory(config: IBuilderConfig) {
             }
             //#endif
         };
-    })(document, config.create);
+    })(typeof document === 'undefined' ? null : document, config.create);
 
     return function build_node(node, model, ctx, container, ctr, children) {
         var el = el_create(node.tagName);

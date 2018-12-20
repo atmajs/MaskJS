@@ -21,7 +21,10 @@ export function _getDecorator (decoNode, model, ctx, ctr) {
 
 export function _getDecoType  (node) {
 		var tagName = node.tagName,
-			type = node.type;
+            type = node.type;
+        if (tagName === 'function' || tagName === 'slot' || tagName === 'event' || tagName === 'pipe') {
+            return 'METHOD';
+        }
 		if (type === 1 && custom_Tags[tagName] != null) {
 			type = 4;
 		}
@@ -30,13 +33,10 @@ export function _getDecoType  (node) {
 		}
 		if (type === 1) {
 			return 'NODE';
-        }
+        }        
         if (type === 4) {
             return 'COMPO';
-        }
-		if (tagName === 'function' || tagName === 'slot' || tagName === 'event' || tagName === 'pipe') {
-			return 'METHOD';
-		}
+        }		
 		return null;
 	};
 

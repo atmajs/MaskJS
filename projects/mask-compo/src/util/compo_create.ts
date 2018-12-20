@@ -1,13 +1,13 @@
 import { _Array_slice } from '@utils/refs';
 import { compo_inherit } from './compo_inherit';
 import { _resolve_External, _mask_ensureTmplFn } from '../scope-vars';
-import { CompoProto } from '../compo/Compo';
+import { Component } from '../compo/Component';
 import { is_Function } from '@utils/is';
-import { obj_create } from '@utils/obj';
+import { obj_create, obj_extendDefaults } from '@utils/obj';
 import { log_error } from '@core/util/reporters';
 import { compo_meta_prepairAttributesHandler, compo_meta_prepairArgumentsHandler } from './compo_meta';
 
-export function compo_create(arguments_) {
+export function compo_create(arguments_: any[]) {
     var argLength = arguments_.length,
         Proto = arguments_[argLength - 1],
         Ctor,
@@ -29,10 +29,8 @@ export function compo_create(arguments_) {
     Ctor = Proto.hasOwnProperty('constructor') ? Proto.constructor : null;
 
     Ctor = compo_createConstructor(Ctor, Proto, hasBase);
-
-    for (var key in CompoProto) {
-        if (Proto[key] == null) Proto[key] = CompoProto[key];
-    }
+    
+    obj_extendDefaults(Proto, Component.prototype);
 
     Ctor.prototype = Proto;
     Proto = null;
@@ -71,7 +69,7 @@ export function compo_createConstructor(Ctor, proto, hasBaseAlready) {
             this.compos = obj_create(this.compos);
         }
         if (this.pipes != null) {
-            Pipes.addController(this);
+            Component.pipe.addController(this);
         }
         if (this.attr != null) {
             this.attr = obj_create(this.attr);

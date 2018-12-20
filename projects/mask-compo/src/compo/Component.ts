@@ -3,17 +3,25 @@ import { class_create } from '@utils/class';
 import { is_Function} from '@utils/is';
 import { _Array_slice } from '@utils/refs';
 import { log_warn } from '@core/util/reporters';
-import { customTag_get } from '@core/custom/tag';
+import { customTag_get } from '@core/custom/exports';
 import { obj_create } from '@utils/obj';
-import { CompoProto } from './Compo';
+import { CompoProto } from './CompoProto';
 import { compo_prepairProperties } from '../util/compo_create';
 import { compo_create } from '../util/compo_create';
-import { Class, Dom, domLib, setDomLib } from '../scope-vars';
+import { Class, domLib, setDomLib } from '../scope-vars';
 import { Anchor } from './anchor';
 import { compo_dispose, compo_ensureTemplate, compo_attachDisposer } from '../util/compo';
 import { dom_addEventListener } from '../util/dom';
 import { CompoSignals } from '../signal/exports';
 import { domLib_initialize } from '../jcompo/jCompo';
+import { DomLite } from '../DomLite';
+import { find_findSingle, find_findAll, find_findChildren, find_findChild } from '../util/traverse';
+import { selector_parse } from '../util/selector';
+import { domLib_find } from '../util/domLib';
+import { Dom } from '@core/dom/exports';
+import { Pipes } from './pipes';
+import { Events_ } from './events';
+import { CompoStaticsAsync } from './async';
 
 declare var include;
 
@@ -40,13 +48,13 @@ export class Component extends class_create(CompoProto) {
     }
 
     /* statics */
-    static create (){
-		return compo_create(arguments);
+    static create (a, b?, c?){
+		return compo_create(arguments as any);
 	}
 
 	static createClass (){
 
-		var Ctor = compo_create(arguments),
+		var Ctor = compo_create(arguments as any),
 			classProto = Ctor.prototype;
 		classProto.Construct = Ctor;
 		return Class(classProto);
@@ -80,9 +88,9 @@ export class Component extends class_create(CompoProto) {
 
 				createNode(compo);
 			} else {
-				createNode(compo_create({
+				createNode(compo_create([{
 					template: mix
-				}));
+				}]));
 			}
 		}
 		else if (typeof mix === 'function') {
@@ -257,16 +265,16 @@ export class Component extends class_create(CompoProto) {
 
 		eventDecorator: function(mix){
 			if (typeof mix === 'function') {
-				EventDecorator = mix;
+				Events_.setEventDecorator(mix);
 				return;
 			}
 			if (typeof mix === 'string') {
 				console.error('EventDecorators are not used. Touch&Mouse support is already integrated');
-				EventDecorator = EventDecos[mix];
+				Events_.setEventDecorator(EventDecos[mix]);
 				return;
 			}
 			if (typeof mix === 'boolean' && mix === false) {
-				EventDecorator = null;
+				Events_.setEventDecorator(null);
 				return;
 			}
 		}
@@ -301,5 +309,11 @@ export class Component extends class_create(CompoProto) {
     
     static signal = CompoSignals.signal
     static slot = CompoSignals.slot
+
+    static DomLite = DomLite
+
+    static pause = CompoStaticsAsync.pause
+    static resume = CompoStaticsAsync.resume
+    static await = CompoStaticsAsync.await
 }
 

@@ -4,7 +4,9 @@
         "paths": {
             "@core/*": [ "src/*" ],
             "@utils/*": [ "ref-utils/src/*" ],
-            "@mask-j/*": [ "projects/mask-j/src/jmask/*" ]
+            "@mask-j/*": [ "projects/mask-j/src/jmask/*" ],
+            "@compo/*": [ "projects/mask-compo/src/*" ],
+            "@binding/*": [ "projects/mask-binding/src/*" ]
         }
     }
 }

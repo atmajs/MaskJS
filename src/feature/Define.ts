@@ -1,7 +1,6 @@
-import { customTag_register, customTag_registerScoped, customTag_get } from '@core/custom/tag';
+import { customTag_register, customTag_registerScoped, customTag_get } from '@core/custom/exports';
 import { is_Function, is_Object } from '@utils/is';
 import { obj_extend } from '@utils/obj';
-import { Compo } from 'mask';
 import { mask_merge } from './merge';
 import { Dom } from '@core/dom/exports';
 import { _Array_slice } from '@utils/refs';
@@ -11,6 +10,7 @@ import { log_error } from '@core/util/reporters';
 import { parser_parse } from '@core/parser/exports';
 import { Decorator } from './decorators/exports';
 import { Methods } from './methods/exports';
+import { Component } from '@compo/exports';
 
 export const Define = {
 		create: function(node, model, ctr, Base) {
@@ -55,7 +55,7 @@ export const Define = {
 			},			
 			renderStart: function(model_, ctx, el){
 				var model = model_;
-				Compo.prototype.renderStart.call(this, model, ctx, el);
+				Component.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template && this.meta.template !== 'copy') {					
 					this.nodes = mask_merge(this.nodes, [], this, null, mergeStats);
 					if (mergeStats.placeholders.$isEmpty) {
@@ -218,7 +218,7 @@ export const Define = {
 			;
 
 		args.push(Proto);
-		var Ctor = Compo.apply(null, args);
+		var Ctor = Component.create.apply(null, args);
 		if (Proto.meta.statics) {
 			obj_extend(Ctor, Proto.meta.statics);
 		}

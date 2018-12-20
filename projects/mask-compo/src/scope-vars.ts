@@ -1,12 +1,7 @@
-export { Dom } from '@core/dom/exports'
-export { Di } from '@core/feature/Di'
-export { expression_eval, expression_evalStatements } from '@core/expression/exports'
+
 import { parser_ensureTemplateFunction } from '@core/parser/exports'
-import { ExpressionUtil } from '@core/expression/exports';
 import { log_warn } from '@core/util/reporters';
 
-export const _mask_ensureTmplFnOrig = parser_ensureTemplateFunction;
-export const expression_varRefs = ExpressionUtil.varRefs;
 
 declare var global;
 declare var exports;
@@ -17,7 +12,7 @@ export var Class;
 export function	_mask_ensureTmplFn (value) {
     return typeof value !== 'string'
         ? value
-        : _mask_ensureTmplFnOrig(value)
+        : parser_ensureTemplateFunction(value)
         ;
 };
 
