@@ -2,6 +2,7 @@ import { _parse } from './parser';
 import { _evaluate } from './eval';
 import { _evaluateStatements } from './eval_statements';
 import { refs_extractVars } from './vars_helper';
+import { customUtil_register } from '@core/custom/exports';
 
 /**
  * ExpressionUtil
@@ -43,3 +44,7 @@ export const ExpressionUtil = {
     'evalStatements': _evaluateStatements
 };
 
+customUtil_register('expression', function(value, model, ctx, element, ctr, name, type, node){
+    var owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+    return expression_eval(value, model, ctx, owner, node);
+});

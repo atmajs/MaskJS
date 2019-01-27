@@ -1,13 +1,11 @@
+import { _Array_slice } from '@utils/refs';
 import { customAttr_register } from '@core/custom/exports';
 import { log_error, log_warn } from '@core/util/reporters';
-import { dom_addEventListener } from '@compo/util/dom';
-import { Component } from './Component';
-import { _Array_slice } from '@utils/refs';
+import { dom_addEventListener } from '../util/dom';
+import { compo_attachDisposer } from '../util/compo';
 
 
-	
 var _collection = {};
-
 
 customAttr_register('x-pipe-signal', 'client', function(node, attrValue, model, ctx, element, ctr) {
 
@@ -103,7 +101,7 @@ function _addController(ctr) {
     for (var key in pipes) {
         pipe_attach(key, ctr);
     }
-    Component.attachDisposer(ctr, _removeControllerDelegate(ctr));
+    compo_attachDisposer(ctr, _removeControllerDelegate(ctr));
 }
 
 class Pipe {

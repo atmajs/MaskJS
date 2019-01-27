@@ -44,9 +44,6 @@ import {
     custom_optimize
 } from './custom/exports';
 
-import { ExpressionUtil } from './expression/exports';
-import { mask_config } from './api/config';
-import { Templates } from './handlers/template';
 
 import {
     parser_ensureTemplateFunction,
@@ -57,6 +54,11 @@ import {
     parser_defineContentTag,
     parser_setInterpolationQuotes
 } from './parser/exports';
+
+import { ExpressionUtil } from './expression/exports';
+import { mask_config } from './api/config';
+import { Templates } from './handlers/template';
+
 
 import {
     builder_build,
@@ -73,6 +75,10 @@ import { Di } from './feature/Di';
 
 import { Decorator } from './feature/decorators/exports';
 
+import './statements/exports';
+import './handlers/exports';
+
+
 import {
     obj_addObserver,
     obj_removeObserver,
@@ -86,10 +92,9 @@ import { Component, Compo, domLib } from '@compo/exports';
 import { jMask } from '@mask-j/jMask';
 import { renderer_clearCache, renderer_renderAsync, renderer_render } from './renderer/exports';
 
-import './statements/exports';
-import './handlers/exports';
 
 declare var global;
+
 /**
  * @namespace mask
  */

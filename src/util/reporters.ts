@@ -3,7 +3,6 @@ import { error_createClass, error_formatSource } from '@utils/error';
 import { listeners_emit } from './listeners';
 import { is_String } from '@utils/is';
 import { _Array_slice } from '@utils/refs';
-import { parser_parse } from '@core/parser/exports';
 
 const noConsole = typeof console !== 'undefined';
 
@@ -39,9 +38,19 @@ export const parser_error = delegate_parserReporter(MaskError, 'error');
 export const parser_warn = delegate_parserReporter(MaskWarn, 'warn');
 
 export function reporter_createErrorNode(message) {
-    return parser_parse(
-        'div style="background:red;color:white;">tt>"""' + message + '"""'
-    );
+    return {
+        type: 1,
+        tagName: 'div',
+        attr: {
+            style: 'background:red; color:white;'
+        },
+        nodes: [
+            {
+                type: 2,
+                content: message
+            }
+        ]
+    };
 }
 
 export function reporter_getNodeStack(node) {

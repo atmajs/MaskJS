@@ -1,7 +1,7 @@
 import { u_resolvePathFromImport } from '../utils';
 import { Endpoint } from '../class/Endpoint';
 import { i_Types } from './ImportTypes'
-import { m_getType } from '../Module/utils';
+import { m_getType } from '../Module/exports';
 
 export function i_createImport (node, ctx, ctr, module?) {
     var path     = u_resolvePathFromImport(node, ctx, ctr, module),

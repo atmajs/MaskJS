@@ -1,6 +1,6 @@
 import { log_error, log_warn } from '@core/util/reporters';
-import { Component } from '@compo/exports';
 import { Events_ } from './events';
+import { CompoConfig } from './CompoConfig';
 
 export const Children_ = {
 
@@ -41,7 +41,7 @@ export const Children_ = {
 			var index = selector.indexOf(':'),
 				engine = selector.substring(0, index);
 
-			engine = Component.config.selectors[engine];
+			engine = CompoConfig.selectors[engine];
 
 			if (engine == null) {
 				component.compos[name] = component.$[0].querySelector(selector);

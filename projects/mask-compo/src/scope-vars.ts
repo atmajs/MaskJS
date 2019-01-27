@@ -9,6 +9,7 @@ declare var exports;
 export var domLib;
 export var Class;
 
+
 export function	_mask_ensureTmplFn (value) {
     return typeof value !== 'string'
         ? value
@@ -21,7 +22,7 @@ export function _resolve_External (key){
 };
 
 var _global = global,
-    _atma = global.atma || {},
+    _atma = _global.atma || {},
     _exports = exports || {};
 
 function resolve(a?,b?,c?) {
@@ -40,8 +41,8 @@ export function setDomLib (lib) {
     domLib = lib;
 }
 
-// if DEBUG
+//#if (DEBUG)
 if (global.document != null && domLib == null) {	
 	log_warn('DomLite is used. You can set jQuery-Zepto-Kimbo via `mask.Compo.config.setDOMLibrary($)`');
 }
-// endif
+//#endif

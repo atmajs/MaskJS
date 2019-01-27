@@ -1,6 +1,6 @@
 import { class_create } from '@utils/class'
 import { _appendChild } from './utils';
-import { dom_NODE, dom_TEXTNODE } from './NodeType';
+import { dom_TEXTNODE } from './NodeType';
 
 /**
  * @name TextNode

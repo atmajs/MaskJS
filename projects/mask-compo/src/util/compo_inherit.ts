@@ -1,12 +1,12 @@
 import { log_error } from '@core/util/reporters';
 import { mask_merge } from '@core/feature/merge';
-import { Component } from '../compo/Component';
 
 import { obj_create, obj_extend } from '@utils/obj';
 import { is_Array, is_rawObject } from '@utils/is';
 
 import { fn_apply } from '@utils/fn';
 import { customTag_get } from '@core/custom/exports';
+import { CompoProto } from '@compo/compo/CompoProto';
 
 const COMPO_CTOR_NAME = 'CompoBase';
 	
@@ -101,7 +101,7 @@ function inherit_(target, source, name){
                     continue outer;
                 case 'serializeState':
                 case 'deserializeState':
-                    if (source[key] !== Component.prototype[key]) {
+                    if (source[key] !== CompoProto[key]) {
                         target[key] = source[key];
                     }
                     continue outer;

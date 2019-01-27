@@ -1,7 +1,6 @@
-import { log_error } from '@core/util/reporters';
 import { is_String, is_Function } from '@utils/is';
+import { log_error } from '@core/util/reporters';
 import { Dom } from '@core/dom/exports';
-
 
 
 export function selector_parse (selector, type, direction?) {

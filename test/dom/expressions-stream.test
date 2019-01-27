@@ -1,3 +1,10 @@
+var Expression = mask.Utils.Expression,
+	$eval = Expression.eval,
+	$refs = Expression.varRefs,
+	$parse = Expression.parse,
+	template, node, attr;
+
+    
 var Stream = mask.class.create(mask.class.EventEmitter, {
 	subscribe (fn) {
 		this.on('value', fn);

@@ -10,7 +10,7 @@ import { customTag_Compo_getHandler, customTag_register, customTag_registerResol
 import { Define } from '@core/feature/Define';
 import { obj_extend } from '@utils/obj';
 import { m_registerModule } from './utils';
-import { i_createImport } from '../Import/utils';
+import { i_createImport } from '../Import/exports';
 import { Endpoint } from '../class/Endpoint';
 
 export const ModuleMask = m_Types['mask'] = class_create(IModule, {

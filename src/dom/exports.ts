@@ -1,9 +1,3 @@
-import { TextNode } from './TextNode';
-import { Fragment, HtmlFragment } from './Fragment';
-import { Node } from './Node';
-
-import { DecoratorNode } from './DecoratorNode';
-
 import {
     dom_NODE,
     dom_TEXTNODE,
@@ -14,6 +8,13 @@ import {
     dom_STATEMENT,
     dom_DECORATOR
 } from './NodeType';
+
+import { TextNode } from './TextNode';
+import { Fragment, HtmlFragment } from './Fragment';
+import { Node } from './Node';
+
+import { DecoratorNode } from './DecoratorNode';
+
 import { Component } from './Component';
 
 export const Dom = {

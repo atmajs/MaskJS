@@ -2,9 +2,9 @@ import { log_error, error_withCompo } from '@core/util/reporters';
 import { compo_errored } from './compo';
 import { is_Function } from '@utils/is';
 import { obj_create } from '@utils/obj';
-import { Component } from '../compo/Component';
 import { expression_evalStatements, expression_eval } from '@core/expression/exports';
 import { Di } from '@core/feature/Di';
+import { CompoProto } from '@compo/compo/CompoProto';
 
 
 // == Meta Attribute and Property Handler
@@ -271,7 +271,7 @@ function _modelArgsBinding(args: any[], expr, model, ctx, ctr) {
 function getMetaProp_(Proto) {
     var meta = Proto.meta;
     if (meta == null) {
-        meta = Proto.meta = obj_create(Component.prototype.meta);
+        meta = Proto.meta = obj_create(CompoProto.meta);
     }
     return meta;
 }

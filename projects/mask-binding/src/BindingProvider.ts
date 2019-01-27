@@ -2,7 +2,6 @@ import { class_create } from '@utils/class';
 import { DomObjectTransport } from './DomObjectTransport';
 import { signal_parse } from './utils/signal';
 import { log_error, log_warn } from '@core/util/reporters';
-import { __dom_addEventListener } from './vars';
 
 import {
     expression_unbind,
@@ -14,7 +13,6 @@ import {
 import { is_Array } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { ValidatorProvider } from './ValidatorProvider';
-import { obj_removeObserver } from './utils/object_observe';
 import { expression_varRefs } from '@core/expression/exports';
 import { Component } from '@compo/exports';
 
@@ -376,7 +374,7 @@ function apply_bind(provider) {
                 eventType = provider.changeEvent,
                 onDomChange = provider.domChanged.bind(provider);
 
-            __dom_addEventListener(element, eventType, onDomChange);
+            Component.Dom.addEventListener(element, eventType, onDomChange);
         }
 
         if (provider.objectWay.get(provider, provider.expression) == null) {

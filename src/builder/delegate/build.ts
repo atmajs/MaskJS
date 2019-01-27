@@ -1,8 +1,10 @@
-import { Dom } from '@core/dom/exports';
-import { builder_Ctx } from '../ctx';
-import { is_ArrayLike, is_Function } from '@utils/is';
-import { log_error } from '@core/util/reporters';
 import { arr_pushMany } from '@utils/arr';
+import { is_ArrayLike, is_Function } from '@utils/is';
+import { Dom } from '@core/dom/exports';
+import { log_error } from '@core/util/reporters';
+import { custom_Statements, custom_Tags, custom_Attributes } from '@core/custom/exports';
+
+import { builder_Ctx } from '../ctx';
 import { builder_findAndRegisterCompo } from '../util';
 
 import { build_manyFactory } from './build_many';
@@ -10,7 +12,6 @@ import { build_nodeFactory } from './build_node';
 import { build_compoFactory } from './build_component';
 import { build_textNode } from './build_textNode';
 import { IBuilderConfig } from './IBuilderConfig';
-import { custom_Statements, custom_Tags, custom_Attributes } from '@core/custom/exports';
 
 /**
  * @param {MaskNode} node

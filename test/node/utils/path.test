@@ -1,16 +1,11 @@
+
+
 import { 
-    parser_parse
-} from '../../../src/parser/exports';
-
-console.log(parser_parse('div'));
-
-
-// import { 
-//     path_toRelative,
-//     path_normalize,
-//     path_combine,
-//     path_fromPrfx
-// } from '../../../src/util/path';
+    path_toRelative,
+    path_normalize,
+    path_combine,
+    path_fromPrfx
+} from '../../../src/util/path';
 
 UTest({
     'toRelative' () {

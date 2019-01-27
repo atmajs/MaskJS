@@ -1,3 +1,5 @@
+import { Mask as mask } from '../../../src/mask';
+
 UTest({
 	'from template' : {
 		'define' () {

@@ -5,7 +5,8 @@ import { _Array_slice } from '@utils/refs';
 import { jmask_getText } from '../util/utils';
 import { jMask } from './jMask';
 import { arr_each } from '@utils/arr';
-import { _signal_emitIn, _mask_render } from '../scope-vars';
+import { _mask_render } from '../scope-vars';
+import { Component } from '@compo/exports'
 
 export const Proto: any = {
 	type: Dom.SET,
@@ -157,21 +158,17 @@ arr_each(['append', 'prepend'], function(method) {
 
 arr_each(['appendTo'], function(method) {
 
-	Proto[method] = function(mix, model, cntx, controller) {
-
-		if (controller == null) {
-			controller = this;
+	Proto[method] = function(mix, model, cntx, ctr) {
+		if (ctr == null) {
+			ctr = this;
 		}
-
 		if (mix.nodeType != null && typeof mix.appendChild === 'function') {
-			mix.appendChild(this.render(model, cntx, null, controller));
+			mix.appendChild(this.render(model, cntx, null, ctr));
 
-			_signal_emitIn(controller, 'domInsert');
+			Component.signal.emitIn(ctr, 'domInsert');
 			return this;
 		}
-
 		jMask(mix).append(this);
 		return this;
 	};
-
 });

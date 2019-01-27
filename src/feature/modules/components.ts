@@ -9,8 +9,8 @@ import { parser_ensureTemplateFunction, mask_stringify } from '@core/parser/expo
 import { is_Function } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { Component } from '@compo/exports';
-import { i_createImport } from './Import/utils';
-import { m_createModule, m_isMask, m_registerModule } from './Module/utils';
+import { i_createImport } from './Import/exports';
+import { m_createModule, m_isMask, m_registerModule } from './Module/exports';
 import { Endpoint } from './class/Endpoint';
 import { m_cfg } from './config';
 
@@ -74,7 +74,7 @@ import { m_cfg } from './config';
 			var arr = this.importItems,
 				self = this,
 				imax = arr.length,
-				await = imax,
+				await_ = imax,
 				next  = cb,
 				i = -1;
 
@@ -87,7 +87,7 @@ import { m_cfg } from './config';
 						ctx._modules.add(import_.module);
 					}
 				}
-				if (--await === 0 && next != null) {
+				if (--await_ === 0 && next != null) {
 					next();
 				}
 			}
@@ -97,7 +97,7 @@ import { m_cfg } from './config';
 				}
 				while( ++i < imax ){
 					var x = arr[i];							
-					if (x.async === 'async' && (--await) === 0) {
+					if (x.async === 'async' && (--await_) === 0) {
 						next();
 						next = null;
 					}

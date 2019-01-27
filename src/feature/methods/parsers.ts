@@ -1,6 +1,6 @@
 import { parser_error } from '@core/util/reporters';
 import { parser_ObjectLexer } from '@core/parser/exports';
-import { cursor_groupEnd } from '@core/parser/cursor';
+import { cursor_groupEnd } from '@core/parser/exports';
 import { class_create } from '@utils/class';
 import { Dom } from '@core/dom/exports';
 import { custom_Parsers } from '@core/custom/exports';

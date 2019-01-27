@@ -1,10 +1,10 @@
 import { class_create } from '@utils/class';
 import { class_Dfr } from '@utils/class/Dfr';
-import { m_createModule } from '../Module/utils';
-import { _opts } from '../Opts';
-import { warn_withNode, error_withCompo } from '@core/util/reporters';
 import { obj_setProperty } from '@utils/obj';
 import { customTag_registerResolver } from '@core/custom/exports';
+import { warn_withNode, error_withCompo } from '@core/util/reporters';
+import { m_createModule } from '../Module/utils';
+import { _opts } from '../Opts';
 
 
 export var IImport = class_create({

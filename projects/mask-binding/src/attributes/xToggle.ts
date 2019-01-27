@@ -1,8 +1,8 @@
 import { customAttr_register } from '@core/custom/exports';
 import { expression_eval_safe } from '../utils/expression';
-import { __dom_addEventListener } from '../vars';
 import { obj_setProperty } from '@utils/obj';
 import { expression_varRefs } from '@core/expression/exports';
+import { Component } from '@compo/exports';
 
 /**
  *	Toggle value with ternary operator on an event.
@@ -19,7 +19,7 @@ customAttr_register('x-toggle', 'client', function(node, attrValue, model, ctx, 
 		ref = ref[0];
 	}
 	
-    __dom_addEventListener(el, event, function(){
+    Component.Dom.addEventListener(el, event, function(){
         var val = expression_eval_safe(expression, model, ctx, ctr, node);
         obj_setProperty(model, ref, val);
     });

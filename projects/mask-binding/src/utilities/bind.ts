@@ -2,8 +2,8 @@ import { is_Function } from '@utils/is';
 import { obj_setProperty } from '@utils/obj';
 import { log_warn } from '@core/util/reporters';
 import { expression_createBinder, expression_bind, expression_unbind, expression_eval_safe } from '../utils/expression';
-import { compo_attachDisposer } from '../utils/compo';
 import { customUtil_register } from '@core/custom/exports';
+import { Component } from '@compo/exports';
 
 
 /**
@@ -128,7 +128,7 @@ function bind (current, expr, model, ctx, element, ctr, attrName, type){
 
     expression_bind(expr, model, ctx, ctr, binder);
 
-    compo_attachDisposer(ctr, function(){
+    Component.attach(ctr, 'dispose', function(){
         expression_unbind(expr, model, ctr, binder);
     });
 }

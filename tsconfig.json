@@ -2,11 +2,22 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@core/*": [ "src/*" ],
-            "@utils/*": [ "ref-utils/src/*" ],
-            "@mask-j/*": [ "projects/mask-j/src/jmask/*" ],
-            "@compo/*": [ "projects/mask-compo/src/*" ],
-            "@binding/*": [ "projects/mask-binding/src/*" ]
-        }
+            "@core/*": [
+                "src/*"
+            ],
+            "@utils/*": [
+                "ref-utils/src/*"
+            ],
+            "@mask-j/*": [
+                "projects/mask-j/src/jmask/*"
+            ],
+            "@compo/*": [
+                "projects/mask-compo/src/*"
+            ],
+            "@binding/*": [
+                "projects/mask-binding/src/*"
+            ]
+        },
+        "module": "commonjs"
     }
 }

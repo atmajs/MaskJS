@@ -4,7 +4,7 @@ import { is_Function } from '@utils/is';
 import { class_Dfr } from '@utils/class/Dfr';
 import { coll_each } from '@utils/coll';
 import { log_error, reporter_createErrorNode } from '@core/util/reporters';
-import { builder_resumeDelegate } from '@core/builder/resume';
+import { builder_resumeDelegate } from '@core/builder/exports';
 import { Dom } from '@core/dom/exports';
 import { builder_build } from '@core/builder/exports';
 import { expression_evalStatements } from '@core/expression/exports';

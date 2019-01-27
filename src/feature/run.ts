@@ -3,6 +3,8 @@ import { is_Function, is_Object } from '@utils/is';
 import { builder_build, builder_Ctx, BuilderData } from '@core/builder/exports';
 import { parser_parse } from '@core/parser/exports';
 import { log_warn } from '@core/util/reporters';
+import { Compo, Component } from '@compo/exports';
+
 
 declare var global;
 
@@ -64,7 +66,7 @@ export function mask_run (){
 			script = null,
 			found = false,
 			ready = false,
-			await = 0,
+			wait = 0,
 			imax = scripts.length,
 			i = -1;
 		while( ++i < imax ){
@@ -95,7 +97,7 @@ export function mask_run (){
 				parser_parse(script.textContent), model, ctx_, null, ctr
 			);
 			if (ctx_.async === true) {
-				await++;
+				wait++;
 				ctx_.done(resumer);
 			}
 			script.parentNode.insertBefore(fragment, script);
@@ -109,18 +111,18 @@ export function mask_run (){
 		}
 
 		ready = true;
-		if (await === 0) {
+		if (wait === 0) {
 			flush();
 		}
 		function resumer(){
-			if (--await === 0 && ready)
+			if (--wait === 0 && ready)
 				flush();
 		}
 		function flush() {
 			if (is_Function(ctr.renderEnd)) {
 				ctr.renderEnd(container, model);
 			}
-			Compo.signal.emitIn(ctr, 'domInsert');
+			Component.signal.emitIn(ctr, 'domInsert');
 		}
 
 		return ctr;

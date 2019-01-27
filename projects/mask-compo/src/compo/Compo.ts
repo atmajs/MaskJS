@@ -1,7 +1,9 @@
-import { compo_create } from '../util/compo_create';
 import { obj_extend } from '@utils/obj';
 import { _Array_slice } from '@utils/refs';
-import { Component } from './Component';
+
+import { CompoProto } from './CompoProto';
+import { CompoStatics } from './CompoStatics';
+import { compo_create } from '@compo/util/compo_create';
 
 
 export function Compo  (): void {
@@ -9,10 +11,8 @@ export function Compo  (): void {
         // used in Class({Base: Compo})
         return void 0;
     }
-
     return compo_create(arguments as any);
 };
 
-
-Compo.prototype = Component.prototype;
-obj_extend(Compo, Component);
+Compo.prototype = CompoProto;
+obj_extend(Compo, CompoStatics);

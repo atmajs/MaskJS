@@ -1,13 +1,9 @@
 import { __rgxEscapedChar } from '@core/scope-vars';
-import { DecoratorNode } from '@core/dom/DecoratorNode';
-import { Fragment } from '@core/dom/Fragment';
-import { Node } from '@core/dom/Node';
+import { Dom } from '@core/dom/exports';
 import { parser_warn, parser_error } from '@core/util/reporters';
 import { custom_Parsers, custom_Parsers_Transform } from '@core/custom/exports';
-import { TextNode } from '@core/dom/TextNode';
 import { cursor_skipWhitespaceBack, cursor_groupEnd, cursor_skipWhitespace, cursor_refEnd } from '../cursor';
 import { parser_parseHtmlPartial } from '../html/parser';
-import { Dom } from '@core/dom/exports';
 import { go_tag, state_tag, state_attr, go_propVal, state_literal, go_up, go_attrVal, go_attrHeadVal, state_prop, interp_code_START, interp_code_OPEN, interp_code_CLOSE } from '../const';
 import { parser_ensureTemplateFunction } from '../interpolation';
 
@@ -21,7 +17,7 @@ import { parser_ensureTemplateFunction } from '../interpolation';
 	 * @method parse
 	 */
 	export function parser_parse (template, filename?) {
-		var current: any = new Fragment(),
+		var current: any = new Dom.Fragment(),
 			fragment = current,
 			state = go_tag,
 			last = state_tag,
@@ -168,7 +164,7 @@ import { parser_ensureTemplateFunction } from '../interpolation';
 					}
 
 
-					next = new Node(token, current);
+					next = new Dom.Node(token, current);
 					next.sourceIndex = tokenIndex;
 
 					current.appendChild(next);
@@ -177,7 +173,7 @@ import { parser_ensureTemplateFunction } from '../interpolation';
 
 				} else if (last === state_literal) {
 
-					next = new TextNode(token, current);
+					next = new Dom.TextNode(token, current);
 					next.sourceIndex = sourceIndex;
 					current.appendChild(next);
 
@@ -344,7 +340,7 @@ import { parser_ensureTemplateFunction } from '../interpolation';
 						continue;
 					}
 					var expr = template.substring(start, index);
-					var deco = new DecoratorNode(expr, current);
+					var deco = new Dom.DecoratorNode(expr, current);
 					deco.sourceIndex = start;
 					current.appendChild(deco);
 	

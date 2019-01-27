@@ -1,11 +1,12 @@
 import { _Array_slice } from '@utils/refs';
-import { compo_inherit } from './compo_inherit';
-import { _resolve_External, _mask_ensureTmplFn } from '../scope-vars';
-import { Component } from '../compo/Component';
 import { is_Function } from '@utils/is';
 import { obj_create, obj_extendDefaults } from '@utils/obj';
 import { log_error } from '@core/util/reporters';
+import { _resolve_External, _mask_ensureTmplFn } from '../scope-vars';
 import { compo_meta_prepairAttributesHandler, compo_meta_prepairArgumentsHandler } from './compo_meta';
+import { compo_inherit } from './compo_inherit';
+import { CompoProto } from '../compo/CompoProto';
+import { Pipes } from '../compo/pipes';
 
 export function compo_create(arguments_: any[]) {
     var argLength = arguments_.length,
@@ -30,7 +31,7 @@ export function compo_create(arguments_: any[]) {
 
     Ctor = compo_createConstructor(Ctor, Proto, hasBase);
     
-    obj_extendDefaults(Proto, Component.prototype);
+    obj_extendDefaults(Proto, CompoProto);
 
     Ctor.prototype = Proto;
     Proto = null;
@@ -45,10 +46,10 @@ export function compo_prepairProperties(Proto) {
     var slots = Proto.slots;
     for (var key in slots) {
         if (typeof slots[key] === 'string') {
-            //if DEBUG
+            //#if (DEBUG)
             if (is_Function(Proto[slots[key]]) === false)
                 log_error('Not a Function @Slot.', slots[key]);
-            // endif
+            //#endif
             slots[key] = Proto[slots[key]];
         }
     }
@@ -69,7 +70,7 @@ export function compo_createConstructor(Ctor, proto, hasBaseAlready) {
             this.compos = obj_create(this.compos);
         }
         if (this.pipes != null) {
-            Component.pipe.addController(this);
+            Pipes.addController(this);
         }
         if (this.attr != null) {
             this.attr = obj_create(this.attr);

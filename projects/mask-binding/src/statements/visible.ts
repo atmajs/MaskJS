@@ -5,7 +5,7 @@ import { fn_proxy } from '@utils/fn';
 
 
 (function(){
-	var $Visible = customStatement_get['visible'];
+	var $Visible = customStatement_get('visible');
 		
 	customTag_register('+visible', {
 		meta: {

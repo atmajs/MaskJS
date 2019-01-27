@@ -1,8 +1,8 @@
 import { class_create } from '@utils/class';
-import { class_Dfr } from '@utils/class/Dfr';
 import { obj_extend } from '@utils/obj';
 import { _Array_slice } from '@utils/refs';
-import { Component } from './Component';
+import { class_Dfr } from '@utils/class/Dfr';
+import { CompoSignals } from '@compo/signal/exports';
 
 export const CompoStaticsAsync = {
     pause: function(compo, ctx) {
@@ -148,7 +148,7 @@ var Slots = {
                 compo.slots[key] = data[0];
             }
             if (shouldEmit && data[1] != null) {
-                Component.signal.emitIn(compo, key, data[1]);
+                CompoSignals.signal.emitIn(compo, key, data[1]);
             }
         }
     }

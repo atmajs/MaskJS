@@ -1,5 +1,5 @@
 import { log_error } from '@core/util/reporters';
-import { builder_Ctx } from '@core/builder/ctx';
+import { builder_Ctx } from '@core/builder/exports';
 import { _Object_hasOwnProp } from '@utils/refs';
 import { parser_parse } from '@core/parser/exports';
 import { builder_build } from '@core/builder/exports';
@@ -17,7 +17,7 @@ import { Compo } from '@compo/exports';
  * @returns {(IAppendChild|Node|DocumentFragment)} container
  * @memberOf mask
  */
-export function renderer_render (mix, model, ctx, container, controller) {
+export function renderer_render (mix, model?, ctx?, container?, controller?) {
     //#if (DEBUG)
     if (container != null && typeof container.appendChild !== 'function') {
         log_error(
@@ -49,7 +49,7 @@ export function renderer_render (mix, model, ctx, container, controller) {
  * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
  * @memberOf mask
  */
-export function renderer_renderAsync (template, model, ctx, container, ctr) {
+export function renderer_renderAsync (template, model?, ctx?, container?, ctr?) {
     if (ctx == null || ctx.constructor !== builder_Ctx)
         ctx = new builder_Ctx(ctx);
     if (ctr == null) ctr = new Compo();

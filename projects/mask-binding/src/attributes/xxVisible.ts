@@ -1,6 +1,7 @@
 import { expression_createBinder, expression_bind, expression_unbind, expression_eval_safe } from '../utils/expression';
-import { compo_attachDisposer } from '../utils/compo';
+
 import { customAttr_register } from '@core/custom/exports';
+import { Component } from '@compo/exports';
 
 customAttr_register('xx-visible', function(node, attrValue, model, ctx, el, ctr) {
 
@@ -10,7 +11,7 @@ customAttr_register('xx-visible', function(node, attrValue, model, ctx, el, ctr)
 
 	expression_bind(attrValue, model, ctx, ctr, binder);
 
-	compo_attachDisposer(ctr, function(){
+	Component.attach(ctr, 'dispose', function(){
 		expression_unbind(attrValue, model, ctr, binder);
 	});
 

@@ -20,4 +20,4 @@ export function dfr_isBusy(dfr) {
     return false;
 }
 
-var Promise = global.Promise;
+const Promise = global.Promise;

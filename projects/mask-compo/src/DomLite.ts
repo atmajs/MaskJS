@@ -1,6 +1,6 @@
-import { domLib, setDomLib } from './scope-vars';
 import { is_Array } from '@utils/is';
 import { log_warn, log_error } from '@core/util/reporters';
+import { domLib, setDomLib } from './scope-vars';
 import { domLib_initialize } from './jcompo/jCompo';
 
 declare var global;

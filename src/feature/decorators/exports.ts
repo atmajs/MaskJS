@@ -1,11 +1,11 @@
+import { _Array_slice } from '@utils/refs';
+import { class_create } from '@utils/class';
+import { is_Function, is_Object } from '@utils/is';
 import { error_withNode } from '@core/util/reporters';
 import { _wrapMany, _wrapper_NodeBuilder, _wrapper_CompoBuilder, _wrapper_Fn } from './wrappers';
-import { Methods } from '../methods/exports';
-import { _Array_slice } from '@utils/refs';
-import { is_Function, is_Object } from '@utils/is';
 import { _getDecoType } from './utils';
-import { class_create } from '@utils/class';
 import { _store } from './store';
+import { Methods } from '../methods/exports';
 
 export const Decorator = {
     getDecoType: _getDecoType,

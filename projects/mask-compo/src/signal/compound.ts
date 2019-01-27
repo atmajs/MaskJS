@@ -1,6 +1,6 @@
-import { Component } from '../compo/Component';
 import { class_create } from '@utils/class';
 import { expression_eval, expression_varRefs } from '@core/expression/exports';
+import { compo_attach } from '@compo/util/compo';
 
 
 export function _compound  (ctr, slotExpression, cb) {
@@ -11,7 +11,7 @@ export function _compound  (ctr, slotExpression, cb) {
     var handler = new SlotExpression(slotExpression, cb);
     for (var i = 0; i < handler.slots.length; i++) {
         var name = handler.slots[i].name;
-        Component.attach(ctr, 'slots.' + name, handler.signalDelegate(name));
+        compo_attach(ctr, 'slots.' + name, handler.signalDelegate(name));
     }  
     return handler;     
 };

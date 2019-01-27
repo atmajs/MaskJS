@@ -26,10 +26,7 @@
     "atma": "^0.11.14",
     "atma-io-middleware-condcomments": "^1.2.6",
     "atma-io-middleware-importer": "^1.1.37",
-    "atma-io-middleware-uglify": "^1.1.21",
-    "atma-loader-babel": "^1.1.26",
-    "babel-plugin-async-to-promises": "^1.0.5",
-    "babel-preset-es2015": "^6.18.0",
+    "atma-io-middleware-uglify": "^1.1.21",            
     "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
   },
   "scripts": {
@@ -52,7 +49,6 @@
       "bower.json"
     ],
     "plugins": [
-      "atma-loader-babel",
       "atma-io-middleware-condcomments",
       "atma-io-middleware-uglify",
       "atma-loader-ts"
@@ -80,23 +76,10 @@
           "@utils": "/ref-utils/src/{0}",
           "@core": "/src/{0}",
           "@compo": "/projects/mask-compo/src/{0}",
-          "@mask-j": "/projects/mask-j/src/jmask/{0}"
+          "@mask-j": "/projects/mask-j/src/jmask/{0}",
+          "@binding": "/projects/mask-binding/src/{0}"
         }
-      },
-      "atma-loader-babel": {
-        "extensions": [
-          "es6",
-          "test"
-        ],
-        "babel": {
-          "presets": [
-            "es2015"
-          ],
-          "plugins": [
-            "async-to-promises"
-          ]
-        }
-      },
+      },      
       "atma-io-middleware-uglify": {},
       "atma-io-middleware-importer": {},
       "atma-io-middleware-condcomments": {
@@ -106,11 +89,10 @@
       },
       "atma-loader-ts": {
         "extensions": [
-            "test",
-            "ts"
-        ],        
+          "test",
+          "ts"
+        ],
         "typescript": {
-            
           "compilerOptions": {
             "baseUrl": "./",
             "paths": {
@@ -131,10 +113,10 @@
               ]
             },
             "#if (TEST)": {
-                "module": "AMD"
+              "module": "AMD"
             },
             "#if (!TEST)": {
-                "module": "esnext"
+              "module": "esnext"
             },
             "sourceMap": false
           }
@@ -143,7 +125,10 @@
     }
   },
   "dependencies": {
-    "@types/jquery": "^3.3.22"
+    "@types/jquery": "^3.3.22",
+    "module-alias": "^2.1.0",
+    "typescript": "^3.2.2",
+    "typescript-require": "^0.2.10"
   },
   "app-bundler": {
     "apps": {
@@ -157,6 +142,50 @@
             "defines": {
               "BROWSER": true
             }
+          },
+          "atma-io-middleware-uglify": {
+            "uglify": {
+                "warnings": true,
+                "compress": {
+                    "dead_code": true,
+                    "unused": true,
+                    
+                    "arguments": false,
+                    "booleans": false,
+                    "collapse_vars": false,
+                    "comparisons": false,
+                    "conditionals": false,
+                    "hoist_funs": false,
+                    "hoist_props": false,
+                    "hoist_vars": false,
+                    "if_return": false,
+                    "inline": false,
+                    "join_vars": false,
+                    "keep_fnames": true,
+                    "loops": false,
+                    "negate_iife": false,
+                    "reduce_funcs": false,
+                    "reduce_vars": false,
+                    "switches": false,
+                    "typeofs": false,
+                    "properties": false,
+                    "sequences": false,
+                    "side_effects": false,
+
+                    "global_defs": {
+                        "DEBUG": false
+                    }
+                },
+                "mangle": false,
+                "parse": {},
+                "output": {
+                    "beautify": true,
+                    "braces": true,
+                    "quote_style": 1,
+                    "indent_level": 2,
+                    "comments": "^!"
+                }
+            }
           }
         },
         "copyFiles": {
@@ -165,11 +194,37 @@
       }
     },
     "common": {
-      "file1": "projects/mask-compo/src/DomLite.ts",
       "file": "src/mask.ts",
       "package": {
         "module": "import",
-        "moduleWrapper": "custom"
+        "moduleWrapper": "custom",
+        "import": {
+            "removeUnusedExports": true,
+            "lazy": {
+                "/custom/*": [
+                    "modules/exports",
+                    "expression/exports"
+                ],
+                "/builder/*": [
+                    "/feature/"
+                ],
+                "/renderer/*": [
+                    "compo/exports"
+                ],
+                "/mask-compo/*": [
+                    "util/reporters",
+                    "parser/exports",
+                    "builder/exports",
+                    "expression/exports",
+                    "renderer/exports",
+                    "parser/exports",
+                    "/feature/"
+                ],
+                "CompoStatics\\b": [
+                    "Component"
+                ]
+            }
+        }
       },
       "dynamicDependencies": [
         "^vm$",
@@ -188,7 +243,8 @@
       "middlewares": {
         "js": [
           "atma-io-middleware-condcomments:read",
-          "atma-io-middleware-importer:read"
+          "atma-io-middleware-importer:read",
+          "atma-io-middleware-uglify:write"
         ],
         "ts": [
           "atma-io-middleware-condcomments:read",
@@ -208,5 +264,12 @@
         }
       }
     }
+  },
+  "_moduleAliases": {
+        "@core": "src",
+        "@utils": "ref-utils/src",
+        "@mask-j": "projects/mask-j/src/jmask",
+        "@compo": "projects/mask-compo/src",
+        "@binding": "projects/mask-binding/src"
   }
 }

@@ -1,13 +1,12 @@
-import { customTag_register, customTag_registerScoped, customTag_get } from '@core/custom/exports';
 import { is_Function, is_Object } from '@utils/is';
 import { obj_extend } from '@utils/obj';
-import { mask_merge } from './merge';
-import { Dom } from '@core/dom/exports';
 import { _Array_slice } from '@utils/refs';
-import { custom_Tags } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
 import { log_error } from '@core/util/reporters';
+import { Dom } from '@core/dom/exports';
+import { custom_Tags, customTag_register, customTag_registerScoped, customTag_get } from '@core/custom/exports';
 import { parser_parse } from '@core/parser/exports';
+import { expression_eval } from '@core/expression/exports';
+import { mask_merge } from './merge';
 import { Decorator } from './decorators/exports';
 import { Methods } from './methods/exports';
 import { Component } from '@compo/exports';

@@ -7,8 +7,8 @@ import { expression_eval } from '@core/expression/exports';
 import { jMask } from '@mask-j/jMask';
 import { attr_first } from '@core/util/attr';
 import { customTag_get } from '@core/custom/exports';
-import { cursor_groupEnd } from '@core/parser/cursor';
-import { Templates } from '@core/handlers/template';
+import { cursor_groupEnd } from '@core/parser/exports';
+import { Templates } from '@core/handlers/exports';
 
 	/**
 	 * Join two Mask templates or DOM trees

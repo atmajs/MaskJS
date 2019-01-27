@@ -1,6 +1,5 @@
 import { customAttr_register } from '@core/custom/exports';
-import { __dom_addEventListener } from '../vars';
-import { domLib } from '@compo/exports';
+import { domLib, Component } from '@compo/exports';
 
 /**
  *	Toggle Class Name
@@ -14,7 +13,7 @@ customAttr_register('x-class-toggle', 'client', function(node, attrVal, model, c
         klass = attrVal.substring(event.length + 1).trim();
     
 	
-    __dom_addEventListener(element, event, function(){
+    Component.Dom.addEventListener(element, event, function(){
         domLib(element).toggleClass(klass);
     });
 });

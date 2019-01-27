@@ -1,9 +1,6 @@
-import { HtmlFragment } from '@core/dom/Fragment';
 import { go_tag, state_literal, state_attr } from '../const';
 import { parser_parseAttrObject, parser_parse, parser_ensureTemplateFunction } from '../exports';
 import { Dom } from '@core/dom/exports';
-import { TextNode } from '@core/dom/TextNode';
-import { Node } from '@core/dom/Node';
 import { parser_warn } from '@core/util/reporters';
 import { cursor_skipWhitespace, cursor_tokenEnd } from '../cursor';
 import { parser_cfg_ContentTags } from '../config';
@@ -25,7 +22,7 @@ export function parser_parseHtml (str) {
     return tripple[0];
 };
 export function parser_parseHtmlPartial (str, index, exitEarly) {
-    var current:any = new HtmlFragment(),
+    var current:any = new Dom.HtmlFragment(),
         fragment = current,
         state = go_tag,
         i = index,
@@ -75,7 +72,7 @@ export function parser_parseHtmlPartial (str, index, exitEarly) {
                     }
                     current.appendChild(mix);
                 } else {
-                    current.appendChild(new TextNode(result[0]));
+                    current.appendChild(new Dom.TextNode(result[0]));
                     current = current.parent;
                 }
             }
@@ -104,14 +101,14 @@ export function parser_parseHtmlPartial (str, index, exitEarly) {
                     start = i + 1 + CDATA.length;
                     i = str.indexOf(']]>', start);
                     if (i === -1) i = imax;
-                    current.appendChild(new TextNode(str.substring(start, i)));
+                    current.appendChild(new Dom.TextNode(str.substring(start, i)));
                     i += 3;
                     state = state_literal;
                     continue outer;
                 }
                 if (str.substring(i + 1, i + 1 + DOCTYPE.length).toUpperCase() === DOCTYPE) {
                     // DOCTYPE
-                    var doctype = new Node('!' + DOCTYPE, current);
+                    var doctype = new Dom.Node('!' + DOCTYPE, current);
                     doctype.attr.html = 'html';
                     current.appendChild(doctype);
                     i = until_(str, i, imax, 62) + 1;
@@ -185,7 +182,7 @@ export function parser_parseHtmlPartial (str, index, exitEarly) {
         token += str.substring(start, i);
         if (token !== '') {
             token = parser_ensureTemplateFunction(token);
-            current.appendChild(new TextNode(token, current));
+            current.appendChild(new Dom.TextNode(token, current));
         }
     }
 
@@ -370,7 +367,7 @@ function tag_Open(name, current) {
             node = node.parent;
         }
     }
-    var next = new Node(name, node);
+    var next = new Dom.Node(name, node);
     node.appendChild(next);
     return next;
 }

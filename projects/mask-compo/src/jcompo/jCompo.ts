@@ -1,11 +1,13 @@
+import { log_warn } from '@core/util/reporters';
+import { Dom } from '@core/dom/exports';
+import { renderer_render } from '@core/renderer/exports';
+
 import { domLib } from '../scope-vars';
 import { Anchor } from '../compo/anchor';
-import { log_warn } from '@core/util/reporters';
 import { node_tryDispose, node_tryDisposeChildren } from '../util/dom';
-import { Component } from '../compo/Component';
-import { find_findSingle } from '@compo/util/traverse';
-import { selector_parse } from '@compo/util/selector';
-import { Dom } from '@core/dom/exports';
+import { find_findSingle } from '../util/traverse';
+import { selector_parse } from '../util/selector';
+import { CompoSignals } from '../signal/exports';
 
 
 export function domLib_initialize(){
@@ -84,13 +86,13 @@ export function domLib_initialize(){
 				
 				var compos = ctr.components,
 					i = compos.length,
-					fragment = mask.render(template, model, ctx, null, ctr);
+					fragment = renderer_render(template, model, ctx, null, ctr);
 				
 				var self = this[jQ_Methods[index]](fragment),
 					imax = compos.length;
 				
 				for (; i < imax; i++) {
-					Component.signal.emitIn(compos[i], 'domInsert');
+					CompoSignals.signal.emitIn(compos[i], 'domInsert');
 				}
 				
 				if (isUnsafe && imax !== 0) {
@@ -135,11 +137,11 @@ export function domLib_initialize(){
 		}
 		
 		
-		function each_tryDispose(index, node){
+		function each_tryDispose(node){
 			node_tryDispose(node);
 		}
 		
-		function each_tryDisposeChildren(index, node){
+		function each_tryDisposeChildren(node){
 			node_tryDisposeChildren(node);
 		}
 		

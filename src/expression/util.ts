@@ -7,7 +7,7 @@ import {
 import { error_formatSource } from '@utils/error';
 import { is_Function } from '@utils/is';
 import { customUtil_$utils } from '@core/custom/exports';
-import { Compo } from '@compo/exports';
+import { CompoProto } from '@compo/exports';
 import {
     type_FunctionRef,
     type_AccessorExpr,
@@ -99,11 +99,11 @@ export function util_resolveRef(astRef, model, ctx, ctr) {
         if (nextBody != null && value[nextBody] == null) {
             if (
                 next.type === type_FunctionRef &&
-                is_Function(Compo.prototype[nextBody])
+                is_Function(CompoProto[nextBody])
             ) {
                 // use fn from prototype if possible, like `closest`
                 object = controller;
-                value = Compo.prototype[nextBody];
+                value = CompoProto[nextBody];
                 current = next;
             } else {
                 // find the closest controller, which has the property
@@ -261,8 +261,8 @@ export function util_resolveRefValue(astRef, model, ctx, ctr, preResults) {
             x = x.parent;
         }
         /** Backwards comp. */
-        if (_isDefined(Compo.prototype, nextKey)) {
-            this_[nextKey] = Compo.prototype[nextKey];
+        if (_isDefined(CompoProto, nextKey)) {
+            this_[nextKey] = CompoProto[nextKey];
         }
         return this_;
     }

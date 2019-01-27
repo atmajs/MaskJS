@@ -8,10 +8,17 @@ import { _file_get, _file_getScript, _file_getStyle, _file_getJson } from './loa
 import { tools_getDependencies } from './tools/dependencies';
 import { tools_build } from './tools/build';
 import { ModuleMask } from './Module/ModuleMask';
-import { m_createModule, m_registerModule, m_registerModuleType, m_isMask, m_getType, m_getModuleType } from './Module/utils';
+import { 
+    m_createModule, 
+    m_registerModule, 
+    m_registerModuleType, 
+    m_isMask, 
+    m_getType, 
+    m_getModuleType 
+} from './Module/exports';
 import { Endpoint } from './class/Endpoint';
 import { IModule } from './Module/Module';
-import { i_createImport } from './Import/utils';
+import { i_createImport } from './Import/exports';
 import { m_cfg } from './config';
 
 import './Module/exports'

@@ -3,7 +3,7 @@ import { customTag_register } from '@core/custom/exports';
 import { fn_proxy } from '@utils/fn';
 import { Binders } from '@binding/binders/exports';
 import { _renderPlaceholder } from './utils';
-import { compo_disposeChildren, compo_renderChildren, compo_transferChildren, compo_dispose } from '@binding/utils/compo';
+import { compo_disposeChildren, compo_renderChildren, compo_dispose } from '@binding/utils/compo';
 import { Component } from '@compo/exports';
 
 customTag_register('listen', class_create({
@@ -63,24 +63,28 @@ customTag_register('listen', class_create({
     create: function(){
         compo_renderChildren(this, this.placeholder);
     },
-    refreshAni: function(){
-        var x = compo_transferChildren(this);
-        var me = this;
-        var show = me.getAni('show');
-        var hide = me.getAni('hide');
+    refreshAni: function() {
+        let x = { 
+            components: this.components, 
+            elements: this.elements 
+        };
+        this.components = this.elements = null;
+
+        var show = this.getAni('show');
+        var hide = this.getAni('hide');
         if (this.attr.animatable === 'parallel') {
-            show.start(me.create());
+            show.start(this.create());
             hide.start(x.elements, function(){
                 compo_dispose(x);
             });
             return;
         }
-        hide.start(x.elements, function(){
-            if (me.disposed === true) {
+        hide.start(x.elements, () => {
+            if (this.disposed === true) {
                 return;
             }
             compo_dispose(x);
-            show.start(me.create());
+            show.start(this.create());
         });
     },
     getAni: function (name) {

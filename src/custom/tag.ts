@@ -1,8 +1,8 @@
 import { obj_create, obj_extendDefaults, obj_toFastProps } from '@utils/obj';
 import { is_Object, is_Function, is_String } from '@utils/is';
-import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { class_Dfr } from '@utils/class/Dfr';
 import { fn_createByPattern } from '@utils/fn';
+import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { custom_Tags, custom_Tags_global } from './repositories';
 import { Module } from '@core/feature/modules/exports';
 
