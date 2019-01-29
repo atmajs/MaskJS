@@ -1,5 +1,5 @@
 import { customTag_register } from '@core/custom/exports';
-import { expression_createBinder, expression_bind, expression_unbind } from '@binding/utils/expression';
+import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 import { fn_proxy } from '@utils/fn';
 import { compo_renderElements, compo_disposeChildren, compo_renderChildren } from '@binding/utils/compo';
 import { _renderPlaceholder } from './utils';

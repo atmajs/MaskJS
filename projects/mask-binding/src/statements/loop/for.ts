@@ -1,6 +1,6 @@
 import { custom_Statements, customTag_register } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
-import { expression_createBinder, expression_bind } from '../../utils/expression';
+import { expression_createBinder, expression_bind } from '@project/observer/src/exports'
 import { is_Array } from '@utils/is';
 import { arr_createRefs } from './utils';
 import { _renderPlaceholder, _compo_initAndBind } from '../utils';

@@ -2,7 +2,7 @@ import { compo_dispose, compo_inserted } from '../../utils/compo';
 import { dom_insertBefore } from '../../utils/dom';
 import { arr_each } from '@utils/arr';
 import { arr_createRefs, list_update, list_sort, list_remove } from './utils';
-import { expression_unbind } from '../../utils/expression';
+import { expression_unbind } from '@project/observer/src/exports';
 
 export const LoopStatementProto = {
 	ctx: null,

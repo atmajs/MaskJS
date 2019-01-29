@@ -55,7 +55,7 @@ UTest({
 				eq_(_3Fn.callCount, 1);
 			},
 			'backward binding' () {
-				var foo = {
+				var foo = <any> {
 					bar: {
 						qux: {
 							color: 'red'
@@ -85,7 +85,7 @@ UTest({
 
 			var count = 1,
 				obj = { name: 'foo' },
-				root = { sub: { child: obj } }
+				root = <any> { sub: { child: obj } }
 				;
 
 			obj_addObserver(obj, 'name', spy);
@@ -109,7 +109,7 @@ UTest({
 		'object - observers - merge': function() {
 			
 			// playing around with nested objects
-			var obj = {
+			var obj = <any> {
 				title: 'O0'
 			},
 				model = {
@@ -123,7 +123,7 @@ UTest({
 			obj_addObserver(obj, 'title', function(value) {
 
 				obj_Count--;
-				deepEq(obj_Expect, value);
+				deepEq_(obj_Expect, value);
 			});
 
 			eq_(obj.__observers.title.length, 1);
@@ -133,7 +133,7 @@ UTest({
 			obj_addObserver(model, 'sub.title', function(value) {
 
 				model_Count--;
-				deepEq(model_Expect, value);
+				deepEq_(model_Expect, value);
 			});
 
 

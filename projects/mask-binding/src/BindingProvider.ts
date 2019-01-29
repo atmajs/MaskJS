@@ -9,7 +9,7 @@ import {
     expression_createBinder,
     expression_bind,
     expression_getHost
-} from './utils/expression';
+} from '@project/observer/src/exports';
 import { is_Array } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { ValidatorProvider } from './ValidatorProvider';

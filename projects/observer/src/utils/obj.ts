@@ -1,5 +1,5 @@
 
-export function obj_callFn  (obj, path, args) {
+export function obj_callMethod  (obj: any, path: string, args?: any[]) {
     var end = path.lastIndexOf('.');
     if (end === -1) {
         return call(obj, path, args);
@@ -15,11 +15,8 @@ export function obj_callFn  (obj, path, args) {
     }
     return call(host, path.substring(end + 1), args);
 };
-function call(obj, key, args) {
-    var fn = null;
-    if (obj != null)
-        fn = obj[key];
-
+function call(obj: any, key: string, args?: any[]) {
+    const fn = obj == null ? null : obj[key];
     if (typeof fn !== 'function') {
         console.error('Not a function', key);
         return null;

@@ -1,8 +1,8 @@
 import { log_error } from '@core/util/reporters';
 import { custom_Utils } from '@core/custom/exports';
 import { obj_getPropertyEx } from '@core/util/object';
-import { cursor_groupEnd } from './cursor';
 import { interp_code_OPEN, interp_START, interp_code_CLOSE } from './const';
+import { cursor_groupEnd } from './cursor';
 
 
 export function	parser_ensureTemplateFunction (template) {

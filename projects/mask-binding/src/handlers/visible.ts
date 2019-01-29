@@ -1,6 +1,6 @@
 import { customTag_register } from '@core/custom/exports';
 import { expression_eval } from '@core/expression/exports';
-import { obj_addObserver } from '@binding/utils/object_observe';
+import { obj_addObserver } from '@project/observer/src/exports';
 
 /**
  * visible handler. Used to bind directly to display:X/none

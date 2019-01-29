@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "baseUrl": "./",
+        "types": [
+            "sinon"
+        ],
         "paths": {
             "@core/*": [
                 "src/*"
@@ -16,8 +19,13 @@
             ],
             "@binding/*": [
                 "projects/mask-binding/src/*"
+            ],
+            "@project/*": [
+                "projects/*"
             ]
+
         },
-        "module": "commonjs"
+        "module": "commonjs",
+        "target": "es5"
     }
 }

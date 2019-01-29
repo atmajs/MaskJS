@@ -1,7 +1,8 @@
-import { expression_createBinder, expression_bind, expression_unbind, expression_eval_safe } from '../utils/expression';
 
 import { customAttr_register } from '@core/custom/exports';
+import { expression_eval } from '@core/expression/exports';
 import { Component } from '@compo/exports';
+import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 
 customAttr_register('xx-visible', function(node, attrValue, model, ctx, el, ctr) {
 
@@ -15,7 +16,7 @@ customAttr_register('xx-visible', function(node, attrValue, model, ctx, el, ctr)
 		expression_unbind(attrValue, model, ctr, binder);
 	});
 
-	if (!expression_eval_safe(attrValue, model, ctx, ctr, node)) {
+	if (expression_eval(attrValue, model, ctx, ctr, node)) {
 		el.style.display = 'none';
 	}
 });

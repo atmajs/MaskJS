@@ -7,3 +7,12 @@ export {
     obj_lockObservers,
     obj_unlockObservers
 } from './obj_observe'
+
+export {
+    expression_bind,
+    expression_unbind,
+    expression_callFn,
+    expression_createBinder,
+    expression_createListener,
+    expression_getHost,
+} from './expression'

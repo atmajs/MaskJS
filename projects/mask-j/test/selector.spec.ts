@@ -1,6 +1,8 @@
+import { jMask as $ } from '../src/jmask/jmask'
+
 UTest({
-	'child nestings': function(){
-		var div = jmask('div { \
+	'child nestings' (){
+		var div = $('div { \
 				section { span; span; ul; } \
 				h4 { span; tt; } \
 			}');
@@ -26,8 +28,8 @@ UTest({
 		}
 	},
 	
-	'select textNodes': function(){
-		var div = jmask('div { \
+	'select textNodes' (){
+		var div = $('div { \
 				section { "Foo" "Bar" } \
 				h4 > "Baz" \
 			}');
@@ -44,8 +46,8 @@ UTest({
 		}
 	},
 	
-	'all siblings': function(){
-		var div = jmask('div { \
+	'all siblings' (){
+		var div = $('div { \
 				section { span > span > br; ul; } \
 				h4 { span; tt; } \
 			}');
@@ -66,7 +68,7 @@ UTest({
 	},
 	'pseudo': {
 		'select text' () {
-			var div = jmask("div; 'Hello'");
+			var div = $("div; 'Hello'");
 			eq_(div.length, 2);
 			
 			var text = div.filter('::text');
@@ -74,7 +76,7 @@ UTest({
 			eq_(text.text(), 'Hello');
 		},
 		'selector not' () {
-			var set = jmask("div; span;");
+			var set = $("div; span;");
 			eq_(set.length, 2);
 			
 			var span = set.filter('::not(div)');
@@ -83,7 +85,7 @@ UTest({
 		}
 	},
 	'shoud match by function' () {
-		var set = jmask("div;span;section;");
+		var set = $("div;span;section;");
 		var span = set.first(node => node.tagName === 'span');
 		eq_(span.length, 1);
 		eq_(span.get(0).tagName, 'span');

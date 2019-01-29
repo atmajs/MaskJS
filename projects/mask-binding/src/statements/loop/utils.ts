@@ -1,6 +1,6 @@
+import { Component } from '@compo/exports';
 import { dom_insertBefore } from '../../utils/dom';
 import { compo_fragmentInsert, compo_dispose } from '../../utils/compo';
-import { Component } from '@compo/exports';
 
 export function arr_createRefs (array){
     var imax = array.length,

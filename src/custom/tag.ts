@@ -1,10 +1,9 @@
 import { obj_create, obj_extendDefaults, obj_toFastProps } from '@utils/obj';
 import { is_Object, is_Function, is_String } from '@utils/is';
-import { class_Dfr } from '@utils/class/Dfr';
 import { fn_createByPattern } from '@utils/fn';
 import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { custom_Tags, custom_Tags_global } from './repositories';
-import { Module } from '@core/feature/modules/exports';
+import { ModuleMidd } from '@core/arch/Module';
 
 /**
  * Get Components constructor from the global repository or the scope
@@ -113,27 +112,19 @@ export function customTag_register(mix, Handler) {
  * @method registerFromTemplate
  */
 export function customTag_registerFromTemplate(mix, Ctr?, path?) {
-    var dfr = new class_Dfr();
-    new Module.ModuleMask(path || '').preprocess_(mix, function(
-        error,
-        exports
-    ) {
-        if (error) {
-            return dfr.reject(error);
-        }
-        var store = exports.__handlers__;
-        for (var key in store) {
-            if (exports[key] != null) {
+
+    return ModuleMidd.parseMaskContent(mix, path).then(exports => {
+        
+        let store = exports.__handlers__;
+        for (let key in store) {
+            if (key in exports) {
                 // is global
                 customTag_register(key, store[key]);
                 continue;
             }
             customTag_registerScoped(Ctr, key, store[key]);
-        }
-        dfr.resolve(exports.__handlers__);
-    });
-
-    return dfr;
+        }        
+    });    
 }
 /**
  * Register a component
@@ -228,8 +219,7 @@ export const customTag_define = fn_createByPattern(
                 return customTag_registerScoped(Scope, name, Ctor);
             }
         }
-    ],
-    null
+    ]
 );
 
 export function customTag_registerResolver(name) {

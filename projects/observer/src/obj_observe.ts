@@ -104,7 +104,7 @@ export function obj_hasObserver(obj, property, callback) {
     return arr_contains(obs[property], callback);
 }
 
-export function obj_removeObserver(obj, property, callback) {
+export function obj_removeObserver(obj, property, callback?) {
     if (obj == null) {
         log_error(
             'Not possible to remove the observer for "' +
@@ -141,10 +141,12 @@ export function obj_removeObserver(obj, property, callback) {
         mutators = getSelfMutators(val);
     if (mutators != null) objMutator_removeObserver(val, mutators, callback);
 }
+
 export function obj_lockObservers(obj) {
     var obs = obj[prop_OBS];
     if (obs != null) obs[prop_DIRTY] = {};
 }
+
 export function obj_unlockObservers(obj) {
     var obs = obj[prop_OBS],
         dirties = obs == null ? null : obs[prop_DIRTY];
@@ -166,11 +168,11 @@ export function obj_unlockObservers(obj) {
     }
 }
 
-
 export function obj_addMutatorObserver(obj, cb) {
     var mutators = getSelfMutators(obj);
     if (mutators != null) objMutator_addObserver(obj, mutators, cb);
 }
+
 export function obj_removeMutatorObserver(obj, cb) {
     objMutator_removeObserver(obj, null, cb);
 }

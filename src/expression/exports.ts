@@ -1,8 +1,8 @@
+import { customUtil_register } from '@core/custom/exports';
 import { _parse } from './parser';
 import { _evaluate } from './eval';
 import { _evaluateStatements } from './eval_statements';
 import { refs_extractVars } from './vars_helper';
-import { customUtil_register } from '@core/custom/exports';
 
 /**
  * ExpressionUtil

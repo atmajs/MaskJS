@@ -1,5 +1,5 @@
 import { expression_eval } from '@core/expression/exports';
-import { expression_callFn } from './utils/expression';
+import { expression_callFn } from '@project/observer/src/exports';
 import { obj_setProperty, obj_getProperty } from '@utils/obj';
 import { date_ensure } from './utils/date';
 import { log_warn, log_error } from '@core/util/reporters';

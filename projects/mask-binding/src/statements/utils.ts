@@ -1,6 +1,6 @@
 import { custom_Statements } from '@core/custom/exports';
 import { fn_proxy } from '@utils/fn';
-import { expression_createBinder, expression_bind } from '../utils/expression';
+import { expression_createBinder, expression_bind } from '@project/observer/src/exports';
 import { is_Array } from '@utils/is';
 
 export function _getNodes(name, node, model, ctx, controller) {

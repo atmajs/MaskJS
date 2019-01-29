@@ -1,9 +1,11 @@
 import { go_tag, state_literal, state_attr } from '../const';
-import { parser_parseAttrObject, parser_parse, parser_ensureTemplateFunction } from '../exports';
 import { Dom } from '@core/dom/exports';
 import { parser_warn } from '@core/util/reporters';
 import { cursor_skipWhitespace, cursor_tokenEnd } from '../cursor';
 import { parser_cfg_ContentTags } from '../config';
+import { parser_parseAttrObject } from '../mask/partials/attributes';
+import { parser_parse } from '../mask/parser';
+import { parser_ensureTemplateFunction } from '../interpolation';
 
 declare var require;
 	var state_closeTag = 21;

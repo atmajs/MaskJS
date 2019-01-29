@@ -1,7 +1,8 @@
 import { customStatement_get, customTag_register } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
-import { expression_createBinder, expression_bind, expression_eval_safe, expression_unbind } from '@binding/utils/expression';
+import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 import { fn_proxy } from '@utils/fn';
+import { expression_eval_safe } from '@binding/utils/expression';
 
 
 (function(){

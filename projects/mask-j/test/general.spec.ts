@@ -1,21 +1,19 @@
-
-var $ = mask.jmask;
+import { jMask as $ } from '../src/jmask/jmask'
 
 UTest({
-	'lib': function(){
-		notEq_(mask.jmask, null);
+	'lib' (){		
 		eq_(typeof $, 'function', 'Compo.jmask is not a function');
 	},
-	'div (attr)': function() {
+	'div (attr)' () {
 		var div = $('div');
 
 		eq_(div.length, 1, 'shoud contain one item');
 		// attr
 		div.attr('key', 'xvalue');
-		assert(div.attr('key') === 'xvalue', 'shoud have key="xvalue" attr');
+		eq_(div.attr('key'), 'xvalue', 'shoud have key="xvalue" attr');
 		
 		div.removeAttr('key');
-		assert(div.attr('key') == null, 'shoud have no key attr');
+		eq_(div.attr('key'), null, 'shoud have no key attr');
 		
 		div.prop('key', 'xvalue');
 		eq_(div.prop('key'), 'xvalue', 'shoud have key="xvalue" prop');
@@ -67,43 +65,43 @@ UTest({
 		eq_(div.css('width'), null, 'shouldnt have 10px for width');
 		eq_(div.css('font-weight'), 'bold', 'should have bold for font-weight');
 	},
-	'div (manip clone/append/remove/attr/class)': function() {
+	'div (manip clone/append/remove/attr/class)' () {
 		var div = $('div style="font-weight:bold"');
 
-		assert(div.clone().css('font-weight') === 'bold', 'cloned shoud have font-weight as bold');
+		eq_(div.clone().css('font-weight'), 'bold', 'cloned shoud have font-weight as bold');
 
 		div.append('span');
-		assert(div.children().length === 1, 'div should have 1 child');
+		eq_(div.children().length, 1, 'div should have 1 child');
 
 		div.append('table');
 
-		assert(div.children().length === 2, 'div should have 2 childs');
-		assert(div.children('span').length === 1, 'div should have 1 span child');
-		assert(div.find('span').length === 1, 'div should have 1 span child');
+		eq_(div.children().length  , 2, 'div should have 2 childs');
+		eq_(div.children('span').length  , 1, 'div should have 1 span child');
+		eq_(div.find('span').length  , 1, 'div should have 1 span child');
 
 		div.children('span').attr('id', 'spanny');
-		assert(div.find('#spanny').length === 1, 'div should have 1 child with id spanny');
+		eq_(div.find('#spanny').length  , 1, 'div should have 1 child with id spanny');
 
 		div.children('table').append('button');
-		assert(div.find('span').children().length === 0, 'span should have no children');
-		assert(div.find('table').children().length === 1, 'table shoud have one child');
+		eq_(div.find('span').children().length  , 0, 'span should have no children');
+		eq_(div.find('table').children().length  , 1, 'table shoud have one child');
 
 
 		div.children().addClass('classy');
-		assert(div.children().eq(0).hasClass('classy'), 'Span shoud have class classy');
-		assert(div.children().eq(1).hasClass('classy'), 'Table shoud have class classy');
+		eq_(div.children().eq(0).hasClass('classy'), true, 'Span shoud have class classy');
+		eq_(div.children().eq(1).hasClass('classy'), true, 'Table shoud have class classy');
 
 		div.children('table').remove();
-		assert(div.children().length === 1, 'Shoud contain 1 child after .remove call');
+		eq_(div.children().length  , 1, 'Shoud contain 1 child after .remove call');
 
 
-		assert(div.prepend('ul > li > "hello"').children().eq(0).get(0).tagName === 'ul', 'First child shoud be UL');
+		eq_(div.prepend('ul > li > "hello"').children().eq(0).get(0).tagName  , 'ul', 'First child shoud be UL');
 
 
-		assert(div.empty().children().length === 0, 'Shoud have no childs after .empty');
+		eq_(div.empty().children().length  , 0, 'Shoud have no childs after .empty');
 	},
 
-	'div (stringify)': function(){
+	'div (stringify)' (){
 		var div = $('div style="color:#fff" > span > ul > li > "Name";'),
 			str = div.mask();
 
@@ -112,7 +110,7 @@ UTest({
 		assert.equal(str, div2.mask(), 'Two markups should be equal');
 
 	},
-	'div (text)': function(){
+	'div (text)' (){
 		var div = $('div { "hello" " world!" }');
 
 		assert.equal('hello world!', div.text());
@@ -122,7 +120,7 @@ UTest({
 		assert.equal('hello <span>1</span>!', div.text({html: '<span>1</span>'}));
 
 	},
-	'divs (manip)': function(){
+	'divs (manip)' (){
 		var div = $('div;div;');
 
 		assert.equal($('div {div; div;}').mask(), div.wrapAll('div').mask(), 'wrappAll failed');
@@ -130,7 +128,7 @@ UTest({
 		assert.equal($('div > div; div > div;').mask(), div.wrap('div').mask(), 'wrap failed');
 	},
 
-	'selectors (filter)': function(){
+	'selectors (filter)' (){
 		var div = $('div; div name="xx"; span#spany.classy.class;');
 
 		function filter(selector, expect) {

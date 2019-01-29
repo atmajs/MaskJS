@@ -77,7 +77,11 @@ module.exports = {
         },
         'observer': {
 			exec: 'node',
-			tests: 'projects/observer/test/**.test'
+			tests: 'projects/observer/test/**.spec.ts'
+        },
+        'jmask': {
+			exec: 'node',
+			tests: 'projects/mask-j/test/**.spec.ts'
 		}
 	}
 };

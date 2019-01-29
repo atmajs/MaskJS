@@ -4,6 +4,7 @@ import './ModuleHtml'
 import './ModuleScript'
 import './ModuleStyle'
 import './ModuleText'
+import './register'
 
 export { 
     m_getType, 

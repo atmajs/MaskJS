@@ -1,9 +1,10 @@
 import { is_Function } from '@utils/is';
 import { obj_setProperty } from '@utils/obj';
 import { log_warn } from '@core/util/reporters';
-import { expression_createBinder, expression_bind, expression_unbind, expression_eval_safe } from '../utils/expression';
+import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 import { customUtil_register } from '@core/custom/exports';
 import { Component } from '@compo/exports';
+import { expression_eval_safe } from '@binding/utils/expression';
 
 
 /**
