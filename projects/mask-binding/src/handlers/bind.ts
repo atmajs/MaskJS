@@ -1,4 +1,4 @@
-import { BindingProviderStatics } from '../BindingProvider';
+import { BindingProvider } from '../BindingProvider';
 import { customTag_register } from '@core/custom/exports';
 
 
@@ -23,9 +23,9 @@ import { customTag_register } from '@core/custom/exports';
 		constructor: Bind,
 		renderEnd: function(els, model, cntx, container){
 			
-			this.provider = BindingProviderStatics.create(model, container, this, 'single');
+			this.provider = BindingProvider.create(model, container, this, 'single');
 			
-			BindingProviderStatics.bind(this.provider);
+			BindingProvider.bind(this.provider);
 		},
 		dispose: function(){
 			if (this.provider && typeof this.provider.dispose === 'function') {

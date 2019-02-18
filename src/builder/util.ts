@@ -37,7 +37,8 @@ export function builder_setCompoModel (compo, model, ctx, ctr){
 		return (compo.model = argsModel || model);
 	};
 export function builder_setCompoAttributes (compo, node, model, ctx, container){
-		var attr = node.attr;
+        let ownAttr = compo.attr;
+		let attr = node.attr;
 		if (attr == null) {
 			attr = {};
 		}
@@ -49,7 +50,9 @@ export function builder_setCompoAttributes (compo, node, model, ctx, container){
 					attr[key] = fn('compo-attr', model, ctx, container, compo, key);
 				}
 			}
-		}
+        }
+        compo.attr = attr;
+
 		if (compo.meta != null) {
 			if (compo.meta.readAttributes != null) {
 				compo.meta.readAttributes(compo, attr, model, container);
@@ -57,9 +60,8 @@ export function builder_setCompoAttributes (compo, node, model, ctx, container){
 			if (compo.meta.readProperties != null) {
 				compo.meta.readProperties(compo, attr, model, container);
 			}
-		}
-		
-		var ownAttr = compo.attr;
+        }
+        
 		for(var key in ownAttr) {
 			var current = attr[key],
 				val = null;
@@ -80,7 +82,7 @@ export function builder_setCompoAttributes (compo, node, model, ctx, container){
 			}
 			attr[key] = val;
 		}
-		return (compo.attr = attr);
+		return attr;
 	};
 
 export function builder_setCompoProps (compo, node, model, ctx, container){

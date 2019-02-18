@@ -1,9 +1,6 @@
 {
     "compilerOptions": {
         "baseUrl": "./",
-        "types": [
-            "sinon"
-        ],
         "paths": {
             "@core/*": [
                 "src/*"
@@ -26,6 +23,6 @@
 
         },
         "module": "commonjs",
-        "target": "es5"
+        "target": "es6"
     }
 }

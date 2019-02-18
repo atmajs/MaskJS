@@ -1,3 +1,4 @@
+import { _document } from '@utils/refs'
 import { expression_unbind, expression_bind, expression_createListener } from '@project/observer/src/exports';
 import { customTag_register } from '@core/custom/exports';
 import { compo_renderElements, compo_inserted } from '../utils/compo';
@@ -111,7 +112,7 @@ import { expression_eval_safe } from '../utils/expression';
 			}
 
 			var nodes = current.node.nodes,
-				frag = document.createDocumentFragment(),
+				frag = _document.createDocumentFragment(),
 				owner = { components: [], parent: ctr },
 				els = compo_renderElements(nodes, model, ctx, frag, owner);
 

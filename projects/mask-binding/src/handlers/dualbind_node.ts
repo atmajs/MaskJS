@@ -1,5 +1,5 @@
 import { customTag_register } from '@core/custom/exports';
-import { BindingProviderStatics } from '@binding/BindingProvider';
+import { BindingProvider } from '@binding/BindingProvider';
 
 /**
  *	Mask Custom Handler
@@ -29,7 +29,7 @@ DualbindHandler.prototype = {
 	constructor: DualbindHandler,
 	
 	renderStart: function(model, ctx, container) {
-		this.provider = BindingProviderStatics.create(model, container, this);
+		this.provider = BindingProvider.create(model, container, this);
 		this.provider.objectChanged();
 	},
 	dispose: function(){

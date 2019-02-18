@@ -1,9 +1,11 @@
+import { _document } from '@utils/refs'
 import { dom_insertAfter, dom_insertBefore, dom_removeAll } from './dom';
 import { builder_build } from '@core/builder/exports';
 import { log_error } from '@core/util/reporters';
 import { arr_remove } from '@utils/arr';
 import { is_Array } from '@utils/is';
 import { Component } from '@compo/exports';
+import { renderer_render } from '@core/renderer/exports';
 
 
 export function compo_fragmentInsert (compo, index, fragment, placeholder) {
@@ -48,10 +50,10 @@ export function compo_fragmentInsert (compo, index, fragment, placeholder) {
     return dom_insertAfter(fragment, anchor);
 };
 export function compo_render (parentCtr, template, model, ctx, container) {
-    return mask.render(template, model, ctx, container, parentCtr);
+    return renderer_render(template, model, ctx, container, parentCtr);
 };
 export function compo_renderChildren (compo, anchor, model?){
-    var fragment = document.createDocumentFragment();
+    var fragment = _document.createDocumentFragment();
     compo.elements = compo_renderElements(
         compo.nodes,
         model || compo.model,

@@ -1,4 +1,4 @@
-declare var global;
+import { _global } from '@utils/refs'
 
 export function sourceUrl_get (node){
 		//if DEBUG
@@ -19,7 +19,7 @@ export function sourceUrl_get (node){
 		return '\n//# sourceURL=' + ORIGIN + '/controllers/' + url;
 		//endif
 	};
-	var ORIGIN = global.location && global.location.origin || 'dynamic://MaskJS'
+	var ORIGIN = _global.location && _global.location.origin || 'dynamic://MaskJS'
 
 	//if DEBUG
 	function forDefine (node) {

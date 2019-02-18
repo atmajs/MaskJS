@@ -14,5 +14,5 @@ export {
     expression_callFn,
     expression_createBinder,
     expression_createListener,
-    expression_getHost,
+    expression_getHost
 } from './expression'

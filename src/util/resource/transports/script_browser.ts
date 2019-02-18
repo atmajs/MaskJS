@@ -1,7 +1,7 @@
+import { _global } from '@utils/refs'
 import { class_create } from '@utils/class';
 import { class_Dfr } from '@utils/class/Dfr';
 
-declare var global;
 
 export function script_get(path: string, cb) {
     var res = new Resource(path)
@@ -27,7 +27,7 @@ var Resource: any = class_create(class_Dfr, {
             return this;
         }
         this.state = 1;
-        global.module = {};
+        _global.module = {};
 
         var self = this;
         embedScript(this.url, function(event) {
@@ -36,7 +36,7 @@ var Resource: any = class_create(class_Dfr, {
                 self.reject(event);
                 return;
             }
-            self.resolve((self.exports = global.module.exports));
+            self.resolve((self.exports = _global.module.exports));
         });
         return this;
     }

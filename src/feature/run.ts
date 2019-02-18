@@ -1,12 +1,10 @@
-import { _Array_slice } from '@utils/refs';
+import { _Array_slice, _global } from '@utils/refs';
 import { is_Function, is_Object } from '@utils/is';
 import { builder_build, builder_Ctx, BuilderData } from '@core/builder/exports';
 import { parser_parse } from '@core/parser/exports';
 import { log_warn } from '@core/util/reporters';
 import { Compo, Component } from '@compo/exports';
 
-
-declare var global;
 
 /**
  * Find all `<script type="text/mask" data-run='true'>` blocks in the page
@@ -137,17 +135,17 @@ export function mask_run (){
 			_state = _state_Manual;
 
 			if (_app == null) return;
-			if (global.app == null) {
-				global.app = _app;
+			if (_global.app == null) {
+				_global.app = _app;
 				return;
 			}
 			var source = _app.components
 			if (source == null || source.length === 0) {
 				return;
 			}
-			var target = global.app.components
+			var target = _global.app.components
 			if (target == null || target.length === 0) {
-				global.app.components = source;
+				_global.app.components = source;
 				return;
 			}
 			target.push.apply(target, source);

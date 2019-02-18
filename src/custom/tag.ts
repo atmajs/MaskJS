@@ -4,6 +4,7 @@ import { fn_createByPattern } from '@utils/fn';
 import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { custom_Tags, custom_Tags_global } from './repositories';
 import { ModuleMidd } from '@core/arch/Module';
+import { Component } from '../dom/Component'
 
 /**
  * Get Components constructor from the global repository or the scope
@@ -167,6 +168,16 @@ function is_Compo(val) {
     return is_Object(val) || is_Function(val);
 }
 
+interface IDefineMethod {
+    (template: string)
+    (scopeName: string, template: string)
+    (scopeCompo: Function, template: string)
+    (compoName: Function, Ctor: Function | any)
+    (scopeCompo: Function, compoName: Function, Ctor: Function | any)
+    (scopeName: string, compoName: Function, Ctor: Function | any)
+    (mix: string | Function, mix2?: string | Function | any, mix3?: string | Function | any)
+}
+
 /**
  * Universal component definition, which covers all the cases: simple, scoped, template
  * - 1. (template)
@@ -179,7 +190,7 @@ function is_Compo(val) {
  * @memberOf mask
  * @method define
  */
-export const customTag_define = fn_createByPattern(
+export const customTag_define = <IDefineMethod> fn_createByPattern(
     [
         {
             pattern: [is_String],

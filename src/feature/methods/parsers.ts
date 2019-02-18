@@ -27,7 +27,7 @@ function create(tagName) {
         return [node, end + 1, 0];
     };
 }
-debugger;
+
 var parseHead;
 (function() {
     var lex_ = parser_ObjectLexer(

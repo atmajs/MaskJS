@@ -2,7 +2,7 @@ import { _parse } from './parser';
 import { Ast_Body } from './ast';
 import { _evaluateAst } from './eval';
 
-export function _evaluateStatements(expr, model, ctx, ctr, node?){
+export function _evaluateStatements(expr, model?, ctx?, ctr?, node?){
 
 	var body = _parse(expr, false, node).body,
 		args = [],

@@ -1,3 +1,4 @@
+import { _document } from '@utils/refs'
 import { custom_Statements } from '@core/custom/exports';
 import { fn_proxy } from '@utils/fn';
 import { expression_createBinder, expression_bind } from '@project/observer/src/exports';
@@ -9,7 +10,7 @@ export function _getNodes(name, node, model, ctx, controller) {
 export function _renderPlaceholder(staticCompo, compo, container) {
     var placeholder = staticCompo.placeholder;
     if (placeholder == null) {
-        placeholder = document.createComment('');
+        placeholder = _document.createComment('');
         container.appendChild(placeholder);
     }
     compo.placeholder = placeholder;

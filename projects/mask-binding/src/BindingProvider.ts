@@ -1,5 +1,5 @@
 import { class_create } from '@utils/class';
-import { DomObjectTransport } from './DomObjectTransport';
+import { DomObjectTransport, IDomWay, IObjectWay } from './DomObjectTransport';
 import { signal_parse } from './utils/signal';
 import { log_error, log_warn } from '@core/util/reporters';
 
@@ -18,23 +18,57 @@ import { Component } from '@compo/exports';
 
 export const CustomProviders = {};
 
-export const BindingProvider = class_create({
-    validations: null,
-    constructor: function BindingProvider(model, element, ctr, bindingType) {
+export class BindingProvider {
+    validations = null
+    ctx = null
+
+    value: string
+    property: string
+
+    expression: string
+
+    domSetter: string
+    domGetter: string
+    objSetter: string
+    objGetter: string
+    mapToObj: string
+    mapToDom: string
+    changeEvent: string
+    typeof: string
+
+    slots: any
+    pipes: any
+
+    parent: any
+
+
+    dismiss: number = 0
+    bindingType: string
+    log = false
+    logExpression: string
+    signal_domChanged: string
+    signal_objectChanged: string
+    
+    pipe_domChanged: { pipe: string, signal: string}
+    pipe_objectChanged: { pipe: string, signal: string}
+    locked = false
+
+    domWay: IDomWay = DomObjectTransport.domWay
+    objectWay: IObjectWay = DomObjectTransport.objectWay
+
+    binder: Function
+
+    constructor (public model, public element: HTMLElement, public ctr, bindingType?: string) {
         if (bindingType == null) {
             bindingType = 'dual';
 
-            var name = ctr.compoName;
+            let name = ctr.compoName;
             if (name === ':bind' || name === 'bind') {
                 bindingType = 'single';
             }
         }
-        var attr = ctr.attr;
+        let attr = ctr.attr;
 
-        this.ctr = ctr;
-        this.ctx = null;
-        this.model = model;
-        this.element = element;
         this.value = attr.value;
         this.property = attr.property;
         this.domSetter = attr['dom-setter'] || attr.setter;
@@ -48,14 +82,9 @@ export const BindingProvider = class_create({
         /* Convert to an instance, e.g. Number, on domchange event */
         this['typeof'] = attr['typeof'] || null;
 
-        this.dismiss = 0;
         this.bindingType = bindingType;
-        this.log = false;
-        this.signal_domChanged = null;
-        this.signal_objectChanged = null;
-        this.locked = false;
-
-        var isCompoBinder = ctr.node.parent.tagName === ctr.parent.compoName;
+        
+        let isCompoBinder = ctr.node.parent.tagName === ctr.parent.compoName;
         if (
             isCompoBinder &&
             (element.nodeType !== 1 || element.tagName !== 'INPUT')
@@ -88,14 +117,14 @@ export const BindingProvider = class_create({
                         this.domWay = x.domWay;
                         break;
                     }
-                    this.changeEvent = attr['change-event'] || 'input';
+                    this.changeEvent = attr['change-event'] || 'change,input';
                     this.property = 'element.value';
                     break;
                 case 'TEXTAREA':
                     this.property = 'element.value';
                     break;
                 case 'SELECT':
-                    this.domWay = element.multiple
+                    this.domWay = (element as HTMLSelectElement).multiple
                         ? DomObjectTransport.SELECT_MULT
                         : DomObjectTransport.SELECT;
                     break;
@@ -191,11 +220,11 @@ export const BindingProvider = class_create({
         }
 
         this.expression = this.value;
-    },
-    dispose: function() {
+    }
+    dispose () {
         expression_unbind(this.expression, this.model, this.ctr, this.binder);
-    },
-    objectChanged: function(x) {
+    }
+    objectChanged (val?) {
         if (this.dismiss-- > 0) {
             return;
         }
@@ -205,61 +234,61 @@ export const BindingProvider = class_create({
         }
         this.locked = true;
 
-        if (x == null || this.objGetter != null) {
-            x = this.objectWay.get(this, this.expression);
+        if (val == null || this.objGetter != null) {
+            val = this.objectWay.get(this, this.expression);
         }
         if (this.mapToDom != null) {
-            x = expression_callFn(this.mapToDom, this.model, null, this.ctr, [
-                x
+            val = expression_callFn(this.mapToDom, this.model, null, this.ctr, [
+                val
             ]);
         }
 
-        this.domWay.set(this, x);
+        this.domWay.set(this, val);
 
         if (this.log) {
-            console.log('[BindingProvider] objectChanged -', x);
+            console.log('[BindingProvider] objectChanged -', val);
         }
         if (this.signal_objectChanged) {
             Component.signal.emitOut(
                 this.ctr,
                 this.signal_objectChanged,
                 this.ctr,
-                [x]
+                [val]
             );
         }
-        if (this.pipe_objectChanged) {
+        if (this.pipe_objectChanged != null) {
             var pipe = this.pipe_objectChanged;
             Component.pipe(pipe.pipe).emit(pipe.signal);
-        }
-
+        }        
         this.locked = false;
-    },
-    domChanged: function(event, val_) {
+    }
+
+    domChanged (event?, val?) {
         if (this.locked === true) {
             log_warn('Concurance change detected', this);
             return;
         }
         this.locked = true;
 
-        var value = val_;
-        if (value == null) value = this.domWay.get(this);
-
-        var typeof_ = this['typeof'];
+        if (val == null) {
+            val = this.domWay.get(this);
+        }
+        let typeof_ = this['typeof'];
         if (typeof_ != null) {
-            var Converter = window[typeof_];
-            value = Converter(value);
+            let Converter = window[typeof_];
+            val = Converter(val);
         }
         if (this.mapToObj != null) {
-            value = expression_callFn(
+            val = expression_callFn(
                 this.mapToObj,
                 this.model,
                 null,
                 this.ctr,
-                [value]
+                [val]
             );
         }
 
-        var error = this.validate(value);
+        var error = this.validate(val);
         if (error == null) {
             this.dismiss = 1;
 
@@ -272,19 +301,19 @@ export const BindingProvider = class_create({
             if (tuple != null) {
                 var obj = tuple[0],
                     prop = tuple[1];
-                this.objectWay.set(obj, prop, value, this);
+                this.objectWay.set(obj, prop, val, this);
             }
 
             this.dismiss = 0;
             if (this.log) {
-                console.log('[BindingProvider] domChanged -', value);
+                console.log('[BindingProvider] domChanged -', val);
             }
             if (this.signal_domChanged != null) {
                 Component.signal.emitOut(
                     this.ctr,
                     this.signal_domChanged,
                     this.ctr,
-                    [value]
+                    [val]
                 );
             }
             if (this.pipe_domChanged != null) {
@@ -293,8 +322,8 @@ export const BindingProvider = class_create({
             }
         }
         this.locked = false;
-    },
-    addValidation: function(mix) {
+    }
+    addValidation (mix) {
         if (this.validations == null) {
             this.validations = [];
         }
@@ -303,8 +332,8 @@ export const BindingProvider = class_create({
             return;
         }
         this.validations.push(mix);
-    },
-    validate: function(val) {
+    }
+    validate (val) {
         var fns = this.validations,
             ctr = this.ctr,
             el = this.element;
@@ -320,13 +349,9 @@ export const BindingProvider = class_create({
             el,
             this.objectChanged.bind(this)
         );
-    },
-    objectWay: DomObjectTransport.objectWay,
-    domWay: DomObjectTransport.domWay
-});
+    }
 
-export const BindingProviderStatics = {
-    create: function(model, el, ctr, bindingType?) {
+    static create (model, el, ctr, bindingType?) {
         /* Initialize custom provider */
         var type = ctr.attr.bindingProvider,
             CustomProvider = type == null ? null : CustomProviders[type],
@@ -342,14 +367,15 @@ export const BindingProviderStatics = {
             obj_extend(provider, CustomProvider);
         }
         return provider;
-    },
+    }
 
-    bind: function(provider) {
+    static bind (provider) {
         return apply_bind(provider);
     }
-};
+}
 
-function apply_bind(provider) {
+
+function apply_bind(provider: BindingProvider) {
     var expr = provider.expression,
         model = provider.model,
         onObjChanged = (provider.objectChanged = provider.objectChanged.bind(
@@ -372,9 +398,16 @@ function apply_bind(provider) {
         if (!attr['dom-slot'] && !attr['change-pipe-event']) {
             var element = provider.element,
                 eventType = provider.changeEvent,
-                onDomChange = provider.domChanged.bind(provider);
+                onDomChange = provider.domChanged.bind(provider),
+                doListen = Component.Dom.addEventListener;
 
-            Component.Dom.addEventListener(element, eventType, onDomChange);
+            if (eventType.indexOf(',') !== -1) {
+                let arr = eventType.split(',');
+                for (let i = 0; i < arr.length; i++) {
+                    doListen(element, arr[i].trim(), onDomChange);        
+                }
+            }
+            doListen(element, eventType, onDomChange);
         }
 
         if (provider.objectWay.get(provider, provider.expression) == null) {

@@ -35,7 +35,7 @@ export const CompoStatics = {
 		return Class(classProto);
 	},
 
-	initialize (mix, model, ctx, container, parent) {
+	initialize (mix: string | Function | any, model?, ctx?, container?, parent?) {
 		if (mix == null)
 			throw Error('Undefined is not a component');
 

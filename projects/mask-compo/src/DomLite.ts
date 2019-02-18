@@ -1,9 +1,8 @@
 import { is_Array } from '@utils/is';
+import { _document } from '@utils/refs'
 import { log_warn, log_error } from '@core/util/reporters';
 import { domLib, setDomLib } from './scope-vars';
 import { domLib_initialize } from './jcompo/jCompo';
-
-declare var global;
 
 /*
  * Extrem simple Dom Library. If (jQuery | Kimbo | Zepto) is not used.
@@ -407,4 +406,4 @@ export var DomLite;
 	DomLite.prototype = Proto;
 	domLib_initialize();
 	
-}(global.document));
+}(_document));

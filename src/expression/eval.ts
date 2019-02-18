@@ -8,8 +8,8 @@ import { Ast_FunctionRefUtil } from './astNode_utils';
 
 const cache = {};
 
-export function _evaluate (mix, model, ctx?, ctr?, node?) {
-	var result, ast;
+export function _evaluate (mix, model?, ctx?, ctr?, node?) {
+	var ast;
 
 	if (null == mix)
 		return null;

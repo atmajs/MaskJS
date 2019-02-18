@@ -4,9 +4,14 @@ import { _Array_slice } from '@utils/refs';
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
 import { compo_create } from '@compo/util/compo_create';
+import { Component } from './Component';
 
+export interface ICompo extends Component {
+    (...args): new (...args) => Component
+    new (...args): Component
+}
 
-export function Compo  (): void {
+export const Compo: ICompo & typeof CompoStatics = <any> function (...args) {
     if (this instanceof Compo){
         // used in Class({Base: Compo})
         return void 0;

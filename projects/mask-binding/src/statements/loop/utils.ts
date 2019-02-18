@@ -1,3 +1,4 @@
+import { _document } from '@utils/refs'
 import { Component } from '@compo/exports';
 import { dom_insertBefore } from '../../utils/dom';
 import { compo_fragmentInsert, compo_dispose } from '../../utils/compo';
@@ -26,7 +27,7 @@ export function list_sort (self, array){
         jmax = null,
         element = null,
         compo = null,
-        fragment = document.createDocumentFragment(),
+        fragment = _document.createDocumentFragment(),
         sorted = [];
 
     for (; i < imax; i++) {

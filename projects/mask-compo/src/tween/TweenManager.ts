@@ -22,10 +22,10 @@ export const TweenManager = class_create({
 			return;
 		}
 		this.animation = true;
-		this.frame = ani_requestFrame(this.tick);
+		this.frame = ani_requestFrame.call(null, this.tick);
 	},
 	dispose: function(){
-		ani_clearFrame(this.frame);
+		ani_clearFrame.call(null, this.frame);
 	},
 	tick: function(timestamp){
 		var busy = false;
@@ -45,7 +45,7 @@ export const TweenManager = class_create({
 			this.parent.onEnterFrame();
 		}
 		if (busy) {
-			this.frame = ani_requestFrame(this.tick);
+			this.frame = ani_requestFrame.call(null, this.tick);
 			return;
 		}
 		this.animating = false;

@@ -56,15 +56,15 @@ export function domLib_initialize(){
 			
 			domLib.fn[method] = function(template, model, ctr, ctx){
 				if (this.length === 0) {
-					// if DEBUG
+					//#if (DEBUG)
 					log_warn('<jcompo> $.', method, '- no element was selected(found)');
-					// endif
+					//#endif
 					return this;
 				}
 				if (this.length > 1) {
-					// if DEBUG
+					//#if (DEBUG)
 					log_warn('<jcompo> $.', method, ' can insert only to one element. Fix is comming ...');
-					// endif
+					//#endif
 				}
 				if (ctr == null) {
 					ctr = index < 2
@@ -125,26 +125,21 @@ export function domLib_initialize(){
 			;
 		
 		domLib.fn.removeAndDispose = function(){
-			this.each(each_tryDispose);
-			
+			this.each(each_tryDispose);			
 			return jq_remove.call(this);
 		};
 		
 		domLib.fn.emptyAndDispose = function(){
 			this.each(each_tryDisposeChildren);
-			
 			return jq_empty.call(this);
+		};
+		function each_tryDispose(i, el){
+			node_tryDispose(el);
 		}
 		
-		
-		function each_tryDispose(node){
-			node_tryDispose(node);
+		function each_tryDisposeChildren(i, el){
+			node_tryDisposeChildren(el);
 		}
-		
-		function each_tryDisposeChildren(node){
-			node_tryDisposeChildren(node);
-		}
-		
 	}());
 }
 

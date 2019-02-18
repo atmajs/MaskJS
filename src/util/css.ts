@@ -1,7 +1,7 @@
 import { is_String } from '@utils/is';
 import { error_withNode } from './reporters';
 
-export function css_ensureScopedStyles  (str, node, el) {
+export function css_ensureScopedStyles  (str: string, node, el) {
 		var attr = node.attr;
 		if (attr.scoped == null && attr[KEY] == null) {
 			return str;

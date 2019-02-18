@@ -1,3 +1,4 @@
+import { _document } from '@utils/refs'
 import { is_Function } from '@utils/is';
 import { obj_setProperty } from '@utils/obj';
 import { log_warn } from '@core/util/reporters';
@@ -145,7 +146,7 @@ customUtil_register('bind', {
         // though we apply value's to `this` context, but it is only for immediat use
         // in .node() function, as `this` context is a static object that share all bind
         // utils
-        this.element = document.createTextNode(current);
+        this.element = _document.createTextNode(current);
 
         return (this.current = current);
     },

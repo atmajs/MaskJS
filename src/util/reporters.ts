@@ -42,6 +42,7 @@ export function reporter_createErrorNode(message) {
         type: 1,
         tagName: 'div',
         attr: {
+            class: '-mask-compo-errored',
             style: 'background:red; color:white;'
         },
         nodes: [

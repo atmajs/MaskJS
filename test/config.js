@@ -4,71 +4,16 @@ module.exports = {
 		'dom': {
 			exec: 'dom',
 			env: [
-				'lib/mask.js',
-				'test/dom/utils.js'
+				'lib/mask.js::foo'				
 			],
 			$config: {
-				$before: function(done){
-
-                    window.global = window;
-
-                    include.cfg({
-                        "amd": true,
-                        "extentionDefault": {
-                            "js": "ts"
-                        },
-                        "routes": {
-                            "@utils": "/ref-utils/src/{0}",
-                            "@core": "/src/{0}",
-                            "@compo": "/projects/mask-compo/src/{0}",
-                            "@mask-j": "/projects/mask-j/src/jmask/{0}",
-                            "@binding": "/projects/mask-binding/src/{0}"
-                        },
-                        "lazy": {
-                            "/custom/*": [
-                                "modules/exports",
-                                "expression/exports",
-                            ],
-                            "/builder/*": [
-                                "/feature/"
-                            ],
-                            "/renderer/*": [
-                                "compo/exports"
-                            ],
-                            "mask-compo": [
-                                "util/reporters",
-                                "parser/exports",
-                                "builder/exports",
-                                "expression/exports",
-                                "renderer/exports",
-                                "parser/exports",
-                                "/feature/"
-                            ],
-                            "CompoStatics\\b": [
-                                "Component"
-                            ]
-                        }
-                    });
-                    setTimeout(done);
-
-					// UTest.configurate({
-					// 	'http.eval': function(){
-					// 		io.settings({
-					// 			extensions: {
-					// 				js: [ 'importer:read' ]
-					// 			}
-					// 		});
-					// 	}
-					// }, done)
-				}
+                includejs: includeSettings(),				
 			},
-			tests: 'test/dom/**.test'
+			tests: 'test/dom/**.spec.ts'
 		},
-		 
 		'node': {
 			exec: 'node',
-			env: ['lib/mask.js::Mask'],
-			tests: 'test/node/**.test'
+			tests: 'test/node/**.spec.ts'
 		},
 		 
 		'examples': {
@@ -82,6 +27,60 @@ module.exports = {
         'jmask': {
 			exec: 'node',
 			tests: 'projects/mask-j/test/**.spec.ts'
+        },
+        'compo': {
+            exec: 'dom',
+            $config: {               
+                includejs: includeSettings(),
+            },
+			tests: 'projects/mask-compo/test/**.spec.ts'
+        },
+        'binding': {
+            exec: 'dom',
+            $config: {               
+                includejs: includeSettings(),
+            },
+			tests: 'projects/mask-binding/test/**.spec.ts'
 		}
 	}
 };
+
+function includeSettings () {
+    return {
+        extentionDefault: { js: 'ts' },
+        amd: true,
+        routes: {
+            "@core": "/src/{0}",
+            "@utils": "/ref-utils/src/{0}",
+            "@mask-j": "/projects/mask-j/src/jmask/{0}",
+            "@compo": "/projects/mask-compo/src/{0}",
+            "@binding": "/projects/mask-binding/src/{0}",
+            "@project": "/projects/{0}"
+        },
+        "lazy": {
+            "/custom/*": [
+                "modules/exports",
+                "expression/exports"
+            ],
+            "/builder/*": [
+                "/feature/"
+            ],
+            "/renderer/*": [
+                "compo/exports"
+            ],
+            "/mask-compo/*": [
+                "util/reporters",
+                "parser/exports",
+                "builder/exports",
+                "expression/exports",
+                "renderer/exports",
+                "parser/exports",
+                "/feature/"
+            ],
+            "CompoStatics\\b": [
+                "Component"
+            ]
+        }
+
+    };
+}

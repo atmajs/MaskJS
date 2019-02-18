@@ -11,7 +11,7 @@ import { expression_evalStatements } from '@core/expression/exports';
  * @name _
  * @category Mask Util
  */
-export const customUtil_$utils = {};
+export const customUtil_$utils = <any> {};
 /**
  * Register Util Handler. Template Example: `'~[myUtil: value]'`
  * @param {string} name

@@ -1,5 +1,5 @@
 
-import { _Object_hasOwnProp, _Array_slice } from '@utils/refs';
+import { _Object_hasOwnProp, _Array_slice, _global } from '@utils/refs';
 
 import { class_Dfr } from '@utils/class/Dfr';
 import { obj_getProperty, obj_setProperty, obj_extend } from '@utils/obj';
@@ -93,7 +93,6 @@ import { jMask } from '@mask-j/jMask';
 import { renderer_clearCache, renderer_renderAsync, renderer_render } from './renderer/exports';
 
 
-declare var global;
 
 /**
  * @namespace mask
@@ -242,7 +241,7 @@ export const Mask = {
 
     // For the consistence with the NodeJS
     toHtml: function(dom) {
-        return ($(dom) as any).outerHtml();
+        return (Mask.$(dom) as any).outerHtml();
     },
 
     factory: function(compoName) {
@@ -261,7 +260,7 @@ export const Mask = {
             });
             return;
         }
-        factory(global, Component.config.getDOMLibrary(), function(compo) {
+        factory(_global, Component.config.getDOMLibrary(), function(compo) {
             customTag_register(compoName, compo);
         });
     },

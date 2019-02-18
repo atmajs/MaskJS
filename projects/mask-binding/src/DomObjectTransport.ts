@@ -5,9 +5,18 @@ import { date_ensure } from './utils/date';
 import { log_warn, log_error } from '@core/util/reporters';
 import { coll_map, coll_each } from '@utils/coll';
 import { is_ArrayLike } from '@utils/is';
+import { BindingProvider } from './BindingProvider';
 
+export interface IObjectWay {
+    get (provider: BindingProvider, expression: string): any
+    set (obj, property: string, value, provider: BindingProvider)
+};
+export interface IDomWay {
+    get (provider: BindingProvider): any
+    set (provider: BindingProvider, value: any)
+}
 
-var objectWay = {
+var objectWay = <IObjectWay> {
     get: function(provider, expression) {
         var getter = provider.objGetter;
         if (getter == null) {
@@ -46,7 +55,7 @@ var objectWay = {
         );
     }
 };
-var domWay  = {
+var domWay  = <IDomWay> {
     get: function(provider) {
         var getter = provider.domGetter;
         if (getter == null) {

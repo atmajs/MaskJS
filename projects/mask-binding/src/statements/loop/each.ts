@@ -1,3 +1,4 @@
+import { _document } from '@utils/refs'
 import { custom_Statements, customTag_register } from '@core/custom/exports';
 import { expression_eval } from '@core/expression/exports';
 import { arr_createRefs } from './utils';
@@ -6,15 +7,15 @@ import { class_create } from '@utils/class';
 import { builder_build } from '@core/builder/exports';
 import { Dom } from '@core/dom/exports';
 import { LoopStatementProto } from './proto';
+import { mask_stringify } from '@core/parser/exports';
 
-	
-var Each = custom_Statements['each'];
-var EachBinded =  {
+
+const EachBinded = {
     meta: {
         serializeNodes: true
     },
     serializeNodes: function(node){
-        return mask.stringify(node);
+        return mask_stringify(node);
     },
     //modelRef: null,
     render: function(model, ctx, container, ctr, children){
@@ -88,7 +89,7 @@ var EachStatement = class_create(LoopStatementProto, {
         return compo.model;
     },		
     _build: function(node, model, ctx, component) {
-        var fragment = document.createDocumentFragment();
+        var fragment = _document.createDocumentFragment();
         
         build(node.nodes, model, ctx, fragment, component);
         

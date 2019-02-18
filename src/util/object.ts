@@ -1,6 +1,7 @@
 import { reporter_deprecated } from './reporters';
+import { _global } from '@utils/refs'
+import { customUtil_$utils } from '@core/custom/exports';
 
-declare var global;
 
 export function obj_getPropertyEx (path, model, ctx, ctr){
         if (path === '.')
@@ -35,7 +36,7 @@ export function obj_getPropertyEx (path, model, ctx, ctr){
             return getFromScope_(ctr, props, 1, imax);
         }
         if ('global' === key) {
-            return getProperty_(global, props, 0, imax);
+            return getProperty_(_global, props, 0, imax);
         }
         var x = getProperty_(model, props, 0, imax);
         if (x != null) {

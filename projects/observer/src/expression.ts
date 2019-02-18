@@ -1,9 +1,9 @@
+import { _Array_slice } from '@utils/refs';
+import { obj_callMethod } from './utils/obj';
 
 import { log_warn, error_withCompo } from '@core/util/reporters';
 import { expression_eval, expression_varRefs } from '@core/expression/exports'
-import { _Array_slice } from '@utils/refs';
 import { obj_addMutatorObserver, obj_addObserver, obj_removeMutatorObserver, obj_removeObserver } from './obj_observe';
-import { obj_callMethod } from './utils/obj';
 
 
 export function expression_bind (expr, model, ctx, ctr, cb) {

@@ -1,6 +1,6 @@
 import { class_create } from '@utils/class';
 import { ValidatorProvider } from '@binding/ValidatorProvider';
-import { BindingProviderStatics } from '@binding/BindingProvider';
+import { BindingProvider } from '@binding/BindingProvider';
 import { customTag_register } from '@core/custom/exports';
 
 /**
@@ -22,7 +22,7 @@ import { customTag_register } from '@core/custom/exports';
 var DualbindCompo = class_create({
 
 	renderEnd: function(elements, model, ctx, container) {
-		this.provider = BindingProviderStatics.create(model, container, this);		
+		this.provider = BindingProvider.create(model, container, this);		
 		var compos = this.components;
 		if (compos != null) {
 			var imax = compos.length,
@@ -40,7 +40,7 @@ var DualbindCompo = class_create({
 				this.provider.addValidation(fn);
 			}
 		}
-		BindingProviderStatics.bind(this.provider);
+		BindingProvider.bind(this.provider);
 	},
 	dispose: function() {
 		var dispose = this.provider && this.provider.dispose;

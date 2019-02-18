@@ -3,7 +3,7 @@
   "tree": {
     "src": "https://raw.githubusercontent.com/atmajs/assertion/master/typings.json",
     "raw": "github:atmajs/assertion",
-    "main": "typings/assertion.d.ts",
+    "main": "types/assertion.d.ts",
     "global": true,
     "name": "assertion"
   }

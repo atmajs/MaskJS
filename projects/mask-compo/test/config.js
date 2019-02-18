@@ -7,6 +7,11 @@ module.exports = {
               '/lib/compo.js'
             ],
             $config: {
+                config: {
+                    includejs: {
+                        amd: true
+                    },
+                },
                 $before: function () {
                     mask.Compo = Compo;
                 }

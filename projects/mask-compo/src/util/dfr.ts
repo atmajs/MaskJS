@@ -1,7 +1,7 @@
 import { is_Function } from '@utils/is';
+import { _global } from '@utils/refs'
 import { log_warn } from '@core/util/reporters';
 
-declare var global;
 
 export function dfr_isBusy(dfr) {
     if (dfr == null || typeof dfr.then !== 'function') return false;
@@ -20,4 +20,4 @@ export function dfr_isBusy(dfr) {
     return false;
 }
 
-const Promise = global.Promise;
+const Promise = _global.Promise;

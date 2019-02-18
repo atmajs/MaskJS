@@ -1,6 +1,7 @@
-declare var global;
+import { _global } from '@utils/refs'
 
-export const isTouchable = 'ontouchstart' in global;
+
+export const isTouchable = 'ontouchstart' in _global;
 	
 export function event_bind (el, type, mix) {
     el.addEventListener(type, mix, false);

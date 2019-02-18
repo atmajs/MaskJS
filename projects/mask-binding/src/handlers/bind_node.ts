@@ -1,5 +1,5 @@
 import { customTag_register } from '@core/custom/exports';
-import { BindingProviderStatics } from '@binding/BindingProvider';
+import { BindingProvider } from '@binding/BindingProvider';
 
 (function() {
 
@@ -12,7 +12,7 @@ import { BindingProviderStatics } from '@binding/BindingProvider';
 		constructor: Bind,
 		renderStart: function(model, ctx, container){
 			
-			this.provider = BindingProviderStatics.create(model, container, this, 'single');
+			this.provider = BindingProvider.create(model, container, this, 'single');
 			this.provider.objectChanged();
 		}
 	};

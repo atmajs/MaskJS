@@ -1,3 +1,5 @@
+import { _global } from '@utils/refs'
+
 import {
     parser_error,
     reporter_getNodeStack,
@@ -15,8 +17,6 @@ import {
 } from './scope-vars';
 import { _evaluateAst } from './eval';
 import { Ast_FunctionRefUtil } from './astNode_utils';
-
-declare var global;
 
 export function util_throw(
     template: string,
@@ -150,7 +150,7 @@ export function util_resolveRef(astRef, model, ctx, ctr) {
             current = next;
         }
     } else if ('global' === key && (model == null || model.global === void 0)) {
-        value = global;
+        value = _global;
     } else {
         // scope resolver
 
@@ -238,7 +238,7 @@ export function util_resolveRefValue(astRef, model, ctx, ctr, preResults) {
         return controller && controller.attr;
     }
     if ('global' === key && (model == null || model.global === void 0)) {
-        return global;
+        return _global;
     }
     if ('_' === key) {
         return customUtil_$utils;
@@ -316,7 +316,7 @@ export function util_resolveAcc(object, astAcc, model, ctx, ctr, preResults) {
 
     do {
         if (value == null) {
-            verifyPropertyUndefinedError(current, key);
+            verifyPropertyUndefinedError(current.parent, key);
             return null;
         }
 

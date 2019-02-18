@@ -21,14 +21,16 @@
     "licenses": [
         "MIT"
     ],
+    "dependencies": {},
     "devDependencies": {
+        "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
         "app-bundler": "0.0.63",
-        "atma": "^0.11.14",
+        "atma": "^0.11.18",
         "atma-io-middleware-condcomments": "^1.2.6",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
-        "includejs": "^0.15.8",
+        "atma-loader-ts": "^1.1.11",
         "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
     },
     "scripts": {
@@ -38,7 +40,9 @@
         "build-dev": "app-bundler --inspect-brk",
         "release": "atma release",
         "server": "atma server",
-        "examples": "atma server"
+        "examples": "atma server",
+        "tick": "func() { echo \"$1\"; }; func",
+        "list": "ls"
     },
     "keywords": [],
     "atma": {
@@ -56,6 +60,11 @@
             "atma-loader-ts"
         ],
         "settings": {
+            "atma-utest": {
+                "include": {
+                    "amd": true
+                }
+            },
             "io": {
                 "extensions": {
                     "js": [
@@ -152,12 +161,6 @@
                 }
             }
         }
-    },
-    "dependencies": {
-        "@types/jquery": "^3.3.22",
-        "module-alias": "^2.1.0",
-        "typescript": "^3.2.2",
-        "typescript-require": "^0.2.10"
     },
     "app-bundler": {
         "apps": {
