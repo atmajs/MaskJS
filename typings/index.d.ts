@@ -6,4 +6,6 @@ interface JQuery {
     has_ (selector: string, ...args)
     hasNot_ (selector: string, ...args)
     eq_
+    model (): any
+    compo (): any
 }

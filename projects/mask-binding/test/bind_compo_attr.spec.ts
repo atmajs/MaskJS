@@ -1,3 +1,5 @@
+import { Mask as mask } from '../../../src/mask'
+
 UTest({
 	'bind to attributes' () {
 		mask.define('Foo', mask.Compo({

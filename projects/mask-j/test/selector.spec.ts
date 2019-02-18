@@ -1,4 +1,4 @@
-import { jMask as $ } from '../src/jmask/jmask'
+import { jMask as $ } from '../src/jmask/jMask'
 
 UTest({
 	'child nestings' (){

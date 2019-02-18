@@ -3,7 +3,7 @@ import { listeners_on, listeners_off } from '@core/util/listeners'
 
 import { renderer_render } from '@core/renderer/exports'
 import { Decorator } from '@core/feature/decorators/exports'
-import { jMask } from '@mask-j/jmask'
+import { jMask } from '@mask-j/jMask'
 import '@core/statements/exports'
 
 declare var sinon;
