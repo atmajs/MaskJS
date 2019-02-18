@@ -1,9 +1,19 @@
+import { listeners_on, listeners_off } from '@core/util/listeners'
+
+
+import { renderer_render } from '@core/renderer/exports'
+import { Decorator } from '@core/feature/decorators/exports'
+import { jMask } from '@mask-j/jmask'
+import '@core/statements/exports'
+
+declare var sinon;
+
 UTest({
 	'$before' () {
-		mask.off('error');
+		listeners_off('error');
 	},
 	$after () {
-		mask.off('error');
+		listeners_off('error');
 	},
 	'function node': {
 		'decorator as a function': {
@@ -26,8 +36,8 @@ UTest({
 						return fn(str);
 					});
 				});
-				mask.defineDecorator ('LetterB', spyDecorator)                
-				var dom = mask.render(template);
+				Decorator.define ('LetterB', spyDecorator)                
+				var dom = renderer_render(template);
 
 				eq_(spyDecorator.callCount, 1);
 				eq_(spyInner.callCount, 2);
@@ -59,9 +69,9 @@ UTest({
 						});
 					});
 				});
-				mask.defineDecorator ('Letter', spyFactory)
+				Decorator.define ('Letter', spyFactory)
 
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 
 				eq_(spyFactory.callCount, 1);
 				eq_(spyDecorator.callCount, 1);
@@ -97,9 +107,9 @@ UTest({
 					})
 				};
 
-				mask.defineDecorator ('LetterB', decorator)
+				Decorator.define ('LetterB', decorator)
 
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 
 				eq_(spyBefore.callCount, 1);
 				eq_(spyAfter.callCount, 1);
@@ -122,14 +132,14 @@ UTest({
 					
 				`;
 
-				mask.defineDecorator ('UpperCase', {
+				Decorator.define ('UpperCase', {
 					beforeRender (node) {
-						var str = mask.j(node).text().toUpperCase();
-						mask.j(node).text(str);
+						var str = jMask(node).text().toUpperCase();
+						jMask(node).text(str);
 					}
 				});
 
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 				return UTest.domtest(dom, `
 					find(div) > text ('HELLO');
 				`);			
@@ -142,17 +152,17 @@ UTest({
 				div > 'Hello';				
 			`;
 			
-			mask.defineDecorator ('RedBackground', function (el) {				
+			Decorator.define ('RedBackground', function (el) {				
 				el.style.backgroundColor = 'red';
 				el.textContent += 'R';
 			});
-			mask.defineDecorator ('GreenColor', function (el) {
+			Decorator.define ('GreenColor', function (el) {
 				el.style.color = 'green';
 				el.textContent += 'G';
 			});
 
 			
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				find(div) {
 					css ('color', 'green');
@@ -163,7 +173,8 @@ UTest({
 		},
 		'decorator Factory as a class': {
 			$before () {
-				mask.defineDecorator ('appender', class Appender {
+				Decorator.define ('appender', class Appender {
+                    text: string
 					static get isFactory () {
 						return true;
 					}
@@ -171,7 +182,7 @@ UTest({
 						this.text = text || 'FooDefault'
 					}
 					beforeRender (node) {
-						mask.j(node).text(mask.j(node).text() + ' ' + this.text);
+						jMask(node).text(jMask(node).text() + ' ' + this.text);
 					}
 				});
 			},
@@ -180,7 +191,7 @@ UTest({
 					[appender]
 					div > 'Hello';				
 				`;
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 				return UTest.domtest(dom, `
 					find(div) {
 						text ('Hello FooDefault');
@@ -192,7 +203,7 @@ UTest({
 					[appender ("Quxy") ]
 					div > 'Hello';				
 				`;
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 				return UTest.domtest(dom, `
 					find(div) {
 						text ('Hello Quxy');
@@ -202,13 +213,13 @@ UTest({
 		},
 		'decorator Factory as an object': {
 			$before () {
-				mask.defineDecorator ('appender2', {
+				Decorator.define ('appender2', {
 					isFactory: true,
 					constructor (text) {
 						this.text = text || 'FooDefault'
 					},
 					beforeRender (node) {
-						mask.j(node).text(mask.j(node).text() + ' ' + this.text);
+						jMask(node).text(jMask(node).text() + ' ' + this.text);
 					}
 				});
 			},
@@ -217,7 +228,7 @@ UTest({
 					[appender2]
 					div > 'Hello';				
 				`;
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 				return UTest.domtest(dom, `
 					find(div) {
 						text ('Hello FooDefault');
@@ -229,7 +240,7 @@ UTest({
 					[appender2 ("Quxy") ]
 					div > 'Hello';				
 				`;
-				var dom = mask.render(template);
+				var dom = renderer_render(template);
 				return UTest.domtest(dom, `
 					find(div) {
 						text ('Hello Quxy');
@@ -252,13 +263,13 @@ UTest({
 				Foo;
 			`;
 
-			mask.defineDecorator ('UpperCase', {
+			Decorator.define ('UpperCase', {
 				afterInvoke (str) {
 					return str.toUpperCase();
 				}
 			});
 
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				find (h1) > text ('FOO');
 			`)
@@ -275,13 +286,13 @@ UTest({
 				Bar;
 			`;
 
-			mask.defineDecorator ('UpperCase', {
+			Decorator.define ('UpperCase', {
 				afterRender (el) {
 					el.textContent = el.textContent.toUpperCase();
 				}
 			});
 
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				find (h1) > text ('BAR');
 			`)
@@ -299,17 +310,17 @@ UTest({
 				Bar;
 			`;
 
-			mask.defineDecorator ('UpperCase', {
+			Decorator.define ('UpperCase', {
 				afterRender (el) { }
 			});
 
 			
-			mask.on('error', assert.await(error => {
+			listeners_on('error', assert.await(error => {
 				var msg = error.message;
 				has_(msg, 'UpperCase');
                 has_(msg, 'support');
 			}))
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				find (h1) > text ('OK');
 			`)

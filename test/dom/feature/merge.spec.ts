@@ -1,10 +1,16 @@
+import { mask_merge } from '@core/feature/merge'
+import { jMask } from '@mask-j/jMask'
+import { parser_parse } from '@core/parser/exports'
+import { renderer_render } from '@core/renderer/exports'
+import '@core/statements/exports'
+
 UTest({
 	'simple - check mask nodes' () {
 		var a = '@foo',
 			b = '@foo { span > "Foo" }'
 			;
 
-		var tmpl = mask.merge(a, b);
+		var tmpl = mask_merge(a, b);
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
 	},
@@ -13,7 +19,7 @@ UTest({
 			b = '@foo;'
 			;
 
-		var tmpl = mask.merge(a, b);
+		var tmpl = mask_merge(a, b);
 		eq_(tmpl[0].tagName, 'span');
 		eq_(tmpl[0].nodes[0].content, 'Foo');
 	},
@@ -74,7 +80,7 @@ UTest({
 		var b = '@content > .inner > @title';
 		var c = '@title > "Hello"';
 
-		var tmpl1 = mask.merge(a, b, null, { extending: true });
+		var tmpl1 = mask_merge(a, b, null, { extending: true });
 		var dom = $render(tmpl1, c);
 		dom
 			.filter('div.outer')
@@ -130,8 +136,8 @@ UTest({
 			b = 'p > @fooContent > span > "baz"'
 			;
 
-		var tmpl = mask.merge(a, b);
-		var dom = $(mask.render(tmpl));
+		var tmpl = mask_merge(a, b);
+		var dom = $(renderer_render(tmpl));
 		dom
 			.filter('p')
 			.eq_('length', 1)
@@ -151,11 +157,11 @@ UTest({
 			;
 	},
 	'should join middle nodes' () {
-		var a = jmask('test { some; span > div > @fooContent; }').find('div').get(0),
-			b = jmask('span { some; p > @fooContent > span > "baz" }').find('p').get(0)
+		var a = jMask('test { some; span > div > @fooContent; }').find('div').get(0),
+			b = jMask('span { some; p > @fooContent > span > "baz" }').find('p').get(0)
 			;
-		var tmpl = mask.merge(a, b);
-		var dom = $(mask.render(tmpl));
+		var tmpl = mask_merge(a, b);
+		var dom = $(renderer_render(tmpl));
 		dom
 			.filter('p')
 			.eq_('length', 1)
@@ -163,14 +169,14 @@ UTest({
 			;
 	},
 	'should join children' () {
-		var a = mask.parse(`
+		var a = parser_parse(`
 				stub {
 					h4 > '-h4-'
 					section > @xContent;
 				}
 			`);
 
-		var b = mask.parse(`
+		var b = parser_parse(`
 				stub {
 					@xContent > 'BazContent'
 				}
@@ -329,13 +335,13 @@ UTest({
 		var a = `@foo > div class="~[: name + '@foo.attr.name']"`,
 			b = `@foo name="baz"`
 
-		var tmpl = mask.merge(a, b);
+		var tmpl = mask_merge(a, b);
 		is_(tmpl[0].attr.class, 'Function');
 
 		var klass = tmpl[0].attr.class();
 		eq_(klass, "~[: name + 'baz']");
 
-		var div = mask.render(tmpl, { name: 'foo' }).firstChild;
+		var div = renderer_render(tmpl, { name: 'foo' }).firstElementChild;
 		eq_(div.tagName, 'DIV');
 		eq_(div.className, 'foobaz');
 	},
@@ -343,13 +349,13 @@ UTest({
 		var a = `@foo class="~[: name + '@foo.attr.name']" as=div;`,
 			b = `@foo name="baz"`
 
-		var tmpl = mask.merge(a, b);
+		var tmpl = mask_merge(a, b);
 		is_(tmpl.attr.class, 'Function');
 
 		var klass = tmpl.attr.class();
 		eq_(klass, "~[: name + 'baz']");
 
-		var div = mask.render(tmpl, { name: 'foo' });
+		var div = renderer_render(tmpl, { name: 'foo' });
 		eq_(div.tagName, 'DIV');
 		eq_(div.className, 'foobaz');
 	},
@@ -485,7 +491,7 @@ UTest({
 				var c = `
 					@two > 'XTwo'
 				`;
-				var tmpl = mask.merge(a, b, null, { extending: true });
+				var tmpl = mask_merge(a, b, null, { extending: true });
 				var dom  = $render(tmpl, c);
 				return UTest.domtest(dom, `
 					find ('h1') > text XOne;
@@ -507,7 +513,7 @@ UTest({
 				var c = `
 					@two atwo='XTwo';
 				`;
-				var tmpl = mask.merge(a, b, null, { extending: true });
+				var tmpl = mask_merge(a, b, null, { extending: true });
 				var dom  = $render(tmpl, c);
 				return UTest.domtest(dom, `
 					find ('h1') > attr name XOne;
@@ -521,9 +527,9 @@ UTest({
 				`;
 				var b = '';
 				var c = '';
-				var tmpl1 = mask.merge(a, b, { attr: { aone: 'XOne' } }, { extending: true });
-				var tmpl2 = mask.merge(tmpl1, c, { attr: { atwo: 'XTwo' } });
-				var dom = mask.render(tmpl2);
+				var tmpl1 = mask_merge(a, b, { attr: { aone: 'XOne' } }, { extending: true });
+				var tmpl2 = mask_merge(tmpl1, c, { attr: { atwo: 'XTwo' } });
+				var dom = renderer_render(tmpl2);
 				return UTest.domtest(dom, `
 					find ('h1') > attr name XOne;
 					find ('h2') > attr name XTwo;
@@ -535,21 +541,21 @@ UTest({
 		'should inline placeholders store': {
 			'store should be empty' () {
 				var a = `div > 'Hello' if (foo) { span .hidden }`
-				var stats = {};
-				var result = mask.merge(a, [], null, null, stats);				
+				var stats = <any> {};
+				var result = mask_merge(a, [], null, null, stats);				
 				eq_(stats.placeholders.$isEmpty, true);
 			},
 			'store should not be empty': {
 				'by tag' () {
 					var a = `div > 'Hello' if (foo) { @body; }`
-					var stats = {};
-					var result = mask.merge(a, [], null, null, stats);				
+					var stats = <any> {};
+					var result = mask_merge(a, [], null, null, stats);				
 					eq_(stats.placeholders.$isEmpty, false);
 				},
 				'by attribute' () {
 					var a = `div > 'Hello' if (foo) { span name='@[attr.key]'; }`
-					var stats = {};
-					var result = mask.merge(a, [], { attr: {key: 'baz'} }, null, stats);				
+					var stats = <any> {};
+					var result = mask_merge(a, [], { attr: {key: 'baz'} }, null, stats);				
 					eq_(stats.placeholders.$isEmpty, false);
 				}
 			}
@@ -558,7 +564,7 @@ UTest({
 	'components': {
 		'should merge components in a seperate merge flow with same name' () {
 			// 
-			var dom = mask.render(`
+			var dom = renderer_render(`
 				define A {
 					h1 > @letter;
 				}
@@ -582,7 +588,7 @@ UTest({
 		},
 		'should merge components in a seperate merge flow with other name' () {
 			// 
-			var dom = mask.render(`
+			var dom = renderer_render(`
 				define A {
 					h1 > @letter;
 				}
@@ -602,7 +608,7 @@ UTest({
 		},
 		'should merge components in a seperate merge flow using simple node interpolation' () {
 			// 
-			var dom = mask.render(`
+			var dom = renderer_render(`
 				define A {
 					function onRenderStart () {}
 				}
@@ -620,7 +626,7 @@ UTest({
 			`)
 		},
 		'should merge components attributes in a first merge flow' () {
-			var dom = mask.render(`
+			var dom = renderer_render(`
 				define A {
 					h1 > '@attr.letter';
 				}
@@ -637,12 +643,10 @@ UTest({
 	}
 });
 
-function $render(tmplA, tmplB, model) {
-	var tmpl = mask.merge(tmplA, tmplB);
-	var dom = mask.render(tmpl, model);
+function $render(tmplA, tmplB, model?) {
+	var tmpl = mask_merge(tmplA, tmplB);
+	var dom = renderer_render(tmpl, model);
 	notEq_(dom, null);
 
 	return $(dom);
 }
-
-// vim: set ft=js:

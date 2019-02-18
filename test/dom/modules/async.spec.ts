@@ -1,5 +1,12 @@
+import { mask_config } from '@core/api/config';
+import { renderer_renderAsync, renderer_render } from '@core/renderer/exports';
+import { Compo } from '@compo/exports';
+import { customTag_define } from '@core/custom/exports';
+import '@core/feature/modules/exports'
+
 // use default module loader
-mask.config('modules', 'default');
+mask_config('modules', 'default');
+
 UTest({
 	async 'should test sync module loading' () {
 		var Files = {
@@ -21,26 +28,28 @@ UTest({
 		};
 
 		var _queue = [];
-		mask.cfg('getFile', (path) => {
-			var dfr = new mask.class.Deferred();
-			var name = path.substring(path.lastIndexOf('/') + 1);
+		mask_config('getFile', (path) => {
+			return new Promise(resolve => {
+                var name = path.substring(path.lastIndexOf('/') + 1);
 
-			_queue.push(name);
-			var str = Files[name];
-			is_(str, 'String');
-			if (name === 'MyComponents.mask') {
-				setTimeout(() => dfr.resolve(str), 200);
-				return dfr;
-			}
-			return dfr.resolve(str);
+                _queue.push(name);
+                
+                var str = Files[name];
+                is_(str, 'String');
+                if (name === 'MyComponents.mask') {
+                    setTimeout(() => resolve(str), 200);
+                    return;
+                }
+                resolve(str);
+            });
 		});
 
-		let dom = await mask.renderAsync(`
+		let dom = await renderer_renderAsync(`
 			import sync from './MyComponents';
 			import './MyLetter';
 		`);
 		
-		mask.cfg('getFile', null);
+		mask_config('getFile', null);
 		deepEq_(_queue, ['MyComponents.mask', 'MyLetter.mask']);
 
 		await UTest.domtest(dom, `
@@ -48,7 +57,7 @@ UTest({
 		`);	
 	},
 	'should load async javascripts scope' (done) {
-		mask.define('TestAsync', mask.Compo({
+		customTag_define('TestAsync', Compo.create({
 			onRenderStart () {
 				var x = this.$scope('X');
 				eq_(x, null, 'Scope should be empty, while still loading');
@@ -60,27 +69,27 @@ UTest({
 				}, 300);
 			}
 		}));
-		mask.render(`
+		renderer_render(`
 			import async * as X from '/test/tmpl/modules/data_foo_1.js';
 			TestAsync;
 		`);
 	},
 	'should await the component': {
 		'simple await' (done) {
-			mask.define('TestAsync', mask.Compo({
+			customTag_define('TestAsync', Compo({
 				onRenderStart () {
 					var x = this.$scope('X');
 					has_(x, { foo: { name: 'Foo2' }});
 					done();
 				}
 			}));
-			mask.render(`
+			renderer_render(`
 				import async * as X from '/test/tmpl/modules/data_foo_2.js';
 				await (X) > TestAsync;
 			`);
 		},
 		'progress await' (done) {
-			mask.define('TestAsync', mask.Compo({
+			customTag_define('TestAsync', Compo({
 				onRenderStart () {
 					var x = this.$scope('X');
 					has_(x, { foo: { name: 'Foo3' }});
@@ -92,7 +101,7 @@ UTest({
 					done();
 				}
 			}));
-			var dom = mask.render(`
+			var dom = renderer_render(`
 				div {
 					import async * as X from '/test/tmpl/modules/data_foo_3.js';
 					await (X) {

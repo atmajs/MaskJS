@@ -1,3 +1,6 @@
+import { renderer_render } from '@core/renderer/exports';
+import { customTag_get } from '@core/custom/tag';
+
 UTest({
 	'pipe test' () {		
 		var template = `
@@ -10,8 +13,8 @@ UTest({
 			Foo;
 		`;
 		
-		var dom = mask.render(template);
-		is_(mask.getHandler('Foo').prototype.pipes.bazzinga.qux, 'Function');
+		var dom = renderer_render(template);
+		is_(customTag_get('Foo').prototype.pipes.bazzinga.qux, 'Function');
 		
 		return UTest.domtest(dom, `
 			find ('button') {
@@ -25,4 +28,3 @@ UTest({
 	
 })
 
-// vim: set ft=js:

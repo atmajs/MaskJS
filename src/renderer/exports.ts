@@ -5,7 +5,7 @@ import { parser_parse } from '@core/parser/exports';
 import { builder_build } from '@core/builder/exports';
 
 import { class_Dfr } from '@utils/class/Dfr';
-import { Compo } from '@compo/exports';
+import { Component } from '@compo/exports';
 
 /**
  * Render the mask template to document fragment or single html node
@@ -17,7 +17,7 @@ import { Compo } from '@compo/exports';
  * @returns {(IAppendChild|Node|DocumentFragment)} container
  * @memberOf mask
  */
-export function renderer_render (mix, model?, ctx?, container?, controller?) {
+export function renderer_render (mix, model?, ctx?, container?, controller?): HTMLElement {
     //#if (DEBUG)
     if (container != null && typeof container.appendChild !== 'function') {
         log_error(
@@ -49,10 +49,10 @@ export function renderer_render (mix, model?, ctx?, container?, controller?) {
  * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
  * @memberOf mask
  */
-export function renderer_renderAsync (template, model?, ctx?, container?, ctr?) {
+export function renderer_renderAsync (template, model?, ctx?, container?, ctr?): PromiseLike<HTMLElement> {
     if (ctx == null || ctx.constructor !== builder_Ctx)
         ctx = new builder_Ctx(ctx);
-    if (ctr == null) ctr = new Compo();
+    if (ctr == null) ctr = new Component();
 
     var dom = renderer_render(template, model, ctx, container, ctr),
         dfr = new class_Dfr();

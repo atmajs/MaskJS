@@ -48,7 +48,7 @@ function createTransport(loaderFactoryFn) {
     };
 }
 
-var Loaders = {
+const Loaders = {
     'default': function () {
         __cfg.getScript = __cfg.getFile = __cfg.getStyle = null;
     },

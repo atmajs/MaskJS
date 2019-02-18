@@ -38,7 +38,7 @@
 	<script src='../lib/mask.js'></script>
 	<script>
 		
-		mask.registerHandler('UserProfile', Compo({
+		mask.registerHandler('UserProfile', mask.Compo({
 			template: document.querySelector('#user-template').textContent,
 			
 			events: {
@@ -75,11 +75,11 @@
 		
 		window.onload = function(){
 			
-			var App = Compo({
+			var App = mask.Compo({
 				template: document.querySelector('#layout').textContent
 			});
 			
-			window.app = Compo.initialize(App, null, document.body);
+			window.app = mask.Compo.initialize(App, null, document.body);
 			
 		};
 		

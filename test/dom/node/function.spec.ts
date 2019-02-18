@@ -1,6 +1,13 @@
+import { customTag_define } from '@core/custom/tag';
+import { Compo } from '@compo/exports';
+import { jMask } from '@mask-j/jMask';
+import { renderer_render } from '@core/renderer/exports';
+import { parser_parse, mask_stringify } from '@core/parser/exports';
+import { mask_config } from '@core/api/config';
+
 UTest({
 	$before () {
-		mask.define('JustAContainer', Compo());
+		customTag_define('JustAContainer', Compo({}));
 	},
 	'function source' () {
 		var template = `
@@ -8,7 +15,7 @@ UTest({
 				return Service(foo);
 			};
 		`;
-		var node = mask.j(template).filter('function').get(0);
+		var node = jMask(template).filter('function').get(0);
 		deepEq_(node.args, [{prop:'foo'}, {prop:'bar'}]);
 
 		var clean = str => str.replace(/\s*/g, '');
@@ -16,7 +23,7 @@ UTest({
 		eq_(clean(node.body), clean('return Service(foo);'))
 	},
 	'function node' () {
-		var dom = mask.render(`
+		var dom = renderer_render(`
 			JustAContainer {
 				function doChange() {
 					this.$.text('B');
@@ -50,7 +57,7 @@ UTest({
 				button > 'A'
 			}
 		`;
-		var str = mask.stringify(mask.parse(tmpl), 4);
+		var str = mask_stringify(parser_parse(tmpl), 4);
 		var clean = txt => txt.replace(/\s/g, '');
 
 		eq_(clean(str), clean(tmpl));
@@ -65,20 +72,19 @@ UTest({
 			}			
 		`;
 		
-		mask.cfg('preprocessor.script', function(body){
+		mask_config('preprocessor.script', function(body){
 			return body.replace('B', 'C');
-		});
-		return UTest
-			.domtest(mask.render(tmpl), `
-				find (button) {
-					text A;
-					do click;
-					text C;
-				}
-			`)
-			.always(() => mask.cfg('preprocessor.script', null))
-			;
+        });
+        
+        let dom = renderer_render(tmpl);
+        mask_config('preprocessor.script', null);        
+        return UTest.domtest(dom, `
+            find (button) {
+                text A;
+                do click;
+                text C;
+            }
+        `);
 	}
 });
 
-// vim: set ft=js:

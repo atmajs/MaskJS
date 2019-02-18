@@ -1,5 +1,11 @@
+import { mask_config } from '@core/api/config';
+import { customTag_define } from '@core/custom/exports'
+import { renderer_render } from '@core/renderer/exports';
+import { Compo } from '@compo/exports';
+import "@core/feature/modules/exports"
+
 // use default module loader
-mask.config('modules', 'default');
+mask_config('modules', 'default');
 
 UTest({
 	'should create functions with scope for': {
@@ -18,7 +24,7 @@ UTest({
 				}
 				Foo;
 			`;
-			var dom = mask.render(template, { name: 'Hello'});
+			var dom = renderer_render(template, { name: 'Hello'});
 			$(dom)
 				.filter('h4')
 				.eq_('length', 1)
@@ -33,8 +39,8 @@ UTest({
 					}
 				}
 			`;
-			mask.define(template);
-			var Wrapper = mask.Compo.initialize('Foo (bob)', { bob: { name: 'IBob'}});
+			customTag_define(template);
+			var Wrapper = Compo.initialize('Foo (bob)', { bob: { name: 'IBob'}});
 			var Foo = Wrapper.find('Foo');
 			eq_(Foo.testFn(), 'IBob');
 		},
@@ -49,7 +55,7 @@ UTest({
 				}
 			`;
 
-			var Foo = mask.Compo.initialize('Foo');
+			var Foo = Compo.initialize('Foo');
 			eq_(Foo.width, 5);
 		},
 
@@ -75,8 +81,8 @@ UTest({
 					}
 				}
 			`;
-			mask.define(template).done(() => {
-				var Foo = mask.Compo.initialize('Foo');
+			customTag_define(template).done(() => {
+				var Foo = Compo.initialize('Foo');
 				deepEq_(Foo.getJsExports_Prop(), { name: 'Foo'});
 				deepEq_(Foo.getJsExports_PropAlias(), { name: 'Foo'});
 				eq_(Foo.getTextImport(), 'Hello foo baz!');
@@ -96,8 +102,8 @@ UTest({
 					}					
 				}
 			`;
-			mask.define(template).done(() => {
-				var Wrapper = mask.Compo.initialize('Foo ("Hello")');
+			customTag_define(template).done(() => {
+				var Wrapper = Compo.initialize('Foo ("Hello")');
 				var Foo = Wrapper.find('Foo');
 				deepEq_(Foo.getSomething(), 'iFoo-Hello');
 				done();
@@ -106,4 +112,3 @@ UTest({
 	},
 });
 
-// vim: set ft=js:

@@ -1,12 +1,19 @@
+import { customTag_define } from '@core/custom/exports'
+import { Compo } from '@compo/exports'
+import '@core/feature/methods/exports'
+import '@core/feature/modules/exports'
+
+declare var sinon;
+
 UTest({
 	'slot should be private (do not pass the signal to parent)' () {
 		var parentFn = sinon.spy();
-		mask.define('FooParent', mask.Compo({
+		customTag_define('FooParent', Compo({
 			slots: {
 				test: parentFn
 			} 
 		}));
-		mask.define(`
+		customTag_define(`
 			define Foo {
 
 				var called = false;
@@ -19,7 +26,7 @@ UTest({
 			}
 		`);
 
-        var compo = mask.Compo.initialize('FooParent > Foo');        
+        var compo = Compo.initialize('FooParent > Foo');        
 		return UTest
 			.domtest(compo.$, `
 				find(button) > click;

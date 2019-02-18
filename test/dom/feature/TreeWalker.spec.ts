@@ -1,3 +1,10 @@
+import { parser_parse, mask_stringify } from '@core/parser/exports';
+import { mask_TreeWalker } from '@core/feature/TreeWalker'
+import { Compo } from '@compo/exports';
+import { customTag_define } from '@core/custom/exports'
+import '@core/feature/modules/exports'
+
+
 UTest({
 	'sync': {
 		'should walk through the nodes' () {
@@ -23,7 +30,7 @@ UTest({
 					, 'div,section,span,h4'
 					, (node) => {
 						if (node.tagName === 'section') 
-							return { replace: mask.parse('menu') };
+							return { replace: parser_parse('menu') };
 					}
 				);
 				
@@ -59,7 +66,7 @@ UTest({
 					, 'div,section,span,h4'
 					, (node, next) => {
 						if (node.tagName === 'section') 
-							return next({ replace: mask.parse('menu') });
+							return next({ replace: parser_parse('menu') });
 						next();
 					}
 					, (dom) => {
@@ -73,7 +80,7 @@ UTest({
 	},
 	'should map tree': {
 		'should map nodes tree' () {
-			var ast = mask.TreeWalker.map(mask.parse('div > span'), node => {
+			var ast = mask_TreeWalker.map(parser_parse('div > span'), node => {
 				return { tagName: node.tagName.toUpperCase() };
 			});
 			deepEq_(ast, {
@@ -84,19 +91,19 @@ UTest({
 			});
 		},
 		'should map components tree' () {
-			mask.registerHandler('Foo', mask.Compo({
+			customTag_define('Foo', Compo({
 				serialize () {
 					return 'iFoo'
 				},
 			}));
-			mask.define('Bar', mask.Compo({
+			customTag_define('Bar', Compo({
 				serialize () {
 					return 'iBar'
 				}
 			}));
-			var root = mask.Compo.initialize('Foo > Bar');
+			var root = Compo.initialize('Foo > Bar');
 			var foo = Compo.find(root, 'Foo');
-			var tree = mask.TreeWalker.map(foo, compo => {
+			var tree = mask_TreeWalker.map(foo, compo => {
 				return { text: compo.serialize() };
 			});
 			deepEq_(tree, {
@@ -109,24 +116,24 @@ UTest({
 	},
 	'should superpose trees': {
 		'should copy id attributes from one tree to another' () {
-			var treeA = mask.parse('div > span');
-			var treeB = mask.parse('div #foo > span #bar');
-			var tree = mask.TreeWalker.superpose(treeA, treeB, (nodeA, nodeB) => {
+			var treeA = parser_parse('div > span');
+			var treeB = parser_parse('div #foo > span #bar');
+			var tree = mask_TreeWalker.superpose(treeA, treeB, (nodeA, nodeB) => {
 				nodeA.attr.id = nodeB.attr.id.toUpperCase();
 			});
 
-			var str = mask.stringify(tree);
+			var str = mask_stringify(tree);
 			eq_(str, '#FOO>span#BAR;');
 		},
 		'should serialize and restore the components properties' () {
-			mask.registerHandler('Foo', mask.Compo({
+			customTag_define('Foo', Compo({
 				constructor () {
 					this.random = (Math.random() * 1000000) | 0;
 				},
 			}));
-			var root = mask.Compo.initialize('Foo > Foo');
+			var root = Compo.initialize('Foo > Foo');
 			var foo = Compo.find(root, 'Foo');
-			var tree = mask.TreeWalker.map(foo, compo => {
+			var tree = mask_TreeWalker.map(foo, compo => {
 				return { compoName: compo.compoName, random: compo.random };
 			});
 			has_(tree, {
@@ -140,14 +147,14 @@ UTest({
 				]
 			});
 
-			var root = mask.Compo.initialize('Foo > Foo');
+			var root = Compo.initialize('Foo > Foo');
 			var otherFoo = Compo.find(root, 'Foo');
 			notEq_(otherFoo.random, foo.random);
 
-			mask.TreeWalker.superpose(otherFoo, foo, (nodeA, nodeB) => {
+			mask_TreeWalker.superpose(otherFoo, foo, (nodeA, nodeB) => {
 				nodeA.random = nodeB.random;
 			});
-			var otherTree = mask.TreeWalker.map(otherFoo, compo => {
+			var otherTree = mask_TreeWalker.map(otherFoo, compo => {
 				return { compoName: compo.compoName, random: compo.random };
 			});
 			deepEq_(tree, otherTree);
@@ -156,15 +163,15 @@ UTest({
 });
 
 function RunSync(...args) {
-	return Run(mask.TreeWalker.walk, args);
+	return Run(mask_TreeWalker.walk, args);
 }
 function RunAsync(...args) {
-	return Run(mask.TreeWalker.walkAsync, args);
+	return Run(mask_TreeWalker.walkAsync, args);
 }
 function Run(walk, args) {
 	var [ template, expectNodes, fn, done ] = args;
 	
-	var dom    = mask.parse(template);
+	var dom    = parser_parse(template);
 	var expect = expectNodes.split(',');
 	var root   = walk(dom, function(node, next){
 		eq_(node.tagName, expect.shift());
@@ -179,4 +186,3 @@ function Run(walk, args) {
 	return root;
 }
 
-// vim: set ft=js:

@@ -1,7 +1,11 @@
+import { Compo } from '@compo/exports'
+import { parser_parse } from '@core/parser/exports'
+import { renderer_render } from '@core/renderer/exports'
+
 UTest({
 	'parser': {
 		'single' () {
-			var tmpl = mask.parse(`
+			var tmpl = parser_parse(`
 				define :foo {
 					h4;
 				}
@@ -12,7 +16,7 @@ UTest({
 			eq_($foo.name, ':foo');
 		},
 		'extend compo' () {
-			var tmpl = mask.parse(`
+			var tmpl = parser_parse(`
 				define :bar extends :foo {
 					h4;
 				}
@@ -26,7 +30,7 @@ UTest({
 			eq_($bar.nodes[0].tagName, 'h4');
 		},
 		'extend compos' () {
-			var tmpl = mask.parse(`
+			var tmpl = parser_parse(`
 				define :qux extends :foo, :bar {
 					h4;
 				}
@@ -40,11 +44,12 @@ UTest({
 				{ compo: ':bar' },
 			]);
 		},
-		'should parse `as` and `extends`' () {
-			var tmpl = mask.parse(`
+		'should parse `as`' () {
+			var tmpl = parser_parse(`
 				define compo as h4  {
 					h4;
-				}
+                }
+                span;
 			`);
 			var node = tmpl.nodes[0];
 			eq_(node.tagName, 'define');
@@ -52,7 +57,7 @@ UTest({
 			eq_(node.as, 'h4');
 		},
 		'should parse `as` and `extends`' () {
-			var tmpl = mask.parse(`
+			var tmpl = parser_parse(`
 				define _1 as section extends a , b , c.y.z {
 					h4;
 				}
@@ -69,7 +74,7 @@ UTest({
 			]);
 		},
 		'should parse attributes for `as`' () {
-			var tmpl = mask.parse(`
+			var tmpl = parser_parse(`
 				define _1 as (section.foo name='~[baz()]') extends a , b , c.y.z {
 					h4;
 				}
@@ -94,7 +99,7 @@ UTest({
 				}
 				Foo (me);
 			`
-			var dom = mask.render(template, { me: { name: 'TestUser' }});
+			var dom = renderer_render(template, { me: { name: 'TestUser' }});
 			return UTest.domtest(dom, `
 				find (h4) > text TestUser;
 			`)
@@ -107,7 +112,7 @@ UTest({
 				}
 				Foo (me, me);
 			`
-			var dom = mask.render(template, { me: { name: 'TestUser' }});
+			var dom = renderer_render(template, { me: { name: 'TestUser' }});
 			return UTest.domtest(dom, `
 				find (h3) > text TestUser;
 				find (h4) > text TestUser;
@@ -125,7 +130,7 @@ UTest({
 				}
 				Foo (me, me.name.toUpperCase())
 			`;
-			var dom = mask.render(template, { me: { name: 'ifoo' }});
+			var dom = renderer_render(template, { me: { name: 'ifoo' }});
 			return UTest.domtest(dom, `
 				find (h5) > text rewritten;
 			`);
@@ -151,4 +156,3 @@ UTest({
 	}
 });
 
-// vim: set ft=js:

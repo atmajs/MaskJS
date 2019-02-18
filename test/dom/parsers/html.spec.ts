@@ -1,3 +1,5 @@
+import { renderer_render } from '@core/renderer/exports';
+
 UTest({
 	'mixed markup' () {
 		var template = `
@@ -5,7 +7,7 @@ UTest({
 				<h4><mask>i>'Foo'</mask></h4>
 			</section>
 		`;
-		var dom = mask.render(template);
+		var dom = renderer_render(template);
 		return UTest.domtest(dom, `
 			find('section>h4>i') >
 				text Foo;
@@ -20,7 +22,7 @@ UTest({
 			<input name='baz-input'>
 			<h4>Lorem ipsum doler it semet</h4>
 		`;
-		var dom = mask.render(template);
+		var dom = renderer_render(template);
 		return UTest.domtest(dom, `
 			find('ul > li') {
 				length 2;

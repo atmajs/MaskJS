@@ -1,3 +1,5 @@
+import { renderer_render } from '@core/renderer/exports';
+
 UTest({
 	'slot test' () {		
 		var template = `
@@ -13,7 +15,7 @@ UTest({
 			}
 		`;
 		
-		var dom = mask.render(template);		
+		var dom = renderer_render(template);		
 		return UTest.domtest(dom, `
 			find ('button') {
 				text Foo;
@@ -35,7 +37,7 @@ UTest({
 				}
 			}
 		`;
-		var dom = mask.render(template);
+		var dom = renderer_render(template);
 		return UTest.domtest(dom, `
 			find ('button') {
 				text Foo;
@@ -45,6 +47,4 @@ UTest({
 			}
 		`);
 	}
-})
-
-// vim: set ft=js:
+});

@@ -1,9 +1,12 @@
+import { parser_ObjectLexer } from '@core/parser/exports';
+
 function Test(data) {
 	var lex;
 	if (data.pattern) {
-		lex = mask.parser.ObjectLexer(data.pattern);
-	} else if (data.args) {
-		lex = mask.parser.ObjectLexer.apply(null, data.args);
+		lex = parser_ObjectLexer(data.pattern);
+	} else if (Array.isArray(data.args)) {
+        let [ key, ...args] = data.args;
+		lex = parser_ObjectLexer(key, ...args);
 	}
 	var obj = {};
 	lex(data.template, 0, data.template.length, obj);
@@ -98,4 +101,3 @@ UTest({
 	}
 })
 
-// vim: set ft=js:

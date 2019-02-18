@@ -1,3 +1,9 @@
+import { parser_parse } from '@core/parser/exports';
+import { jMask } from '@mask-j/jMask';
+import { expression_eval } from '@core/expression/exports';
+import { $render } from '../utils';
+
+import '@core/statements/exports'
 
 UTest({
 	
@@ -66,8 +72,8 @@ UTest({
 			
 		].forEach(x => {
 			
-			var nodes = mask.parse('div { ' + x.template + '}'),
-				$nodes = jmask(nodes),
+			var nodes = parser_parse('div { ' + x.template + '}'),
+				$nodes = jMask(nodes),
 				$vars = $nodes.find('var');
 			
 			eq_($vars.length, x.varNames.length);
@@ -79,7 +85,7 @@ UTest({
 				
 				
 				deepEq_(
-					mask.Utils.Expression.eval($var),
+					expression_eval($var),
 					x.expect[key]
 				);
 				
@@ -109,7 +115,7 @@ UTest({
 	},
 	'render list': function(){
 		
-		var ast = mask.parse(`
+		var ast = parser_parse(`
 				var list = [1, 2, 3];
 				for( key of list ){
 					span > "~[key]"
@@ -125,4 +131,3 @@ UTest({
 	}
 })
 
-// vim: set ft=js:

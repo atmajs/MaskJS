@@ -1,9 +1,7 @@
-import { is_String, is_Object } from '@utils/is';
-import { obj_getProperty } from '@utils/obj';
 
-import { u_resolvePathFromImport, u_setOption, u_resolveLocation } from './utils';
+import { u_resolvePathFromImport, u_resolveLocation } from './utils';
 import { cache_get, cache_clear } from './cache';
-import { _typeMappings, _opts } from './Opts';
+import { _opts } from './Opts';
 import { _file_get, _file_getScript, _file_getStyle, _file_getJson } from './loaders';
 import { tools_getDependencies } from './tools/dependencies';
 import { tools_build } from './tools/build';
@@ -11,10 +9,7 @@ import { ModuleMask } from './Module/ModuleMask';
 import { 
     m_createModule, 
     m_registerModule, 
-    m_registerModuleType, 
-    m_isMask, 
-    m_getType, 
-    m_getModuleType 
+    m_registerModuleType,     
 } from './Module/exports';
 import { Endpoint } from './class/Endpoint';
 import { IModule } from './Module/Module';
@@ -25,6 +20,7 @@ import './Module/exports'
 import './Import/exports'
 import './components'
 import './await'
+import { type_isMask, type_get, type_getModuleType } from './types';
 
 export const Module = {
     ModuleMask: ModuleMask,
@@ -34,9 +30,9 @@ export const Module = {
     registerModuleType: m_registerModuleType,
 
     createImport: i_createImport,
-    isMask: m_isMask,
-    getType: m_getType,
-    getModuleType: m_getModuleType,
+    isMask: type_isMask,
+    getType: type_get,
+    getModuleType: type_getModuleType,
 
     cfg: m_cfg,
     resolveLocation: u_resolveLocation,

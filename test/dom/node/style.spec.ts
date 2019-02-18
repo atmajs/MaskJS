@@ -1,3 +1,8 @@
+import { mask_stringify, parser_parse } from '@core/parser/exports';
+import { jMask } from '@mask-j/jMask';
+import { renderer_render, renderer_renderAsync } from '@core/renderer/exports';
+import { mask_config } from '@core/api/config';
+
 UTest({
 	'check generic multiple style nodes' () {
 		TestRunner({
@@ -166,8 +171,8 @@ UTest({
 			isInterpolated: true
 		});
 	},
-	'check preprocessor' () {
-		mask.cfg('preprocessor.style', function(body){
+	async 'check preprocessor' () {
+		mask_config('preprocessor.style', function(body){
 			return body.replace('red', 'green');
 		});
 		var template = `
@@ -179,16 +184,14 @@ UTest({
 				}
 			}
 		`;
-		return mask
-			.renderAsync(template)
-			.pipe(function(div){
+		let div = await renderer_renderAsync(template);
+			
+        var str = $('body').children('style').last().text();
+        hasNot_(str, 'red');
+        has_   (str, 'green');
 
-				var str = $('body').children('style').last().text();
-				hasNot_(str, 'red');
-				has_   (str, 'green');
-
-				mask.cfg('preprocessor.style', null);
-			});
+        mask_config('preprocessor.style', null);
+    
 	},
 	'check serialization': {
 		'simple' () {
@@ -201,7 +204,7 @@ UTest({
 					}
 				}
 			`;
-			var str = mask.stringify(mask.parse(tmpl), 4);
+			var str = mask_stringify(parser_parse(tmpl), 4);
 			eq_(
 				tmpl.replace(/\s/g, ''),
 				str .replace(/\s/g, '')
@@ -215,7 +218,7 @@ UTest({
 					}
 				}
 			`;
-			var str = mask.stringify(mask.parse(tmpl), 4);
+			var str = mask_stringify(parser_parse(tmpl), 4);
 			eq_(
 				tmpl.replace(/\s+/g, ''),
 				str .replace(/\s+/g, '')
@@ -224,7 +227,7 @@ UTest({
 	}
 })
 
-function TestRunner(test, additionalFn) {
+function TestRunner(test, additionalFn?) {
 	var {
 		template,
 		model,
@@ -235,9 +238,9 @@ function TestRunner(test, additionalFn) {
 		isInterpolated = false
 	} = test;
 
-	var nodes = mask.parse('div { ' + template + '}'),
-		style = jmask(nodes).find('style'),
-		$root = $(mask.render(nodes, model)).appendTo('body');
+	var nodes = parser_parse('div { ' + template + '}'),
+		style = jMask(nodes).find('style'),
+		$root = $(renderer_render(nodes, model)).appendTo('body');
 
 
 	eq_(style.length, count);
@@ -290,4 +293,3 @@ function TestRunner(test, additionalFn) {
 	$style && $style.remove();
 }
 
-// vim: set ft=js:

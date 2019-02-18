@@ -1,8 +1,11 @@
+import { renderer_renderAsync } from '@core/renderer/exports';
+import { Module } from '@core/feature/modules/exports'
+
 UTest({
 	async 'Should load module' () {
-		mask.Module.registerModuleType('data', 'myJson', {
-			load_ () {
-				return mask.class.Deferred.run(resolve => resolve({ foo: 'fox' }));
+		Module.registerModuleType('data', 'myJson', {
+			async load_ () {
+				return { foo: 'fox' };
 			}
 		})
 		var template = `
@@ -11,7 +14,7 @@ UTest({
 			h4 > '~Test.foo'
 		`;
 
-		var dom = await mask.renderAsync(template); 
+		var dom = await renderer_renderAsync(template); 
 
 		await UTest.domtest(dom, `
 			find ('h4') > text fox;

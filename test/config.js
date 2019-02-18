@@ -12,13 +12,16 @@ module.exports = {
 			tests: 'test/dom/**.spec.ts'
 		},
 		'node': {
-			exec: 'node',
+            exec: 'node',            
 			tests: 'test/node/**.spec.ts'
 		},
 		 
 		'examples': {
-			exec: 'dom',
-			tests: 'test/examples/**.test'
+            exec: 'dom',
+            $config: {
+                includejs: includeSettings(),				
+			},
+			tests: 'test/examples/**.spec.ts'
         },
         'observer': {
 			exec: 'node',

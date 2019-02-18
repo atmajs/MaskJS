@@ -1,5 +1,10 @@
+import { mask_config } from '@core/api/config';
+import { renderer_render } from '@core/renderer/exports';
+import { Module } from '@core/feature/modules/exports'
+import '@core/statements/exports'
+
 // use default module loader
-mask.config('modules', 'default');
+mask_config('modules', 'default');
 
 UTest({
 	'getting dependencies': {
@@ -9,8 +14,7 @@ UTest({
 				import from 'bar.css';
 			`;
 			var path = '/mask/test.mask';
-			return mask
-				.Module
+			return Module
 				.getDependencies(template, path)
 				.done(list => deepEq_(list, {
 						mask: [],
@@ -27,8 +31,7 @@ UTest({
 				}
 			`;
 			var path = '/mask/test.mask';
-			return mask
-				.Module
+			return Module
 				.getDependencies(template, path)
 				.done(list => deepEq_(list, {
 					mask: [{
@@ -81,8 +84,7 @@ UTest({
 			`;
 			var path = '/mask/test.mask';
 			var opts = { flattern: true };
-			return mask
-				.Module
+			return Module
 				.getDependencies(template, path, opts)
 				.done(list => deepEq_(list, {
 					mask: [
@@ -100,8 +102,7 @@ UTest({
 			var template = `
 				import X from '/test/tmpl/modules/FAKE';
 			`;
-			mask
-				.Module
+			Module
 				.getDependencies(template, '/')
 				.fail(error => {
 					eq_(error.status, 404);
@@ -115,8 +116,7 @@ UTest({
 			var template = `
 				import X from '/test/tmpl/modules/nest';
 			`;
-			return mask
-				.Module
+			return Module
 				.build(template, '/')
 				.done(pckg => {
 					has_(pckg.mask, 'B Module');
@@ -128,8 +128,7 @@ UTest({
 			var template = `
 				import from '/test/tmpl/modules/model';
 			`;
-			return mask
-				.Module
+			return Module
 				.build(template, '/')
 				.done(pckg => {
 					has_(pckg.mask, template.trim());
@@ -145,13 +144,12 @@ UTest({
 			import * as Foo from '/test/tmpl/modules/model';
 			Foo;
 		`;		
-		return mask
-			.Module
+		return Module
 			.build(template, '/')
 			.pipe(pckg => {
 				eval(pckg.script);
 				$('<style>').text(pckg.style).appendTo('body');
-				var dom = mask.render(pckg.mask);
+				var dom = renderer_render(pckg.mask);
 				return UTest.domtest(dom, `
 					find ('.foo') {
 						text Foo;
@@ -162,4 +160,3 @@ UTest({
 	}
 });
 
-// vim: set ft=js:

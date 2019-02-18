@@ -1,15 +1,20 @@
+import { mask_config } from '@core/api/config'
+import { renderer_render, renderer_renderAsync } from '@core/renderer/exports'
+import '@core/feature/methods/exports'
+import { Module } from '@core/feature/modules/exports'
+
 UTest({
 	$teardown () {
-		mask.cfg('getScript', null);
-		mask.Module.clearCache();
+		mask_config('getScript', null);
+		Module.clearCache();
 	},
 	'should get instance from define args' () {
 		class Foo {
 			load () { }
 		};
 
-		mask.cfg('getScript', path => {
-			return mask.class.Deferred.run(resolve => resolve(new Foo))
+		mask_config('getScript', async path => {
+			return new Foo();
 		});
 
 
@@ -25,7 +30,7 @@ UTest({
 			FooCompo;
 		`;
 
-		mask.render(template, null, null, null, {
+		renderer_render(template, null, null, null, {
 			slots: {
 				fooSignal: assert.await(function(sender, foo){
 					is_(foo, Foo);
@@ -34,15 +39,15 @@ UTest({
 		});		
 
 	},
-	'!should get instance from define constructor' () {
+	'should get instance from define constructor' () {
 		class Foo {
 			load () {
 				return 'Hello'
 			}
 		};
 
-		mask.cfg('getScript', path => {
-			return mask.class.Deferred.run(resolve => resolve(new Foo))
+		mask_config('getScript', async path => {
+			return new Foo();
 		});
 
 
@@ -54,14 +59,14 @@ UTest({
                     this.foo = foo;
 				}
 				function onRenderStart () {
-					this.emitOut('fooSignal', this.foo.load());	
+                    this.emitOut('fooSignal', this.foo.load());	
 				}
 			}
 
 			FooCompo;
 		`;
 
-		mask.render(template, null, null, null, {
+		return renderer_renderAsync(template, null, null, null, {
 			slots: {
 				fooSignal: assert.await(function(sender, str){
 					eq_(str, 'Hello');

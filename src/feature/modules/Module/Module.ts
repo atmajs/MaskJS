@@ -1,10 +1,9 @@
 import { fn_doNothing } from '@utils/fn';
 import { obj_getProperty } from '@utils/obj';
-import { path_getDir } from '@core/util/path';
 import { class_create } from '@utils/class';
 import { class_Dfr } from '@utils/class/Dfr';
+import { path_getDir } from '@core/util/path';
 import { u_isNpmPath, u_resolveNpmPath } from '../utils';
-import { m_getModuleType } from './utils';
 
 export const IModule = class_create(class_Dfr, {
 	type: null,
@@ -41,15 +40,12 @@ export const IModule = class_create(class_Dfr, {
 		return this;
 	},
 	doLoad: function(){
-		var self = this;
 		this
-			.load_(this.path)
-			.fail(function(err){
-				self.onLoadError_(err);
-			})
-			.done(function(mix){
-				self.onLoadSuccess_(mix);
-			});
+            .load_(this.path)
+            .then(
+                mix => this.onLoadSuccess_(mix),
+                err => this.onLoadError_(err)
+            );
 	},
 	complete_: function(error, exports){
 		this.exports = exports;

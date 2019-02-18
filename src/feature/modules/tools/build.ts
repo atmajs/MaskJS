@@ -8,7 +8,7 @@ import { jMask } from '@mask-j/jMask';
 import { __cfg } from '@core/api/config';
 
 
-export function tools_build (template, path, opts_){
+export function tools_build (template, path, opts_?){
 		var opts = obj_extendDefaults(opts_, optionsDefault);
 		return class_Dfr.run(function(resolve, reject){
 			tools_getDependencies(template, path, { flattern: true })

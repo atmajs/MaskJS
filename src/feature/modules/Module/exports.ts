@@ -7,10 +7,7 @@ import './ModuleText'
 import './register'
 
 export { 
-    m_getType, 
-    m_getModuleType, 
     m_createModule, 
-    m_isMask,
     m_registerModule, 
     m_registerModuleType
 } from './utils'

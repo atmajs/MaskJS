@@ -1,11 +1,15 @@
+import { renderer_render } from '@core/renderer/exports';
+import { mask_config } from '@core/api/config';
+import '@core/feature/modules/exports'
+
 UTest({
 	'$before' () {
-		Promise.await = function (ms, val) {
+		(<any>Promise).await = function (ms, val) {
 			return new Promise(resolve => {
 				setTimeout(() => resolve(val), ms);
 			});
-		}
-		Promise.awaitFail = function (ms, val) {
+		};
+		(<any>Promise).awaitFail = function (ms, val) {
 			return new Promise((resolve, reject) => {
 				setTimeout(() => reject(val), ms);
 			});
@@ -27,7 +31,7 @@ UTest({
 
 				Foo;
 			`;
-			var fragment = mask.render(template);
+            var fragment = renderer_render(template);            
 			return UTest.domtest(fragment, `
 				find('section > span') {
 					eq text ('Please wait');
@@ -55,7 +59,7 @@ UTest({
 				}
 				Foo;
 			`;
-			var fragment = mask.render(template);
+			var fragment = renderer_render(template);
 			return UTest.domtest(fragment, `
 				hasNot ('i');
 
@@ -81,7 +85,7 @@ UTest({
 
 				Foo;
 			`;
-			var fragment = mask.render(template);
+			var fragment = renderer_render(template);
 			return UTest.domtest(fragment, `
 				find('section > span') {
 					eq text ('Please wait');
@@ -113,7 +117,7 @@ UTest({
 				}
 			`;
 
-			var fragment = mask.render(template);
+			var fragment = renderer_render(template);
 			return UTest.domtest(fragment, `
 				find('div > span') {
 					eq text ('Please wait');
@@ -148,7 +152,7 @@ UTest({
 					}
 				}
 			`;
-			var fragment = mask.render(template);
+			var fragment = renderer_render(template);
 			return UTest.domtest(fragment, `
 				find('div > span') {
 					eq text ('Please wait');
@@ -166,21 +170,22 @@ UTest({
 			`);
 		},			
 		'should await async import and then render' () {
-			mask.cfg('getFile', assert.await(function(path){
+			mask_config('getFile', assert.await(function(path){
 				has_(path, 'myFoo.mask');
-				var dfr = new mask.class.Deferred();
-				var file = `
-					define MyFoo (number) {
-						function onRenderStart () {
-							return Promise.await(50);
-						}
-						b > 'HERE ~number';
-					}
-				`;
-				setTimeout(() => {
-					dfr.resolve(file)
-				}, 50);
-				return dfr;			
+                
+                return new Promise(resolve => {
+                    var file = `
+                        define MyFoo (number) {
+                            function onRenderStart () {
+                                return Promise.await(50);
+                            }
+                            b > 'HERE ~number';
+                        }
+                    `;
+                    setTimeout(() => {
+                        resolve(file)
+                    }, 50);
+                });
 			}));
 
 			var template = `
@@ -192,8 +197,8 @@ UTest({
 				}
 			`;
 
-			var container = mask.render('div');
-			var fragment = mask.render(template, null, null, container);
+			var container = renderer_render('div');
+			var fragment = renderer_render(template, null, null, container);
 
 			return UTest.domtest(container, `
 				find ('h2') {
@@ -213,4 +218,3 @@ UTest({
 		}
 	},	
 })
-// vim: set ft=js:

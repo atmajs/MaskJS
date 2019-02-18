@@ -1,3 +1,10 @@
+import { renderer_render } from '@core/renderer/exports';
+import { customTag_get } from '@core/custom/tag';
+import '@core/statements/with'
+import '@core/handlers/debug'
+
+declare var sinon;
+
 UTest({
 	'log' () {
 		var expect;
@@ -33,7 +40,7 @@ UTest({
 			expect = row.expect;
 			expect.unshift('Mask::Log');
 			
-			mask.render(
+			renderer_render(
 				row.data[0], row.data[1], null, null, row[3]
 			);
 		})
@@ -41,7 +48,7 @@ UTest({
 		stub.restore();
 	},
 	'debugger' () {
-		var Debugger = mask.getHandler('debugger');
+		var Debugger = customTag_get('debugger');
 		notEq_(Debugger, null);
 		
 		var stub = sinon.stub(Debugger, 'render', assert.await(function(model){
@@ -50,10 +57,8 @@ UTest({
 		var Model = {
 			Foo: {}
 		};
-		mask.render('with(Foo) > debugger;', Model);
+		renderer_render('with(Foo) > debugger;', Model);
 		
 		stub.restore();
 	}
 })
-
-// vim: set ft=js:

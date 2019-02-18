@@ -1,23 +1,27 @@
+import { mask_config } from '@core/api/config';
+import { Module } from '@core/feature/modules/exports';
+import { renderer_renderAsync } from '@core/renderer/exports';
+
 UTest({
 	$teardown () {
-		mask.cfg('getScript', null);
-		mask.cfg('getFile', null);
-		mask.Module.clearCache();
+		mask_config('getScript', null);
+		mask_config('getFile', null);
+		Module.clearCache();
 	},
 	async 'should get instance from define args' () {
 		class Foo {
 			checkIt () { return 'checkThis' }
 		};
 
-		mask.cfg('getScript', path => {
-			return mask.class.Deferred.run(resolve => resolve(new Foo))
+		mask_config('getScript', async path => {
+			return new Foo()
 		});
 
 		var template = `
 			import * as Foo from 'Foo.js';
 			section > Foo > span > '~[this.checkIt()]'
 		`;
-		var dom = await mask.renderAsync(template);
+		var dom = await renderer_renderAsync(template);
 
 		return UTest.domtest(dom, `
 			find ('span') > text ('checkThis');
@@ -25,17 +29,17 @@ UTest({
 	},
 	async 'should get mask component in js' () {
 		
-		mask.cfg('getFile', path => {
+		mask_config('getFile', async path => {
 			has_(path, /Any\.mask/);
 			let template = `
 				define MyFoo {
 					function baz () {}
 				}
 			`;
-			return mask.class.Deferred.run(resolve => resolve(template))
+			return template;
 		});
-		mask.cfg('getScript', path => {
-			return mask.class.Deferred.run(resolve => resolve({ some: 'wow' }))
+		mask_config('getScript', async path => {
+			return { some: 'wow' };
 		});
 
 		var template = `
@@ -54,7 +58,7 @@ UTest({
 
 			Baz;
 		`;
-		var dom = await mask.renderAsync(template);
+		var dom = await renderer_renderAsync(template);
 
 		return UTest.domtest(dom, `
 			find ('h3') > text ('function');

@@ -16,23 +16,18 @@ import { Anchor } from './anchor'
 import { CompoConfig } from './CompoConfig'
 import { Pipes } from './pipes'
 
-
 import { Component } from './Component'
 
 declare var include;
 
 export const CompoStatics = {
 
-    create (){
+    create (...args) {
 		return compo_create(arguments as any);
 	},
 
 	createClass (){
         throw Error('@Obsolete: createClass');
-		var Ctor = compo_create(arguments as any),
-			classProto = Ctor.prototype;
-		classProto.Construct = Ctor;
-		return Class(classProto);
 	},
 
 	initialize (mix: string | Function | any, model?, ctx?, container?, parent?) {
@@ -43,7 +38,7 @@ export const CompoStatics = {
             if (ctx && ctx.nodeType != null){
                 container = ctx;
                 ctx = null;
-            }else if (model && model.nodeType != null){
+            } else if (model && model.nodeType != null){
                 container = model;
                 model = null;
             }

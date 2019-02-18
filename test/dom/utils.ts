@@ -3,7 +3,7 @@ import { renderer_render } from '@core/renderer/exports'
 export function $render(template, ...args): JQuery {
 	var dom = renderer_render(template, ...args);
 	if (dom.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-		return $(dom.childNodes);
+		return <JQuery> <any> $(dom.childNodes);
 	}
 	return $(dom);
 }

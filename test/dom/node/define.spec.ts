@@ -1,3 +1,8 @@
+import { renderer_render } from '@core/renderer/exports';
+import { Compo } from '@compo/exports';
+import { customTag_get } from '@core/custom/tag';
+import { listeners_on, listeners_off } from '@core/util/listeners';
+
 UTest({
 	'global (define)' :{
 		'should define the component' () {
@@ -9,7 +14,7 @@ UTest({
 				// comment
 				div > foo;
 			`;
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				filter ('div') {
 					children ('h4') {
@@ -28,7 +33,7 @@ UTest({
 				}
 				foo;
 			`;
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			$(dom).has_('section > span');
 		},
 		'should merge contents' () {
@@ -41,7 +46,7 @@ UTest({
 					@xContent > 'BazContent'
 				}
 			`;
-			var dom = mask.render(template);
+			var dom = renderer_render(template);
 			return UTest.domtest(dom, `
 				filter ('div') {
 					children ('h4') {
@@ -68,8 +73,8 @@ UTest({
 				foo;
 			`;
 			
-			var app = mask.Compo.initialize(template, { name: 'Foo' });
-			var Foo = mask.getHandler('foo');
+			var app = Compo.initialize(template, { name: 'Foo' });
+			var Foo = customTag_get('foo');
 			is_(Foo.prototype.onRenderStart, 'Function');
 			
 			eq_(app.components.length, 3);
@@ -86,7 +91,7 @@ UTest({
 				foo;
 			`;
 			
-			var app = mask.Compo.initialize(template, { name: 'Foo' });
+			var app = Compo.initialize(template, { name: 'Foo' });
 			app.$.has_('h4');
 			eq_(app.find('foo').fooBar(), 'hello');
 		},
@@ -105,7 +110,7 @@ UTest({
 				
 				foo;
 			`;
-			var dom = mask.render(tmpl);
+			var dom = renderer_render(tmpl);
 			return UTest.domtest(dom, `
 				filter('h4') {
 					html ("<i>FooBaz</i>");
@@ -120,7 +125,7 @@ UTest({
 				
 				baz text='Hello';
 			`;
-			var dom = mask.render(tmpl);
+			var dom = renderer_render(tmpl);
 			return UTest.domtest(dom, `
 				filter('button') {
 					text Hello;
@@ -139,7 +144,7 @@ UTest({
 				}
 				B aone='XOne';
 			`;
-			var dom = mask.render(tmpl);
+			var dom = renderer_render(tmpl);
 			return UTest.domtest(dom, `
 				filter('h1') > text XOne;
 				filter('h2') > text XTwo;
@@ -165,7 +170,7 @@ UTest({
 					@label > 'MyLabel'
 				}
 			`;
-			var dom = mask.render(tmpl);
+			var dom = renderer_render(tmpl);
 			return UTest.domtest(dom, `
 				find('i') > text MyLabel;
 				find('h1') > text MyHeader;
@@ -185,14 +190,15 @@ UTest({
 				}
 				
 				BarLocal;
-			`;
-			mask.on('error', assert.await(err => has_(String(err), 'BarLocal')));
-			$(mask.render(tmpl))
+            `;
+            
+			listeners_on('error', assert.await(err => has_(String(err), 'BarLocal')));
+			$(renderer_render(tmpl))
 				.eq_('length', 1)
 				.eq_('prop', 'tagName', 'SPAN')
 				.eq_('text', 'Bar')
 				;
-			mask.off('error');
+            listeners_off('error');
 		}
 	}
 })

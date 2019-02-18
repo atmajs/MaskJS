@@ -1,5 +1,5 @@
 import { obj_extend } from '@utils/obj';
-import { m_getModuleType } from './Module/utils';
+import { type_getModuleType } from './types';
 
 var _cache = {};
 
@@ -9,7 +9,7 @@ export function cache_get  (endpoint) {
 export function cache_set (endpoint, Module) {
     return (ensure(endpoint)[endpoint.path] = Module);
 };
-export function cache_clear  (path) {
+export function cache_clear  (path?) {
     if (path == null) {
         _cache = {};
         return;
@@ -26,7 +26,7 @@ export function cache_toMap  () {
     return out;
 };
 function ensure (endpoint) {
-    var type = m_getModuleType(endpoint);
+    var type = type_getModuleType(endpoint);
     var hash = _cache[type];
     if (hash == null) {
         hash = _cache[type] = {};

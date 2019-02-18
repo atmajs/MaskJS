@@ -10,9 +10,10 @@ import { is_Function } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { Component } from '@compo/exports';
 import { i_createImport } from './Import/exports';
-import { m_createModule, m_isMask, m_registerModule } from './Module/exports';
+import { m_createModule, m_registerModule } from './Module/exports';
 import { Endpoint } from './class/Endpoint';
 import { m_cfg } from './config';
+import { type_isMask } from './types';
 
 (function() {
 	var IMPORT  = 'import',
@@ -40,7 +41,7 @@ import { m_cfg } from './config';
 			serializeNodes: true
 		},
 		constructor: function(node, model, ctx, el, ctr) {
-			if (node.alias == null && node.exports == null && m_isMask(node)) {
+			if (node.alias == null && node.exports == null && type_isMask(node)) {
 				// embedding
 				this.module = m_createModule(node, ctx, ctr);
 			}
