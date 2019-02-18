@@ -26,7 +26,7 @@
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
         "app-bundler": "0.0.65",
-        "atma": "^0.11.18",
+        "atma": "^0.11.19",
         "atma-io-middleware-condcomments": "^1.2.6",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
