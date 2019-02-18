@@ -77,9 +77,10 @@ UTest({
 		async '+for..in - server' () {
 			var template = `
 					#container { 
-						+for (username of users) > 
-							span > "~[username]";
-						
+						+for (username of users) {
+                            span > "~[username]";
+                        }
+
 						footer > 'Footer'
 					}
 				`,
@@ -88,7 +89,7 @@ UTest({
 					users: ['Baz']
 				};
             
-            let { doc, win } = await $renderServer(template, { renderModel });
+            let { doc, win } = await $renderServer(template, { model: renderModel });
             
             var $dom = mask.$(doc),
                 model = win.app.model,
