@@ -3,9 +3,6 @@ module.exports = {
 		
 		'dom': {
 			exec: 'dom',
-			env: [
-				'lib/mask.js::foo'				
-			],
 			$config: {
                 includejs: includeSettings(),				
 			},

@@ -9,7 +9,7 @@ import { ModuleMask } from './Module/ModuleMask';
 import { 
     m_createModule, 
     m_registerModule, 
-    m_registerModuleType,     
+    m_registerModuleType
 } from './Module/exports';
 import { Endpoint } from './class/Endpoint';
 import { IModule } from './Module/Module';
