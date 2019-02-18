@@ -39,10 +39,8 @@
         "watch": "app-bundler --watch",
         "build-dev": "app-bundler --inspect-brk",
         "release": "atma release",
-        "server": "atma server",
-        "examples": "atma server",
-        "tick": "func() { echo \"$1\"; }; func",
-        "list": "ls"
+        "server": "atma server --TEST",
+        "examples": "atma server --TEST"        
     },
     "keywords": [],
     "atma": {
