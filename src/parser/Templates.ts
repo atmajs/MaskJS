@@ -1,5 +1,5 @@
 import { _Object_hasOwnProp } from '@utils/refs';
-import { parser_parse } from './exports';
+import { parser_parse } from './mask/parser';
 
 export const Templates = {
     ensure (mix: string | any, ctx: { filename?: string }) {

@@ -1,5 +1,6 @@
 import { event_getCode } from './utils';
 import { filter_skippedInput } from './filters';
+import { Key_MATCH_OK, Key_MATCH_NEXT, Key_MATCH_WAIT } from './KeySequance';
 
 export function CombHandler (){
 		this.keys = [];

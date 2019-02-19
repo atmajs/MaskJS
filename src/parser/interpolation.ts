@@ -1,7 +1,8 @@
 import { log_error } from '@core/util/reporters';
-import { cursor_groupEnd } from './cursor';
-import { obj_getPropertyEx } from '@core/util/object';
 import { custom_Utils } from '@core/custom/exports';
+import { obj_getPropertyEx } from '@core/util/object';
+import { interp_code_OPEN, interp_START, interp_code_CLOSE } from './const';
+import { cursor_groupEnd } from './cursor';
 
 
 export function	parser_ensureTemplateFunction (template) {
@@ -31,25 +32,7 @@ export function	parser_ensureTemplateFunction (template) {
 	};
 
 
-	export function parser_setInterpolationQuotes (start, end) {
-		if (!start || start.length !== 2) {
-			log_error('Interpolation Start must contain 2 Characters');
-			return;
-		}
-		if (!end || end.length !== 1) {
-			log_error('Interpolation End must be of 1 Character');
-			return;
-		}
-
-		interp_code_START = start.charCodeAt(0);
-		interp_code_OPEN = start.charCodeAt(1);
-		interp_code_CLOSE = end.charCodeAt(0);
-
-		interp_START = start[0];
-		interp_OPEN = start[1];
-		interp_CLOSE = end;
-	};
-
+	
 
 	function _split (template) {
 		var index = -1,

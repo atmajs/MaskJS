@@ -1,7 +1,6 @@
-import { customTag_register } from '@core/custom/tag';
-import { expression_eval } from '../scope-vars';
-
-declare var global;
+import { _global } from '@utils/refs'
+import { customTag_register } from '@core/custom/exports';
+import { expression_eval } from '@core/expression/exports';
 
 function SlotHandler() {}
 
@@ -19,6 +18,6 @@ SlotHandler.prototype = {
 	handle: function(){
 		var expr = this.expression;
 
-		expression_eval(expr, this.model, global, this);
+		expression_eval(expr, this.model, _global, this);
 	}
 };

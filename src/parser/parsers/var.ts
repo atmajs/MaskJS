@@ -1,9 +1,9 @@
-import { custom_Parsers } from '@core/custom/exports';
-import { cursor_refEnd, cursor_groupEnd, cursor_quoteEnd } from '../cursor';
+import { class_create } from '@utils/class';
 import { parser_error } from '@core/util/reporters';
+import { custom_Parsers } from '@core/custom/exports';
 import { Dom } from '@core/dom/exports';
 import { expression_eval } from '@core/expression/exports';
-import { class_create } from '@utils/class';
+import { cursor_refEnd, cursor_groupEnd, cursor_quoteEnd } from '../cursor';
 
 
 custom_Parsers['var'] = function(str, index, length, parent){

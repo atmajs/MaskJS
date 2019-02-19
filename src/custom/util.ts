@@ -1,6 +1,7 @@
 import { is_Function } from '@utils/is';
 import { fn_proxy } from '@utils/fn';
 import { custom_Utils } from './repositories';
+import { expression_evalStatements } from '@core/expression/exports';
 
 /**
  * Utils Repository
@@ -10,7 +11,7 @@ import { custom_Utils } from './repositories';
  * @name _
  * @category Mask Util
  */
-export const customUtil_$utils = {};
+export const customUtil_$utils = <any> {};
 /**
  * Register Util Handler. Template Example: `'~[myUtil: value]'`
  * @param {string} name

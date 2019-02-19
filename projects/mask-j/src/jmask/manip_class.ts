@@ -1,14 +1,15 @@
-import { Proto } from './jmask-proto'
+
 import { coll_each, coll_find } from '@utils/coll';
 import { arr_each } from '@utils/arr';
 
 
-
-Proto.hasClass = function(klass){
-    return coll_find(this, function(node){
-        return has(node, klass);
-    });
-};
+export const ManipClass = {
+    hasClass (klass){
+        return coll_find(this, function(node){
+            return has(node, klass);
+        });
+    }
+}
 var Mutator_ = {
     add: function(node, klass){
         if (has(node, klass) === false) 
@@ -25,7 +26,7 @@ var Mutator_ = {
 };
 arr_each(['add', 'remove', 'toggle'], function(method) {
     var fn = Mutator_[method];
-    Proto[method + 'Class'] = function(klass) {
+    ManipClass[method + 'Class'] = function(klass) {
         return coll_each(this, function(node){
             fn(node, klass);
         });

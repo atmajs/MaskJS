@@ -1,4 +1,5 @@
-declare var global, process;
+import { _global } from '@utils/refs'
+import { __cfg } from '@core/api/config';
 
 var isWeb = true;
 
@@ -66,19 +67,19 @@ export const path_resolveCurrent = (function() {
     return function() {
         if (current_ != null) return current_;
 
-        var fn = 'baseURI' in global.document ? fromBase : fromBaseTag;
+        var fn = 'baseURI' in _global.document ? fromBase : fromBaseTag;
         return (current_ = path_sliceFilename(fn()));
     };
     function fromBase() {
-        var path = global.document.baseURI;
+        var path = _global.document.baseURI;
         var i = path.indexOf('?');
         return i === -1 ? path : path.substring(0, i);
     }
     function fromLocation() {
-        return global.location.origin + global.location.pathname;
+        return _global.location.origin + _global.location.pathname;
     }
     function fromBaseTag() {
-        var h = global.document.head;
+        var h = _global.document.head;
         if (h == null) {
             return fromLocation();
         }
@@ -105,17 +106,17 @@ export const path_resolveRoot = (function() {
     return function() {
         if (root_ != null) return root_;
 
-        var fn = 'baseURI' in global.document ? fromBase : fromLocation;
+        var fn = 'baseURI' in _global.document ? fromBase : fromLocation;
         return (root_ = fn());
     };
     function fromBase() {
-        var path = global.document.baseURI;
+        var path = _global.document.baseURI;
         var protocol = /^\w+:\/+/.exec(path);
         var i = path.indexOf('/', protocol && protocol[0].length);
         return i === -1 ? path : path.substring(0, i);
     }
     function fromLocation() {
-        return global.location.origin;
+        return _global.location.origin;
     }
     // endif
 
@@ -165,7 +166,7 @@ export function path_isRelative(path) {
     }
     return true;
 }
-export function path_toRelative(path, anchor, base) {
+export function path_toRelative(path, anchor, base?) {
     var path_ = path_resolveUrl(path_normalize(path), base),
         absolute_ = path_resolveUrl(path_normalize(anchor), base);
 

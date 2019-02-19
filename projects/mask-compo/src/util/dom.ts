@@ -1,4 +1,11 @@
-export function dom_addEventListener(el, event, fn, param, ctr) {
+import { domLib } from '../scope-vars';
+import { Anchor } from '../compo/anchor';
+import { compo_dispose, compo_detachChild } from './compo';
+import { _Array_indexOf, _Array_splice } from '@utils/refs';
+import { KeyboardHandler } from '../keyboard/Handler';
+import { TouchHandler } from '../touch/Handler';
+
+export function dom_addEventListener(el, event, fn, param?, ctr?) {
     if (TouchHandler.supports(event)) {
         TouchHandler.on(el, event, fn);
         return;

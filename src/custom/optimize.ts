@@ -1,4 +1,5 @@
 import { obj_toFastProps } from '@utils/obj';
+import { custom_Attributes, custom_Statements, custom_Tags, custom_Parsers, custom_Parsers_Transform } from './repositories';
 
 export function custom_optimize (){
     var i = _arr.length;

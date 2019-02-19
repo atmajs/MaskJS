@@ -1,5 +1,14 @@
-import { coll_remove } from '@utils/coll'
-import { is_String } from '@utils/is'
+import { coll_remove, coll_indexOf } from '@utils/coll'
+import { is_String, is_Function } from '@utils/is'
+import { obj_getProperty, obj_setProperty } from '@utils/obj';
+import { _Array_slice } from '@utils/refs';
+import { mask_merge } from '@core/feature/merge';
+import { error_withCompo, reporter_createErrorNode } from '@core/util/reporters';
+import { CompoStaticsAsync } from '../compo/async';
+import { Anchor } from '../compo/anchor';
+import { parser_parse } from '@core/parser/exports';
+import { Component } from '@compo/compo/Component';
+
 
 declare var log_warn, log_error;
 
@@ -68,6 +77,23 @@ export function compo_attachDisposer(compo, disposer) {
         prev.call(this);
     };
 }
+export function compo_attach (compo: Component, name: string, fn: Function) {
+    var current = obj_getProperty(compo, name);		
+    if (is_Function(current)) {
+        var wrapper = function(){
+            var args = _Array_slice.call(arguments);
+            fn.apply(compo, args);
+            current.apply(compo, args);
+        };
+        obj_setProperty(compo, name, wrapper);
+        return;
+    }
+    if (current == null) {
+        obj_setProperty(compo, name, fn);
+        return;
+    }
+    throw Error('Cann`t attach ' + name + ' to not a Function');
+}
 
 export function compo_removeElements(compo) {
     if (compo.$) {
@@ -125,7 +151,7 @@ export function compo_cleanElements(compo) {
 }
 
 export function compo_prepairAsync(dfr, compo, ctx) {
-    var resume = Compo.pause(compo, ctx);
+    var resume = CompoStaticsAsync.pause(compo, ctx);
     var x = dfr.then(resume, onError);
     function onError(error) {
         compo_errored(compo, error);
@@ -169,7 +195,7 @@ function getTemplateProp_(compo) {
             }
             template = node.innerHTML;
         }
-        return mask.parse(template);
+        return parser_parse(template);
     }
     log_warn('Invalid template', typeof template);
     return null;

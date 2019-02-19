@@ -22,7 +22,7 @@ export function listeners_on(event, fn) {
  * @memberOf mask
  * @method on
  */
-export function listeners_off(event, fn) {
+export function listeners_off(event, fn?) {
     if (fn == null) {
         bin[event] = [];
         return;

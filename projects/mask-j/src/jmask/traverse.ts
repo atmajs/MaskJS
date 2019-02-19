@@ -1,13 +1,11 @@
-import { Proto } from './jmask-proto'
-import { obj_extend } from '@utils/obj';
 import { arr_each } from '@utils/arr';
 import { jmask_filter, jmask_find } from '../util/utils';
-import { jMask } from './jmask';
-import { selector_getNextKey } from '../util/selector';
+import { jMask } from './jMask';
+import { selector_getNextKey, selector_parse, selector_match } from '../util/selector';
 import { Dom } from '@core/dom/exports';
 import { arr_unique } from '../util/array';
 
-obj_extend(Proto, {
+export const Traverse = {
 	each: function(fn, ctx) {
 		for (var i = 0; i < this.length; i++) {
 			fn.call(ctx || this, this[i], i)
@@ -30,7 +28,7 @@ obj_extend(Proto, {
 	slice: function() {
 		return this.pushStack(Array.prototype.slice.apply(this, arguments));
 	}
-});
+};
 
 
 arr_each([
@@ -43,7 +41,7 @@ arr_each([
 	'last'
 ], function(method) {
 
-	Proto[method] = function(selector) {
+	Traverse[method] = function(selector) {
 		var result = [],
 			matcher = selector == null
 				? null

@@ -1,10 +1,11 @@
 import { class_create } from '@utils/class';
-import { Module } from '../exports';
 import { class_Dfr } from '@utils/class/Dfr';
-import { _opts } from '../Opts';
-import { warn_withNode, error_withCompo } from '@core/util/reporters';
 import { obj_setProperty } from '@utils/obj';
 import { customTag_registerResolver } from '@core/custom/exports';
+import { warn_withNode, error_withCompo } from '@core/util/reporters';
+import { m_createModule } from '../Module/utils';
+import { _opts } from '../Opts';
+
 
 export var IImport = class_create({
 	type: null,
@@ -16,7 +17,7 @@ export var IImport = class_create({
 		this.async = node.async;
 		this.contentType = node.contentType;
 		this.moduleType = node.moduleType;	
-		this.module = Module.createModule(endpoint, null, null, module);
+		this.module = m_createModule(endpoint, null, null, module);
 		this.parent = module;
 		this.imports = null;
 	},
@@ -152,20 +153,3 @@ export var IImport = class_create({
 		error_withCompo(str, this);
 	}
 });
-
-
-(function(){
-	(IImport as any).create = function(endpoint, node, parent){
-		return new (Factory(endpoint))(endpoint, node, parent);
-	};
-	(IImport as any).types = {};
-
-	function Factory(endpoint) {
-		var type = Module.getType(endpoint);
-		var Ctor = (IImport as any).types[type];
-		if (Ctor == null) {
-			throw Error('Module is not supported for type ' + type + ' and the path ' + endpoint.path);
-		}
-		return Ctor;
-	}
-}());

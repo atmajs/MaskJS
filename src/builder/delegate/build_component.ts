@@ -1,11 +1,20 @@
-import { builder_findAndRegisterCompo, builder_pushCompo, builder_setCompoAttributes, builder_setCompoProps, builder_setCompoModel, builder_resumeDelegate } from '../util';
+import { 
+    builder_findAndRegisterCompo, 
+    builder_pushCompo, 
+    builder_setCompoAttributes, 
+    builder_setCompoProps, 
+    builder_setCompoModel
+} from '../util';
+import { builder_resumeDelegate } from '../resume'
 import { BuilderData } from '../BuilderData';
 import { is_Function } from '@utils/is';
 import { arr_pushMany } from '@utils/arr';
 import { listeners_emit } from '@core/util/listeners';
 import { custom_Tags } from '@core/custom/exports';
 
-export function build_compo (node, model, ctx, container, ctr, children){
+
+export function build_compoFactory (build: Function) {
+    return function build_compo (node, model, ctx, container, ctr, children){
 
 		var compoName = node.tagName,
 			Handler;
@@ -78,7 +87,7 @@ export function build_compo (node, model, ctx, container, ctr, children){
 				, ctx
 				, container
 				, children
-				, compo.renderEnd
+                , compo.renderEnd
 			);
 			compo.await(resume);
 			return null;
@@ -171,7 +180,7 @@ export function build_compo (node, model, ctx, container, ctr, children){
 		if (node.render) {
 			node.render(node.model, ctx, container, ctr, els);
 		} else {
-			builder_build(node.nodes, node.model, ctx, container, node, els);
+			build(node.nodes, node.model, ctx, container, node, els);
 		}
 
 		if (childs != null && els.length !== 0) {
@@ -179,3 +188,4 @@ export function build_compo (node, model, ctx, container, ctr, children){
 		}
 		return null;
 	}
+}

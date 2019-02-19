@@ -6,9 +6,9 @@ import { obj_extend, _Object_create, obj_getProperty } from '@utils/obj';
 import { expression_eval } from '@core/expression/exports';
 import { jMask } from '@mask-j/jMask';
 import { attr_first } from '@core/util/attr';
-import { customTag_get } from '@core/custom/tag';
-import { cursor_groupEnd } from '@core/parser/cursor';
-import { Templates } from '@core/handlers/template';
+import { customTag_get } from '@core/custom/exports';
+import { cursor_groupEnd } from '@core/parser/exports';
+import { Templates } from '@core/handlers/exports';
 
 	/**
 	 * Join two Mask templates or DOM trees
@@ -23,7 +23,7 @@ import { Templates } from '@core/handlers/template';
 	 * @method merge
 	 */
 export function mask_merge (a, b, owner?, opts?, stats?){
-		if (typeof a === 'string') {
+        if (typeof a === 'string') {
 			a = parser_parse(a);
 		}
 		if (typeof b === 'string') {
@@ -292,8 +292,7 @@ export function mask_merge (a, b, owner?, opts?, stats?){
 					tagName = attr_first(node.attr);
 				}
 				tagName = interpolate_str_(tagName, placeholders, tmplNode);
-
-				var handler = customTag_get(tagName, tmplNode);
+                var handler = customTag_get(tagName, tmplNode);
 				if (handler != null) {
 					var proto = handler.prototype;
 					var tmpl  = proto.template || proto.nodes;
@@ -308,8 +307,8 @@ export function mask_merge (a, b, owner?, opts?, stats?){
 				}
 				break;
 			default:
-				var handler = customTag_get(tagName, tmplNode);
-				if (handler != null) {
+                var handler = customTag_get(tagName, tmplNode);
+                if (handler != null) {
 					placeholders.$compos[tagName] = handler;
 
 					var proto = handler.prototype;

@@ -1,10 +1,11 @@
 import { IModule } from './Module';
+import { m_Types } from './ModuleTypes';
 import { class_create } from '@utils/class';
 import { _file_getScript } from '../loaders';
 import { log_error } from '@core/util/reporters';
 import { _opts } from '../Opts';
 
-export const ModuleScript = (IModule as any).types['script'] = class_create(IModule, {
+export const ModuleScript = m_Types['script'] = class_create(IModule, {
 	type: 'script',
 	load_: _file_getScript,	
 	preprocessError_: function(error, next) {

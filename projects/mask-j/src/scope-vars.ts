@@ -1,11 +1,10 @@
-import { parser_ensureTemplateFunction } from '@core/parser/exports';
+import { parser_ensureTemplateFunction, parser_parse } from '@core/parser/exports';
+import { renderer_render } from '@core/renderer/exports';
 
-export { Dom } from '@core/dom/exports'
-
-export const _mask_render = mask.render;
-export const _mask_parse = mask.parse;
+export const _mask_render = renderer_render;
+export const _mask_parse = parser_parse;
 export const _mask_ensureTmplFnOrig = parser_ensureTemplateFunction;
-export const _signal_emitIn = (mask.Compo || Compo).signal.emitIn;
+
 	
 
 export function _mask_ensureTmplFn(value) {

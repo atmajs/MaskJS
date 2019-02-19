@@ -1,17 +1,26 @@
-import { compo_create, compo_prepairProperties } from '../util/compo_create';
 import { is_Function, is_String, is_Array } from '@utils/is';
-import { obj_create, obj_extend } from '@utils/obj';
+import { obj_extend } from '@utils/obj';
 import { compo_meta_toAttributeKey } from '../util/compo_meta';
 import { ani_updateAttr } from '../util/ani';
-import { compo_ensureTemplate, compo_prepairAsync, compo_cleanElements, compo_removeElements, compo_detachChild, compo_dispose } from '../util/compo';
+import { compo_ensureTemplate, compo_prepairAsync, compo_cleanElements, compo_removeElements, compo_detachChild, compo_dispose, compo_attach } from '../util/compo';
 import { dfr_isBusy } from '../util/dfr';
 import { log_error } from '@core/util/reporters';
 import { _Array_slice } from '@utils/refs';
-import { Dom, domLib, expression_eval } from '../scope-vars';
+
 import { Anchor } from './anchor';
 import { CompoSignals } from '../signal/exports';
 import { KeyboardHandler } from '../keyboard/Handler';
-import { Component } from './Component';
+
+import { selector_parse } from '../util/selector';
+import { find_findSingle } from '../util/traverse';
+import { Dom } from '@core/dom/exports';
+import { expression_eval } from '@core/expression/exports';
+import { domLib } from '@compo/scope-vars';
+import { Children_ } from './children';
+import { Events_ } from './events';
+import { compo_find, compo_findAll, compo_closest } from './find';
+import { renderer_render } from '@core/renderer/exports';
+import { parser_parse } from '@core/parser/exports';
 
 
 export const CompoProto = {
@@ -138,7 +147,7 @@ export const CompoProto = {
         var parent;
 
         if (this.$ == null) {
-            var ast = is_String(template) ? mask.parse(template) : template;
+            var ast = is_String(template) ? parser_parse(template) : template;
             var parent = this;
             if (selector) {
                 parent = find_findSingle(this, selector_parse(selector, Dom.CONTROLLER, 'down'));
@@ -151,7 +160,7 @@ export const CompoProto = {
             return this;
         }
 
-        var frag = mask.render(template, model, null, null, this);
+        var frag = renderer_render(template, model, null, null, this);
         parent = selector
             ? this.$.find(selector)
             : this.$;
@@ -162,13 +171,13 @@ export const CompoProto = {
         return this;
     },
     find: function(selector){
-        return Component.find(this, selector);
+        return compo_find(this, selector);
     },
     findAll: function(selector){
-        return Component.findAll(this, selector);
+        return compo_findAll(this, selector);
     },
     closest: function(selector){
-        return Component.closest(this, selector);
+        return compo_closest(this, selector);
     },
     on: function() {
         var x = _Array_slice.call(arguments);
@@ -231,7 +240,7 @@ export const CompoProto = {
         return expression_eval(expr, model || this.model, ctx, this);
     },
     attach: function (name, fn) {
-        Component.attach(this, name, fn);
+        compo_attach(this, name, fn);
     },
     serializeState: function () {
         if (this.scope) {

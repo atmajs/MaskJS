@@ -232,7 +232,7 @@ define UserList (store: IStore) {
 We thoroughly pay attention to the performance, especially on the mobile CPU. _The DOM based and the Shadow DOM approach is the fastest way to create hierarchical component structure._
 
 Some benchmarks:
-- Mask vs raw HTML Template Engines - [:jsperf](http://jsperf.com/dom-vs-innerhtml-based-templating/711)
+- Mask vs raw HTML Template Engines - [:jsperf](https://jsperf.com/dom-vs-innerhtml-based-templating/1097)
 - Mask vs Angular - [:jsperf](http://jsperf.com/mask-vs-angular/6)
 - MaskDOM AST vs JSON parse - [:jsperf](http://jsperf.com/maskjs-vs-json/13)
 - Mask Markup vs HTML - [:jsperf](http://jsperf.com/mask-vs-contextual-fragment/9)

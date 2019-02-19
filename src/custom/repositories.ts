@@ -1,5 +1,6 @@
 import { obj_extend } from '@utils/obj';
 
+
 var _HtmlTags = {
     /*
         * Most common html tags
@@ -71,12 +72,7 @@ var _HtmlAttr = {
     'disabled': null,
 };
 
-export const custom_Utils = {
-    expression: function(value, model, ctx, element, ctr, name, type, node){
-        var owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
-        return expression_eval(value, model, ctx, owner, node);
-    },
-};
+export const custom_Utils = {};
 export const custom_Optimizers   = {};
 export const custom_Statements 	= {};
 export const custom_Attributes 	= obj_extend({}, _HtmlAttr);

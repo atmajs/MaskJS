@@ -1,19 +1,19 @@
-import { domLib, Dom } from '../scope-vars';
-import { Anchor } from '../compo/anchor';
 import { log_warn } from '@core/util/reporters';
-import { node_tryDispose, node_tryDisposeChildren } from '../util/dom';
-import { Component } from '../compo/Component';
+import { Dom } from '@core/dom/exports';
+import { renderer_render } from '@core/renderer/exports';
 
-// try to initialize the dom lib, or is then called from `setDOMLibrary`
-domLib_initialize();
+import { domLib } from '../scope-vars';
+import { Anchor } from '../compo/anchor';
+import { node_tryDispose, node_tryDisposeChildren } from '../util/dom';
+import { find_findSingle } from '../util/traverse';
+import { selector_parse } from '../util/selector';
+import { CompoSignals } from '../signal/exports';
+
 
 export function domLib_initialize(){
 	if (domLib == null || domLib.fn == null)
 		return;
     
-    //@TODO reference the Mask namespace
-	(mask as any).$ = domLib;
-	
 	domLib.fn.compo = function(selector){
 		if (this.length === 0)
 			return null;
@@ -56,15 +56,15 @@ export function domLib_initialize(){
 			
 			domLib.fn[method] = function(template, model, ctr, ctx){
 				if (this.length === 0) {
-					// if DEBUG
+					//#if (DEBUG)
 					log_warn('<jcompo> $.', method, '- no element was selected(found)');
-					// endif
+					//#endif
 					return this;
 				}
 				if (this.length > 1) {
-					// if DEBUG
+					//#if (DEBUG)
 					log_warn('<jcompo> $.', method, ' can insert only to one element. Fix is comming ...');
-					// endif
+					//#endif
 				}
 				if (ctr == null) {
 					ctr = index < 2
@@ -86,13 +86,13 @@ export function domLib_initialize(){
 				
 				var compos = ctr.components,
 					i = compos.length,
-					fragment = mask.render(template, model, ctx, null, ctr);
+					fragment = renderer_render(template, model, ctx, null, ctr);
 				
 				var self = this[jQ_Methods[index]](fragment),
 					imax = compos.length;
 				
 				for (; i < imax; i++) {
-					Component.signal.emitIn(compos[i], 'domInsert');
+					CompoSignals.signal.emitIn(compos[i], 'domInsert');
 				}
 				
 				if (isUnsafe && imax !== 0) {
@@ -125,25 +125,23 @@ export function domLib_initialize(){
 			;
 		
 		domLib.fn.removeAndDispose = function(){
-			this.each(each_tryDispose);
-			
+			this.each(each_tryDispose);			
 			return jq_remove.call(this);
 		};
 		
 		domLib.fn.emptyAndDispose = function(){
 			this.each(each_tryDisposeChildren);
-			
 			return jq_empty.call(this);
+		};
+		function each_tryDispose(i, el){
+			node_tryDispose(el);
 		}
 		
-		
-		function each_tryDispose(index, node){
-			node_tryDispose(node);
+		function each_tryDisposeChildren(i, el){
+			node_tryDisposeChildren(el);
 		}
-		
-		function each_tryDisposeChildren(index, node){
-			node_tryDisposeChildren(node);
-		}
-		
 	}());
 }
+
+// try to initialize the dom lib, or is then called from `setDOMLibrary`
+domLib_initialize();

@@ -8,7 +8,7 @@ var EventDecos = (function() {
 			return true;
 		}
 		try {
-			return !!document.createEvent('TouchEvent').initTouchEvent;
+			return !!(document as any).createEvent('TouchEvent').initTouchEvent;
 		} catch (error) {
 			return false;
 		}

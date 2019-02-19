@@ -4,7 +4,7 @@ import { custom_Statements } from '@core/custom/exports';
 import { attr_first } from '@core/util/attr';
 import { mask_merge } from '@core/feature/merge';
 import { builder_build } from '@core/builder/exports';
-import { jMask } from '@mask-j/jmask';
+import { jMask } from '@mask-j/jMask';
 
 const cache_ = {};
 export const Templates = {

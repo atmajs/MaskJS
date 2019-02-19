@@ -1,6 +1,5 @@
 import { log_warn } from '@core/util/reporters';
-import { Compo } from './Compo';
-
+import { compo_find } from './find';
 
 /**
  *	Get component that owns an element
@@ -28,7 +27,7 @@ export const Anchor =  {
 					}
 					compo = _cache[id];
 					if (compo != null) {
-						compo = Compo.find(compo, {
+						compo = compo_find(compo, {
 							key: 'ID',
 							selector: ownerId,
 							nextKey: 'components'

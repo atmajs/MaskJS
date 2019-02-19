@@ -3,66 +3,63 @@ import { expression_eval } from '@core/expression/exports';
 import { builder_build } from '@core/builder/exports';
 import { log_warn } from '@core/util/reporters';
 
-(function(){
-	custom_Statements['switch'] = {
-		render: function(node, model, ctx, el, ctr, elements){
 
-			var value = expression_eval(node.expression, model, ctx, ctr),
-				nodes = getNodes(value, node.nodes, model, ctx, ctr);
-			if (nodes == null)
-				return;
+custom_Statements['switch'] = {
+    render: function(node, model, ctx, el, ctr, elements){
 
-			builder_build(nodes, model, ctx, el, ctr, elements);
-		},
+        var value = expression_eval(node.expression, model, ctx, ctr),
+            nodes = getNodes(value, node.nodes, model, ctx, ctr);
+        if (nodes == null)
+            return;
 
-		getNodes: getNodes
-	};
+        builder_build(nodes, model, ctx, el, ctr, elements);
+    },
+
+    getNodes: getNodes
+};
 
 
-	function getNodes(value, nodes, model, ctx, ctr) {
-		if (nodes == null)
-			return null;
+function getNodes(value, nodes, model, ctx, ctr) {
+    if (nodes == null)
+        return null;
 
-		var imax = nodes.length,
-			i = -1,
+    var imax = nodes.length,
+        i = -1,
 
-			child, expr,
-			case_, default_;
+        child, expr,
+        case_, default_;
 
-		while ( ++i < imax ){
-			child = nodes[i];
+    while ( ++i < imax ){
+        child = nodes[i];
 
-			if (child.tagName === 'default') {
-				default_ = child;
-				continue;
-			}
+        if (child.tagName === 'default') {
+            default_ = child;
+            continue;
+        }
 
-			if (child.tagName !== 'case') {
-				log_warn('<mask:switch> Case expected', child.tagName);
-				continue;
-			}
-			expr = child.expression;
-			if (!expr) {
-				log_warn('<mask:switch:case> Expression expected');
-				continue;
-			}
+        if (child.tagName !== 'case') {
+            log_warn('<mask:switch> Case expected', child.tagName);
+            continue;
+        }
+        expr = child.expression;
+        if (!expr) {
+            log_warn('<mask:switch:case> Expression expected');
+            continue;
+        }
 
-			/* jshint eqeqeq: false */
-			if (expression_eval(expr, model, ctx, ctr) == value) {
-				/* jshint eqeqeq: true */
-				case_ = child;
-				break;
-			}
-		}
+        /* jshint eqeqeq: false */
+        if (expression_eval(expr, model, ctx, ctr) == value) {
+            /* jshint eqeqeq: true */
+            case_ = child;
+            break;
+        }
+    }
 
-		if (case_ == null)
-			case_ = default_;
+    if (case_ == null)
+        case_ = default_;
 
-		return case_ != null
-			? case_.nodes
-			: null
-			;
-	}
-
-}());
-
+    return case_ != null
+        ? case_.nodes
+        : null
+        ;
+}

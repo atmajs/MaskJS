@@ -1,16 +1,17 @@
-import { Dom } from '@core/dom/exports';
-import { builder_Ctx } from '../ctx';
-import { is_ArrayLike, is_Function } from '@utils/is';
-import { log_error } from '@core/util/reporters';
 import { arr_pushMany } from '@utils/arr';
+import { is_ArrayLike, is_Function } from '@utils/is';
+import { Dom } from '@core/dom/exports';
+import { log_error } from '@core/util/reporters';
+import { custom_Statements, custom_Tags, custom_Attributes } from '@core/custom/exports';
+
+import { builder_Ctx } from '../ctx';
 import { builder_findAndRegisterCompo } from '../util';
 
-import { build_many } from './build_many';
+import { build_manyFactory } from './build_many';
 import { build_nodeFactory } from './build_node';
-import { build_compo } from './build_component';
+import { build_compoFactory } from './build_component';
 import { build_textNode } from './build_textNode';
 import { IBuilderConfig } from './IBuilderConfig';
-import { custom_Statements, custom_Tags, custom_Attributes } from '@core/custom/exports';
 
 /**
  * @param {MaskNode} node
@@ -24,9 +25,11 @@ import { custom_Statements, custom_Tags, custom_Attributes } from '@core/custom/
  * @method build
  */
 export function builder_buildFactory (config: IBuilderConfig) {
-    let build_node = build_nodeFactory(config);
+    let build_node = build_nodeFactory(config);   
+    let build_many = build_manyFactory(build);
+    let build_compo = build_compoFactory(build);
 
-    return function builder_build (node, model_, ctx, container_, ctr_, children_?) {
+    function build (node, model_, ctx, container_, ctr_, children_?) {
         if (node == null)
             return container;
 
@@ -136,7 +139,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
             if (is_ArrayLike(nodes)) {
                 build_many(nodes, model, ctx, container, ctr, elements);			
             } else {
-                builder_build(nodes, model, ctx, container, ctr, elements);
+                build(nodes, model, ctx, container, ctr, elements);
             }
         }
 
@@ -180,4 +183,6 @@ export function builder_buildFactory (config: IBuilderConfig) {
 
         return container;
     }
+
+    return build;
 };

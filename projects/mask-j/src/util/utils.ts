@@ -2,6 +2,7 @@ import { arr_eachAny } from './array';
 import { is_ArrayLike, is_Function } from '@utils/is';
 import { obj_create } from '@utils/obj';
 import { Dom } from '@core/dom/exports';
+import { selector_match } from './selector';
 
 export function jmask_filter (mix, matcher) {
 		if (matcher == null) 

@@ -1,3 +1,4 @@
+import { event_bind, event_trigger, event_unbind } from './utils';
 
 export function FastClick  (el, fn) {
 		this.state = 0;

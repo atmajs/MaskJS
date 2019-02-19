@@ -1,5 +1,9 @@
+import { class_create } from '@utils/class';
+import { compo_attachDisposer } from '@compo/util/compo';
+import { Tween } from './Tween';
+import { ani_requestFrame, ani_clearFrame } from '@compo/util/ani';
 
-var TweenManager = class_create({
+export const TweenManager = class_create({
 	animating: false,
 	frame: null,
 	constructor: function (compo) {
@@ -18,10 +22,10 @@ var TweenManager = class_create({
 			return;
 		}
 		this.animation = true;
-		this.frame = ani_requestFrame(this.tick);
+		this.frame = ani_requestFrame.call(null, this.tick);
 	},
 	dispose: function(){
-		ani_clearFrame(this.frame);
+		ani_clearFrame.call(null, this.frame);
 	},
 	tick: function(timestamp){
 		var busy = false;
@@ -41,7 +45,7 @@ var TweenManager = class_create({
 			this.parent.onEnterFrame();
 		}
 		if (busy) {
-			this.frame = ani_requestFrame(this.tick);
+			this.frame = ani_requestFrame.call(null, this.tick);
 			return;
 		}
 		this.animating = false;

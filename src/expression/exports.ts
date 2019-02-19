@@ -1,7 +1,8 @@
-import { _evaluate } from './6.eval';
-import { _evaluateStatements } from './7.eval_statements';
-import { _parse } from './5.parser';
-import { refs_extractVars } from './8.vars.helper';
+import { customUtil_register } from '@core/custom/exports';
+import { _parse } from './parser';
+import { _evaluate } from './eval';
+import { _evaluateStatements } from './eval_statements';
+import { refs_extractVars } from './vars_helper';
 
 /**
  * ExpressionUtil
@@ -11,6 +12,8 @@ import { refs_extractVars } from './8.vars.helper';
 
 export const expression_eval           = _evaluate;
 export const expression_evalStatements = _evaluateStatements;
+export const expression_varRefs = refs_extractVars;
+export const expression_parse           = _parse;
 export const ExpressionUtil = {
     'parse': _parse,
 
@@ -41,3 +44,7 @@ export const ExpressionUtil = {
     'evalStatements': _evaluateStatements
 };
 
+customUtil_register('expression', function(value, model, ctx, element, ctr, name, type, node){
+    var owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+    return expression_eval(value, model, ctx, owner, node);
+});

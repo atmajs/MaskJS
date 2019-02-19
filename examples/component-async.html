@@ -6,12 +6,12 @@
 <body>
 	<script type='text/mask' data-run='true'>
 		h4 > 'User'
-		:user-profile;
+		UserProfile;
 	</script>
 	
 	
 	<script>
-		mask.registerHandler(':user-profile', Compo({
+		mask.registerHandler('UserProfile', mask.Compo({
 			template: "input type='text' value='~[name]'",
 			
 			onRenderStart: function(model, ctx){
@@ -19,7 +19,7 @@
 				// all sync components will still be renderd,
 				// and other async components are loaded parallel
 				
-				var resume = Compo.pause(this, ctx),
+				var resume = mask.Compo.pause(this, ctx),
 					profile = this;
 				
 				// fake some async job for getting e.g. the model for the component

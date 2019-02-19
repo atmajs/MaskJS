@@ -1,4 +1,4 @@
-import { jMask } from '@mask-j/jmask';
+import { jMask } from '@mask-j/jMask';
 import { customTag_register } from '@core/custom/exports';
 
 

@@ -1,7 +1,7 @@
+import { Dom } from '@core/dom/exports';
 import { custom_Parsers } from '@core/custom/exports';
 import { go_tag } from '../const';
 import { class_create } from '@utils/class';
-import { Dom } from '@core/dom/exports';
 import { parser_ObjectLexer } from '../object/ObjectLexer';
 
 (function(){

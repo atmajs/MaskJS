@@ -15,7 +15,7 @@ import { custom_Attributes } from './repositories';
  * @memberOf mask
  * @method registerAttrHandler
  */
-export function customAttr_register (attrName, mix, Handler){
+export function customAttr_register (attrName, mix, Handler?){
 	if (is_Function(mix)) {
 		Handler = mix;
 	}

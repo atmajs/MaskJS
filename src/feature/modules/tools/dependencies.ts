@@ -3,11 +3,11 @@ import { class_Dfr } from '@utils/class/Dfr';
 import { parser_parse } from '@core/parser/exports';
 import { path_getDir, path_getExtension, path_isRelative, path_combine, path_normalize } from '@core/util/path';
 import { mask_TreeWalker } from '@core/feature/TreeWalker';
-import { Module } from '../exports';
 import { _file_get } from '../loaders';
+import { type_get } from '../types';
 
 
-export function tools_getDependencies (template, path, opts_){
+export function tools_getDependencies (template, path, opts_?: { deep?: boolean, flattern?: boolean }){
 
 		var opts = obj_extendDefaults(opts_, defaultOptions);
 		var dfr = new class_Dfr;
@@ -52,7 +52,7 @@ export function tools_getDependencies (template, path, opts_){
 				return next();
 			}
 			var path = resolvePath(node, location);
-			var type = Module.getType(node);
+			var type = type_get(node);
 			if (opts.deep === false) {
 				dependency[type].push(path);
 				return next();
