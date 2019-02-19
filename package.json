@@ -218,7 +218,9 @@
                     }
                 },
                 "copyFiles": {
-                    "src/auto-reload.ts": "lib/plugin.reload.js"
+                    "src/auto-reload.ts": "lib/plugin.reload.js",
+                    "ref-mask-node/lib/mask.bootstrap.js": "lib/mask.bootstrap.js",
+                    "ref-mask-node/lib/mask.node.js": "lib/mask.node.js"
                 }
             }
         },
