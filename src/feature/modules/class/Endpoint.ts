@@ -3,7 +3,7 @@ export class Endpoint {
     contentType: string
     moduleType: string
     
-    constructor (path, contentType, moduleType?) {
+    constructor (path, contentType?, moduleType?) {
         this.path = path;
         this.contentType = contentType;
         this.moduleType = moduleType;

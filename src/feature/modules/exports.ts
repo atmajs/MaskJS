@@ -42,6 +42,8 @@ export const Module = {
     clearCache: cache_clear,
     getCache: cache_get,
 
+    reload: (path) => {},
+
     types: (IModule as any).types,
     File: {
         get: _file_get,

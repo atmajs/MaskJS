@@ -93,6 +93,5 @@ UTest({
 	}
 });
 function run (expr, model?) {
-    debugger;
-	return expression_eval(expr, model);	
+    return expression_eval(expr, model);	
 }

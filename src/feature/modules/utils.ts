@@ -76,7 +76,7 @@ export function u_resolvePath (path, ctx, ctr, module){
     return toAbsolute(path, ctx, ctr, module);
 };
 
-export function u_resolvePathFromImport (node, ctx, ctr, module, makeAbs?){
+export function u_resolvePathFromImport (node, ctx?, ctr?, module?, makeAbs?){
     var path = node.path;
     if (path == null && node.namespace != null) {
         path = fromNs(node);			

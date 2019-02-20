@@ -118,60 +118,60 @@ export const Mask = {
      * @memberOf mask
      */
     renderAsync: renderer_renderAsync,
-    // parser/mask/parse.js
+    
     parse: parser_parse,
-    // parser/html/parse.js
+    
     parseHtml: parser_parseHtml,
-    // formatter/stringify.js
+    
     stringify: mask_stringify,
-    // builder/delegate/build.js
+    
     build: builder_build,
-    // builder/svg/exports.js
+    
     buildSVG: builder_buildSVG,
-    // feature/run.js
+    
     run: mask_run,
-    // feature/merge.js
+    
     merge: mask_merge,
-    // feature/optimize.js
+    
     optimize: mask_optimize,
     registerOptimizer: mask_registerOptimizer,
-    // feature/TreeWalker.js
+    
     TreeWalker: mask_TreeWalker,
-    // feature/Module.js
+    
     Module: Module,
     File: Module.File,
-    // feature/Di.js
+    
     Di: Di,
-    // custom/tag.js
+    
     registerHandler: customTag_register,
     registerFromTemplate: customTag_registerFromTemplate,
     define: customTag_define,
     getHandler: customTag_get,
     getHandlers: customTag_getAll,
-    // custom/statement.js
+    
     registerStatement: customStatement_register,
     getStatement: customStatement_get,
-    // custom/attribute.js
+    
     registerAttrHandler: customAttr_register,
     getAttrHandler: customAttr_get,
-    // custom/util.js
+    
     registerUtil: customUtil_register,
     getUtil: customUtil_get,
     $utils: customUtil_$utils,
     _: customUtil_$utils,
 
     defineDecorator: Decorator.define,
-    // dom/exports.js
+    
     Dom: Dom,
     /**
      * Is present only in DEBUG (not minified) version
      * Evaluates script in masks library scope
      * @param {string} script
      */
-    plugin: function(source) {
-        //if DEBUG
+    plugin (source) {
+        //#if (DEBUG)
         eval(source);
-        //endif
+        //#endif
     },
     clearCache: renderer_clearCache,
     Utils: {
@@ -216,12 +216,12 @@ export const Mask = {
         warn: log_warn,
         warnWithNode: warn_withNode
     },
-    // util/listeners.js
+    
     on: listeners_on,
     off: listeners_off,
 
     // Stub for the reload.js, which will be used by includejs.autoreload
-    delegateReload: function() {},
+    delegateReload () {},
 
     /**
      * Define interpolation quotes for the parser
@@ -232,7 +232,7 @@ export const Mask = {
      **/
     setInterpolationQuotes: parser_setInterpolationQuotes,
 
-    setCompoIndex: function(index) {
+    setCompoIndex (index) {
         BuilderData.id = index;
     },
 
@@ -240,11 +240,11 @@ export const Mask = {
     config: mask_config,
 
     // For the consistence with the NodeJS
-    toHtml: function(dom) {
+    toHtml (dom) {
         return (Mask.$(dom) as any).outerHtml();
     },
 
-    factory: function(compoName) {
+    factory (compoName) {
         var params_ = _Array_slice.call(arguments, 1),
             factory = params_.pop(),
             mode = 'both';

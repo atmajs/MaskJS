@@ -1,13 +1,14 @@
 import { obj_extend } from '@utils/obj';
 import { type_getModuleType } from './types';
+import { Endpoint } from './class/Endpoint';
 
 var _cache = {};
 
-export function cache_get  (endpoint) {
+export function cache_get  (endpoint: Endpoint) {
     return ensure(endpoint)[endpoint.path];
 };
-export function cache_set (endpoint, Module) {
-    return (ensure(endpoint)[endpoint.path] = Module);
+export function cache_set (endpoint: Endpoint, module) {
+    return (ensure(endpoint)[endpoint.path] = module);
 };
 export function cache_clear  (path?) {
     if (path == null) {
