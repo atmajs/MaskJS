@@ -2,7 +2,7 @@ import { is_Array } from '@utils/is';
 import { fn_proxy } from '@utils/fn';
 import { custom_Statements, customTag_register } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { mask_stringify } from '@core/parser/exports';
 import { expression_createBinder, expression_bind } from '@project/observer/src/exports'
 import { arr_createRefs } from './utils';

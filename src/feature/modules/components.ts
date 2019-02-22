@@ -1,5 +1,5 @@
 import { custom_Tags } from '@core/custom/exports';
-import { expression_eval, expression_evalStatements } from '@core/expression/exports';
+import { expression_eval, expression_evalStatements } from '@project/expression/src/exports';
 import { class_create } from '@utils/class';
 import { fn_doNothing } from '@utils/fn';
 import { path_resolveUrl } from '@core/util/path';

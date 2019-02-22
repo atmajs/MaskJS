@@ -1,5 +1,5 @@
 import { custom_Statements } from '@core/custom/exports';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 import { customTag_register } from '@core/custom/exports';
 
 

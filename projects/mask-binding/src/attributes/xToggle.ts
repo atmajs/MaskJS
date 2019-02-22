@@ -1,7 +1,7 @@
 import { customAttr_register } from '@core/custom/exports';
 import { expression_eval_safe } from '../utils/expression';
 import { obj_setProperty } from '@utils/obj';
-import { expression_varRefs } from '@core/expression/exports';
+import { expression_varRefs } from '@project/expression/src/exports';
 import { Component } from '@compo/exports';
 
 /**

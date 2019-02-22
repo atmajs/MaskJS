@@ -67,7 +67,9 @@ common:
       lazy:
         "/custom/*":
         - modules/exports
-        - expression/exports
+        - expression/src/exports
+        "/expression/*":
+        - project/observer
         "/builder/*":
         - "/feature/"
         "/renderer/*":
@@ -76,7 +78,7 @@ common:
         - util/reporters
         - parser/exports
         - builder/exports
-        - expression/exports
+        - expression/src/exports
         - renderer/exports
         - parser/exports
         - "/feature/"

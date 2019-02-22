@@ -1,6 +1,6 @@
 import { _global } from '@utils/refs'
 import { customTag_register } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 
 function SlotHandler() {}
 

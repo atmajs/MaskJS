@@ -2,7 +2,7 @@ import { class_create } from '@utils/class';
 import { parser_error } from '@core/util/reporters';
 import { custom_Parsers } from '@core/custom/exports';
 import { Dom } from '@core/dom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { cursor_refEnd, cursor_groupEnd, cursor_quoteEnd } from '../cursor';
 
 

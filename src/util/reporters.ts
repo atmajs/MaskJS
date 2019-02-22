@@ -4,9 +4,9 @@ import { listeners_emit } from './listeners';
 import { is_String } from '@utils/is';
 import { _Array_slice } from '@utils/refs';
 
-const noConsole = typeof console !== 'undefined';
+const noConsole = typeof console === 'undefined';
 
-var bind = Function.prototype.bind;
+let bind = Function.prototype.bind;
 export const log = noConsole ? fn_doNothing : bind.call(console.warn, console);
 export const log_warn = noConsole
     ? fn_doNothing
@@ -94,7 +94,7 @@ function delegate_parserReporter(Ctor, type) {
         var cursorMsg = error_formatSource(source, index, file);
         if (cursorMsg) {
             error.message += '\n' + cursorMsg;
-        }
+        }                
         report(error, 'error');
     };
 }

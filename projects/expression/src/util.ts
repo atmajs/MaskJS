@@ -27,7 +27,7 @@ export function util_throw(
 ) {
     return parser_error(
         msg + util_getNodeStack(astNode),
-        template,
+        template.toString(),
         index,
         token,
         'expr'

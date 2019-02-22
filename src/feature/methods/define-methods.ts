@@ -5,7 +5,7 @@ import { _args_toCode } from './utils';
 import { Dom } from '@core/dom/exports';
 import { Decorator } from '../decorators/exports';
 import { scopeRefs_getImportVars } from './scope-refs';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { Di } from '../Di';
 
 export function defMethods_getSource(defNode, defProto, model, owner) {

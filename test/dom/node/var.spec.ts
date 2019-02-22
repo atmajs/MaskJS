@@ -1,6 +1,6 @@
 import { parser_parse } from '@core/parser/exports';
 import { jMask } from '@mask-j/jMask';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { $render } from '../utils';
 
 import '@core/statements/exports'

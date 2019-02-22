@@ -1,7 +1,7 @@
-import { expression_eval, expression_parse } from '@core/expression/exports';
+import { expression_eval, expression_parse } from '@project/expression/src/exports';
 import { listeners_on, listeners_off } from '@core/util/listeners'
+import sinon = require('sinon');
 
-declare var sinon: any;
 
 UTest({
 	$config: {

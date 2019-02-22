@@ -25,7 +25,7 @@
     "devDependencies": {
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
-        "app-bundler": "0.0.65",
+        "app-bundler": "0.0.68",
         "atma": "^0.11.19",
         "atma-io-middleware-condcomments": "^1.2.6",
         "atma-io-middleware-importer": "^1.1.37",
@@ -86,12 +86,13 @@
                     "@core": "/src/{0}",
                     "@compo": "/projects/mask-compo/src/{0}",
                     "@mask-j": "/projects/mask-j/src/jmask/{0}",
-                    "@binding": "/projects/mask-binding/src/{0}"
+                    "@binding": "/projects/mask-binding/src/{0}",
+                    "@project": "/projects/{0}"
                 },
                 "lazy": {
                     "/custom/*": [
                         "modules/exports",
-                        "expression/exports"
+                        "expression/src/exports"
                     ],
                     "/builder/*": [
                         "/feature/"
@@ -103,10 +104,13 @@
                         "util/reporters",
                         "parser/exports",
                         "builder/exports",
-                        "expression/exports",
+                        "expression/src/exports",
                         "renderer/exports",
                         "parser/exports",
                         "/feature/"
+                    ],
+                    "/expression/*": [
+                        "projects/observer"
                     ],
                     "CompoStatics\\b": [
                         "Component"

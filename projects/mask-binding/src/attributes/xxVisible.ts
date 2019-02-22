@@ -1,6 +1,6 @@
 
 import { customAttr_register } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { Component } from '@compo/exports';
 import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 

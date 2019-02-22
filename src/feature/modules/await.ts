@@ -7,10 +7,10 @@ import { log_error, reporter_createErrorNode } from '@core/util/reporters';
 import { builder_resumeDelegate } from '@core/builder/exports';
 import { Dom } from '@core/dom/exports';
 import { builder_build } from '@core/builder/exports';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 import { builder_Ctx } from '@core/builder/exports';
 import { jMask } from '@mask-j/jMask';
-import { Component, Compo } from '@compo/exports';
+import { Component } from '@compo/exports';
 import { renderer_renderAsync } from '@core/renderer/exports';
 
 
@@ -165,7 +165,7 @@ custom_Tags['await'] = class_create({
         var node = {
             type: Dom.COMPONENT,
             nodes: nodes,
-            controller: new Compo,
+            controller: new Component,
             attr: {},
         };
         builder_build(node, null, ctx, container, this);

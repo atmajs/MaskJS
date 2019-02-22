@@ -55,7 +55,7 @@ import {
     parser_setInterpolationQuotes
 } from './parser/exports';
 
-import { ExpressionUtil } from './expression/exports';
+import { ExpressionUtil } from '@project/expression/src/exports';
 import { mask_config } from './api/config';
 import { Templates } from './handlers/template';
 

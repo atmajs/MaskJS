@@ -1,4 +1,4 @@
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { listeners_off, listeners_on } from '@core/util/listeners';
 
 UTest({

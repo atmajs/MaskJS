@@ -1,4 +1,4 @@
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { error_withNode } from '@core/util/reporters';
 import { _store } from './store';
 import { custom_Tags, custom_Statements } from '@core/custom/exports';

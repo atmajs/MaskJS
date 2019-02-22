@@ -1,5 +1,5 @@
 import { customTag_register } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { obj_addObserver } from '@project/observer/src/exports';
 
 /**

@@ -1,4 +1,4 @@
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { expression_callFn } from '@project/observer/src/exports';
 import { obj_setProperty, obj_getProperty } from '@utils/obj';
 import { date_ensure } from './utils/date';

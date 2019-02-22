@@ -1,7 +1,7 @@
 import { is_Function } from '@utils/is';
 import { fn_proxy } from '@utils/fn';
 import { custom_Utils } from './repositories';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 
 /**
  * Utils Repository

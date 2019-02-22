@@ -1,4 +1,4 @@
-import { expression_eval, expression_parse } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 
 declare var sinon: any;
 declare var mask: any;

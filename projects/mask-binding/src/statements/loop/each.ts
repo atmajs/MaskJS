@@ -1,6 +1,6 @@
 import { _document } from '@utils/refs'
 import { custom_Statements, customTag_register } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { arr_createRefs } from './utils';
 import { _renderPlaceholder, _compo_initAndBind } from '../utils';
 import { class_create } from '@utils/class';

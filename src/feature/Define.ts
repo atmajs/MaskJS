@@ -5,7 +5,7 @@ import { log_error } from '@core/util/reporters';
 import { Dom } from '@core/dom/exports';
 import { custom_Tags, customTag_register, customTag_registerScoped, customTag_get } from '@core/custom/exports';
 import { parser_parse } from '@core/parser/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { mask_merge } from './merge';
 import { Decorator } from './decorators/exports';
 import { Methods } from './methods/exports';

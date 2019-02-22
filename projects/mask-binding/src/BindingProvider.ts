@@ -1,4 +1,3 @@
-import { class_create } from '@utils/class';
 import { DomObjectTransport, IDomWay, IObjectWay } from './DomObjectTransport';
 import { signal_parse } from './utils/signal';
 import { log_error, log_warn } from '@core/util/reporters';
@@ -13,7 +12,7 @@ import {
 import { is_Array } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { ValidatorProvider } from './ValidatorProvider';
-import { expression_varRefs } from '@core/expression/exports';
+import { expression_varRefs } from '@project/expression/src/exports';
 import { Component } from '@compo/exports';
 
 export const CustomProviders = {};

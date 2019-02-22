@@ -3,7 +3,7 @@ import { log_error, log_warn } from '@core/util/reporters';
 import { dom_addEventListener } from '../util/dom';
 import { _hasSlot, _fire } from './utils';
 import { _Array_slice } from '@utils/refs';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 import { compo_attach } from '@compo/util/compo';
 
 	

@@ -3,7 +3,7 @@ import { is_ArrayLike, is_Array, is_Function } from '@utils/is';
 import { Dom } from '@core/dom/exports';
 import { log_warn, error_withNode, log_error } from '@core/util/reporters';
 import { obj_extend, _Object_create, obj_getProperty } from '@utils/obj';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { jMask } from '@mask-j/jMask';
 import { attr_first } from '@core/util/attr';
 import { customTag_get } from '@core/custom/exports';

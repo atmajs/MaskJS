@@ -1,4 +1,4 @@
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { custom_Statements } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
 

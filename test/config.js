@@ -41,6 +41,10 @@ module.exports = {
                 includejs: includeSettings(),
             },
 			tests: 'projects/mask-binding/test/**.spec.ts'
+        },
+        'expression': {
+            exec: 'node',
+            tests: 'projects/expression/test/**.spec.ts'
 		}
 	}
 };
@@ -60,7 +64,7 @@ function includeSettings () {
         "lazy": {
             "/custom/*": [
                 "modules/exports",
-                "expression/exports"
+                "expression/src/exports"
             ],
             "/builder/*": [
                 "/feature/"
@@ -72,7 +76,7 @@ function includeSettings () {
                 "util/reporters",
                 "parser/exports",
                 "builder/exports",
-                "expression/exports",
+                "expression/src/exports",
                 "renderer/exports",
                 "parser/exports",
                 "/feature/"

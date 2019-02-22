@@ -1,5 +1,5 @@
 import { custom_Statements, custom_Tags } from '@core/custom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { builder_build } from '@core/builder/exports';
 import { is_Array } from '@utils/is';
 import { log_error, log_warn } from '@core/util/reporters';

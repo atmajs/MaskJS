@@ -28,14 +28,14 @@ export const Ast_Body = class_create({
         this.observe = false;
     },
     toString: function() {
-        var imax = this.body,
-            i = -1,
+        let arr = this.body,
+            l = arr.length,
             str = '';
-        while (++i < imax) {
-            if (i !== 0) {
+        for (let i = 0; i < l; i++) {
+            if (i > 0) {
                 str += ', ';
             }
-            str += this.body[i].toString();
+            str += arr[i].toString();
         }
         return str;
     }
@@ -140,7 +140,9 @@ export const Ast_SymbolRef = class_create(Ast_AccessorBase, {
         this.body = ref;
     },
     toString: function() {
-        return this.body + (this.next == null ? '' : this.next.toString());
+        return this.next == null 
+            ? this.body
+            : `${this.body}.${this.next.toString()}`;
     }
 });
 export const Ast_Accessor = class_create(Ast_AccessorBase, {

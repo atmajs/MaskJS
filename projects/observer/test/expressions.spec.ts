@@ -2,7 +2,7 @@
 import { obj_lockObservers, obj_unlockObservers, obj_removeMutatorObserver, obj_addMutatorObserver, obj_addObserver, obj_removeObserver } from '../src/exports';
 import { obj_getProperty } from '@utils/obj';
 import { expression_createBinder, expression_bind, expression_unbind } from '../src/expression';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 
 declare var sinon: any;
 

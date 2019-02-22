@@ -14,7 +14,7 @@ import { KeyboardHandler } from '../keyboard/Handler';
 import { selector_parse } from '../util/selector';
 import { find_findSingle } from '../util/traverse';
 import { Dom } from '@core/dom/exports';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 import { domLib } from '@compo/scope-vars';
 import { Children_ } from './children';
 import { Events_ } from './events';
@@ -66,7 +66,7 @@ export const CompoProto = {
         readArguments: null
     },
 
-    getAttribute: function(key) {
+    getAttribute (key) {
         var attr = this.meta.attributes;
         if (attr == null || attr[key] === void 0) {
             return this.attr[key];
@@ -75,7 +75,7 @@ export const CompoProto = {
         return this[prop];
     },
 
-    setAttribute: function(key, val) {
+    setAttribute (key, val) {
         var attr = this.meta.attributes;
         var meta = attr == null ? void 0 : attr[key];
         var prop = null;
@@ -100,7 +100,7 @@ export const CompoProto = {
     onRenderEndServer: null,
     onEnterFrame: null,
     render: null,
-    renderStart: function(model, ctx, container){
+    renderStart (model, ctx, container){
         compo_ensureTemplate(this);
         if (is_Function(this.onRenderStart)){
             var x = this.onRenderStart(model, ctx, container);
@@ -108,14 +108,14 @@ export const CompoProto = {
                 compo_prepairAsync(x, this, ctx);
         }
     },
-    renderStartClient: function(model, ctx, container){
+    renderStartClient (model, ctx, container){
         if (is_Function(this.onRenderStartClient)){
             var x = this.onRenderStartClient(model, ctx, container);
             if (x !== void 0 && dfr_isBusy(x))
                 compo_prepairAsync(x, this, ctx);
         }
     },
-    renderEnd: function(elements, model, ctx, container){
+    renderEnd (elements, model, ctx, container){
 
         Anchor.create(this);
 
@@ -138,12 +138,12 @@ export const CompoProto = {
             this.onEnterFrame();
         }
     },
-    appendTo: function(el) {
+    appendTo (el) {
         this.$.appendTo(el);
         this.emitIn('domInsert');
         return this;
     },
-    append: function(template, model, selector) {
+    append (template, model, selector) {
         var parent;
 
         if (this.$ == null) {
@@ -170,16 +170,16 @@ export const CompoProto = {
         this.emitIn('domInsert');
         return this;
     },
-    find: function(selector){
+    find (selector){
         return compo_find(this, selector);
     },
-    findAll: function(selector){
+    findAll (selector){
         return compo_findAll(this, selector);
     },
-    closest: function(selector){
+    closest (selector){
         return compo_closest(this, selector);
     },
-    on: function() {
+    on () {
         var x = _Array_slice.call(arguments);
         if (arguments.length < 3) {
             log_error('Invalid Arguments Exception @use .on(type,selector,fn)');
@@ -198,7 +198,7 @@ export const CompoProto = {
         }
         return this;
     },
-    remove: function() {
+    remove () {
         compo_cleanElements(this);
         compo_removeElements(this);
         compo_detachChild(this);
@@ -207,15 +207,15 @@ export const CompoProto = {
         this.$ = null;
         return this;
     },
-    slotState: function(slotName, isActive){
+    slotState (slotName, isActive){
         CompoSignals.slot.toggle(this, slotName, isActive);
         return this;
     },
-    signalState: function(signalName, isActive){
+    signalState (signalName, isActive){
         CompoSignals.signal.toggle(this, signalName, isActive);
         return this;
     },
-    emitOut: function(signalName, a1, a2, a3, a4){
+    emitOut (signalName, a1, a2, a3, a4){
         CompoSignals.signal.emitOut(
             this,
             signalName,
@@ -224,7 +224,7 @@ export const CompoProto = {
         );
         return this;
     },
-    emitIn: function(signalName, a1, a2, a3, a4){
+    emitIn (signalName, a1, a2, a3, a4){
         CompoSignals.signal.emitIn(
             this,
             signalName,
@@ -233,21 +233,21 @@ export const CompoProto = {
         );
         return this;
     },
-    $scope: function(path){
-        return expression_eval('$scope.' + path, null, null, this);
+    $scope (path){
+        return expression_eval('$scope?.' + path, null, null, this);
     },
-    $eval: function(expr, model, ctx){
+    $eval (expr, model, ctx){
         return expression_eval(expr, model || this.model, ctx, this);
     },
-    attach: function (name, fn) {
+    attach  (name, fn) {
         compo_attach(this, name, fn);
     },
-    serializeState: function () {
+    serializeState  () {
         if (this.scope) {
             return { scope: this.scope };
         }			
     },
-    deserializeState: function (bundle) {
+    deserializeState  (bundle) {
         if (bundle != null && bundle.scope != null) {
             this.scope = obj_extend(this.scope, bundle.scope);
         }

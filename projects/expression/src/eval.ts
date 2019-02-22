@@ -5,6 +5,7 @@ import { util_resolveAcc, util_resolveRefValue, util_getNodeStack, util_resolveR
 import { is_Function } from '@utils/is';
 import { error_ } from '@core/util/reporters';
 import { Ast_FunctionRefUtil } from './astNode_utils';
+import { _evaluateAstDeferred } from './eval_deferred';
 
 const cache = {};
 
@@ -35,10 +36,11 @@ export function _evaluate (mix, model?, ctx?, ctr?, node?) {
 	}
 	if (ast == null) {
 		return null;
-	}
-	return ast.async === true 
-		? _evaluateAstAsync(ast, model, ctx, ctr)
-		: _evaluateAst(ast, model, ctx, ctr, null);
+    }
+    if (ast.observe === true || ast.async === true) {
+        return _evaluateAstDeferred(ast, model, ctx, ctr);
+    }
+	return _evaluateAst(ast, model, ctx, ctr, null);
 }
 export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 	if (ast == null)
@@ -142,9 +144,8 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 		return result;		
 	}
 	if (type_Statement === type) {
-		if (ast.async === true && ast.preResultIndex > -1 && preResults != null) {
-			var x = preResults[ast.preResultIndex];
-			result = x == null ? null : x.result;
+		if ((ast.async === true || ast.observe === true) && ast.preResultIndex > -1 && preResults != null) {
+			result = preResults[ast.preResultIndex];
 		} else {
 			result = _evaluateAst(ast.body, model, ctx, ctr, preResults);
 		}

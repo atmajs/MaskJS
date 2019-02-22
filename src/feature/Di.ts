@@ -1,5 +1,5 @@
 import { is_Function, is_Array } from '@utils/is';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 
 export	const Di = {
 		resolve: function (Type) {

@@ -1,5 +1,5 @@
 import { class_create } from '@utils/class';
-import { expression_eval, expression_varRefs } from '@core/expression/exports';
+import { expression_eval, expression_varRefs } from '@project/expression/src/exports';
 import { compo_attach } from '@compo/util/compo';
 
 

@@ -9,7 +9,6 @@ import { CompoSignals } from '../signal/exports'
 import { DomLite } from '../DomLite'
 import { compo_create } from '../util/compo_create'
 
-import { Class } from '../scope-vars'
 import { CompoStaticsAsync } from './async'
 import { compo_find, compo_findAll, compo_closest, compo_children, compo_child } from './find'
 import { Anchor } from './anchor'

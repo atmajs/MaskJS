@@ -1,6 +1,6 @@
 import { custom_Tags, customTag_Base } from '@core/custom/exports';
 import { class_create } from '@utils/class';
-import { expression_eval } from '@core/expression/exports';
+import { expression_eval } from '@project/expression/src/exports';
 
 (function(){
 	// TODO: refactor methods, use MaskNode Serialization instead Model Serialization

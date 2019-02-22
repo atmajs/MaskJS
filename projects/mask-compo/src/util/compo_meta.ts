@@ -2,7 +2,7 @@ import { log_error, error_withCompo } from '@core/util/reporters';
 import { compo_errored } from './compo';
 import { is_Function } from '@utils/is';
 import { obj_create } from '@utils/obj';
-import { expression_evalStatements, expression_eval } from '@core/expression/exports';
+import { expression_evalStatements, expression_eval } from '@project/expression/src/exports';
 import { Di } from '@core/feature/Di';
 import { CompoProto } from '@compo/compo/CompoProto';
 

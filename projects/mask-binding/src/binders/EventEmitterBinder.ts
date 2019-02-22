@@ -1,7 +1,7 @@
 import { class_create } from '@utils/class';
 import { log_error } from '@core/util/reporters';
 import { IBinder } from './IBinder';
-import { expression_evalStatements } from '@core/expression/exports';
+import { expression_evalStatements } from '@project/expression/src/exports';
 
 /*
  *	"expression, ...args"

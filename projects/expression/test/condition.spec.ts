@@ -1,4 +1,4 @@
-import { expression_eval } from '@core/expression/exports'
+import { expression_eval } from '@project/expression/src/exports'
 
 UTest({
 	'expression_eval by strings': function() {
