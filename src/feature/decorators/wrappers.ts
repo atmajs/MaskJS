@@ -80,9 +80,17 @@ export function _wrapper_Fn  (decoNode, deco, innerFn, target, key) {
 		function create(decoCtx, beforeFn, afterFn, builderFn) {
 			return function (node, model, ctx, el, ctr, els) {
 				if (beforeFn != null) {
-					var newNode = beforeFn.call(decoCtx, node, model, ctx, el, ctr, els);
-					if (newNode != null) {
-						node = newNode;
+					var mix = beforeFn.call(decoCtx, node, model, ctx, el, ctr, els);
+					if (mix != null) {
+                        if ('tagName' in mix) {
+                            console.warn('@obsolete: Before FN in decorator should return compound object with node?, container?, controller?, model? properties')
+                            node = mix;
+                        } else {
+                            if (mix.model) model = mix.model;
+                            if (mix.node) node = mix.node;
+                            if (mix.container) el = mix.container;
+                            if (mix.controller) ctr = mix.controller;
+                        }
 					}
 				}
 				if (els == null) {
