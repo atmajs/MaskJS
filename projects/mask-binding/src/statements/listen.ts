@@ -48,10 +48,7 @@ customTag_register('listen', class_create({
         this.binder.dispose();
 
         this.disposed = true;
-        this.elements = null;
-        this.parent = null;
-        this.model = null;
-        this.ctx = null;
+        this.elements = null;        
     },
     refresh: function(){
         throw new Error('Should be defined');

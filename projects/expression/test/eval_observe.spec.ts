@@ -205,14 +205,12 @@ UTest({
 class ObservableMock {
     cb: Function    
     subscribe (cb) {
-        debugger;
         this.cb = cb;
     }
     unsubscribe () {
 
     }
     next (val) { 
-        debugger;       
         this.cb(val)
     }
 }

@@ -77,7 +77,6 @@ export class DeferStatement<T = any> extends PromisedStream<T> {
         this.deferExp.then(context => {
             this.ctx = AwaitableCtx(context);
             this.ctx.then(result => {
-                debugger;
                 this.resolve(result);
             }, function (error) {
                 this.reject(error);

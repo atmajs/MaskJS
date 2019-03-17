@@ -3,6 +3,7 @@ import { obj_extend } from '@utils/obj';
 import { _Array_slice } from '@utils/refs';
 import { class_Dfr } from '@utils/class/Dfr';
 import { CompoSignals } from '@compo/signal/exports';
+import { Component } from './Component';
 
 export const CompoStaticsAsync = {
     pause: function(compo, ctx) {
@@ -53,12 +54,12 @@ export const CompoStaticsAsync = {
         }
         if (busy === false) ctx.resolve();
     },
-    await: function(compo) {
+    await (compo: Component) {
         return new Awaiter().await(compo);
     }
 };
 /** private */
-var CompoProto = {
+const CompoProto = {
     async: true,
     resume: null,
     await: function(resume, deep) {

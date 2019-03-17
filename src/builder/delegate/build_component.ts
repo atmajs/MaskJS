@@ -1,6 +1,5 @@
 import { 
-    builder_findAndRegisterCompo, 
-    builder_pushCompo, 
+    builder_findAndRegisterCompo,     
     builder_setCompoAttributes, 
     builder_setCompoProps, 
     builder_setCompoModel
@@ -11,6 +10,7 @@ import { is_Function } from '@utils/is';
 import { arr_pushMany } from '@utils/arr';
 import { listeners_emit } from '@core/util/listeners';
 import { custom_Tags } from '@core/custom/exports';
+import { compo_addChild } from '@core/util/compo';
 
 
 export function build_compoFactory (build: Function) {
@@ -78,7 +78,7 @@ export function build_compoFactory (build: Function) {
 			compo.renderStart(model, ctx, container);
 
 
-		builder_pushCompo(ctr, compo);
+		compo_addChild(ctr, compo);
 
 		if (compo.async === true) {
 			var resume = builder_resumeDelegate(
@@ -144,7 +144,7 @@ export function build_compoFactory (build: Function) {
 		}
 
 		clone.ID = ++BuilderData.id;
-		builder_pushCompo(ctr, clone);
+		compo_addChild(ctr, clone);
 
 		var i = ctr.components.length - 1;
 		if (is_Function(clone.render)){
@@ -171,7 +171,7 @@ export function build_compoFactory (build: Function) {
 	function build_NodeAsCompo(node, model, ctx, container, ctr, childs){
 		node.ID = ++BuilderData.id;
 
-		builder_pushCompo(ctr, node);
+		compo_addChild(ctr, node);
 
 		if (node.model == null)
 			node.model = model;

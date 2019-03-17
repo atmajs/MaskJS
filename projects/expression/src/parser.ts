@@ -13,8 +13,9 @@ let index = 0,
  * earlyExit - only first statement/expression is consumed
  */
 export function _parse(expr, earlyExit?, node?) {
-	if (earlyExit == null)
-		earlyExit = false;
+	if (earlyExit == null) {
+        earlyExit = false;
+    }
 
 	template = expr;
 	index = 0;

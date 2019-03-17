@@ -13,23 +13,26 @@ import { dom_NODE } from './NodeType';
  * @property {function} appendChild
  * @memberOf mask.Dom
  */
-export const Node = class_create({
-	constructor:  function Node(tagName, parent) {
-		this.type = dom_NODE;
+export class Node {
+    type: number = dom_NODE
+    attr: any = {}
+
+    __single: boolean = null
+	appendChild = _appendChild
+    nextSibling: Node = null
+    
+	props: any = null
+	expression: string =  null
+	nodes: Node[] = null
+	parent: Node = null
+	sourceIndex: number = -1
+	stringify: Function = null
+	tagName: string = null
+	
+    decorators: any = null
+    
+	constructor (tagName: string, parent: Node) {
 		this.tagName = tagName;
 		this.parent = parent;
-		this.attr = {};
-	},
-	__single: null,
-	appendChild: _appendChild,
-	attr: null,
-	props: null,
-	expression: null,
-	nodes: null,
-	parent: null,
-	sourceIndex: -1,
-	stringify: null,
-	tagName: null,
-	type: dom_NODE,
-	decorators: null
-});
+	}	
+};

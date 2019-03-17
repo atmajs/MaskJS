@@ -26,6 +26,9 @@ export function compo_dispose(compo) {
             compo_dispose(compos[i]);
         }
     }
+    compo.parent = null;
+    compo.model = null;
+    compo.components = null;
 }
 
 export function compo_detachChild(childCompo) {
