@@ -1,10 +1,18 @@
-
-import { obj_lockObservers, obj_unlockObservers, obj_removeMutatorObserver, obj_addMutatorObserver, obj_addObserver, obj_removeObserver } from '../src/exports';
+import { 
+    obj_lockObservers, 
+    obj_unlockObservers, 
+    obj_removeMutatorObserver, 
+    obj_addMutatorObserver, 
+    obj_addObserver, 
+    obj_removeObserver,
+    expression_createBinder,
+    expression_bind,
+    expression_unbind
+ } from '../src/exports';
 import { obj_getProperty } from '@utils/obj';
-import { expression_createBinder, expression_bind, expression_unbind } from '../src/expression';
 import { expression_eval } from '@project/expression/src/exports';
+import sinon = require('sinon');
 
-declare var sinon: any;
 
 UTest({
 
@@ -63,6 +71,21 @@ UTest({
 
         obj_removeMutatorObserver(array, callback);
         eq_(array.__observers.__mutators.length, 0);
+    },
+
+    'array property' () {
+        var model = <any> {
+            letters: []
+        };
+        let cb1 = sinon.spy();
+        let cb2 = sinon.spy();
+        obj_addObserver(model, 'letters', cb1);
+        obj_addObserver(model, 'letters', cb2);
+
+        model.letters.push('a');
+
+        deepEq_(cb1.args, [ ['a'] ])
+        deepEq_(cb2.args, [ ['a'] ])
     },
 
     'object - observer': function() {
@@ -636,3 +659,4 @@ UTest({
         }
     },
 })
+
