@@ -1,5 +1,7 @@
+
 import { mask_merge } from '@core/feature/merge';
 import { mask_stringify } from '@core/parser/exports';
+
 
 UTest({
 	'placeholders' () {
@@ -34,5 +36,18 @@ UTest({
 		var nodes = mask_merge(a, b);
 		var str = mask_stringify(nodes);
 		eq_(str, 'div>span;');
-	}
+    },
+    'destructured attributes' () {
+        var a = `
+			section > @content > div @[...attr];
+		`;
+		var b = `
+			@content name='Foo';
+        `;
+        
+        var nodes = mask_merge(a, b);
+        
+		var str = mask_stringify(nodes);
+		eq_(str, `section>div name=Foo;`);
+    }
 })

@@ -67,7 +67,8 @@ function includeSettings () {
                 "expression/src/exports"
             ],
             "/builder/*": [
-                "/feature/"
+                "src/util/compo",
+                "src/feature/"
             ],
             "/renderer/*": [
                 "compo/exports"

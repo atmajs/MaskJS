@@ -1,6 +1,6 @@
 import { is_Function } from '@utils/is';
-import { custom_Attributes } from '@core/custom/exports';
 import { coll_indexOf } from '@utils/coll';
+import { custom_Attributes } from '@core/custom/exports';
 import { builder_build } from './dom/build';
 
 export function builder_resumeDelegate  (ctr, model, ctx, container, children?, finilizeFn?){

@@ -1,16 +1,20 @@
+import { is_Function } from '@utils/is';
+import { arr_pushMany } from '@utils/arr';
+
+import { listeners_emit } from '@core/util/listeners';
+import { custom_Tags } from '@core/custom/exports';
+import { compo_addChild } from '@core/util/compo';
+
+
 import { 
     builder_findAndRegisterCompo,     
     builder_setCompoAttributes, 
     builder_setCompoProps, 
     builder_setCompoModel
 } from '../util';
+
 import { builder_resumeDelegate } from '../resume'
 import { BuilderData } from '../BuilderData';
-import { is_Function } from '@utils/is';
-import { arr_pushMany } from '@utils/arr';
-import { listeners_emit } from '@core/util/listeners';
-import { custom_Tags } from '@core/custom/exports';
-import { compo_addChild } from '@core/util/compo';
 
 
 export function build_compoFactory (build: Function) {

@@ -360,6 +360,16 @@ export function mask_merge (a, b, owner?, opts?, stats?){
 			x = clone[key];
 			if (x == null)
 				continue;
+            
+            if (key === '@[...attr]') {
+                // When `node` is component, the original node is under `node` property
+                let attr = (node.node || node).attr;
+                for (let key in attr) {
+                    clone[key] = attr[key];
+                }
+                clone[key] = null;
+                continue;
+            }
 
 			clone[key] = interpolate_str_(x, placeholders, node);
 		}
