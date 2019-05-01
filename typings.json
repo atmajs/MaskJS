@@ -1,6 +1,0 @@
-{
-  "globalDependencies": {
-    "assertion": "github:atmajs/assertion",
-    "atma-utest": "github:atmajs/utest"
-  }
-}
