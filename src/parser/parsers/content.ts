@@ -16,11 +16,11 @@ import { parser_parseLiteral } from '../mask/partials/literal';
 custom_Parsers['style' ] = createParser('style', Style.transform);
 custom_Parsers['script'] = createParser('script');
 
-var ContentNode = class_create(Dom.Node, {
-    content: null,
-    id: null,
+class ContentNode extends Dom.Node {
+    content = null
+    id = null
 
-    stringify: function (stream) {
+    stringify (stream) {
         stream.processHead(this);
 
         var body = this.content;
@@ -36,7 +36,7 @@ var ContentNode = class_create(Dom.Node, {
         stream.closeBlock('}');
         return;
     }
-});
+};
 
 var COUNTER = 0;
 var PRFX = '_cm_';

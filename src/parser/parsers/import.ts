@@ -27,8 +27,9 @@ custom_Parsers_Transform[IMPORT] = function(current) {
     if (current.tagName === IMPORTS) {
         return null;
     }
+    
     var imports = new ImportsNode('imports', current);
-    current.appendChild(imports);
+    current.appendChild(imports);    
     return imports;
 };
 
@@ -49,7 +50,7 @@ var lex_ = parser_ObjectLexer(
 );
 
 var ImportsNode = class_create(Dom.Node, {
-    stringify: function (stream) {
+    stringify (stream) {
         stream.process(this.nodes);
     }
 });

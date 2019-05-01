@@ -7,12 +7,12 @@ export function compo_addChild(ctr, compo) {
     compo_addChildren(ctr, compo);
 };
 export function compo_addChildren(ctr, ...compos) {
-    let x = ctr.components;
-    if (x == null) {
+    let arr = ctr.components;
+    if (arr == null) {
         ctr.components = compos;
         return;
     }
-    compos.push(...compos);
+    arr.push(...compos);
 };
 
 export function compo_renderElements (nodes, model, ctx, el, ctr, children?){
