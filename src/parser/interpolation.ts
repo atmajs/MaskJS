@@ -5,15 +5,15 @@ import { interp_code_OPEN, interp_START, interp_code_CLOSE } from './const';
 import { cursor_groupEnd } from './cursor';
 
 
-export function	parser_ensureTemplateFunction (template) {
-		var mix = _split(template);
+export function	parser_ensureTemplateFunction (template: string) {
+		let mix = _split(template);
 		if (mix == null) {
 			return template;
 		}
 		if (typeof mix === 'string') {
 			return mix;
 		}
-		var array = mix;
+		let array = mix;
 		return function(type, model, ctx, element, ctr, name, node) {
 			if (type === void 0) {
 				return template;
@@ -34,17 +34,16 @@ export function	parser_ensureTemplateFunction (template) {
 
 	
 
-	function _split (template) {
+	function _split (template: string): string | ([string | Function][]) {
 		var index = -1,
-			wasEscaped = false,
-			nextC, nextI;
+			wasEscaped = false;
 		/*
 		 * - single char indexOf is much faster then '~[' search
 		 * - function is divided in 2 parts: interpolation start lookup + interpolation parse
 		 * for better performance
 		 */
 		while ((index = template.indexOf(interp_START, index)) !== -1) {
-			nextC = template.charCodeAt(index + 1);
+			let nextC = template.charCodeAt(index + 1);
 			var escaped = _char_isEscaped(template, index);
 			if (escaped === true) {
 				wasEscaped = true;
@@ -80,8 +79,8 @@ export function	parser_ensureTemplateFunction (template) {
 				: _slice(template, lastIndex, index);
 
 
-			nextI = index + 1;
-			nextC = template.charCodeAt(nextI);
+			let nextI = index + 1;
+			let nextC = template.charCodeAt(nextI);
 			if (nextC === interp_code_OPEN) {
 				propAccessor = false;
 				end = cursor_groupEnd(
@@ -213,7 +212,7 @@ export function	parser_ensureTemplateFunction (template) {
 	 * If custom utils returns only strings, then String will be returned by this function
 	 * @returns {(array|string)}
 	 */
-	function _interpolate(arr, type, model, ctx, el, ctr, name, node) {
+	function _interpolate(arr: any[], type: 'compo-attr' | 'compo-prop' | 'attr', model: any, ctx, el: Element, ctr, name, node) {
 		if ((type === 'compo-attr' || type === 'compo-prop') && arr.length === 2 && arr[0] === '') {
 			return arr[1].process(model, ctx, el, ctr, name, type);
 		}
@@ -272,4 +271,4 @@ export function	parser_ensureTemplateFunction (template) {
 		return i;
 	}
 
-	var rgx_UTIL = /\s*(\w+):/;
+	const rgx_UTIL = /^\s*(\w+):/;

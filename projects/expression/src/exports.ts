@@ -10,20 +10,20 @@ import { refs_extractVars } from './vars_helper';
  * Helper to work with expressions
  **/
 
-export const type_Value = 1;
-export const type_Async = 2;
-export const type_Observe = 3;
+export const exp_type_Sync = 1;
+export const exp_type_Async = 2;
+export const exp_type_Observe = 3;
 export function expression_getType (expr): 1 | 2 | 3 {
     let ast = _parse(expr);
     if (ast != null) {
         if (ast.observe) {
-            return type_Observe;
+            return exp_type_Observe;
         }
         if (ast.async) {
-            return type_Async;
+            return exp_type_Async;
         }
     }
-    return type_Value;
+    return exp_type_Sync;
 }
 
 export const expression_eval           = _evaluate;

@@ -1,4 +1,4 @@
-import { expression_eval, expression_parse, expression_getType, type_Value, type_Observe, type_Async } from '@project/expression/src/exports';
+import { expression_eval, expression_parse, expression_getType, exp_type_Sync, exp_type_Observe, exp_type_Async } from '@project/expression/src/exports';
 import { custom_Statements } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
 import { Node } from '@core/dom/Node';
@@ -110,12 +110,12 @@ class ObservableNodes {
         let meta = this.switch[i];
         if (meta != null) {
             switch (meta.type) {
-                case type_Value: {
+                case exp_type_Sync: {
                     this.onValue(null, this.eval());
                     return;
                 }
-                case type_Async:
-                case type_Observe:
+                case exp_type_Async:
+                case exp_type_Observe:
                     if (meta.busy === false) {
                         this.onValue(null, meta.result);
                         return;
@@ -126,27 +126,27 @@ class ObservableNodes {
         let value = this.eval();
         meta = this.switch[i] = {
             busy: true,
-            type: type_Value,
+            type: exp_type_Sync,
             node: this.cursor,
             value: null,
             error: null,
             result: null
         };        
         if (is_Observable(value) && value.kind !== 2 /* SubjectKind.Promise */) {
-            meta.type = type_Observe;
+            meta.type = exp_type_Observe;
             this.subscriptions.push(
                 value.subscribe(x => this.tick(null, i, x), this.tick)
             );
             return;
         }
         if (is_PromiseLike(value)) {
-            meta.type = type_Async;
+            meta.type = exp_type_Async;
             value.then(x => this.onValue(null, x), this.onValue);
             return;
         }
         
 
-        meta.type = type_Value;
+        meta.type = exp_type_Sync;
         this.onValue(null, value);
     }
 
@@ -161,7 +161,7 @@ custom_Statements['if'] = {
     getNodes: getNodesSync,
     render (node: Node, model, ctx, container, ctr, children) {
         let type = expression_getType(node.expression);
-        if (type === type_Value) {
+        if (type === exp_type_Sync) {
             
             let nodes = getNodesSync(node, model, ctx, ctr);
             if (nodes != null) {

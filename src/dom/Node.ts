@@ -31,7 +31,7 @@ export class Node {
 	
     decorators: any = null
     
-	constructor (tagName: string, parent: Node) {
+	constructor (tagName: string, parent?: Node) {
 		this.tagName = tagName;
 		this.parent = parent;
 	}	
