@@ -17,6 +17,10 @@ import { Component } from '@compo/exports';
 
 export const CustomProviders = {};
 
+const A_dom_slot = 'dom-slot';
+const A_property = 'property';
+const A_change_event = 'change-event';
+
 export class BindingProvider {
     validations = null
     ctx = null
@@ -33,31 +37,37 @@ export class BindingProvider {
     mapToObj: string
     mapToDom: string
     changeEvent: string
-    typeof: string
+    typeOf: string
 
     slots: any
     pipes: any
 
     parent: any
 
+    private dismiss: number = 0
+    bindingType: 'dual' | 'single'
 
-    dismiss: number = 0
-    bindingType: string
-    log = false
-    logExpression: string
-    signal_domChanged: string
-    signal_objectChanged: string
+    private log = false
+    private logExpression: string
+    private signal_domChanged: string
+    private signal_objectChanged: string
     
-    pipe_domChanged: { pipe: string, signal: string}
-    pipe_objectChanged: { pipe: string, signal: string}
-    locked = false
+    private pipe_domChanged: { pipe: string, signal: string}
+    private pipe_objectChanged: { pipe: string, signal: string}
+    private locked = false
 
     domWay: IDomWay = DomObjectTransport.domWay
     objectWay: IObjectWay = DomObjectTransport.objectWay
-
+    
+    // -
     binder: Function
+    domObserveBinder: Function
 
-    constructor (public model, public element: HTMLElement, public ctr, bindingType?: string) {
+    domListenerType: 'event' | 'signal' | 'pipe' | 'observe'
+
+    owner;
+
+    constructor (public model, public element: HTMLElement, public ctr, bindingType?: 'dual' | 'single') {
         if (bindingType == null) {
             bindingType = 'dual';
 
@@ -68,40 +78,66 @@ export class BindingProvider {
         }
         let attr = ctr.attr;
 
+        this.bindingType = bindingType;
         this.value = attr.value;
-        this.property = attr.property;
+        this.property = attr[A_property];
         this.domSetter = attr['dom-setter'] || attr.setter;
         this.domGetter = attr['dom-getter'] || attr.getter;
         this.objSetter = attr['obj-setter'];
         this.objGetter = attr['obj-getter'];
         this.mapToObj = attr['map-to-obj'];
         this.mapToDom = attr['map-to-dom'];
-        this.changeEvent = attr['change-event'] || 'change';
+        this.owner = ctr.parent;
+        
+        this.changeEvent = attr[A_change_event] || 'change';
 
         /* Convert to an instance, e.g. Number, on domchange event */
-        this['typeof'] = attr['typeof'] || null;
-
-        this.bindingType = bindingType;
+        this.typeOf = attr['typeof'] || null;
         
-        let isCompoBinder = ctr.node.parent.tagName === ctr.parent.compoName;
-        if (
-            isCompoBinder &&
-            (element.nodeType !== 1 || element.tagName !== 'INPUT')
-        ) {
-            if (this.domSetter == null) this.domSetter = 'setValue';
-            if (this.domGetter == null) this.domGetter = 'getValue';
-            if (attr['dom-slot'] == null) attr['dom-slot'] = 'input';
+        let isCompoBinder = ctr.node.parent.tagName === this.owner.compoName;
+        switch (true) {
+            case (A_dom_slot in attr): 
+                this.domListenerType = 'signal';
+                break;
+            case (A_change_event in attr): 
+                this.domListenerType = 'event';
+                break;
+            case (isCompoBinder && (A_property in attr)):
+                this.domListenerType = 'observe';
+                break;
+        }
+        
+        if (isCompoBinder) {
+            if (this.domListenerType === 'observe') {
+                this.domWay = DomObjectTransport.domModelWay;
+            } else {
+                let isInput = element.nodeType === 1 && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');
+                if (isInput === false) {
+                    if (this.domSetter == null) this.domSetter = 'setValue';
+                    if (this.domGetter == null) this.domGetter = 'getValue';
+                    if (attr[A_dom_slot] == null) attr[A_dom_slot] = 'input';
+                }
+            }
+        }
+        if (this.domListenerType == null) {
+            this.domListenerType = 'event';
         }
 
         if (this.property == null && this.domGetter == null) {
             switch (element.tagName) {
                 case 'INPUT':
                     // Do not use .type accessor, as some browsers do not support e.g. date
-                    var type = element.getAttribute('type');
+                    let type = element.getAttribute('type');
                     if ('checkbox' === type) {
                         this.property = 'element.checked';
                         break;
-                    } else if (
+                    } 
+                    if ('radio' === type) {
+                        this.domWay = DomObjectTransport.RADIO.domWay;
+                        break;
+                    }
+                    
+                    if (
                         'date' === type ||
                         'time' === type ||
                         'month' === type
@@ -110,13 +146,9 @@ export class BindingProvider {
                         this.domWay = x.domWay;
                         this.objectWay = x.objectWay;
                     } else if ('number' === type) {
-                        this['typeof'] = 'Number';
-                    } else if ('radio' === type) {
-                        var x = DomObjectTransport.RADIO;
-                        this.domWay = x.domWay;
-                        break;
-                    }
-                    this.changeEvent = attr['change-event'] || 'change,input';
+                        this['typeOf'] = 'Number';
+                    } 
+                    this.changeEvent = attr[A_change_event] || 'change,input';
                     this.property = 'element.value';
                     break;
                 case 'TEXTAREA':
@@ -170,7 +202,7 @@ export class BindingProvider {
             }
         }
 
-        var domSlot = attr['dom-slot'];
+        var domSlot = attr[A_dom_slot];
         if (domSlot != null) {
             this.slots = {};
             // @hack - place dualb. provider on the way of a signal
@@ -221,7 +253,12 @@ export class BindingProvider {
         this.expression = this.value;
     }
     dispose () {
-        expression_unbind(this.expression, this.model, this.ctr, this.binder);
+        if (this.binder != null) {
+            expression_unbind(this.expression, this.model, this.ctr, this.binder);
+        }
+        if (this.domObserveBinder != null) {
+            expression_unbind(this.property, this.ctr, this.ctr, this.domObserveBinder);
+        }
     }
     objectChanged (val?) {
         if (this.dismiss-- > 0) {
@@ -272,7 +309,7 @@ export class BindingProvider {
         if (val == null) {
             val = this.domWay.get(this);
         }
-        let typeof_ = this['typeof'];
+        let typeof_ = this['typeOf'];
         if (typeof_ != null) {
             let Converter = window[typeof_];
             val = Converter(val);
@@ -375,11 +412,9 @@ export class BindingProvider {
 
 
 function apply_bind(provider: BindingProvider) {
-    var expr = provider.expression,
+    let expr = provider.expression,
         model = provider.model,
-        onObjChanged = (provider.objectChanged = provider.objectChanged.bind(
-            provider
-        ));
+        onObjChanged = provider.objectChanged = provider.objectChanged.bind(provider);
 
     provider.binder = expression_createBinder(
         expr,
@@ -392,25 +427,31 @@ function apply_bind(provider: BindingProvider) {
     expression_bind(expr, model, provider.ctx, provider.ctr, provider.binder);
 
     if (provider.bindingType === 'dual') {
-        var attr = provider.ctr.attr;
+        
+        let onDomChange = provider.domChanged.bind(provider);        
+        switch (provider.domListenerType) {
+            case 'event': {
+                let el = provider.element,
+                    event = provider.changeEvent,
+                    attachListener = Component.Dom.addEventListener;
 
-        if (!attr['dom-slot'] && !attr['change-pipe-event']) {
-            var element = provider.element,
-                eventType = provider.changeEvent,
-                onDomChange = provider.domChanged.bind(provider),
-                doListen = Component.Dom.addEventListener;
-
-            if (eventType.indexOf(',') !== -1) {
-                let arr = eventType.split(',');
-                for (let i = 0; i < arr.length; i++) {
-                    doListen(element, arr[i].trim(), onDomChange);        
+                if (event.indexOf(',') !== -1) {
+                    let arr = event.split(',');
+                    for (let i = 0; i < arr.length; i++) {
+                        attachListener(el, arr[i].trim(), onDomChange);        
+                    }
                 }
+                attachListener(el, event, onDomChange);
+                break;
             }
-            doListen(element, eventType, onDomChange);
+            case 'observe': {
+                provider.domObserveBinder = onDomChange;            
+                expression_bind(provider.property, provider.owner, provider.ctx, null, onDomChange);
+                break;
+            }
         }
-
         if (provider.objectWay.get(provider, provider.expression) == null) {
-            // object has no value, so check the dom
+            // object has no value, so check the dom            
             setTimeout(function() {
                 if (provider.domWay.get(provider))
                     // and apply when exists

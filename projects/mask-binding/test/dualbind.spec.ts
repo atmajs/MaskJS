@@ -1,7 +1,6 @@
 import { Mask as mask } from '../../../src/mask'
 const Compo = mask.Compo;
 
-
 UTest({
 	'input text' () {
 		var model = <any> { foo: 'Foo' };
@@ -245,7 +244,32 @@ UTest({
 		
 		app.remove();
 		eq_(foo.scope.__observers.letter.length, 0);
-	},
+    },
+    async 'should observe components property' () {
+        var template = `
+            define Foo {
+                var myLetter = 'a';
+                span > '~[bind: this.myLetter]'
+                @placeholder;
+            };
+
+            Foo {
+                dualbind value='letter' property='myLetter';
+            }
+        `;
+
+        let model = { letter: null };
+        let parent = Compo.initialize(template, model);
+        let foo = Compo.find(parent, 'Foo');
+        
+        await pause(20)
+
+        eq_(foo.myLetter, 'a');
+        eq_(model.letter, 'a', 'Must got from component as initial was null');
+
+        foo.myLetter = 'b';
+        eq_(model.letter, 'b');
+    },
 	'mappings': {
 		'should map to dom and to object' () {
 			var template = `
@@ -319,3 +343,8 @@ UTest({
 		}
 	} 
 })
+
+
+function pause (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

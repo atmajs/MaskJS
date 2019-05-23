@@ -56,7 +56,7 @@ var objectWay = <IObjectWay> {
     }
 };
 var domWay  = <IDomWay> {
-    get: function(provider) {
+    get (provider: BindingProvider) {
         var getter = provider.domGetter;
         if (getter == null) {
             return obj_getProperty(provider, provider.property);
@@ -67,7 +67,7 @@ var domWay  = <IDomWay> {
         }
         return ctr[getter](provider.element);
     },
-    set: function(provider, value) {
+    set (provider: BindingProvider, value) {
         var setter = provider.domSetter;
         if (setter == null) {
             obj_setProperty(provider, provider.property, value);
@@ -115,9 +115,18 @@ export const DomObjectTransport = {
     objectWay: objectWay,
     domWay: domWay,
 
+    domModelWay: {
+        get (provider: BindingProvider) {
+            return obj_getProperty(provider.owner, provider.property);
+        },
+        set (provider: BindingProvider, val) {
+            obj_setProperty(provider.owner, provider.property, val);
+        }
+    },
+
     SELECT: {
-        get: function(provider) {
-            var el = provider.element,
+        get (provider: BindingProvider) {
+            let el = provider.element as HTMLSelectElement,
                 i = el.selectedIndex;
             if (i === -1)
                 return '';
@@ -129,7 +138,7 @@ export const DomObjectTransport = {
                 : val
                 ;
         },
-        set: function(provider, val) {
+        set (provider, val) {
             var el = provider.element,
                 options = el.options,
                 imax = options.length,
@@ -151,12 +160,12 @@ export const DomObjectTransport = {
         }
     },
     SELECT_MULT: {
-        get: function(provider) {
+        get (provider) {
             return coll_map(provider.element.selectedOptions, function(x){
                 return x.value;
             });
         },
-        set: function(provider, mix) {
+        set (provider, mix) {
             coll_each(provider.element.options, function(el){
                 el.selected = false;
             });
@@ -182,7 +191,7 @@ export const DomObjectTransport = {
     DATE: {
         domWay: {
             get: domWay.get,
-            set: function(prov, val){
+            set (prov, val){
                 var date = date_ensure(val);
                 prov.element.value = date == null ? '' : formatDate(date);
             }
