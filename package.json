@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.7.4",
+    "version": "0.7.5",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -42,7 +42,8 @@
         "release": "atma release",
         "server": "atma server --TEST",
         "examples": "atma server --TEST",
-        "dts": "tsc -p . && atma custom tools/build-dts"
+        "tsc": "tsc -p tsconfig-build.json",
+        "dts": "npm run tsc && atma run tools/build-dts"
     },
     "keywords": [],
     "atma": {

@@ -168,7 +168,7 @@ function is_Compo(val) {
     return is_Object(val) || is_Function(val);
 }
 
-interface IDefineMethod {
+export interface IDefineMethod {
     (template: string)
     (scopeName: string, template: string)
     (scopeCompo: Function, template: string)

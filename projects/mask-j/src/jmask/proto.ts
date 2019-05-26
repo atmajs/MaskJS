@@ -1,6 +1,6 @@
 import { Dom } from '@core/dom/exports';
 import { is_ArrayLike } from '@utils/is';
-import { parser_parse } from '@core/parser/exports';
+import { parser_parse, mask_stringify } from '@core/parser/exports';
 import { _Array_slice } from '@utils/refs';
 import { jmask_getText } from '../util/utils';
 import { jMask } from './jMask';
@@ -105,7 +105,7 @@ export const Proto: any = {
 		if (arguments.length !== 0) {
 			return this.empty().append(template);
 		}
-		return mask.stringify(this);
+		return mask_stringify(this);
 	},
 
 	text: function(mix, ctx, ctr){

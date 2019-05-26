@@ -6,6 +6,8 @@ import { _Array_slice } from '@utils/refs';
 import { dom_insertBefore } from '@binding/utils/dom';
 import { fn_proxy } from '@utils/fn';
 import { expression_eval_safe } from '@binding/utils/expression';
+import { mask_stringify } from '@core/parser/exports';
+import { renderer_render } from '@core/renderer/exports';
 
 (function(){
 
@@ -21,7 +23,7 @@ import { expression_eval_safe } from '@binding/utils/expression';
 			serializeNodes: true
 		},
 		serializeNodes: function(current){
-			return mask.stringify(current);
+			return mask_stringify(current);
 		},
 		render: function(model, ctx, container, ctr, children){
 			var value = expression_eval_safe(this.expression, model, ctx, ctr);
@@ -103,7 +105,7 @@ import { expression_eval_safe } from '@binding/utils/expression';
 				return;
 			}
 
-			var result = mask.render(nodes, model, ctx, null, ctr);
+			var result = renderer_render(nodes, model, ctx, null, ctr);
 			Switch[index] = result.nodeType === Node.DOCUMENT_FRAGMENT_NODE
 				? _Array_slice.call(result.childNodes)
 				: result

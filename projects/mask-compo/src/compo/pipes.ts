@@ -104,7 +104,7 @@ function _addController(ctr) {
     compo_attachDisposer(ctr, _removeControllerDelegate(ctr));
 }
 
-class Pipe {
+export class Pipe {
     name: string
     constructor (name) {
         this.name = name;
@@ -145,7 +145,7 @@ class Pipe {
     }
 };
 
-function PipeCtor (name) {
+export function PipeCtor (name) {
     return new Pipe(name);
 }
 PipeCtor.addController = _addController;

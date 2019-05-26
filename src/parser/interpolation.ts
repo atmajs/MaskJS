@@ -14,7 +14,7 @@ export function	parser_ensureTemplateFunction (template: string) {
 			return mix;
 		}
 		let array = mix;
-		return function(type, model, ctx, element, ctr, name, node) {
+		return function(type, model, ctx, element, ctr, name?, node?) {
 			if (type === void 0) {
 				return template;
 			}

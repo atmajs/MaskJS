@@ -1,9 +1,13 @@
 {
-    "exclude": [
-        "node_modules",
-        "ts_temp"
+    "files": [
+    	"src/mask.ts"
+  	],
+	"exclude": [
+		"node_modules"
 	],
     "compilerOptions": {
+        "outDir": "ts-temp",
+        "declaration": true,
         "baseUrl": "./",
         "paths": {
             "@core/*": [

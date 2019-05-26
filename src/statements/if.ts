@@ -1,13 +1,13 @@
 import { expression_eval, expression_parse, expression_getType, exp_type_Sync, exp_type_Observe, exp_type_Async } from '@project/expression/src/exports';
 import { custom_Statements } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
-import { Node } from '@core/dom/Node';
 import { is_PromiseLike, is_Observable } from '@utils/is';
 import { Compo } from '@compo/exports';
 import { compo_addChild, compo_renderElements, compo_emitInserted, compo_addChildren } from '@core/util/compo';
 import { els_toggleVisibility, el_renderPlaceholder } from './utils';
 import { _document } from '@utils/refs';
 import { dom_insertBefore } from '@core/util/dom';
+import { INode } from '@core/dom/INode';
 
 
 
@@ -30,13 +30,13 @@ function getNodesSync (node, model, ctx, ctr){
 class ObservableNodes {
     frame = 0
     index = 0
-    cursor: Node = null
+    cursor: INode = null
     switch = []
     subscriptions = []
     disposed = false
 
     constructor (
-        public node: Node, 
+        public node: INode, 
         public model, 
         public ctx, 
         public ctr, 
@@ -62,7 +62,7 @@ class ObservableNodes {
         );
     }
 
-    private onValue (err, val) {
+    private onValue (err, val?) {
         if (err) {
             this.cb(err);
             return;
@@ -159,7 +159,7 @@ class ObservableNodes {
 
 custom_Statements['if'] = {
     getNodes: getNodesSync,
-    render (node: Node, model, ctx, container, ctr, children) {
+    render (node: INode, model, ctx, container, ctr, children) {
         let type = expression_getType(node.expression);
         if (type === exp_type_Sync) {
             
@@ -187,7 +187,7 @@ class ObservableIf {
     private placeholder = null;
     private index = -1;
     private obs: ObservableNodes
-    private Switch: { node: Node, elements: Element[] }[] = []
+    private Switch: { node: INode, elements: Element[] }[] = []
 
     constructor (private node, private model, private ctx, private el, private ctr, private children) {
 
@@ -201,14 +201,14 @@ class ObservableIf {
         );
         this.obs.start();     
     }
-    private show (err, node: Node, index: number) {
+    private show (err, node: INode, index: number) {
         this.refresh(err, node, index);
         if (this.resumeFn != null) {
             this.resumeFn();
             this.resumeFn = null;
         }
     }
-    private refresh (err, node: Node, index: number) {
+    private refresh (err, node: INode, index: number) {
         let currentIndex = this.index,
             switch_ = this.Switch;
 

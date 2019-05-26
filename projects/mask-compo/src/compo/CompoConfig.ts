@@ -5,10 +5,11 @@ import { domLib_initialize } from '../jcompo/jCompo';
 
 import { compo_find } from './find';
 import { Events_ } from './events';
+import { EventsDeco } from './EventsDeco';
 
 export const CompoConfig = {
     selectors: {
-        '$': function(compo, selector) {
+        '$'(compo, selector) {
             var r = domLib_find(compo.$, selector)
             //#if (DEBUG)
             if (r.length === 0)
@@ -16,7 +17,7 @@ export const CompoConfig = {
             //#endif
             return r;
         },
-        'compo': function(compo, selector) {
+        'compo'(compo, selector) {
             var r = compo_find(compo, selector);
             //#if (DEBUG)
             if (r == null)
@@ -32,7 +33,7 @@ export const CompoConfig = {
      *	on(event, selector, fn) - @see jQuery 'on'
      *	}
      */
-    setDOMLibrary: function(lib) {
+    setDOMLibrary(lib) {
         if (domLib === lib)
             return;
 
@@ -40,18 +41,18 @@ export const CompoConfig = {
         domLib_initialize();
     },
 
-    getDOMLibrary: function(){
+    getDOMLibrary() {
         return domLib;
     },
 
-    eventDecorator: function(mix){
+    eventDecorator(mix) {
         if (typeof mix === 'function') {
             Events_.setEventDecorator(mix);
             return;
         }
         if (typeof mix === 'string') {
             console.error('EventDecorators are not used. Touch&Mouse support is already integrated');
-            Events_.setEventDecorator(EventDecos[mix]);
+            Events_.setEventDecorator(EventsDeco[mix]);
             return;
         }
         if (typeof mix === 'boolean' && mix === false) {

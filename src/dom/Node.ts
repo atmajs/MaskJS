@@ -1,6 +1,7 @@
 import { class_create } from '@utils/class'
 import { _appendChild } from './utils';
 import { dom_NODE } from './NodeType';
+import { INode } from './INode';
 /**
  * @name MaskNode
  * @type {class}
@@ -13,7 +14,7 @@ import { dom_NODE } from './NodeType';
  * @property {function} appendChild
  * @memberOf mask.Dom
  */
-export const Node = class_create({
+export const Node = < (new (...args) => INode) >class_create({
 	constructor:  function Node(tagName, parent) {
 		this.type = dom_NODE;
 		this.tagName = tagName;
@@ -31,5 +32,6 @@ export const Node = class_create({
 	stringify: null,
 	tagName: null,
 	type: dom_NODE,
-	decorators: null
+    decorators: null,
+    nextSibling: null
 });
