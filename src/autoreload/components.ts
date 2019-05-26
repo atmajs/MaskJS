@@ -23,7 +23,7 @@ mask.on('compoCreated', function(custom, model, ctx, container, node) {
         ctx: ctx
     });
 
-    mask.Compo.attach('dispose', () => {
+    mask.Compo.attach(custom, 'dispose', () => {
         cache_remove(custom);
     });
 });
@@ -31,7 +31,9 @@ mask.on('compoCreated', function(custom, model, ctx, container, node) {
 
 export function cache_remove (compo) {
     let arr = CACHE[compo.compoName];
-
+    if (arr == null) {
+        return;
+    }
     for (let i = 0; i < arr.length; i++) {
         let x = arr[i];
         if (x === compo || x.instance === compo) {
@@ -49,7 +51,7 @@ export function cache_pluck (compoName) {
 export function cache_push(compoName: string, compoMeta: ICompoMeta) {
     let arr = CACHE[compoName];
     if (arr == null) {
-        CACHE[compoName] = [];
+        arr = CACHE[compoName] = [];
     }
     arr.push(compoMeta);
 }

@@ -1,5 +1,12 @@
 {
+    "files": [
+    	"src/mask.ts"
+  	],
+	"exclude": [
+		"node_modules"
+	],
     "compilerOptions": {
+        "declaration": true,
         "baseUrl": "./",
         "paths": {
             "@core/*": [

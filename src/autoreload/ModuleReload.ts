@@ -20,7 +20,7 @@ Module.reload = function (path) {
         let hasReloaded = false;
         compos.forEach(function (name, index) {
             if (name in module.exports) {
-                hasReloaded = compo_reload(name, compos.slice(0, index)) || hasReloaded;
+                hasReloaded = compo_reload(name, compos.slice(0, index), compos.slice(index + 1)) || hasReloaded;
             }
         });
         if (hasReloaded === false) {

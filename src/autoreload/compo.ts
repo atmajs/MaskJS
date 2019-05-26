@@ -60,14 +60,11 @@ export function compo_insert(fragment, placeholder, parentController, stateTree,
     }		
 }
 
-
-
-export function compo_reload(compoName: string, reloadedCompoNames?) {
+export function compo_reload(compoName: string, reloadedCompoNames?, nextReloadedCompoNames?: string[]) {
     let cache = cache_pluck(compoName);
     if (cache.length === 0) {
         return false;
     }
-
     let hasReloaded = false;
     for (let i = 0; i < cache.length; i++) {
 
@@ -80,7 +77,7 @@ export function compo_reload(compoName: string, reloadedCompoNames?) {
             continue;
         }
 
-        if (wasReloadedViaParent(_instance, reloadedCompoNames)) {
+        if (hasParentOfSome(_instance, reloadedCompoNames) || hasParentOfSome(_instance, nextReloadedCompoNames)) {
             cache_push(compoName, x);
             continue;
         }
@@ -100,8 +97,10 @@ export function compo_reload(compoName: string, reloadedCompoNames?) {
     return hasReloaded;
 }
 
-
-function wasReloadedViaParent (compo, names) {
+function hasParentOfSome (compo, names: string[]) {
+    if (names == null) {
+        return false;
+    }
     let parent = compo.parent;
     while(parent != null) {
         if (names.indexOf(parent.compoName) !== -1) {

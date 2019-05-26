@@ -31,6 +31,7 @@
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
         "atma-loader-ts": "^1.1.11",
+        "dts-bundle": "^0.7.3",
         "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
     },
     "scripts": {
@@ -40,7 +41,8 @@
         "build-dev": "app-bundler --inspect-brk",
         "release": "atma release",
         "server": "atma server --TEST",
-        "examples": "atma server --TEST"
+        "examples": "atma server --TEST",
+        "dts": "tsc -p . && atma custom tools/build-dts"
     },
     "keywords": [],
     "atma": {
