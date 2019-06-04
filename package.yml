@@ -16,6 +16,7 @@ apps:
       atma-io-middleware-condcomments:
         defines:
           BROWSER: true
+          NODE: false
       atma-io-middleware-uglify:
         uglify:
           warnings: true

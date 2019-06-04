@@ -364,15 +364,25 @@ function interpolate_obj_(obj, placeholders, node) {
             // When `node` is component, the original node is under `node` property
             let attr = (node.node || node).attr;
             for (let key in attr) {
+                let val = attr[key];
                 if (key === 'class') {
                     let current = clone[key];
-                    if (current) {
-                        current += ' ' + attr[key];
-                        clone[key] = current;
+                    if (current != null) {
+                        let isFn = false;
+                        if (is_Function(current)) {
+                            isFn = true;
+                            current = current();
+                        }
+                        if (is_Function(val)) {
+                            isFn = true;
+                            val = val();
+                        }
+                        current += ' ' + val;
+                        clone[key] = isFn ?  parser_ensureTemplateFunction (current) : current;
                         continue;
                     }                    
                 }
-                clone[key] = attr[key];
+                clone[key] = val;
             }
             clone[key] = null;
             continue;
