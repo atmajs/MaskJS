@@ -1,7 +1,5 @@
-import { _global } from '@utils/refs'
+import { _global, _document } from '@utils/refs'
 import { __cfg } from '@core/api/config';
-
-var isWeb = true;
 
 export function path_getDir(path) {
     return path.substring(0, path.lastIndexOf('/') + 1);
@@ -66,8 +64,9 @@ export const path_resolveCurrent = (function() {
     //#if (BROWSER)
     return function() {
         if (current_ != null) return current_;
+        if (_document == null) return '';
 
-        var fn = 'baseURI' in _global.document ? fromBase : fromBaseTag;
+        var fn = 'baseURI' in _document ? fromBase : fromBaseTag;
         return (current_ = path_sliceFilename(fn()));
     };
     function fromBase() {

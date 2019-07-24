@@ -1,5 +1,5 @@
 const hasTouch = (function () {
-    if (document == null) {
+    if (typeof document === 'undefined' || document == null) {
         return false;
     }
     if ('createTouch' in document) {

@@ -18,6 +18,7 @@ import { u_resolvePath } from '../utils';
 import { m_registerModule } from './utils';
 import { i_createImport } from '../Import/exports';
 import { Endpoint } from '../class/Endpoint';
+import { mask_nodesToArray } from '../utils/mask-module';
 
 export const ModuleMask = (m_Types['mask'] = class_create(IModule, {
     type: 'mask',
@@ -61,7 +62,7 @@ export const ModuleMask = (m_Types['mask'] = class_create(IModule, {
             __handlers__: {}
         };
 
-        var arr = _nodesToArray(ast),
+        var arr = mask_nodesToArray(ast),
             importNodes = [],
             imax = arr.length,
             i = -1,
@@ -114,35 +115,7 @@ export const ModuleMask = (m_Types['mask'] = class_create(IModule, {
     }
 }));
 
-// Also flattern all `imports` tags
-function _nodesToArray(mix) {
-    var type = mix.type;
-    if (type === Dom.NODE && mix.tagName === 'imports') {
-        return mix.nodes;
-    }
-    if (type !== Dom.FRAGMENT && type != null) {
-        return [mix];
-    }
-    var arr = mix;
-    if (type === Dom.FRAGMENT) {
-        arr = mix.nodes;
-        if (arr == null) {
-            return [];
-        }
-    }
-    var imax = arr.length,
-        i = -1,
-        x;
-    while (++i < imax) {
-        x = arr[i];
-        if (x.tagName === 'imports') {
-            arr.splice.apply(arr, [i, 1].concat(x.nodes));
-            i--;
-        }
-    }
 
-    return arr;
-}
 function _nodesFilter(nodes, tagName) {
     var arr = [],
         imax = nodes.length,

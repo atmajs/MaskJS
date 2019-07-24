@@ -42,9 +42,7 @@ export function listeners_emit(event, v1?, v2?, v3?, v4?, v5?) {
     return i !== 0;
 }
 
-// === private
-
-var bin = {
+const bin = {
     compoCreated: null,
     error: null
 };
