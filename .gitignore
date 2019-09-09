@@ -1,10 +1,12 @@
-# build
-/lib/*
-/ts-temp
-
-# node
-node_modules
-!test/tmpl/npm/node_modules
-
-# WebStorm
-.idea
+*
+!lib/
+!vendor/
+!lib/
+!lib/converter-js.js
+!lib/mask.bootstrap.js
+!lib/mask.js
+!lib/mask.node.js
+!lib/plugin.reload.js
+!readme.md
+!package.json
+!bower.json
