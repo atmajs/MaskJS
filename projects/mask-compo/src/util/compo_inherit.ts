@@ -9,6 +9,7 @@ import { customTag_get } from '@core/custom/exports';
 import { CompoProto } from '@compo/compo/CompoProto';
 
 const COMPO_CTOR_NAME = 'CompoBase';
+const setPrototypeOf = Object.setPrototypeOf;
 	
 export function compo_inherit (Proto, Extends){
     var imax = Extends.length,
@@ -32,6 +33,10 @@ export function compo_inherit (Proto, Extends){
             hasBase = hasBase || x.name === COMPO_CTOR_NAME;
             ctors.push(x);
             x = x.prototype;
+            if (i === imax - 1 && setPrototypeOf != null) {
+                setPrototypeOf(Proto, x);
+                continue;
+            }
         }
         inherit_(Proto, x, 'node');
     }
