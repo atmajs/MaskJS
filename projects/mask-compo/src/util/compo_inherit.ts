@@ -73,9 +73,9 @@ function fillProtoHash (proto, hash) {
     }
     let next = Object.getPrototypeOf(proto);
     if (next == null || next === Object.prototype) {
-        return;
+        return hash;
     }
-    fillProtoHash(next, hash);
+    return fillProtoHash(next, hash);
 }
 
 function inherit_(target, source, name){
