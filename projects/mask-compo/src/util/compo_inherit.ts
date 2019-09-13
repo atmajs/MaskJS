@@ -9,7 +9,7 @@ import { customTag_get } from '@core/custom/exports';
 import { CompoProto } from '@compo/compo/CompoProto';
 
 const COMPO_CTOR_NAME = 'CompoBase';
-const setPrototypeOf = Object.setPrototypeOf;
+const getProtoOf = Object.getPrototypeOf
 	
 export function compo_inherit (Proto, Extends){
     var imax = Extends.length,
@@ -33,9 +33,9 @@ export function compo_inherit (Proto, Extends){
             hasBase = hasBase || x.name === COMPO_CTOR_NAME;
             ctors.push(x);
             x = x.prototype;
-            if (i === imax - 1 && setPrototypeOf != null) {
-                setPrototypeOf(Proto, x);
-                continue;
+            /** ES6 Classes: methods are not enumarable, which is needed in `inherit_` method: so convert prototype to hash */
+            if (i === imax - 1 && getProtoOf != null) {
+                x = fillProtoHash(x, obj_create(null));
             }
         }
         inherit_(Proto, x, 'node');
@@ -58,6 +58,25 @@ export function compo_inherit (Proto, Extends){
         
     return hasBase;
 };
+
+function fillProtoHash (proto, hash) {
+    if (getProtoOf == null) {
+        return proto;
+    }
+    let keys = Object.getOwnPropertyNames(proto);
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (hash[key] != null) {
+            continue;
+        }
+        hash[key] = proto[key];
+    }
+    let next = Object.getPrototypeOf(proto);
+    if (next == null || next === Object.prototype) {
+        return;
+    }
+    fillProtoHash(next, hash);
+}
 
 function inherit_(target, source, name){
     if (target == null || source == null) 
