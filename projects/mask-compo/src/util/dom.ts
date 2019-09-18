@@ -4,8 +4,9 @@ import { compo_dispose, compo_detachChild } from './compo';
 import { _Array_indexOf, _Array_splice } from '@utils/refs';
 import { KeyboardHandler } from '../keyboard/Handler';
 import { TouchHandler } from '../touch/Handler';
+import { event_bind } from './event';
 
-export function dom_addEventListener(el, event, fn, param?, ctr?) {
+export function dom_addEventListener(el, event, fn, param?: string, ctr?) {
     if (TouchHandler.supports(event)) {
         TouchHandler.on(el, event, fn);
         return;
@@ -15,12 +16,17 @@ export function dom_addEventListener(el, event, fn, param?, ctr?) {
         return;
     }
     // allows custom events - in x-signal, for example
-    if (domLib != null) return domLib(el).on(event, fn);
-
-    if (el.addEventListener != null)
-        return el.addEventListener(event, fn, false);
-
-    if (el.attachEvent) el.attachEvent('on' + event, fn);
+    if (domLib != null) {
+        if (event !== 'touchmove' &&
+            event !== 'touchstart' && 
+            event !== 'touchend' &&
+            event !== 'wheel' && 
+            event !== 'scroll') {
+            domLib(el).on(event, fn);
+            return;
+        }
+    }
+    event_bind(el, event, fn);
 }
 
 export function node_tryDispose(node) {

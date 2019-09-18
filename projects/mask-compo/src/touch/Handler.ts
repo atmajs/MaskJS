@@ -1,9 +1,10 @@
-import { isTouchable } from './utils';
+
 import { Touch } from './Touch'
 import { FastClick } from './FastClick';
+import { isTouchable } from '../util/event';
 	
 export const TouchHandler = {
-    supports: function (type) {
+    supports (type) {
         if (isTouchable === false) {
             return false;
         }
@@ -16,7 +17,7 @@ export const TouchHandler = {
         }
         return false;
     },
-    on: function(el, type, fn){
+    on (el, type, fn){
         if ('click' === type) {
             return new FastClick(el, fn);
         }

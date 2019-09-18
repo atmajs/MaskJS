@@ -1,4 +1,4 @@
-import { event_bind } from './utils';
+import { event_bind } from '../util/event';
 
 export function Touch (el, type, fn) {
     this.el = el;

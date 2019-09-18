@@ -31,7 +31,7 @@ function _create(name, asEvent?) {
         _attachListener(el, ctr, attrValue, asEvent, isSlot);
     });
 }	
-function _attachListener(el, ctr, definition, asEvent, isSlot) {
+function _attachListener(el: HTMLElement, ctr, definition: string, asEvent: string, isSlot) {
     let hasMany = definition.indexOf(';') !== -1,
         signals = '',
         arr = hasMany ? definition.split(';') : null,
@@ -61,7 +61,7 @@ function _attachListener(el, ctr, definition, asEvent, isSlot) {
 function _handleDefinition (el, ctr, definition: string, asEvent: string, isSlot:boolean) {
     var match = rgx_DEF.exec(definition);
     if (match == null) {
-        log_error('Signal definition is not resolved', definition, 'The pattern is: (source((sourceArg))?:)?signal((expression))?');
+        log_error(`Signal definition is not resolved ${definition}. The pattern is: (source((sourceArg))?:)?signal((expression))?`);
         return null;
     }
     var source = match[2], 
