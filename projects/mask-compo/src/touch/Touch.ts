@@ -8,16 +8,16 @@ export function Touch (el, type, fn) {
     event_bind(el, MOUSE_MAP[type], this);
 };
 
-var MOUSE_MAP = {
+const MOUSE_MAP = {
     'mousemove': 'touchmove',
     'mousedown': 'touchstart',
     'mouseup': 'touchend'
 };
-var TOUCH_MAP = {
-    'touchmove': 'mousemove',
-    'touchstart': 'mousedown',
-    'touchup': 'mouseup'
-};
+// var TOUCH_MAP = {
+//     'touchmove': 'mousemove',
+//     'touchstart': 'mousedown',
+//     'touchup': 'mouseup'
+// };
 
 Touch.prototype = {
     handleEvent: function (event) {
@@ -26,7 +26,7 @@ Touch.prototype = {
             case 'touchmove':
             case 'touchend':
                 this.dismiss++;
-                event = prepairTouchEvent(event);
+                // event = prepairTouchEvent(event);
                 this.fn(event);
                 break;
             case 'mousedown':
@@ -40,35 +40,36 @@ Touch.prototype = {
         }
     }
 };
-function prepairTouchEvent(event){
-    var touch = null,
-        touches = event.changedTouches;
-    if (touches && touches.length) {
-        touch = touches[0];
-    }
-    if (touch == null && event.touches) {
-        touch = event.touches[0];
-    }
-    if (touch == null) {
-        return event;
-    }
-    return createMouseEvent(event, touch);
-}
-function createMouseEvent (event, touch) {
-    var obj = Object.create(MouseEvent.prototype);
-    for (var key in event) {
-        obj[key] = event[key];
-    }
-    for (var key in PROPS) {
-        obj[key] = touch[key];
-    }
-    return new MouseEvent(TOUCH_MAP[event.type], obj);
-}
-var PROPS = {
-    clientX: 1,
-    clientY: 1,
-    pageX: 1,
-    pageY: 1,
-    screenX: 1,
-    screenY: 1
-};
+
+// function prepairTouchEvent(event){
+//     var touch = null,
+//         touches = event.changedTouches;
+//     if (touches && touches.length) {
+//         touch = touches[0];
+//     }
+//     if (touch == null && event.touches) {
+//         touch = event.touches[0];
+//     }
+//     if (touch == null) {
+//         return event;
+//     }
+//     return createMouseEvent(event, touch);
+// }
+// function createMouseEvent (event, touch) {
+//     var obj = Object.create(MouseEvent.prototype);
+//     for (var key in event) {
+//         obj[key] = event[key];
+//     }
+//     for (var key in PROPS) {
+//         obj[key] = touch[key];
+//     }
+//     return new MouseEvent(TOUCH_MAP[event.type], obj);
+// }
+// var PROPS = {
+//     clientX: 1,
+//     clientY: 1,
+//     pageX: 1,
+//     pageY: 1,
+//     screenX: 1,
+//     screenY: 1
+// };

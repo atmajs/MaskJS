@@ -27,33 +27,39 @@ function _createEvent(name, type?) {
 }
 function _create(name, asEvent?) {
     customAttr_register('x-' + name, 'client', function(node, attrValue, model, ctx, el, ctr) {
-        var listenSlot = node === ctr;
-        _attachListener(el, ctr, attrValue, asEvent, listenSlot);
+        let isSlot = node === ctr;
+        _attachListener(el, ctr, attrValue, asEvent, isSlot);
     });
 }	
 function _attachListener(el, ctr, definition, asEvent, isSlot) {
-    var hasMany = definition.indexOf(';') !== -1,
+    let hasMany = definition.indexOf(';') !== -1,
         signals = '',
         arr = hasMany ? definition.split(';') : null,
         i = hasMany ? arr.length : 1;
 
     while( --i !== -1) {
-        var signal = _handleDefinition(el, ctr, arr == null ? definition : arr[i], asEvent, isSlot);
+        let signal = _handleDefinition(
+            el, 
+            ctr, 
+            arr == null ? definition : arr[i], 
+            asEvent, 
+            isSlot
+        );
         if (signal != null) {
             signals += ',' + signal + ',';
         }
     }
     if (signals !== '') {
-        var KEY = 'data-signals';
-        var attr = el.getAttribute(KEY);
+        let KEY = 'data-signals';
+        let attr = el.getAttribute(KEY);
         if (attr != null) {
             signals = attr + signals;
         }
         el.setAttribute(KEY, signals);
     }
 }
-function _handleDefinition (el, ctr, definition, asEvent, isSlot) {
-    var match = rgx.exec(definition);
+function _handleDefinition (el, ctr, definition: string, asEvent: string, isSlot:boolean) {
+    var match = rgx_DEF.exec(definition);
     if (match == null) {
         log_error('Signal definition is not resolved', definition, 'The pattern is: (source((sourceArg))?:)?signal((expression))?');
         return null;
@@ -102,4 +108,5 @@ function _createListener (ctr, slot, expr) {
     };
 }
 
-var rgx = /^\s*((\w+)(\s*\(\s*(\w+)\s*\))?\s*:)?\s*(\w+)(\s*\(([^)]+)\)\s*)?\s*$/;
+// click: fooSignal(barArg)
+const rgx_DEF = /^\s*((\w+)(\s*\(\s*(\w+)\s*\))?\s*:)?\s*(\w+)(\s*\(([^)]+)\)\s*)?\s*$/;
