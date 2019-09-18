@@ -1,2 +1,0 @@
-import:route ('templates', '/test/tmpl/{0}.mask')
-import * as Data from 'templates: a'
