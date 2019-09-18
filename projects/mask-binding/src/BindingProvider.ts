@@ -264,9 +264,10 @@ export class BindingProvider {
         if (this.dismiss-- > 0) {
             return;
         }
-        if (this.locked === true) {
-            log_warn('Concurance change detected', this);
-            return;
+        let isConcurrent = this.locked === true;
+        if (isConcurrent) {
+            log_warn('Concurrent change detected', this);
+            // Set the value to dom anyway, but skip emitting
         }
         this.locked = true;
 
@@ -284,18 +285,21 @@ export class BindingProvider {
         if (this.log) {
             console.log('[BindingProvider] objectChanged -', val);
         }
-        if (this.signal_objectChanged) {
-            Component.signal.emitOut(
-                this.ctr,
-                this.signal_objectChanged,
-                this.ctr,
-                [val]
-            );
+        if (isConcurrent === false) {
+            let signal = this.signal_objectChanged;
+            if (signal != null) {
+                Component.signal.emitOut(
+                    this.ctr,
+                    signal,
+                    this.ctr,
+                    [val]
+                );
+            }
+            let pipe = this.pipe_objectChanged;
+            if (pipe != null) {
+                Component.pipe(pipe.pipe).emit(pipe.signal);
+            }
         }
-        if (this.pipe_objectChanged != null) {
-            var pipe = this.pipe_objectChanged;
-            Component.pipe(pipe.pipe).emit(pipe.signal);
-        }        
         this.locked = false;
     }
 
