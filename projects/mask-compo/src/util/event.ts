@@ -20,9 +20,8 @@ export function event_trigger (el: HTMLElement, type: string) {
 
 /* Private */
 
-type IHandler = (this: HTMLElement, ev: any) => any | { handleEvent: Function };
-type IOptions = { passive?: boolean, capture?: boolean, once?: boolean } | boolean
-
+export type IHandler = (this: HTMLElement, ev: any) => any | { handleEvent: Function };
+export type IOptions = { passive?: boolean, capture?: boolean, once?: boolean } | boolean
 
 let supportsCaptureOption = false;
 if (_global.document != null) {
@@ -34,7 +33,7 @@ if (_global.document != null) {
     });
 }
 
-const opts_DEFAULT = supportsCaptureOption ? false : { passive: true, capture: false };
+const opts_DEFAULT = supportsCaptureOption ? { passive: true, capture: false } : false;
 const resolveOpts = function (opts?: IOptions) {
     if (opts == null) {
         return opts_DEFAULT;

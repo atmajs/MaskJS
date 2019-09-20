@@ -1,6 +1,6 @@
-import { event_bind, event_trigger, event_unbind } from '../util/event';
+import { event_bind, event_trigger, event_unbind, IHandler, IOptions } from '../util/event';
 
-export function FastClick  (el, fn) {
+export function FastClick  (el: HTMLElement, fn: IHandler, opts: IOptions) {
     this.state = 0;
     this.el = el;
     this.fn = fn;
@@ -10,9 +10,9 @@ export function FastClick  (el, fn) {
     this.tEnd = 0;
     this.dismiss = 0;
 
-    event_bind(el, 'touchstart', this);
-    event_bind(el, 'touchend', this);
-    event_bind(el, 'click', this);
+    event_bind(el, 'touchstart', this, opts);
+    event_bind(el, 'touchend', this, opts);
+    event_bind(el, 'click', this, opts);
 };
 
 var threshold_TIME = 300,

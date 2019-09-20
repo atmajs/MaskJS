@@ -17,10 +17,10 @@ export const TouchHandler = {
         }
         return false;
     },
-    on (el, type, fn){
+    on (el, type, fn, opts){
         if ('click' === type) {
-            return new FastClick(el, fn);
+            return new FastClick(el, fn, opts);
         }
-        return new Touch(el, type, fn);
+        return new Touch(el, type, fn, opts);
     }
 };

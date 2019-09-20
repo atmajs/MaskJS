@@ -7,8 +7,12 @@ import { TouchHandler } from '../touch/Handler';
 import { event_bind } from './event';
 
 export function dom_addEventListener(el, event, fn, param?: string, ctr?) {
+    const opts = !param ? void 0 : {
+        capture: param.indexOf('capture') !== -1,
+        passive: param.indexOf('nopassive') === -1,
+    };
     if (TouchHandler.supports(event)) {
-        TouchHandler.on(el, event, fn);
+        TouchHandler.on(el, event, fn, opts);
         return;
     }
     if (KeyboardHandler.supports(event, param)) {
@@ -26,7 +30,7 @@ export function dom_addEventListener(el, event, fn, param?: string, ctr?) {
             return;
         }
     }
-    event_bind(el, event, fn);
+    event_bind(el, event, fn, opts);
 }
 
 export function node_tryDispose(node) {

@@ -1,11 +1,11 @@
-import { event_bind } from '../util/event';
+import { event_bind, IOptions, IHandler } from '../util/event';
 
-export function Touch (el, type, fn) {
+export function Touch (el: HTMLElement, type: string, fn: IHandler, opts: IOptions) {
     this.el = el;
     this.fn = fn;
     this.dismiss = 0;
-    event_bind(el, type, this);
-    event_bind(el, MOUSE_MAP[type], this);
+    event_bind(el, type, this, opts);
+    event_bind(el, MOUSE_MAP[type], this, opts);
 };
 
 const MOUSE_MAP = {
