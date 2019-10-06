@@ -1,12 +1,13 @@
 import { _document } from '@utils/refs'
 import { expression_unbind, expression_bind, expression_createListener } from '@project/observer/src/exports';
 import { customTag_register } from '@core/custom/exports';
-import { compo_renderElements, compo_inserted } from '../utils/compo';
+import { compo_inserted } from '../utils/compo';
 import { _renderPlaceholder, _getNodes, els_toggleVisibility } from './utils';
 import { mask_stringify } from '@core/parser/exports';
 import { dom_insertBefore } from '../utils/dom';
 import { fn_proxy } from '@utils/fn';
 import { expression_eval_safe } from '../utils/expression';
+import { compo_renderElements } from '@core/util/compo';
 
 
 customTag_register('+if', {

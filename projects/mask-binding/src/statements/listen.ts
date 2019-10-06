@@ -21,7 +21,7 @@ customTag_register('listen', class_create({
             rx: false,
         }
     },
-    renderEnd: function(els, model, ctx, container, ctr){
+    renderEnd (els, model, ctx, container, ctr){
         _renderPlaceholder(this, this, container);
 
         var fn = Boolean(this.attr.animatable)
@@ -35,7 +35,7 @@ customTag_register('listen', class_create({
         this.binder = new Ctor(this.expression, model, this);
         this.binder.bind(this.refresh);
     },
-    getBinder: function(){
+    getBinder (){
         if (this.attr.on) {
             return Binders.EventEmitterBinder;
         }
@@ -44,23 +44,23 @@ customTag_register('listen', class_create({
         }
         return Binders.ExpressionBinder;
     },
-    dispose: function(){
+    dispose (){
         this.binder.dispose();
 
         this.disposed = true;
-        this.elements = null;        
+        this.elements = null;
     },
-    refresh: function(){
-        throw new Error('Should be defined');
+    refresh (){
+        throw new Error('Should be defined by refreshSync/refreshAni');
     },
-    refreshSync: function(){
+    refreshSync (){
         compo_disposeChildren(this);
         this.create();
     },
-    create: function(){
+    create(){
         compo_renderChildren(this, this.placeholder);
     },
-    refreshAni: function() {
+    refreshAni() {
         let x = { 
             components: this.components, 
             elements: this.elements 
@@ -84,7 +84,7 @@ customTag_register('listen', class_create({
             show.start(this.create());
         });
     },
-    getAni: function (name) {
+    getAni (name) {
         var x = this[name];
         if (x != null) {
             return x;

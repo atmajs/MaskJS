@@ -1,6 +1,5 @@
 import { customStatement_get, customTag_register } from '@core/custom/exports';
 import { expression_unbind, expression_createBinder, expression_bind } from '@project/observer/src/exports';
-import { compo_renderElements } from '@binding/utils/compo';
 import { _renderPlaceholder, els_toggleVisibility } from './utils';
 import { _Array_slice } from '@utils/refs';
 import { dom_insertBefore } from '@binding/utils/dom';
@@ -8,6 +7,7 @@ import { fn_proxy } from '@utils/fn';
 import { expression_eval_safe } from '@binding/utils/expression';
 import { mask_stringify } from '@core/parser/exports';
 import { renderer_render } from '@core/renderer/exports';
+import { compo_renderElements } from '@core/util/compo';
 
 (function(){
 

@@ -1,11 +1,11 @@
 import { _document } from '@utils/refs'
 import { dom_insertAfter, dom_insertBefore, dom_removeAll } from './dom';
-import { builder_build } from '@core/builder/exports';
 import { log_error } from '@core/util/reporters';
+import { compo_renderElements  } from '@core/util/compo';
 import { arr_remove } from '@utils/arr';
-import { is_Array } from '@utils/is';
 import { Component } from '@compo/exports';
 import { renderer_render } from '@core/renderer/exports';
+import { builder_Ctx } from '@core/builder/exports';
 
 
 export function compo_fragmentInsert (compo, index, fragment, placeholder) {
@@ -53,28 +53,30 @@ export function compo_render (parentCtr, template, model, ctx, container) {
     return renderer_render(template, model, ctx, container, parentCtr);
 };
 export function compo_renderChildren (compo, anchor, model?){
-    var fragment = _document.createDocumentFragment();
+    let fragment = _document.createDocumentFragment();
+    let ctx = new builder_Ctx(compo.ctx);
     compo.elements = compo_renderElements(
         compo.nodes,
         model || compo.model,
-        compo.ctx,
+        ctx,
         fragment,
         compo
     );
     dom_insertBefore(fragment, anchor);
-    compo_inserted(compo);
+    
+    compo_inserted(compo, ctx);
 };
-export function compo_renderElements (nodes, model, ctx, el, ctr, children?){
-    if (nodes == null){
-        return null;
-    }
-    var arr = [];
-    builder_build(nodes, model, ctx, el, ctr, arr);
-    if (is_Array(children)) {
-        children.push.apply(children, arr);
-    }
-    return arr;
-};
+// export function compo_renderElements (nodes, model, ctx, el, ctr, children?){
+//     if (nodes == null){
+//         return null;
+//     }
+//     var arr = [];
+//     builder_build(nodes, model, ctx, el, ctr, arr);
+//     if (is_Array(children)) {
+//         children.push.apply(children, arr);
+//     }
+//     return arr;
+// };
 export function compo_dispose (compo, parent?) {
     if (compo == null)
         return false;
@@ -109,8 +111,14 @@ export function compo_disposeChildren (compo){
     }
 };
 
-export function compo_inserted (compo) {
-    Component.signal.emitIn(compo, 'domInsert');
+export function compo_inserted (compo, ctx?) {
+    if (ctx == null || typeof ctx !== 'object' || ctx.async !== true) {
+        Component.signal.emitIn(compo, 'domInsert');
+    } else {
+        ctx.done(() => {
+            Component.signal.emitIn(compo, 'domInsert');
+        })
+    }
 };
 
 

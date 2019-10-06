@@ -1,9 +1,10 @@
 import { customTag_register } from '@core/custom/exports';
 import { expression_createBinder, expression_bind, expression_unbind } from '@project/observer/src/exports';
 import { fn_proxy } from '@utils/fn';
-import { compo_renderElements, compo_disposeChildren, compo_renderChildren } from '@binding/utils/compo';
+import { compo_disposeChildren, compo_renderChildren } from '@binding/utils/compo';
 import { _renderPlaceholder } from './utils';
 import { expression_eval } from '@project/expression/src/exports';
+import { compo_renderElements } from '@core/util/compo';
 
 
 (function(){
