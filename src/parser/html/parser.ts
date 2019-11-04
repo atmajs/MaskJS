@@ -149,7 +149,7 @@ export function parser_parseHtmlPartial (str, index, exitEarly) {
         start = i;
         token = '';
         while(i <= imax) {
-            c = char_(str, ++i);
+            c = char_(str, i);
             if (c === 60 /*<*/) {
                 // MAYBE NODE
                 c = char_(str, i + 1);
@@ -177,9 +177,11 @@ export function parser_parseHtmlPartial (str, index, exitEarly) {
                 }
                 if (Char != null) {
                     token += str.substring(start, i) + Char;
-                    start = i + ent.length + 1 /*;*/;
+                    i = i + ent.length + 1 /*;*/;
+                    start = i + 1;
                 }
             }
+            i++;
         }
         token += str.substring(start, i);
         if (token !== '') {
