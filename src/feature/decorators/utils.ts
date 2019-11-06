@@ -25,9 +25,9 @@ export function _getDecoType  (node) {
         if (tagName === 'function' || tagName === 'slot' || tagName === 'event' || tagName === 'pipe') {
             return 'METHOD';
         }
-		if (type === 1 && custom_Tags[tagName] != null) {
+		if ((type === 1 || type === 15) && custom_Tags[tagName] != null) {
 			type = 4;
-		}
+        }
 		if (type === 1 && custom_Statements[tagName] != null) {
 			type = 15;
 		}
