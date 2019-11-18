@@ -20,7 +20,9 @@ export function obj_ensureFieldDeep(obj: any, chain: string[]) {
     return obj;
 }
 
-export function obj_ensureObserversProperty(obj, type?) {
+export function obj_ensureObserversProperty (obj: any): IObserversMeta
+export function obj_ensureObserversProperty (obj: any, prop: keyof IObserversMeta | string): Function[]
+export function obj_ensureObserversProperty (obj: any, prop?: keyof IObserversMeta | string): IObserversMeta | Function[] {
     var obs = obj[prop_OBS];
     if (obs == null) {
         obs = {
@@ -30,24 +32,25 @@ export function obj_ensureObserversProperty(obj, type?) {
             __rebinders: {},
             __proxies: {}
         };
-        obj_defineProp(obj, '__observers', {
+        obj_defineProp(obj, prop_OBS, {
             value: obs,
             enumerable: false
         });
     }
-    if (type == null) return obs;
-
-    var arr = obs[type];
-    return arr == null ? (obs[type] = []) : arr;
+    if (prop == null) {
+        return obs;
+    }
+    const arr = obs[prop];
+    return arr == null ? (obs[prop] = []) : arr;
 }
 
 
-export function obj_getObserversProperty (obj, type) {
+export function obj_getObserversProperty (obj, type: keyof IObserversMeta) {
     var obs = obj[prop_OBS];
     return obs == null ? null : obs[type];
 };
 
-export function  obj_ensureRebindersProperty (obj) {
+export function  obj_ensureRebindersProperty (obj: IObserversMeta) {
     var hash = obj[prop_REBINDERS];
     if (hash == null) {
         hash = {};
@@ -60,7 +63,7 @@ export function  obj_ensureRebindersProperty (obj) {
 };
 
 
-export function obj_chainToProp(chain: string[], start: number) {
+export function obj_chainToProp(chain: string[], start: number): string {
     var str = '',
         imax = chain.length,
         i = start - 1;
@@ -70,3 +73,14 @@ export function obj_chainToProp(chain: string[], start: number) {
     }
     return str;
 }
+
+export interface IObserversMeta {
+    __dirty: null
+    __dfrTimeout: null
+    __mutators: null
+    __rebinders: {}
+    __proxies: {}
+}
+
+export declare type IObserved = { __observers: IObserversMeta } & any;
+

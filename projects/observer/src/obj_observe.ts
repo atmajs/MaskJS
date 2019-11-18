@@ -2,34 +2,42 @@ import { _Array_slice } from '@utils/refs';
 import { log_error } from '@core/util/reporters';
 import { obj_getProperty } from '@utils/obj';
 import { arr_contains, arr_remove } from '@utils/arr';
-import { prop_OBS, prop_PROXY, prop_DIRTY, prop_MUTATORS, prop_REBINDERS, prop_TIMEOUT, obj_getObserversProperty, obj_ensureObserversProperty, obj_defineProp, obj_ensureRebindersProperty, obj_ensureFieldDeep, obj_chainToProp } from './obj_props';
+import { 
+    prop_OBS, 
+    prop_PROXY, 
+    prop_DIRTY, 
+    prop_MUTATORS, 
+    obj_getObserversProperty, 
+    obj_ensureObserversProperty, 
+    obj_defineProp, 
+    obj_ensureFieldDeep, 
+    obj_chainToProp,
+    IObserved
+} from './obj_props';
+
 import { objMutator_addObserver, objMutator_removeObserver } from './obj_mutators';
 import { getSelfMutators } from './Mutators';
 import { obj_defineCrumbs } from './obj_crumbs';
 import { obj_sub_notifyListeners, obj_deep_notifyListeners } from './notify';
 
-export var obj_addObserver;
-(function() {
-    obj_addObserver = function(obj, property, cb) {
+
+namespace AddObserver {
+    export function add (obj: any, property: string, cb) {
         if (obj == null) {
             log_error(
-                'Not possible to add the observer for "' +
-                    property +
-                    '" as current model is undefined.'
+                `Not possible to add the observer for "${property}" as the model is undefined.`
             );
             return;
         }
         // closest observer
-        var parts = property.split('.'),
-            imax = parts.length,
-            i = -1,
-            x = obj;
+        let parts = property.split('.'),
+            i = -1;
 
         if (pushClosest(obj[parts[0]], parts, 1, cb)) {
             /* We have added a callback as close as possible to the observle property owner
              * But also add the cb to myself to listen different object path level setters
              */
-            var cbs = pushListener_(obj, property, cb);
+            let cbs = pushListener_(obj, property, cb);
             if (cbs.length === 1) {
                 var arr = parts.splice(0, i);
                 if (arr.length !== 0) attachProxy_(obj, property, cbs, arr);
@@ -50,27 +58,32 @@ export var obj_addObserver;
         }
     };
 
-    function pushClosest(ctx, parts, i, cb) {
+    function pushClosest(ctx: IObserved, parts: string[], i: number, cb: Function) {
         if (ctx == null) {
             return false;
         }
-        if (
-            i < parts.length - 1 &&
-            pushClosest(ctx[parts[i]], parts, i + 1, cb)
-        ) {
+        if (i < parts.length - 1 && pushClosest(ctx[parts[i]], parts, i + 1, cb)) {
             return true;
         }
-        var obs = ctx[prop_OBS];
+        let obs = ctx[prop_OBS];
         if (obs == null) {
             return false;
         }
-        var prop = obj_chainToProp(parts, i);
-        var arr = obs[prop];
+        let prop = obj_chainToProp(parts, i);
+        let arr = obs[prop];
         if (arr == null) {
             // fix [obj.test](hosts)
-            var proxy = obs[prop_PROXY];
+            let proxy = obs[prop_PROXY];
             if (proxy != null && proxy[prop] === true) {
                 pushListener_(ctx, prop, cb);
+
+                let x = obj_getProperty(ctx, prop);
+                
+                let mutators = getSelfMutators(x);
+                if (mutators) {
+                    objMutator_addObserver(x, mutators, cb);
+                }
+                
                 return true;
             }
             return false;
@@ -78,7 +91,9 @@ export var obj_addObserver;
         pushListener_(ctx, prop, cb);
         return true;
     }
-})();
+};
+
+export const obj_addObserver = AddObserver.add;
 
 export function obj_hasObserver(obj, property, callback) {
     // nested observer
@@ -107,9 +122,7 @@ export function obj_hasObserver(obj, property, callback) {
 export function obj_removeObserver(obj, property, callback?) {
     if (obj == null) {
         log_error(
-            'Not possible to remove the observer for "' +
-                property +
-                '" as current model is undefined.'
+            `Not possible to remove the observer for "${property}" as current model is undefined.`
         );
         return;
     }
@@ -137,8 +150,8 @@ export function obj_removeObserver(obj, property, callback?) {
             arr_remove(obs, callback);
         }
     }
-    var val = obj_getProperty(obj, property),
-        mutators = getSelfMutators(val);
+    let val = obj_getProperty(obj, property);
+    let mutators = getSelfMutators(val);
     if (mutators != null) objMutator_removeObserver(val, mutators, callback);
 }
 
@@ -170,7 +183,9 @@ export function obj_unlockObservers(obj) {
 
 export function obj_addMutatorObserver(obj, cb) {
     var mutators = getSelfMutators(obj);
-    if (mutators != null) objMutator_addObserver(obj, mutators, cb);
+    if (mutators != null) {
+        objMutator_addObserver(obj, mutators, cb);
+    }
 }
 
 export function obj_removeMutatorObserver(obj, cb) {
@@ -213,20 +228,27 @@ function attachProxy_(obj, property, cbs, chain) {
     hash[key] = true;
 
     obj_defineProp(parent, key, {
-        get: function() {
+        get () {
             return currentVal;
         },
-        set: function(x) {
+        set (x) {
             if (x === currentVal) return;
-            var oldVal = currentVal;
+            
+            let imax = cbs.length;
+            let oldVal = currentVal;
+
+            let oldMutators = getSelfMutators(oldVal);
+            if (oldMutators != null) {
+                for (let i = 0; i < imax; i++) {
+                    objMutator_removeObserver(oldVal, oldMutators, cbs[i]);
+                }
+            }
 
             currentVal = x;
-            var i = 0,
-                imax = cbs.length,
-                mutators = getSelfMutators(x);
-
+            
+            let mutators = getSelfMutators(x);
             if (mutators != null) {
-                for (; i < imax; i++) {
+                for (let i = 0; i < imax; i++) {
                     objMutator_addObserver(x, mutators, cbs[i]);
                 }
             }
@@ -236,7 +258,7 @@ function attachProxy_(obj, property, cbs, chain) {
                 return;
             }
 
-            for (i = 0; i < imax; i++) {
+            for (let i = 0; i < imax; i++) {
                 cbs[i](x);
             }
 
@@ -254,8 +276,10 @@ function attachProxy_(obj, property, cbs, chain) {
 
 
 // Create Collection - Check If Exists - Add Listener
-function pushListener_(obj, property, cb) {
-    var obs = obj_ensureObserversProperty(obj, property);
-    if (arr_contains(obs, cb) === false) obs.push(cb);
+function pushListener_(obj: any, property: string, cb: Function): Function[] {
+    let obs = obj_ensureObserversProperty(obj, property);
+    if (arr_contains(obs, cb) === false) {
+        obs.push(cb);
+    }
     return obs;
 }

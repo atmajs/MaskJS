@@ -84,8 +84,8 @@ UTest({
 
         model.letters.push('a');
 
-        deepEq_(cb1.args, [ ['a'] ])
-        deepEq_(cb2.args, [ ['a'] ])
+        eq_(cb1.args[0][0], model.letters);
+        eq_(cb2.args[0][0], model.letters);
     },
 
     'object - observer': function() {

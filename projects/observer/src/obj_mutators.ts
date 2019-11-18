@@ -2,7 +2,7 @@ import { arr_remove } from '@utils/arr';
 import { _Array_slice } from '@utils/refs';
 import { prop_TIMEOUT, prop_MUTATORS, prop_OBS, prop_DIRTY, obj_ensureObserversProperty, obj_getObserversProperty } from './obj_props';
 
-export function objMutator_addObserver (obj, mutators, cb) {
+export function objMutator_addObserver (obj: any, mutators, cb: Function) {
     var methods = mutators.methods,
         throttle = mutators.throttle,
         obs = obj_ensureObserversProperty(obj, prop_MUTATORS);
