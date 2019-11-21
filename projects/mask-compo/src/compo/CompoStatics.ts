@@ -7,7 +7,7 @@ import { compo_dispose, compo_ensureTemplate, compo_attachDisposer, compo_attach
 import { dom_addEventListener } from '../util/dom'
 import { CompoSignals } from '../signal/exports'
 import { DomLite } from '../DomLite'
-import { compo_create } from '../util/compo_create'
+import { compo_createExt } from '../util/compo_ceateExt'
 
 import { CompoStaticsAsync } from './async'
 import { compo_find, compo_findAll, compo_closest, compo_children, compo_child } from './find'
@@ -17,13 +17,18 @@ import { Pipes } from './pipes'
 
 import { Component } from './Component'
 
+
 declare var include;
 
 export const CompoStatics = {
 
     create (...args) {
-		return compo_create(arguments as any);
-	},
+        let Base = args.pop();
+		return compo_createExt(Base, args);
+    },
+    createExt (Proto, args) {
+        return compo_createExt(Proto, args);
+    },
 
 	createClass (){
         throw Error('@Obsolete: createClass');
@@ -57,9 +62,9 @@ export const CompoStatics = {
 
 				createNode(compo);
 			} else {
-				createNode(compo_create([{
+				createNode(compo_createExt({
 					template: mix
-				}]));
+				}));
 			}
 		}
 		else if (typeof mix === 'function') {

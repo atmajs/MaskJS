@@ -95,8 +95,7 @@ export function customTag_register(mix, Handler) {
         customTag_registerScoped.apply(this, arguments);
         return;
     }
-    var Current = custom_Tags[mix],
-        Ctor = compo_ensureCtor(Handler),
+    var Ctor = compo_ensureCtor(Handler),
         Repo = custom_Tags[mix] === Resolver ? custom_Tags_global : custom_Tags;
     Repo[mix] = Ctor;
 

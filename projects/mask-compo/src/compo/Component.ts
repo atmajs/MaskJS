@@ -28,6 +28,7 @@ export class Component extends class_create(CompoProto) {
     }
 
     static create = CompoStatics.create
+    static createExt = CompoStatics.createExt
 	static createClass = CompoStatics.createClass
     static initialize = CompoStatics.initialize
     

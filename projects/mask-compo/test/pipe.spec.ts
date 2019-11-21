@@ -1,4 +1,4 @@
-import { Mask as mask } from '../../../src/mask';
+import { Mask as mask } from '@core/mask';
 const Compo = mask.Compo;
 
 declare var sinon: sinon.SinonStatic

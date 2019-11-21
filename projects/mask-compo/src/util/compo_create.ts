@@ -8,35 +8,36 @@ import { compo_inherit } from './compo_inherit';
 import { CompoProto } from '../compo/CompoProto';
 import { Pipes } from '../compo/pipes';
 
-export function compo_create(arguments_: any[]) {
-    var argLength = arguments_.length,
-        Proto = arguments_[argLength - 1],
-        Ctor,
-        hasBase;
 
-    if (argLength > 1)
-        hasBase = compo_inherit(
-            Proto,
-            _Array_slice.call(arguments_, 0, argLength - 1)
-        );
+// export function compo_create(arguments_: any[]) {
+//     var argLength = arguments_.length,
+//         Proto = arguments_[argLength - 1],
+//         Ctor,
+//         hasBase;
 
-    if (Proto == null) Proto = {};
+//     if (argLength > 1)
+//         hasBase = compo_inherit(
+//             Proto,
+//             _Array_slice.call(arguments_, 0, argLength - 1)
+//         );
 
-    var include = _resolve_External('include');
-    if (include != null) Proto.__resource = include.url;
+//     if (Proto == null) Proto = {};
 
-    compo_prepairProperties(Proto);
+//     var include = _resolve_External('include');
+//     if (include != null) Proto.__resource = include.url;
 
-    Ctor = Proto.hasOwnProperty('constructor') ? Proto.constructor : null;
+//     compo_prepairProperties(Proto);
 
-    Ctor = compo_createConstructor(Ctor, Proto, hasBase);
+//     Ctor = Proto.hasOwnProperty('constructor') ? Proto.constructor : null;
+
+//     Ctor = compo_createConstructor(Ctor, Proto, hasBase);
     
-    obj_extendDefaults(Proto, CompoProto);
+//     obj_extendDefaults(Proto, CompoProto);
 
-    Ctor.prototype = Proto;
-    Proto = null;
-    return Ctor;
-}
+//     Ctor.prototype = Proto;
+//     Proto = null;
+//     return Ctor;
+// }
 
 export function compo_prepairProperties(Proto) {
     for (var key in Proto.attr) {
@@ -57,26 +58,47 @@ export function compo_prepairProperties(Proto) {
     compo_meta_prepairArgumentsHandler(Proto);
 }
 
-export function compo_createConstructor(Ctor, proto, hasBaseAlready) {
-    return function CompoBase(node, model, ctx, container, ctr) {
-        if (Ctor != null) {
-            var overriden = Ctor.call(this, node, model, ctx, container, ctr);
-            if (overriden != null) return overriden;
-        }
-        if (hasBaseAlready === true) {
-            return;
-        }
-        if (this.compos != null) {
-            this.compos = obj_create(this.compos);
-        }
-        if (this.pipes != null) {
-            Pipes.addController(this);
-        }
-        if (this.attr != null) {
-            this.attr = obj_create(this.attr);
-        }
-        if (this.scope != null) {
-            this.scope = obj_create(this.scope);
-        }
-    };
+// export function compo_createConstructor(Ctor, proto, hasBaseAlready) {
+//     return function CompoBase(node, model, ctx, container, ctr) {
+//         if (Ctor != null) {
+//             var overriden = Ctor.call(this, node, model, ctx, container, ctr);
+//             if (overriden != null) return overriden;
+//         }
+//         if (hasBaseAlready === true) {
+//             return;
+//         }
+//         if (this.compos != null) {
+//             this.compos = obj_create(this.compos);
+//         }
+//         if (this.pipes != null) {
+//             Pipes.addController(this);
+//         }
+//         if (this.attr != null) {
+//             this.attr = obj_create(this.attr);
+//         }
+//         if (this.scope != null) {
+//             this.scope = obj_create(this.scope);
+//         }
+//     };
+// }
+
+export function compo_baseConstructor () {
+    if (this.__constructed === true) {
+        return;
+    }
+    
+    this.__constructed = true;
+
+    if (this.compos != null) {
+        this.compos = obj_create(this.compos);
+    }
+    if (this.pipes != null) {
+        Pipes.addController(this);
+    }
+    if (this.attr != null) {
+        this.attr = obj_create(this.attr);
+    }
+    if (this.scope != null) {
+        this.scope = obj_create(this.scope);
+    }
 }

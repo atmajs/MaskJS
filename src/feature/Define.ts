@@ -53,7 +53,7 @@ export const Define = {
 				}
 			},			
 			renderStart: function(model_, ctx, el){
-				var model = model_;
+                var model = model_;
 				Component.prototype.renderStart.call(this, model, ctx, el);
 				if (this.nodes === this.template && this.meta.template !== 'copy') {					
 					this.nodes = mask_merge(this.nodes, [], this, null, mergeStats);
@@ -177,7 +177,7 @@ export const Define = {
 
 		var imax = extends_.length,
 			i = -1,
-			await = 0, x;
+			x;
 		while( ++i < imax ){
 			x = extends_[i];
 			if (x.compo) {
@@ -216,8 +216,8 @@ export const Define = {
 			args = compo_extends(extends_, model, ctr)
 			;
 
-		args.push(Proto);
-		var Ctor = Component.create.apply(null, args);
+		
+		var Ctor = Component.createExt(Proto, args);
 		if (Proto.meta.statics) {
 			obj_extend(Ctor, Proto.meta.statics);
 		}

@@ -44,9 +44,9 @@ export function compo_inherit (Proto, Extends){
     i = -1;
     imax = ctors.length;
     if (imax > 0) {
-        if (Proto.hasOwnProperty('constructor')) 
+        if (Proto.hasOwnProperty('constructor')) {
             ctors.unshift(Proto.constructor);
-        
+        }
         Proto.constructor = joinCtors_(ctors);
     }
     var meta = Proto.meta;

@@ -1,9 +1,7 @@
-import { Mask as mask } from '../../../src/mask'
+import { Mask as mask } from '@core/mask'
 const Compo = mask.Compo;
 const DomLite = Compo.DomLite;
 const $ = mask.$;
-
-
 
 UTest({
 	$before () {

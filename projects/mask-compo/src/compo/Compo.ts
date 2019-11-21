@@ -3,7 +3,7 @@ import { _Array_slice } from '@utils/refs';
 
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
-import { compo_create } from '@compo/util/compo_create';
+import { compo_createExt } from '../util/compo_ceateExt';
 import { Component } from './Component';
 
 export interface ICompo extends Component {
@@ -16,7 +16,8 @@ export const Compo: ICompo & typeof CompoStatics = <any> function (...args) {
         // used in Class({Base: Compo})
         return void 0;
     }
-    return compo_create(arguments as any);
+    let Base = args.pop();
+    return compo_createExt(Base, args);
 };
 
 Compo.prototype = CompoProto;

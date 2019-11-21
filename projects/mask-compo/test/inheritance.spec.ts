@@ -1,8 +1,10 @@
-import { Mask as mask } from '../../../src/mask';
+import { Mask as mask } from '@core/mask';
 const Compo = mask.Compo;
+
 
 UTest({
     'simple object inheritance'() {
+        
         var A = {
             a: 'a',
             getA() {
@@ -128,6 +130,9 @@ UTest({
                 this.name += x + 'A';
             }
         });
+        var a: any = new A('!');
+        eq_(a.name, '_!A');
+
         var B = function(x) {
             this.name += x + 'B';
         };
@@ -136,9 +141,8 @@ UTest({
                 this.name += x + 'C';
             }
         });
-
         var c: any = new C('-');
-        eq_(c.name, '_-A-B-C');
+        eq_(c.name, '_-B-A-C');
     },
     'inherit templates': {
         'merge `template` properties'() {

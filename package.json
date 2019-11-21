@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.7.31",
+    "version": "0.71.31",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -28,7 +28,7 @@
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
         "app-bundler": "0.0.68",
-        "atma": "^0.11.19",
+        "atma": "^0.12.9",
         "atma-io-middleware-condcomments": "^1.2.8",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
