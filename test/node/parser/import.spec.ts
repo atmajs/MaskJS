@@ -92,7 +92,6 @@ UTest({
 		]
 		.forEach(data => {
 			var {template} = data;
-            debugger;
             var nodes = parser_parse(template);
             var str = mask_stringify(nodes);            
 			eq_(str, template);

@@ -266,6 +266,11 @@ export const Mask = {
     },
 
     injectable: Di.deco.injectableClass,
+    deco: {
+        slot: Component.deco.slot,
+        attr: Component.deco.attr,
+        inject: Di.deco.injectableClass,
+    },
 
     templates: Templates,
 

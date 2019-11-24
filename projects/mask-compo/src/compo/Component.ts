@@ -4,11 +4,12 @@ import { obj_create } from '@utils/obj';
 import { compo_prepairProperties } from '../util/compo_create';
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
+import { deco_slot, deco_attr } from '@compo/deco/component_decorators';
+import { IComponent } from '@compo/model/IComponent';
 
-export class Component extends class_create(CompoProto) {
+export class Component extends class_create(CompoProto) implements IComponent {
     constructor () {
         super();
-        
         if (this.__constructed !== true) {
 			this.__constructed = true;
 			compo_prepairProperties(this);
@@ -63,5 +64,10 @@ export class Component extends class_create(CompoProto) {
     static pause = CompoStatics.pause
     static resume = CompoStatics.resume
     static await = CompoStatics.await
+
+    static deco = {
+        slot: deco_slot,
+        attr: deco_attr
+    }
 }
 

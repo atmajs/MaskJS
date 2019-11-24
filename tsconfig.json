@@ -4,6 +4,7 @@
         "ts_temp"
 	],
     "compilerOptions": {
+        "experimentalDecorators": true,
         "baseUrl": "./",
         "paths": {
             "@core/*": [

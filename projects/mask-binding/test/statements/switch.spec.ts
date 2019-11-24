@@ -1,4 +1,4 @@
-import { Mask as mask } from '../../../../src/mask'
+import { Mask as mask } from '@core/mask'
 import { $renderServer, $has, $visible } from '../utils';
 const Compo = mask.Compo;
 

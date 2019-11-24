@@ -12,34 +12,38 @@ import { CompoProto } from '@compo/compo/CompoProto';
 export const compo_meta_toAttributeKey = _getProperty;
 export function compo_meta_prepairAttributesHandler(
     Proto,
-    type? /* attributes | properties */
+    type?: 'attributes' | 'properties'
 ) {
-    var meta = getMetaProp_(Proto);
-    var attr = meta.attributes;
+    let meta = getMetaProp_(Proto);
+    let attr = meta.attributes;
     if (attr != null) {
-        var hash = _createHash(Proto, attr, true);
+        let hash = _createHash(Proto, attr, true);
         meta.readAttributes = _attr_setProperties_Delegate(hash);
     }
-    var props = meta.properties;
+    let props = meta.properties;
     if (props != null) {
-        var hash = _createHash(Proto, attr, false);
+        let hash = _createHash(Proto, attr, false);
         meta.readProperties = _attr_setProperties_Delegate(hash);
     }
 }
 function _createHash(Proto, metaObj, isAttr) {
-    var hash = {};
-    for (var key in metaObj) {
-        var val = metaObj[key];
-        _attr_setProperty_Delegate(Proto, key, val, isAttr, /*out*/ hash);
+    let hash = {};
+    for (let key in metaObj) {
+        _attr_setProperty_Delegate(
+            Proto, 
+            key, 
+            metaObj[key], 
+            isAttr, 
+            /*out*/ hash);
     }
     return hash;
 }
 function _attr_setProperties_Delegate(hash) {
     return function(compo, attr, model, container) {
-        for (var key in hash) {
-            var fn = hash[key];
-            var val = attr[key];
-            var error = fn(compo, key, val, model, container, attr);
+        for (let key in hash) {
+            let fn = hash[key];
+            let val = attr[key];
+            let error = fn(compo, key, val, model, container, attr);
             if (error == null) {
                 continue;
             }
@@ -60,9 +64,9 @@ function _attr_setProperty_Delegate(
         default_ = null,
         attrName = optional ? metaKey.substring(1) : metaKey;
 
-    var property = isAttr ? _getProperty(attrName) : attrName,
-        fn = null,
-        type = typeof metaVal;
+    let property = isAttr ? _getProperty(attrName, metaVal) : attrName;
+    let fn = null;
+    let type = typeof metaVal;
     if ('string' === type) {
         if (
             metaVal === 'string' ||
@@ -111,7 +115,7 @@ function _attr_setProperty_Delegate(
     ) {
         if (attrVal == null) {
             if (optional === false) {
-                return Error('Expected');
+                return Error(`Expected attribute ${attrName}`);
             }
             if (factory_ != null) {
                 compo[property] = factory_.call(compo, model, container, attr);
@@ -123,9 +127,10 @@ function _attr_setProperty_Delegate(
             return null;
         }
 
-        var val = fn.call(compo, attrVal, model, container, attrName);
-        if (val instanceof Error) return val;
-
+        let val = fn.call(compo, attrVal, model, container, attrName);
+        if (val instanceof Error) {
+            return val;
+        }
         compo[property] = val;
         return null;
     };
@@ -134,8 +139,11 @@ function _attr_setProperty_Delegate(
 function _toCamelCase_Replacer(full, char_) {
     return char_.toUpperCase();
 }
-function _getProperty(attrName) {
-    var prop = attrName;
+function _getProperty(attrName, attrDef) {
+    if (attrDef != null && typeof attrDef !== 'function' && attrDef.name != null) {
+        return attrDef.name;
+    }
+    let prop = attrName;
     if (prop.charCodeAt(0) !== 120) {
         // x
         prop = 'x-' + prop;
@@ -143,8 +151,7 @@ function _getProperty(attrName) {
     return prop.replace(/-(\w)/g, _toCamelCase_Replacer);
 }
 function _errored(compo, error, key, val) {
-    error.message =
-        compo.compoName + ' - attribute `' + key + '`: ' + error.message;
+    error.message = `${compo.compoName} - attribute '${key}': ${error.message}`;
     compo_errored(compo, error);
     log_error(error.message, '. Current: ', val);
 }

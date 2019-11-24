@@ -1,4 +1,4 @@
-import { Mask as mask } from '../../../../src/mask'
+import { Mask as mask } from '@core/mask'
 import { $renderServer } from '../utils';
 const Compo = mask.Compo;
 
@@ -36,9 +36,7 @@ UTest({
 			},
 			'should remove observers' (done, compo) {
 				compo.remove();
-				eq_(compo.model.letter.name, 'B');
-				is_(compo.model.__observers.letter, 'Array');
-				eq_(compo.model.__observers.letter.length, 0);
+				eq_(compo.model, null);
 				done(compo);
 			}
 		},
@@ -119,8 +117,7 @@ UTest({
             $.eq_('text', 'B');
 
             win.app.remove();
-            is_(win.app.model.__observers['letter'], 'Array');
-            eq_(win.app.model.__observers['letter'].length, 0);
+            eq_(win.app.model, null);
         
 		}
 	}

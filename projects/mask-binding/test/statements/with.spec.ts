@@ -1,4 +1,4 @@
-import { Mask as mask } from '../../../../src/mask'
+import { Mask as mask } from '@core/mask'
 import { $renderServer, $has, $visible } from '../utils';
 const Compo = mask.Compo;
 
@@ -76,7 +76,7 @@ UTest({
 					}
 				}
 			`,
-			model = {
+			model = <any> {
 				user: {
 					username: 'Baz'
 				}
@@ -110,13 +110,13 @@ UTest({
                 ;
             
             '> dispose'
+            
             win.app.remove();
             $dom
                 .find('#container')
                 .eq_('text', '')
                 ;
-            
-            eq_(win.app.model.__observers.user.length, 0);
+            eq_(win.app.model, null);
         
 		}
 	}

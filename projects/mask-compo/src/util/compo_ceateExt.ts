@@ -36,7 +36,6 @@ export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
                 Extends[i] = {};
             }
         }
-
         if (typeof Extends[i] === 'function') {
             classes.push(Extends[i]);
         }
@@ -144,7 +143,7 @@ export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
 function compo_createSingle (Proto: IProtoDefinition) {
     let ProtoCtor = Proto.hasOwnProperty('constructor') ? Proto.constructor : null;
 
-    let Ctor = function () {
+    let Ctor = function CompoBase () {
         compo_baseConstructor.apply(this, arguments);
         if (ProtoCtor) {
             ProtoCtor.apply(this, arguments);

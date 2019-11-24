@@ -1,4 +1,5 @@
 import { Mask as mask } from '@core/mask'
+import { deco_slot } from '@compo/deco/component_decorators';
 const Compo = mask.Compo;
 
 declare var sinon: sinon.SinonStatic
@@ -46,7 +47,7 @@ UTest({
 					eq(1) > do click;
 				}
 			`)
-			.done(() => {
+			.then(() => {
 				eq_(spy.callCount, 2);
 				deepEq_(spy.args[0][1], 'Lorem');
 				deepEq_(spy.args[1][1], 2);
@@ -79,7 +80,7 @@ UTest({
 		'should call method on 2 signals' () {
 			var spy = sinon.spy();
 			var compo = {
-				slots: {}
+				slots: {} as any
 			};
 
 			Compo.slot.attach(compo, 'foo && bar', spy);
@@ -102,10 +103,10 @@ UTest({
 		'should call method on 2 signals with a negotiation' () {
 			var spy = sinon.spy();
 			var compo = {
-				slots: {}
+				slots: {} as any
 			};
 
-			var worker = Compo.slot.attach(compo, 'foo ^ qux && bar', spy);
+			Compo.slot.attach(compo, 'foo ^ qux && bar', spy);
 
 			is_(compo.slots.foo, 'Function');
 			is_(compo.slots.bar, 'Function');
@@ -120,16 +121,41 @@ UTest({
 			Compo.signal.emitIn(compo, 'foo');
 			eq_(spy.callCount, 1);
 
-			
 			Compo.signal.emitIn(compo, 'qux');
 			eq_(spy.callCount, 1);
 			
 			Compo.signal.emitIn(compo, 'bar');
 			eq_(spy.callCount, 1);
-			
 
 			Compo.signal.emitIn(compo, 'foo');
 			eq_(spy.callCount, 2);
 		}
-	}
+    }, 
+    'supports decorator' () {
+        let spyBar = sinon.spy();
+        let spyQux = sinon.spy();
+        class Foo {
+            @deco_slot()
+            bar (arg) {
+                spyBar(arg);
+            }
+
+            @deco_slot('dex')
+            qux (arg) {
+                spyQux(arg);
+            }
+        }
+
+        let foo = Compo.initialize(Foo);
+        Compo.signal.emitIn(foo, 'bar', 'a');
+
+        Compo.signal.emitIn(foo, 'dex', 'b');
+        Compo.signal.emitIn(foo, 'qux', 'c');
+
+        eq_(spyBar.callCount, 1);
+        deepEq_(spyBar.args, [ ['a']] );
+
+        eq_(spyQux.callCount, 1);
+        deepEq_(spyQux.args, [ ['b']] );
+    }
 });

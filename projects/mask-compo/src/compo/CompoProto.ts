@@ -52,7 +52,7 @@ export const CompoProto = {
     await: null,
     resume: null,
 
-    meta: {
+    meta: null as {
         /* render modes, relevant for mask-node */
         mode: null,
         modelMode: null,
@@ -66,29 +66,27 @@ export const CompoProto = {
         readArguments: null
     },
 
-    getAttribute (key) {
-        var attr = this.meta.attributes;
-        if (attr == null || attr[key] === void 0) {
+    getAttribute <T = any> (key: string): T {
+        let def = this.meta.attributes?.[key];
+        if (def == null) {
             return this.attr[key];
         }
-        var prop = compo_meta_toAttributeKey(key);
+        let prop = compo_meta_toAttributeKey(key, def);
         return this[prop];
     },
 
-    setAttribute (key, val) {
-        var attr = this.meta.attributes;
-        var meta = attr == null ? void 0 : attr[key];
-        var prop = null;
-        if (meta !== void 0) {
-            prop = compo_meta_toAttributeKey(key);
+    setAttribute (key: string, val: any) {
+        let prop = null;
+        let def = this.meta.attributes?.[key];
+        if (def != null) {
+            prop = compo_meta_toAttributeKey(key, def);
         } else {
-            var props = this.meta.properties;
-            meta = props == null ? void 0 : props[key];
-            if (meta !== void 0) {
+            def = this.meta.properties?.[key];
+            if (def != null) {
                 prop = key;
             }
         }
-        ani_updateAttr(this, key, prop, val, meta);
+        ani_updateAttr(this, key, prop, val, def);
         if (this.onAttributeSet) {
             this.onAttributeSet(key, val);
         }

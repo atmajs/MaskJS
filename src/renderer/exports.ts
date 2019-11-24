@@ -17,7 +17,7 @@ import { Component } from '@compo/exports';
  * @returns {(IAppendChild|Node|DocumentFragment)} container
  * @memberOf mask
  */
-export function renderer_render (mix, model?, ctx?, container?, controller?): HTMLElement {
+export function renderer_render<T extends HTMLElement> (mix, model?, ctx?, container?, controller?): T {
     //#if (DEBUG)
     if (container != null && typeof container.appendChild !== 'function') {
         log_error(

@@ -1,55 +1,55 @@
 module.exports = {
-	suites: {
-		
-		'dom': {
-			exec: 'dom',
-			$config: {
-                includejs: includeSettings(),				
-			},
-			tests: 'test/dom/**.spec.ts'
-		},
-		'node': {
-            exec: 'node',            
-			tests: 'test/node/**.spec.ts'
-		},
-		 
-		'examples': {
+    suites: {
+
+        'dom': {
             exec: 'dom',
             $config: {
-                includejs: includeSettings(),				
-			},
-			tests: 'test/examples/**.spec.ts'
+                includejs: includeSettings(),
+            },
+            tests: 'test/dom/**.spec.ts'
+        },
+        'node': {
+            exec: 'node',
+            tests: 'test/node/**.spec.ts'
+        },
+
+        'examples': {
+            exec: 'dom',
+            $config: {
+                includejs: includeSettings(),
+            },
+            tests: 'test/examples/**.spec.ts'
         },
         'observer': {
-			exec: 'node',
-			tests: 'projects/observer/test/**.spec.ts'
+            exec: 'node',
+            tests: 'projects/observer/test/**.spec.ts'
         },
         'jmask': {
-			exec: 'node',
-			tests: 'projects/mask-j/test/**.spec.ts'
+            exec: 'node',
+            tests: 'projects/mask-j/test/**.spec.ts'
         },
         'compo': {
             exec: 'dom',
-            $config: {               
+            $config: {
                 includejs: includeSettings(),
             },
-			tests: 'projects/mask-compo/test/**.spec.ts'
+            tests: 'projects/mask-compo/test/**.spec.ts'
         },
         'binding': {
             exec: 'dom',
-            $config: {               
+            $config: {
                 includejs: includeSettings(),
             },
-			tests: 'projects/mask-binding/test/**.spec.ts'
+            tests: 'projects/mask-binding/test/**.spec.ts'
         },
         'expression': {
             exec: 'node',
             tests: 'projects/expression/test/**.spec.ts'
-		}
-	}
+        }
+    }
 };
 
-function includeSettings () {
+function includeSettings() {
     return {
         extentionDefault: { js: 'ts' },
         amd: true,
