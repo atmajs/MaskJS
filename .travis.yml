@@ -1,4 +1,7 @@
-sudo: false
+sudo: required
+
+services:
+  - xvfb
 
 # prevent travis from recursive gitsubmodule checkout
 git:
@@ -8,10 +11,8 @@ addons:
   firefox: "latest"
 
 before_script:
-  - git submodule init && git submodule update
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sleep 4
+  - sleep 5
   - npm run build &
   - sleep 8
   - npm run server &
@@ -23,8 +24,6 @@ script:
   - "npm test"
 
 language: node_js
+
 node_js:
-  - "node"
-compiler: clang-3.4
-env:
-  - CXX=clang-3.4
+  - "10.1.0"
