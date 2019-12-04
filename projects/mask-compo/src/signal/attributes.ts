@@ -101,7 +101,13 @@ function _createListener (ctr, slot, expr) {
             args = _Array_slice.call(arguments, 1); 
         }
         if (expr != null) {
-            var arr = expression_evalStatements(expr, ctr.model, null, ctr);
+            var p = ctr, 
+                model;
+            while(p != null && model == null)  {
+                model = p.model;
+                p = p.parent;
+            }
+            var arr = expression_evalStatements(expr, model, null, ctr);
             args = args == null ? arr : args.concat(arr);
         }
         _fire(ctr, slot, event, args, -1);
