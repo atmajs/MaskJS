@@ -63,7 +63,8 @@ export const CompoProto = {
         serializeNodes: null,
         readAttributes: null,
         readProperties: null,
-        readArguments: null
+        readArguments: null,
+        refs: null
     },
 
     getAttribute <T = any> (key: string): T {
@@ -124,6 +125,9 @@ export const CompoProto = {
         }
         if (this.compos != null) {
             Children_.select(this, this.compos);
+        }
+        if (this.meta?.refs != null) {
+            Children_.selectSelf(this, this.meta.refs);
         }
         if (this.hotkeys != null) {
             KeyboardHandler.hotkeys(this, this.hotkeys);

@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.71.35",
+    "version": "0.71.37",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -23,7 +23,9 @@
     "licenses": [
         "MIT"
     ],
-    "dependencies": {},
+    "dependencies": {
+        "@types/node": "^12.12.17"
+    },
     "devDependencies": {
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
@@ -45,7 +47,7 @@
         "server": "atma server --TEST",
         "examples": "atma server --TEST",
         "tsc": "tsc -p tsconfig-build.json",
-        "dts": "npm run tsc && atma run tools/build-dts"
+        "dts": "npm run tsc && atma run tools/build-dts --TEST"
     },
     "keywords": [],
     "atma": {

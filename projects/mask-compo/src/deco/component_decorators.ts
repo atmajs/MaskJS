@@ -18,12 +18,7 @@ export function deco_slot (name?: string) {
 export function deco_attr (opts?: IAttrDefinition) {
     
     return function (target, propertyKey, descriptor?) {
-        let meta = target.meta;
-        if (meta == null) meta = target.meta = { attributes: {} };
-
-        let attr = meta.attributes;
-        if (attr == null) attr = meta.attributes = {};
-
+        let attr = ensureMeta(target, 'attributes');
         let name = opts?.name;
         if (name == null) {
             name = propertyKey[0] + propertyKey.substring(1).replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
@@ -31,3 +26,31 @@ export function deco_attr (opts?: IAttrDefinition) {
         attr [name] = obj_extend(opts, { name: propertyKey });
     };
 };
+
+
+export function deco_refCompo (selector: string) {
+    return function (target, propertyKey, descriptor?) {
+        ensureRef(target, propertyKey, selector, 'compos');
+    };
+};
+export function deco_refElement (selector: string) {
+    return function (target, propertyKey, descriptor?) {
+        ensureRef(target, propertyKey, selector, 'elements');
+    };
+};
+export function deco_refQuery (selector: string) {
+    return function (target, propertyKey, descriptor?) {
+        ensureRef(target, propertyKey, selector, 'queries');
+    };
+};
+
+function ensureMeta(proto, name: string) {
+    let m = proto.meta;
+    if (m == null) m = proto.meta = { [name]: {} };
+    return m[name] ?? (m[name] = {});
+}
+function ensureRef(proto, key: string, selector: string, refName: string) {
+    let refs = ensureMeta(proto, 'refs');
+    let ref = refs[refName] ?? (refs[refName] = {});
+    ref[key] = selector;
+}

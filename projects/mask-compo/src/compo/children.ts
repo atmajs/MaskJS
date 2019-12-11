@@ -19,13 +19,14 @@ export const Children_ = {
 	 *	});
 	 *
 	 */
-	select: function(component, compos) {
+	select (component, compos) {
 		for (var name in compos) {
 			var data = compos[name],
 				events = null,
 				selector = null;
 
 			if (data instanceof Array) {
+                console.error('obsolete');
 				selector = data[0];
 				events = data.splice(1);
 			}
@@ -60,5 +61,25 @@ export const Children_ = {
 				Events_.on(component, events, element);
 			}
 		}
-	}
+    },
+    selectSelf (self, refs: { compos?: any, elements?: any, queries?: any } ) {
+        let compos = refs.compos;
+        if (compos) {
+            for (let prop in compos) {
+                self[prop] = CompoConfig.selectors.compo(self, compos[prop]);
+            }
+        }
+        let q = refs.queries;
+        if (q) {
+            for (let prop in q) {
+                self[prop] = CompoConfig.selectors.$(self, q[prop]);
+            }
+        }
+        let els = refs.elements;
+        if (els) {
+            for (let prop in els) {
+                self[prop] = self.$[0].querySelector(els[prop]);
+            }
+        }
+    }
 };

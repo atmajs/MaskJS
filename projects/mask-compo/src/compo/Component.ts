@@ -4,7 +4,7 @@ import { obj_create } from '@utils/obj';
 import { compo_prepairProperties } from '../util/compo_create';
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
-import { deco_slot, deco_attr } from '@compo/deco/component_decorators';
+import { deco_slot, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from '@compo/deco/component_decorators';
 import { IComponent } from '@compo/model/IComponent';
 
 export class Component extends class_create(CompoProto) implements IComponent {
@@ -67,7 +67,10 @@ export class Component extends class_create(CompoProto) implements IComponent {
 
     static deco = {
         slot: deco_slot,
-        attr: deco_attr
+        attr: deco_attr,
+        refCompo: deco_refCompo, 
+        refElement: deco_refElement, 
+        refQuery: deco_refQuery
     }
 }
 

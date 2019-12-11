@@ -2,9 +2,9 @@ import { fn_proxy } from '@utils/fn';
 import { domLib_on } from '../util/domLib';
 
 export const Events_ = {
-	on: function(component, events, $element?) {
-		if ($element == null) {
-			$element = component.$;
+	on: function(component, events, $el?) {
+		if ($el == null) {
+			$el = component.$;
 		}
 
 		var isarray = events instanceof Array,
@@ -20,7 +20,7 @@ export const Events_ = {
 					x[0] = EventDecorator(x[0]);
 				}
 
-				$element.on.apply($element, x);
+				$el.on.apply($el, x);
 				continue;
 			}
 
@@ -42,7 +42,7 @@ export const Events_ = {
 					type = EventDecorator(type);
 				}
 
-				domLib_on($element, type, selector, fn_proxy(fn, component));
+				domLib_on($el, type, selector, fn_proxy(fn, component));
 			}
 		}
     },

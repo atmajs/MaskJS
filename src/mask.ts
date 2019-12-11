@@ -269,6 +269,9 @@ export const Mask = {
     deco: {
         slot: Component.deco.slot,
         attr: Component.deco.attr,
+        refCompo: Component.deco.refCompo,
+        refElement: Component.deco.refCompo,
+        refQuery: Component.deco.refCompo,
         inject: Di.deco.injectableClass,
     },
 
