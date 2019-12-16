@@ -6,7 +6,7 @@
 .gitmodules
 .gitattributes
 .npmignore
-
+.vscode
 .travis.yml
 
 build.js
@@ -16,7 +16,9 @@ test/
 src/
 builds/
 examples/
+ts-temp/
 /ref-**
 /projects
 
 
+tsconfig-build.json

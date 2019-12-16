@@ -125,13 +125,14 @@ function create_refresher(type, expr, element, currentValue, attrName, ctr) {
 
 
 function bind (current, expr, model, ctx, element, ctr, attrName, type){
+    let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
     var	refresher =  create_refresher(type, expr, element, current, attrName, ctr),
-        binder = expression_createBinder(expr, model, ctx, ctr, refresher);
+        binder = expression_createBinder(expr, model, ctx, owner, refresher);
 
-    expression_bind(expr, model, ctx, ctr, binder);
+    expression_bind(expr, model, ctx, owner, binder);
 
     Component.attach(ctr, 'dispose', function(){
-        expression_unbind(expr, model, ctr, binder);
+        expression_unbind(expr, model, owner, binder);
     });
 }
 
@@ -139,9 +140,9 @@ customUtil_register('bind', {
     mode: 'partial',
     current: null,
     element: null,
-    nodeRenderStart: function(expr, model, ctx, el, ctr, type, node){
-
-        var current = expression_eval_safe(expr, model, ctx, ctr, node);
+    nodeRenderStart: function(expr, model, ctx, el, ctr, attrName, type, node){
+        let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+        let current = expression_eval_safe(expr, model, ctx, owner, node);
 
         // though we apply value's to `this` context, but it is only for immediat use
         // in .node() function, as `this` context is a static object that share all bind
@@ -168,8 +169,9 @@ customUtil_register('bind', {
         return el;
     },
 
-    attrRenderStart: function(expr, model, ctx, el, ctr, type, node){
-        return (this.current = expression_eval_safe(expr, model, ctx, ctr, node));
+    attrRenderStart: function(expr, model, ctx, el, ctr, attrName, type, node){
+        let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+        return (this.current = expression_eval_safe(expr, model, ctx, owner, node));
     },
     attr: function(expr, model, ctx, element, controller, attrName, type){
         bind(

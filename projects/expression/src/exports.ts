@@ -61,6 +61,6 @@ export const ExpressionUtil = {
 };
 
 customUtil_register('expression', function(value, model, ctx, element, ctr, name, type, node){
-    var owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+    let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
     return expression_eval(value, model, ctx, owner, node);
 });
