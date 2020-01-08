@@ -1,5 +1,0 @@
-import NotExists from 'fake';
-
-define Any {
-	NotExists;
-}
