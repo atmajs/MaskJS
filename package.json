@@ -31,6 +31,7 @@
         "@types/sinon": "^7.0.5",
         "app-bundler": "0.0.68",
         "atma": "^0.12.12",
+        "atma-io": "^1.2.28",
         "atma-io-middleware-condcomments": "^1.2.8",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
@@ -47,7 +48,8 @@
         "server": "atma server --TEST",
         "examples": "atma server --TEST",
         "tsc": "tsc -p tsconfig-build.json",
-        "dts": "npm run tsc && atma run tools/build-dts --TEST"
+        "dts": "npm run tsc && atma run tools/build-dts --TEST",
+        "dts-build": "atma run tools/build-dts --TEST"
     },
     "keywords": [],
     "atma": {
