@@ -9,22 +9,52 @@ const ENV_CLASS = (function () {
     }
 }());
 
+const ENV_SPREAD = (function () {
+    try {
+        let x = new Function('x', 'return(function(...args){return args[0]}(x));return foo(x);')(1);
+        return x === 1;
+    } catch {
+        return false;
+    }
+}());
+
+
 interface WrappedCtor {
     <T> (Ctor: T, innerFn: Function): T
 }
-export const env_class_overrideArgs: WrappedCtor = <any> (ENV_CLASS ? new Function('Ctor', 'innerFn', `
-    return class extends Ctor {
-        constructor (...args) {
-            super(...innerFn(...args));
-        }
+
+const class_overrideArgs: WrappedCtor = <any> (function () {
+    if (ENV_CLASS === false) {
+        return function (Ctor, innerFn) {
+            const Wrapped = function (...args) {
+                Ctor.apply(this, innerFn(...args));
+            };
+            Wrapped.prototype = Ctor.prototype;
+            return Wrapped;
+        };
     }
-`) : function (Ctor, innerFn) {
-    const Wrapped = function (...args) {
-        Ctor.apply(this, innerFn(...args));
-    };
-    Wrapped.prototype = Ctor.prototype;
-    return Wrapped;
-});
+    if (ENV_SPREAD) {
+        return new Function('Ctor', 'innerFn', `
+            return class extends Ctor {
+                constructor (...args) {
+                    super(...innerFn(...args));
+                }
+            }
+        `);
+    }
+    return new Function('Ctor', 'innerFn', `
+        return class extends Ctor {
+            constructor () {
+                var x = innerFn.apply(null, arguments);
+                super(x[0], x[1], x[2], x[3], x[4], x[5]);
+            }
+        };
+    `);
+}());
+
+
+
+export const env_class_overrideArgs = class_overrideArgs;
 
 
 export const env_class_wrapCtors = function (Base, beforeFn?: Function, afterFn?: Function, middCtors?: Function[]) {
@@ -36,64 +66,70 @@ export const env_class_wrapCtors = function (Base, beforeFn?: Function, afterFn?
     return polyfill_class_wrap_inner(Base, beforeFn, afterFn, middCtors);
 }
 
-const polyfill_class_wrap_inner = <any> (ENV_CLASS ? new Function('Base', 'beforeFn', 'afterFn', 'callCtors', `
-return class extends Base {
-    constructor (...args) {
-        super(...args);
-        if (beforeFn != null) {
-            beforeFn.apply(this, args);
-        }
-        if (callCtors != null) {
-            for (let i = callCtors.length - 1; i > -1; i--) {
-                callCtors[i](this, args);
-            }
-        }
-        if (afterFn != null) {
-            afterFn.apply(this, args);
-        }
+const polyfill_class_wrap_inner = (function () {
+    if (!ENV_CLASS) {
+        return function (Base, beforeFn: Function, afterFn: Function, callCtors: Function[]) {
+            let callBase = ensureCallableSingle(Base);
+            const Wrapped = function (...args) {
+                callBase(this, args);
+                if (beforeFn != null) {
+                    beforeFn.apply(this, args);
+                }
+                if (callCtors != null) {
+                    for (let i = callCtors.length - 1; i > -1; i--) {
+                        callCtors[i](this, args);
+                    }
+                }
+                if (afterFn != null) {
+                    afterFn.apply(this, args);
+                }
+            };
+            obj_extend(Wrapped.prototype, Base.prototype);
+            return Wrapped;
+        };
     }
-}
-`) : function (Base, beforeFn: Function, afterFn: Function, callCtors: Function[]) {
-    let callBase = ensureCallableSingle(Base);
-    const Wrapped = function (...args) {
-        callBase(this, args);
-        if (beforeFn != null) {
-            beforeFn.apply(this, args);
-        }
-        if (callCtors != null) {
-            for (let i = callCtors.length - 1; i > -1; i--) {
-                callCtors[i](this, args);
-            }
-        }
-        if (afterFn != null) {
-            afterFn.apply(this, args);
-        }
-    };
-    obj_extend(Wrapped.prototype, Base.prototype);
-    return Wrapped;
-});
-
-
-const polyfill_class_wrap_es5_inner = function (Base, beforeFn: Function, afterFn: Function, callCtors: Function[]) {
-    return class extends Base {
-        constructor (...args) {
-            super(...args);
-            if (beforeFn != null) {
-                beforeFn.apply(this, args);
-            }
-            if (callCtors != null) {
-                for (let i = callCtors.length - 1; i > -1; i--) {
-                    callCtors[i](this, args);
+    if (ENV_SPREAD) {
+        return new Function('Base', 'beforeFn', 'afterFn', 'callCtors', `
+            return class extends Base {
+                constructor (...args) {
+                    super(...args);
+                    if (beforeFn != null) {
+                        beforeFn.apply(this, args);
+                    }
+                    if (callCtors != null) {
+                        for (var i = callCtors.length - 1; i > -1; i--) {
+                            callCtors[i](this, args);
+                        }
+                    }
+                    if (afterFn != null) {
+                        afterFn.apply(this, args);
+                    }
                 }
             }
-            if (afterFn != null) {
-                afterFn.apply(this, args);
+        `);
+    }
+    return new Function('Base', 'beforeFn', 'afterFn', 'callCtors', `
+        return class extends Base {
+            constructor (a, b, c, d, e, f) {
+                super(a, b, c, d, e, f);
+                var args = Array.from(arguments);
+                if (beforeFn != null) {
+                    beforeFn.apply(this, args);
+                }
+                if (callCtors != null) {
+                    for (var i = callCtors.length - 1; i > -1; i--) {
+                        callCtors[i](this, args);
+                    }
+                }
+                if (afterFn != null) {
+                    afterFn.apply(this, args);
+                }
             }
         }
-    }
-}
+    `);
+}());
 
-var ensureCallableSingle = function (fn) {
+function ensureCallableSingle(fn) {
     var caller = directCaller;
     var safe = false;
     return function (self, args: any[]) {
