@@ -27,6 +27,7 @@ async function process () {
     });
     
     File.copyTo('./ts-temp/out/index.d.ts', './lib/mask.d.ts');
+    File.copyTo('./ts-temp/out/index.d.ts', './types/mask.d.ts');
 }
 
 namespace Preprocess {
