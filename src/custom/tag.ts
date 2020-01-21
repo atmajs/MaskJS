@@ -4,7 +4,7 @@ import { fn_createByPattern } from '@utils/fn';
 import { error_withNode, reporter_deprecated } from '@core/util/reporters';
 import { custom_Tags, custom_Tags_global } from './repositories';
 import { ModuleMidd } from '@core/arch/Module';
-import { Component } from '../dom/Component'
+import { ComponentNode } from '../dom/ComponentNode'
 
 /**
  * Get Components constructor from the global repository or the scope

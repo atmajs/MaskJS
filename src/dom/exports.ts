@@ -15,7 +15,7 @@ import { Node } from './Node';
 
 import { DecoratorNode } from './DecoratorNode';
 
-import { Component } from './Component';
+import { ComponentNode } from './ComponentNode';
 
 export const Dom = {
     NODE: dom_NODE,
@@ -31,6 +31,6 @@ export const Dom = {
     TextNode: TextNode,
     Fragment: Fragment,
     HtmlFragment: HtmlFragment,
-    Component: Component,
+    Component: ComponentNode,
     DecoratorNode: DecoratorNode
 };

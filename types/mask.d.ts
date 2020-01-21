@@ -27,7 +27,7 @@ declare module 'mask' {
      import { refs_extractVars } from "mask/projects/expression/src/vars_helper"; 
      import { _evaluate } from "mask/projects/expression/src/eval"; 
      import { _parse } from "mask/projects/expression/src/parser"; 
-     import { Component } from 'mask/dom/Component'; 
+     import { ComponentNode } from 'mask/dom/ComponentNode'; 
      import { _appendChild } from 'mask/dom/utils'; 
      import { INode } from 'mask/dom/INode'; 
      import { IDefineMethod } from 'mask/custom/tag'; 
@@ -250,7 +250,7 @@ declare module 'mask' {
                     } & {
                             syntax: string;
                     });
-                    Component: typeof Component;
+                    Component: typeof ComponentNode;
                     DecoratorNode: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
                             constructor: (expression: any, parent: any) => void;
                             __single: boolean;
@@ -416,7 +416,6 @@ declare module 'mask' {
     };
 }
 
-
 declare module 'mask/projects/mask-compo/src/signal/compound' {
     export function _compound(ctr: any, slotExpression: any, cb: any): {
         slots: any;
@@ -552,8 +551,8 @@ declare module 'mask/projects/expression/src/parser' {
     export function ast_append(current: any, next: any): any;
 }
 
-declare module 'mask/dom/Component' {
-    export function Component(compoName?: any, parent?: any, controller?: any): void;
+declare module 'mask/dom/ComponentNode' {
+    export function ComponentNode(compoName?: any, parent?: any, controller?: any): void;
 }
 
 declare module 'mask/dom/utils' {

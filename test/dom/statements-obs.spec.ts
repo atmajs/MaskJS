@@ -1,6 +1,6 @@
 import { renderer_render } from '@core/renderer/exports'
 import '@core/statements/exports'
-import { Component } from '@core/dom/Component';
+import { ComponentNode } from '@core/dom/ComponentNode';
 import { Compo } from '@compo/exports';
 import { class_Dfr } from '@utils/class/Dfr';
 
@@ -8,7 +8,7 @@ import { class_Dfr } from '@utils/class/Dfr';
 UTest({
 	async 'await if' () {
         
-        let compo = new Component();
+        let compo = new ComponentNode();
         let template = `
             div {
                 if (await num === 5) {
@@ -28,7 +28,7 @@ UTest({
     },
 	async 'if' () {
         
-        let compo = new Component();
+        let compo = new ComponentNode();
         let template = `
             div {
                 if (observe num === 2) {
