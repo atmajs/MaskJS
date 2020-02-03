@@ -99,7 +99,7 @@ export const CompoProto = {
     onRenderEndServer: null,
     onEnterFrame: null,
     render: null,
-    renderStart (model, ctx, container){
+    renderStart (model?, ctx?, container?){
         compo_ensureTemplate(this);
         if (is_Function(this.onRenderStart)){
             var x = this.onRenderStart(model, ctx, container);
@@ -107,14 +107,14 @@ export const CompoProto = {
                 compo_prepairAsync(x, this, ctx);
         }
     },
-    renderStartClient (model, ctx, container){
+    renderStartClient (model?, ctx?, container?){
         if (is_Function(this.onRenderStartClient)){
             var x = this.onRenderStartClient(model, ctx, container);
             if (x !== void 0 && dfr_isBusy(x))
                 compo_prepairAsync(x, this, ctx);
         }
     },
-    renderEnd (elements, model, ctx, container){
+    renderEnd (elements?, model?, ctx?, container?){
 
         Anchor.create(this);
 
@@ -172,10 +172,10 @@ export const CompoProto = {
         this.emitIn('domInsert');
         return this;
     },
-    find (selector){
+    find<T = any>(selector): T{
         return compo_find(this, selector);
     },
-    findAll (selector){
+    findAll<T = any>(selector): T[]{
         return compo_findAll(this, selector);
     },
     closest (selector){
@@ -217,7 +217,7 @@ export const CompoProto = {
         CompoSignals.signal.toggle(this, signalName, isActive);
         return this;
     },
-    emitOut (signalName, a1, a2, a3, a4){
+    emitOut (signalName, a1?, a2?, a3?, a4?){
         CompoSignals.signal.emitOut(
             this,
             signalName,
@@ -226,7 +226,7 @@ export const CompoProto = {
         );
         return this;
     },
-    emitIn (signalName, a1, a2, a3, a4){
+    emitIn (signalName, a1?, a2?, a3?, a4?){
         CompoSignals.signal.emitIn(
             this,
             signalName,

@@ -1,18 +1,30 @@
 import { Mask } from '../mask'
 import { compo_reload } from './compo';
+
 declare let mask: typeof Mask;
 declare let include;
 
 const { Module } = mask;
 
 
-Module.reload = function (path) {
-    let filename = Module.resolvePath({ path: path });
+Module.reload = function (path: string) {
+    if (path[0] === '/') {
+        let base = mask.Module.cfg('base') ?? '/';
+        if (base[0] === '/') {
+            base = location.origin + base;
+        }
+        if (base[base.length - 1] !== '/') {
+            base += '/';
+        }
+        path = base + path.substring(1);
+    }
+    let filename = Module.resolvePath({ path });
     let endpoint = new Module.Endpoint(filename);
     let module = Module.getCache(endpoint);
     if (module == null) {
+        console.warn(`Module not found: ${path}`);
         return false;
-    }		
+    }
     let compos = Object.keys(module.exports.__handlers__);
     module.state = 0;
     module.defer();
