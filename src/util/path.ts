@@ -153,17 +153,14 @@ export function path_resolveUrl(path, base) {
     return url;
 }
 export function path_isRelative(path) {
-    var c = path.charCodeAt(0);
+    const c = path.charCodeAt(0);
     switch (c) {
-        case 47:
-            // /
+        case 46: /* . */
+            return true;
+        case 47: /* / */
             return false;
-        case 102:
-        case 104:
-            // f || h
-            return rgx_PROTOCOL.test(path) === false;
     }
-    return true;
+    return rgx_PROTOCOL.test(path) === false
 }
 export function path_toRelative(path, anchor, base?) {
     var path_ = path_resolveUrl(path_normalize(path), base),
@@ -231,7 +228,7 @@ export const path_toLocalFile = (function() {
 })();
 //#endif
 
-var rgx_PROTOCOL = /^(file|https?):/i,
+var rgx_PROTOCOL = /^[\w\-]{2,}:\/\//i,
     rgx_SUB_DIR = /[^\/\.]+\/\.\.\//,
     rgx_FILENAME = /\/[^\/]+\.\w+(\?.*)?(#.*)?$/,
     rgx_EXT = /\.(\w+)$/,
