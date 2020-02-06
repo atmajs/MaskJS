@@ -659,7 +659,7 @@ declare module 'mask/feature/modules/utils' {
 }
 
 declare module 'mask/feature/modules/config' {
-    export function m_cfg(mix: any, val: any): any;
+    export function m_cfg(mix: any, val?: any): any;
 }
 
 declare module 'mask/feature/modules/types' {
@@ -920,74 +920,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
      import { compo_find } from 'mask/projects/mask-compo/src/compo/find'; 
      import { deco_slot, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from "mask/projects/mask-compo/src/deco/component_decorators";
     import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
-    const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
-            type: number;
-            __constructed: boolean;
-            __resource: any;
-            __frame: any;
-            __tweens: any;
-            ID: any;
-            tagName: any;
-            compoName: any;
-            node: any;
-            nodes: any;
-            components: any;
-            expression: any;
-            attr: any;
-            model: any;
-            scope: any;
-            slots: any;
-            pipes: any;
-            compos: any;
-            events: any;
-            hotkeys: any;
-            async: boolean;
-            await: any;
-            resume: any;
-            meta: {
-                    mode: null;
-                    modelMode: null;
-                    attributes: null;
-                    properties: null;
-                    arguments: null;
-                    template: null;
-                    serializeNodes: null;
-                    readAttributes: null;
-                    readProperties: null;
-                    readArguments: null;
-                    refs: null;
-            };
-            getAttribute<T = any>(key: string): T;
-            setAttribute(key: string, val: any): void;
-            onAttributeSet: any;
-            onRenderStart: any;
-            onRenderStartClient: any;
-            onRenderEnd: any;
-            onRenderEndServer: any;
-            onEnterFrame: any;
-            render: any;
-            renderStart(model?: any, ctx?: any, container?: any): void;
-            renderStartClient(model?: any, ctx?: any, container?: any): void;
-            renderEnd(elements?: any, model?: any, ctx?: any, container?: any): void;
-            appendTo(el: any): any;
-            append(template: any, model: any, selector: any): any;
-            find<T_1 = any>(selector: any): T_1;
-            findAll<T_2 = any>(selector: any): T_2[];
-            closest(selector: any): any;
-            on(): any;
-            remove(): any;
-            slotState(slotName: any, isActive: any): any;
-            signalState(signalName: any, isActive: any): any;
-            emitOut(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
-            emitIn(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
-            $scope(path: any): any;
-            $eval(expr: any, model: any, ctx: any): any;
-            attach(name: any, fn: any): void;
-            serializeState(): {
-                    scope: any;
-            };
-            deserializeState(bundle: any): void;
-    };
+    const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => IComponent<any>;
     export class Component extends Component_base implements IComponent {
             constructor();
             static create: (...args: any[]) => any;
@@ -1282,74 +1215,8 @@ declare module 'mask/projects/observer/src/exports' {
 }
 
 declare module 'mask/projects/mask-compo/src/compo/CompoProto' {
-    export const CompoProto: {
-        type: number;
-        __constructed: boolean;
-        __resource: any;
-        __frame: any;
-        __tweens: any;
-        ID: any;
-        tagName: any;
-        compoName: any;
-        node: any;
-        nodes: any;
-        components: any;
-        expression: any;
-        attr: any;
-        model: any;
-        scope: any;
-        slots: any;
-        pipes: any;
-        compos: any;
-        events: any;
-        hotkeys: any;
-        async: boolean;
-        await: any;
-        resume: any;
-        meta: {
-            mode: null;
-            modelMode: null;
-            attributes: null;
-            properties: null;
-            arguments: null;
-            template: null;
-            serializeNodes: null;
-            readAttributes: null;
-            readProperties: null;
-            readArguments: null;
-            refs: null;
-        };
-        getAttribute<T = any>(key: string): T;
-        setAttribute(key: string, val: any): void;
-        onAttributeSet: any;
-        onRenderStart: any;
-        onRenderStartClient: any;
-        onRenderEnd: any;
-        onRenderEndServer: any;
-        onEnterFrame: any;
-        render: any;
-        renderStart(model?: any, ctx?: any, container?: any): void;
-        renderStartClient(model?: any, ctx?: any, container?: any): void;
-        renderEnd(elements?: any, model?: any, ctx?: any, container?: any): void;
-        appendTo(el: any): any;
-        append(template: any, model: any, selector: any): any;
-        find<T_1 = any>(selector: any): T_1;
-        findAll<T_2 = any>(selector: any): T_2[];
-        closest(selector: any): any;
-        on(): any;
-        remove(): any;
-        slotState(slotName: any, isActive: any): any;
-        signalState(signalName: any, isActive: any): any;
-        emitOut(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
-        emitIn(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
-        $scope(path: any): any;
-        $eval(expr: any, model: any, ctx: any): any;
-        attach(name: any, fn: any): void;
-        serializeState(): {
-            scope: any;
-        };
-        deserializeState(bundle: any): void;
-    };
+    import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
+    export const CompoProto: IComponent<any>;
 }
 
 declare module 'mask/projects/mask-compo/src/scope-vars' {
@@ -1380,6 +1247,7 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         };
         model: TModel;
         scope: any;
+        $: JQuery;
         slots: {
             [key: string]: Function;
         };

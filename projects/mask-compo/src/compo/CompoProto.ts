@@ -21,9 +21,9 @@ import { Events_ } from './events';
 import { compo_find, compo_findAll, compo_closest } from './find';
 import { renderer_render } from '@core/renderer/exports';
 import { parser_parse } from '@core/parser/exports';
+import { IComponent } from '@compo/model/IComponent';
 
-
-export const CompoProto = {
+export const CompoProto = <IComponent> {
     type: Dom.CONTROLLER,
     __constructed: false,
     __resource: null,
@@ -31,6 +31,7 @@ export const CompoProto = {
     __tweens: null,
 
     ID: null,
+    $: null,
 
     tagName: null,
     compoName: null,

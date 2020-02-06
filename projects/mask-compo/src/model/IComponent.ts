@@ -20,6 +20,8 @@ export interface IComponent<TModel = any> {
     model: TModel
     scope: any
 
+    $: JQuery
+
     slots: { [key: string]: Function }
     pipes: { [pipe: string]: { [key: string]: Function } }
 
