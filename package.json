@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.71.53",
+    "version": "0.71.55",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -41,7 +41,7 @@
     },
     "scripts": {
         "test": "atma test",
-        "build": "app-bundler",
+        "build": "app-bundler && npm run dts",
         "watch": "app-bundler --watch",
         "build-dev": "app-bundler --inspect-brk",
         "release": "atma bump && npm run build && atma release",
