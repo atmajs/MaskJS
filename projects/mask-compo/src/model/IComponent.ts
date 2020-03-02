@@ -14,6 +14,7 @@ export interface IComponent<TModel = any> {
     compoName: string
     node: INode
     nodes: INode | INode[]
+    parent: IComponent
     components: IComponent[]
     expression: string
     attr: { [key: string]: string | Function | any }

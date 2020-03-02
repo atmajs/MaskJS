@@ -18,15 +18,13 @@ export function file_getJson(path, ctr) {
 }
 
 function get(fn, path, ctr) {
-    path = path_resolveUrl(path, Module.resolveLocation(ctr));
-
-    var dfr = Cache[path];
-    if (dfr !== void 0) {
-        return dfr;
+    let url = path_resolveUrl(path, Module.resolveLocation(ctr));
+    if (url in Cache) {
+        return Cache[url];
     }
-    dfr = new class_Dfr();
-    fn(path, dfr.pipeCallback());
+    const dfr = Cache[url] = new class_Dfr();
+    fn(url, dfr.pipeCallback());
     return dfr;
 }
 
-var Cache = {};
+const Cache = Object.create(null);
