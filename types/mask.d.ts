@@ -1240,6 +1240,7 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         compoName: string;
         node: INode;
         nodes: INode | INode[];
+        parent: IComponent;
         components: IComponent[];
         expression: string;
         attr: {

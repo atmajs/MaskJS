@@ -35,6 +35,7 @@ export const CompoProto = <IComponent> {
 
     tagName: null,
     compoName: null,
+    parent: null,
     node: null,
     nodes: null,
     components: null,
