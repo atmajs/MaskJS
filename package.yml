@@ -68,6 +68,7 @@ apps:
     copyFiles:
       ref-mask-node/lib/mask.bootstrap.js: lib/mask.bootstrap.js
       ref-mask-node/lib/mask.node.js: lib/mask.node.js
+      src/parser/html/html_entities.js: lib/html_entities.js
 common:
   file: src/mask.ts
   package:
