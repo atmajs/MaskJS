@@ -115,4 +115,5 @@ function _createListener (ctr, slot, expr) {
 }
 
 // click: fooSignal(barArg)
-const rgx_DEF = /^\s*((\w+)(\s*\(\s*(\w+)\s*\))?\s*:)?\s*(\w+)(\s*\(([^)]+)\)\s*)?\s*$/;
+// ctrl+enter: doSmth(arg, arg2)
+const rgx_DEF = /^\s*(([\w\+\-_]+)(\s*\(\s*(\w+)\s*\))?\s*:)?\s*(\w+)(\s*\(([^)]+)\)\s*)?\s*$/;
