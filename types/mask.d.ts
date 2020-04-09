@@ -20,6 +20,9 @@ declare module 'mask' {
      import { deco_refElement } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_refCompo } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_attr } from "mask/projects/mask-compo/src/deco/component_decorators"; 
+     import { deco_hotkey } from "mask/projects/mask-compo/src/deco/component_decorators"; 
+     import { deco_event } from "mask/projects/mask-compo/src/deco/component_decorators"; 
+     import { deco_pipe } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_slotPrivate } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_slot } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { ClassFactory } from "mask/ref-utils/src/class"; 
@@ -332,6 +335,9 @@ declare module 'mask' {
             deco: {
                     slot: typeof deco_slot;
                     slotPrivate: typeof deco_slotPrivate;
+                    pipe: typeof deco_pipe;
+                    event: typeof deco_event;
+                    hotkey: typeof deco_hotkey;
                     attr: typeof deco_attr;
                     refCompo: typeof deco_refCompo;
                     refElement: typeof deco_refElement;

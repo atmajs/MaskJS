@@ -269,6 +269,9 @@ export const Mask = {
     deco: {
         slot: Component.deco.slot,
         slotPrivate: Component.deco.slotPrivate,
+        pipe: Component.deco.pipe,
+        event: Component.deco.event,
+        hotkey: Component.deco.hotkey,
         attr: Component.deco.attr,
         refCompo: Component.deco.refCompo,
         refElement: Component.deco.refElement,
