@@ -5,10 +5,7 @@ export function deco_slot (opts?: { name?: string, private?: boolean })
 export function deco_slot (name?: string)
 export function deco_slot (mix?: string | { name?: string, private?: boolean}) {
     return function (target, propertyKey, descriptor?) {
-        let slots = target.slots;
-        if (slots == null) {
-            slots = target.slots = {};
-        }
+        let slots = target.slots ?? (target.slots = {});
         const name = typeof mix === 'string' ? mix : mix?.name;
         const isPrivate = typeof mix !== 'string' ? mix?.private ?? false : false;
         const viaProperty = descriptor == null;
@@ -22,6 +19,47 @@ export function deco_slot (mix?: string | { name?: string, private?: boolean}) {
         return descriptor;
     };
 };
+
+/** Tip: use constants instead string literals for arguments */
+export function deco_pipe (pipeName: string, signalName?: string) {
+    return function (target, propertyKey, descriptor?) {
+        let pipes = target.pipes ?? (target.pipes = {});
+        const stream = pipes[pipeName] ?? (pipes[pipeName] = {});
+        const viaProperty = descriptor == null;
+        const fn = viaProperty ? target[propertyKey] : descriptor.value;
+        stream [name ?? propertyKey] = fn;
+        return descriptor;
+    };
+};
+
+
+/**
+ * @param selector event or delegated event - "click: .some"
+ */
+export function deco_event (selector: string) {
+    return function (target, propertyKey, descriptor?) {
+        let events = target.events ?? (target.events = {});
+        const viaProperty = descriptor == null;
+        const fn = viaProperty ? target[propertyKey] : descriptor.value;
+        events [selector] = fn;
+        return descriptor;
+    };
+};
+
+/**
+ * @param selector event or delegated event - "click: .some"
+ */
+export function deco_hotkey (hotkey: string) {
+    return function (target, propertyKey, descriptor?) {
+        let hotkeys = target.hotkeys ?? (target.hotkeys = {});
+        const viaProperty = descriptor == null;
+        const fn = viaProperty ? target[propertyKey] : descriptor.value;
+        hotkeys [hotkey] = fn;
+        return descriptor;
+    };
+};
+
+
 export function deco_slotPrivate (name?: string) {
     return deco_slot({ name, private: true });
 };

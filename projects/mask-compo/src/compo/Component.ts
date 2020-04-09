@@ -10,7 +10,10 @@ import {
     deco_attr,
     deco_refCompo,
     deco_refElement,
-    deco_refQuery
+    deco_refQuery,
+    deco_pipe,
+    deco_event,
+    deco_hotkey
 } from '@compo/deco/component_decorators';
 import { IComponent } from '@compo/model/IComponent';
 
@@ -73,9 +76,12 @@ export class Component extends class_create(CompoProto) implements IComponent {
     static await = CompoStatics.await
 
     static deco = {
+        pipe: deco_pipe,
         slot: deco_slot,
         slotPrivate: deco_slotPrivate,
         attr: deco_attr,
+        event: deco_event,
+        hotkey: deco_hotkey,
         refCompo: deco_refCompo,
         refElement: deco_refElement,
         refQuery: deco_refQuery

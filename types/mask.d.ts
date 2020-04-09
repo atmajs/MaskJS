@@ -20,6 +20,7 @@ declare module 'mask' {
      import { deco_refElement } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_refCompo } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_attr } from "mask/projects/mask-compo/src/deco/component_decorators"; 
+     import { deco_slotPrivate } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { deco_slot } from "mask/projects/mask-compo/src/deco/component_decorators"; 
      import { ClassFactory } from "mask/ref-utils/src/class"; 
      import { is_Array } from "mask/ref-utils/src/is"; 
@@ -330,6 +331,7 @@ declare module 'mask' {
             injectable: (mix: any) => any;
             deco: {
                     slot: typeof deco_slot;
+                    slotPrivate: typeof deco_slotPrivate;
                     attr: typeof deco_attr;
                     refCompo: typeof deco_refCompo;
                     refElement: typeof deco_refElement;
@@ -357,7 +359,7 @@ declare module 'mask' {
                     createClass(): never;
                     initialize(mix: any, model?: any, ctx?: any, container?: any, parent?: any): any;
                     find: typeof compo_find;
-                    findAll: typeof compo_findAll; 
+                    findAll: typeof compo_findAll;
                     closest: typeof compo_closest;
                     children: typeof compo_children;
                     child: typeof compo_child;
@@ -367,8 +369,8 @@ declare module 'mask' {
                     attach: typeof compo_attach;
                     gc: {
                             using: (compo: any, x: any) => any;
-                            on: (compo: any, emitter: any) => void;
-                            subscribe: (compo: any, observable: any) => void;
+                            on: (compo: any, emitter: any, ...args: any[]) => void;
+                            subscribe: (compo: any, observable: any, ...args: any[]) => void;
                     };
                     element: {
                             getCompo: (el: any) => any;
@@ -386,6 +388,7 @@ declare module 'mask' {
                     pipe: typeof PipeCtor;
                     resource(compo: any): any;
                     plugin(source: any): void;
+    
                     Dom: {
                             addEventListener: typeof dom_addEventListener;
                     };
@@ -493,7 +496,12 @@ declare module 'mask/projects/mask-compo/src/compo/Compo' {
 
 declare module 'mask/projects/mask-compo/src/deco/component_decorators' {
     import { IAttrDefinition } from "mask/projects/mask-compo/src/model/IAttrDefinition";
-    export function deco_slot(name?: string): (target: any, propertyKey: any, descriptor?: any) => any;
+    export function deco_slot(opts?: {
+        name?: string;
+        private?: boolean;
+    }): any;
+    export function deco_slot(name?: string): any;
+    export function deco_slotPrivate(name?: string): any;
     export function deco_attr(opts?: IAttrDefinition): (target: any, propertyKey: any, descriptor?: any) => void;
     export function deco_refCompo(selector: string): (target: any, propertyKey: any, descriptor?: any) => void;
     export function deco_refElement(selector: string): (target: any, propertyKey: any, descriptor?: any) => void;
@@ -918,7 +926,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
      import { compo_closest } from 'mask/projects/mask-compo/src/compo/find'; 
      import { compo_findAll } from 'mask/projects/mask-compo/src/compo/find'; 
      import { compo_find } from 'mask/projects/mask-compo/src/compo/find'; 
-     import { deco_slot, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from "mask/projects/mask-compo/src/deco/component_decorators";
+     import { deco_slot, deco_slotPrivate, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from "mask/projects/mask-compo/src/deco/component_decorators";
     import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
     const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => IComponent<any>;
     export class Component extends Component_base implements IComponent {
@@ -938,8 +946,8 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             static attach: typeof compo_attach;
             static gc: {
                     using: (compo: any, x: any) => any;
-                    on: (compo: any, emitter: any) => void;
-                    subscribe: (compo: any, observable: any) => void;
+                    on: (compo: any, emitter: any, ...args: any[]) => void;
+                    subscribe: (compo: any, observable: any, ...args: any[]) => void;
             };
             static element: {
                     getCompo: (el: any) => any;
@@ -980,6 +988,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             static await: (compo: Component) => any;
             static deco: {
                     slot: typeof deco_slot;
+                    slotPrivate: typeof deco_slotPrivate;
                     attr: typeof deco_attr;
                     refCompo: typeof deco_refCompo;
                     refElement: typeof deco_refElement;
@@ -1013,8 +1022,8 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
             attach: typeof compo_attach;
             gc: {
                     using: (compo: any, x: any) => any;
-                    on: (compo: any, emitter: any) => void;
-                    subscribe: (compo: any, observable: any) => void;
+                    on: (compo: any, emitter: any, ...args: any[]) => void;
+                    subscribe: (compo: any, observable: any, ...args: any[]) => void;
             };
             element: {
                     getCompo: (el: any) => any;
