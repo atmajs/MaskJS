@@ -501,6 +501,12 @@ declare module 'mask/projects/mask-compo/src/deco/component_decorators' {
         private?: boolean;
     }): any;
     export function deco_slot(name?: string): any;
+    
+    export function deco_pipe(pipeName: string, signalName?: string): (target: any, propertyKey: any, descriptor?: any) => any;
+    
+    export function deco_event(selector: string): (target: any, propertyKey: any, descriptor?: any) => any;
+    
+    export function deco_hotkey(hotkey: string): (target: any, propertyKey: any, descriptor?: any) => any;
     export function deco_slotPrivate(name?: string): any;
     export function deco_attr(opts?: IAttrDefinition): (target: any, propertyKey: any, descriptor?: any) => void;
     export function deco_refCompo(selector: string): (target: any, propertyKey: any, descriptor?: any) => void;
@@ -926,7 +932,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
      import { compo_closest } from 'mask/projects/mask-compo/src/compo/find'; 
      import { compo_findAll } from 'mask/projects/mask-compo/src/compo/find'; 
      import { compo_find } from 'mask/projects/mask-compo/src/compo/find'; 
-     import { deco_slot, deco_slotPrivate, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from "mask/projects/mask-compo/src/deco/component_decorators";
+     import { deco_slot, deco_slotPrivate, deco_attr, deco_refCompo, deco_refElement, deco_refQuery, deco_pipe, deco_event, deco_hotkey } from "mask/projects/mask-compo/src/deco/component_decorators";
     import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
     const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => IComponent<any>;
     export class Component extends Component_base implements IComponent {
@@ -987,9 +993,12 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             static resume: (compo: any, ctx: any) => void;
             static await: (compo: Component) => any;
             static deco: {
+                    pipe: typeof deco_pipe;
                     slot: typeof deco_slot;
                     slotPrivate: typeof deco_slotPrivate;
                     attr: typeof deco_attr;
+                    event: typeof deco_event;
+                    hotkey: typeof deco_hotkey;
                     refCompo: typeof deco_refCompo;
                     refElement: typeof deco_refElement;
                     refQuery: typeof deco_refQuery;
