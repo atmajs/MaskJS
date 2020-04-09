@@ -268,6 +268,7 @@ export const Mask = {
     injectable: Di.deco.injectableClass,
     deco: {
         slot: Component.deco.slot,
+        slotPrivate: Component.deco.slotPrivate,
         attr: Component.deco.attr,
         refCompo: Component.deco.refCompo,
         refElement: Component.deco.refElement,

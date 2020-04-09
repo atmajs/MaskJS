@@ -4,58 +4,65 @@ import { obj_create } from '@utils/obj';
 import { compo_prepairProperties } from '../util/compo_create';
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
-import { deco_slot, deco_attr, deco_refCompo, deco_refElement, deco_refQuery } from '@compo/deco/component_decorators';
+import {
+    deco_slot,
+    deco_slotPrivate,
+    deco_attr,
+    deco_refCompo,
+    deco_refElement,
+    deco_refQuery
+} from '@compo/deco/component_decorators';
 import { IComponent } from '@compo/model/IComponent';
 
 export class Component extends class_create(CompoProto) implements IComponent {
-    constructor () {
+    constructor() {
         super();
         if (this.__constructed !== true) {
-			this.__constructed = true;
-			compo_prepairProperties(this);
-		}
-		if (this.pipes != null) {
-			CompoStatics.pipe.addController(this);
-		}
-		if (this.compos != null) {
-			this.compos = obj_create(this.compos);
-		}
-		if (this.attr != null) {
-			this.attr = obj_create(this.attr);
-		}
-		if (this.scope != null) {
-			this.scope = obj_create(this.scope);
-		}
+            this.__constructed = true;
+            compo_prepairProperties(this);
+        }
+        if (this.pipes != null) {
+            CompoStatics.pipe.addController(this);
+        }
+        if (this.compos != null) {
+            this.compos = obj_create(this.compos);
+        }
+        if (this.attr != null) {
+            this.attr = obj_create(this.attr);
+        }
+        if (this.scope != null) {
+            this.scope = obj_create(this.scope);
+        }
     }
 
     static create = CompoStatics.create
     static createExt = CompoStatics.createExt
-	static createClass = CompoStatics.createClass
+    static createClass = CompoStatics.createClass
     static initialize = CompoStatics.initialize
-    
+
     static find = CompoStatics.find
-	static findAll = CompoStatics.findAll
-	static closest = CompoStatics.closest
-	static children = CompoStatics.children
-	static child = CompoStatics.child
-	static dispose = CompoStatics.dispose
+    static findAll = CompoStatics.findAll
+    static closest = CompoStatics.closest
+    static children = CompoStatics.children
+    static child = CompoStatics.child
+    static dispose = CompoStatics.dispose
 
-	static ensureTemplate = CompoStatics.ensureTemplate
+    static ensureTemplate = CompoStatics.ensureTemplate
 
-	static attachDisposer = CompoStatics.attachDisposer
+    static attachDisposer = CompoStatics.attachDisposer
 
     static attach = CompoStatics.attach
-    
-	static gc = CompoStatics.gc
-	static element = CompoStatics.element
-	static config = CompoStatics.config
-	static pipe = CompoStatics.pipe
 
-	static resource = CompoStatics.resource
+    static gc = CompoStatics.gc
+    static element = CompoStatics.element
+    static config = CompoStatics.config
+    static pipe = CompoStatics.pipe
 
-	static plugin  = CompoStatics.plugin
-	static Dom = CompoStatics.Dom
-    
+    static resource = CompoStatics.resource
+
+    static plugin = CompoStatics.plugin
+    static Dom = CompoStatics.Dom
+
     static signal = CompoStatics.signal
     static slot = CompoStatics.slot
 
@@ -67,10 +74,10 @@ export class Component extends class_create(CompoProto) implements IComponent {
 
     static deco = {
         slot: deco_slot,
+        slotPrivate: deco_slotPrivate,
         attr: deco_attr,
-        refCompo: deco_refCompo, 
-        refElement: deco_refElement, 
+        refCompo: deco_refCompo,
+        refElement: deco_refElement,
         refQuery: deco_refQuery
     }
 }
-

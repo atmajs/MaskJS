@@ -1,22 +1,32 @@
 import { obj_extend } from '@utils/obj';
 import { IAttrDefinition } from '@compo/model/IAttrDefinition';
 
-export function deco_slot (name?: string) {
-    
+export function deco_slot (opts?: { name?: string, private?: boolean })
+export function deco_slot (name?: string)
+export function deco_slot (mix?: string | { name?: string, private?: boolean}) {
     return function (target, propertyKey, descriptor?) {
         let slots = target.slots;
         if (slots == null) {
             slots = target.slots = {};
         }
+        const name = typeof mix === 'string' ? mix : mix?.name;
+        const isPrivate = typeof mix !== 'string' ? mix?.private ?? false : false;
         const viaProperty = descriptor == null;
         const fn = viaProperty ? target[propertyKey] : descriptor.value;
-        slots [name ?? propertyKey] = fn;
+        slots [name ?? propertyKey] = !isPrivate 
+            ? fn
+            : function (...args) {
+                fn(...args);
+                return false;
+            };
         return descriptor;
     };
 };
+export function deco_slotPrivate (name?: string) {
+    return deco_slot({ name, private: true });
+};
 
 export function deco_attr (opts?: IAttrDefinition) {
-    
     return function (target, propertyKey, descriptor?) {
         let attr = ensureMeta(target, 'attributes');
         let name = opts?.name;
