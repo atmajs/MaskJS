@@ -507,13 +507,13 @@ declare module 'mask/projects/mask-compo/src/deco/component_decorators' {
         private?: boolean;
     }): any;
     export function deco_slot(name?: string): any;
+    export function deco_slotPrivate(name?: string): any;
     
     export function deco_pipe(pipeName: string, signalName?: string): (target: any, propertyKey: any, descriptor?: any) => any;
     
     export function deco_event(selector: string): (target: any, propertyKey: any, descriptor?: any) => any;
     
     export function deco_hotkey(hotkey: string): (target: any, propertyKey: any, descriptor?: any) => any;
-    export function deco_slotPrivate(name?: string): any;
     export function deco_attr(opts?: IAttrDefinition): (target: any, propertyKey: any, descriptor?: any) => void;
     export function deco_refCompo(selector: string): (target: any, propertyKey: any, descriptor?: any) => void;
     export function deco_refElement(selector: string): (target: any, propertyKey: any, descriptor?: any) => void;
