@@ -13,12 +13,17 @@ export function deco_slot (mix?: string | { name?: string, private?: boolean}) {
         slots [name ?? propertyKey] = !isPrivate 
             ? fn
             : function (...args) {
-                fn(...args);
+                fn.call(this, ...args);
                 return false;
             };
         return descriptor;
     };
 };
+
+export function deco_slotPrivate (name?: string) {
+    return deco_slot({ name, private: true });
+};
+
 
 /** Tip: use constants instead string literals for arguments */
 export function deco_pipe (pipeName: string, signalName?: string) {
@@ -57,11 +62,6 @@ export function deco_hotkey (hotkey: string) {
         hotkeys [hotkey] = fn;
         return descriptor;
     };
-};
-
-
-export function deco_slotPrivate (name?: string) {
-    return deco_slot({ name, private: true });
 };
 
 export function deco_attr (opts?: IAttrDefinition) {
