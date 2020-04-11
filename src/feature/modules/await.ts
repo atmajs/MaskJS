@@ -13,33 +13,46 @@ import { jMask } from '@mask-j/jMask';
 import { Component } from '@compo/exports';
 import { renderer_renderAsync } from '@core/renderer/exports';
 
+class AwaitCtr {
+    nodes = null
+    attr = null
+    expression: string = null
+    scope = null
+    parent = null
+    model = null
+    components = null
 
-custom_Tags['await'] = class_create({
-    progressNodes: null,
-    progressNodesExpr: null,
-    completeNodes: null,
-    completeNodesExpr: null,
-    errorNodes: null,
-    errorNodesExpr: null,
+    progressNodes = null
+    progressNodesExpr = null
+    completeNodes = null
+    completeNodesExpr = null
+    errorNodes = null
+    errorNodesExpr = null
 
-    keys: null,
-    strategy: null,
-    importItems: null,
-    
-    splitNodes_: function(){
+    keys = null
+    strategy = null
+    importItems = null
+
+    @Component.deco.slot()
+    domInsert() {
+        this.strategy.emit('domInsert');
+    }
+
+
+    splitNodes_() {
         var map = {
             '@progress': 'progressNodes',
             '@fail': 'errorNodes',
             '@done': 'completeNodes',
         };
-        coll_each(this.nodes, function(node){
+        coll_each(this.nodes, function (node) {
             var name = node.tagName,
                 nodes = node.nodes;
 
             var prop = map[name];
             if (prop == null) {
                 prop = 'completeNodes';
-                nodes = [ node ];
+                nodes = [node];
             }
             if (node.expression) {
                 this[prop + 'Expr'] = node.expression;
@@ -55,22 +68,26 @@ custom_Tags['await'] = class_create({
                 .call(current, nodes);
         }, this);
         this.nodes = null;
-    },
-    prepairKeys_: function(){
-        for (var key in this.attr) {
+    }
+    prepairKeys_() {
+        for (let key in this.attr) {
+            let val = this.attr[key];
+            if (key !== val) {
+                continue;
+            }
             if (this.keys == null) {
                 this.keys = [];
             }
             this.keys.push(key);
         }
-    },
-    prepairImports_: function(){
+    }
+    prepairImports_() {
         var imports = Component.closest(this, 'imports');
         if (imports != null) {
             return this.importItems = imports.importItems;
         }
-    },
-    initStrategy_: function(){
+    }
+    initStrategy_() {
         var expr = this.expression;
         if (expr && this.keys == null) {
             if (expr.indexOf('(') !== -1 || expr.indexOf('.') !== -1) {
@@ -83,8 +100,8 @@ custom_Tags['await'] = class_create({
         if (this.keys != null) {
             if (this.keys.length === 1) {
                 this.strategy = new ComponentStrategy(
-                    this, 
-                    this.keys[0], 
+                    this,
+                    this.keys[0],
                     this.expression
                 );
                 return;
@@ -99,8 +116,8 @@ custom_Tags['await'] = class_create({
         msg += ') ';
         msg += this.keys && this.keys.join(' ') || '';
         throw new Error(msg)
-    },		
-    getModuleFor: function(name){
+    }
+    getModuleFor(name) {
         var parent = this.parent;
         var module;
         while (parent != null && module == null) {
@@ -111,13 +128,13 @@ custom_Tags['await'] = class_create({
             log_error('Module not found for import ' + name);
             return null;
         }
-        var import_ = module.importItems.find(function(x) {
+        var import_ = module.importItems.find(function (x) {
             return x.hasExport(name);
         });
         return import_ && import_.module || null;
-    },
-    await_: function(model, ctx, container){
-        this.progress_(ctx, container);			
+    }
+    await_(model, ctx, container) {
+        this.progress_(ctx, container);
         this.strategy.process(model, ctx, container);
 
         var resume = builder_resumeDelegate(
@@ -129,34 +146,34 @@ custom_Tags['await'] = class_create({
         var self = this;
         this
             .strategy
-            .done(function(){
+            .done(function () {
                 self.complete_();
             })
-            .fail(function(error){
+            .fail(function (error) {
                 self.error_(error);
             })
             .always(resume);
-    },
-    renderStart: function(model, ctx, container){
+    }
+    renderStart(model, ctx, container) {
         this.splitNodes_();
         this.prepairKeys_();
         this.prepairImports_();
         this.initStrategy_();
         this.await_(model, ctx, container);
-    },
-    error_: function(error) {
+    }
+    error_(error) {
         this.nodes = this.errorNodes || reporter_createErrorNode(error.message);
         this.model = error;
         if (this.errorNodesExpr) {
-            this.initScope(this.errorNodesExpr, [ error ])	
-        }					
-    },
-    progress_: function(ctx, container){
+            this.initScope(this.errorNodesExpr, [error])
+        }
+    }
+    progress_(ctx, container) {
         var nodes = this.progressNodes;
         if (nodes == null) {
             return;
         }
-        var hasLiteral = nodes.some(function(x){
+        var hasLiteral = nodes.some(function (x) {
             return x.type === Dom.TEXTNODE;
         });
         if (hasLiteral) {
@@ -169,148 +186,171 @@ custom_Tags['await'] = class_create({
             attr: {},
         };
         builder_build(node, null, ctx, container, this);
-    },
-    complete_: function(){
+    }
+    complete_() {
         var progress = this.progressNodes && this.components && this.components[0];
         if (progress) {
             progress.remove();
         }
         if (this.completeNodesExpr != null) {
-            this.initScope(this.completeNodesExpr, this.strategy.getExports());	
+            this.initScope(this.completeNodesExpr, this.strategy.getExports());
         }
-        this.nodes = this.strategy.getNodes();			
-    },
-    initScope: function(expr, exports){
+        this.nodes = this.strategy.getNodes();
+    }
+    initScope(expr, exports) {
         this.scope = {};
         var names = _getNames(expr),
             i = names.length;
-        while(--i > -1) {
+        while (--i > -1) {
             this.scope[names[i]] = exports[i];
         }
     }
-});
+};
 
-var IStrategy = class_create(class_Dfr, {
-    constructor: function(awaiter){
-        this.error = null;
-        this.awaiter = awaiter;
-    },
-    getNodes_: function(){
+custom_Tags['await'] = AwaitCtr;
+
+abstract class AStrategy extends class_Dfr {
+    error = null
+    constructor(public awaiter: AwaitCtr) {
+        super();
+    }
+    getNodes_() {
         return this.awaiter.completeNodes;
-    },
-    getNodes: function(){
+    }
+    getNodes() {
         return this.getNodes_();
-    },
-    process: function(){
+    }
+    process(...args) {
         throw Error('Not implemented');
     }
-});
+    emit(name, ...args) {
 
-var ExpressionStrategy = class_create(IStrategy, {
-    process: function(){
+    }
+};
+
+class ExpressionStrategy extends AStrategy {
+    process() {
         this.awaitable = new AwaitableExpr(
-            this.awaiter.parent, 
+            this.awaiter.parent,
             this.awaiter.expression
         );
         this.awaitable.pipe(this);
-    },
-    getExports: function(){
+    }
+    getExports() {
         return this.awaitable.exports;
     }
-});
+};
 
-var RefOrImportStrategy = class_create(IStrategy, {
-    process: function(){
+class RefOrImportStrategy extends AStrategy {
+    process() {
         var self = this;
-        var refs = this.awaiter.expression 
-            ? _getNames(this.awaiter.expression) 
+        var refs = this.awaiter.expression
+            ? _getNames(this.awaiter.expression)
             : this.awaiter.keys;
-            
-        var arr = refs.map(function(ref){
+
+        var arr = refs.map(function (ref) {
             var module = self.awaiter.getModuleFor(ref);
             if (module != null) {
                 return new AwaitableModule(module);
             }
             return new AwaitableExpr(self.awaiter.parent, ref);
         });
-        var i = arr.length;			
-        arr.forEach(function(awaiter){
+        var i = arr.length;
+        arr.forEach(function (awaiter) {
             awaiter
-                .done(function(){
-                    if (self.error == null && --i === 0) 
+                .done(function () {
+                    if (self.error == null && --i === 0)
                         self.resolve();
                 })
-                .fail(function(error) {
+                .fail(function (error) {
                     self.error = error;
                     self.reject(error);
                 });
         });
         this.awaitables = arr;
-    },
-    getExports: function(){
-        return this.awaitables.reduce(function(aggr, x){
+    }
+    getExports() {
+        return this.awaitables.reduce(function (aggr, x) {
             return aggr.concat(x.getExports());
         }, []);
     }
-});
+};
 
-var ComponentStrategy = class_create(IStrategy, {
-    constructor: function(awaiter, name, expr){
+class ComponentStrategy extends AStrategy {
+    isDomInsert = false
+    constructor(awaiter, name, expr) {
+        super(awaiter);
         this.name = name;
         this.expr = expr;
-    },
-    process: function(model, ctx, container){
+    }
+    process(model, ctx, container) {
         var module = this.awaiter.getModuleFor(this.name);
         if (module == null) {
             this.render(model, ctx, container);
             return;
-        }			
+        }
         var self = this;
         module
-            .done(function(){
+            .done(function () {
                 self.render(model, ctx, container);
             })
             .fail(this.rejectDelegate());
-    },
-    render: function (model, ctx, container) {
+    }
+    render(model, ctx, container) {
+        let attr = Object.create(this.awaiter.attr);
+        attr[this.name] = null;
+
         this.awaitable = new AwaitableRender(
-            this.name, 
+            this.name,
+            attr,
             this.expr,
             this.getNodes_(),
-            model, 
+            model,
             ctx,
             container,
             this.awaiter
         );
-        this.awaitable.pipe(this);
-    },
-    getNodes: function(){
+        this.awaitable.pipe(this).then(() => {
+            if (this.isDomInsert) {
+                Component.signal.emitIn(this.awaiter, 'domInsert');
+            }
+        });
+
+    }
+    getNodes() {
         return null;
     }
-});
+    emit(name) {
+        if (name === 'domInsert') {
+            this.isDomInsert = true;
+        }
+    }
+};
 
-var AwaitableModule = class_create(class_Dfr, {
-    constructor: function(module) {
+class AwaitableModule extends class_Dfr {
+    constructor(module) {
+        super();
         this.module = module;
         this.module.pipe(this);
-    },
-    getExports: function(){
-        return [ this.module.exports ]
-    }		
-});
-var AwaitableExpr = class_create(class_Dfr, {
-    constructor: function(compo, expression) {
+    }
+    getExports() {
+        return [this.module.exports]
+    }
+};
+class AwaitableExpr extends class_Dfr {
+    constructor(compo, expression) {
+        super();
         this.error = null;
         this.exports = [];
         this.onResolve = this.onResolve.bind(this);
         this.onReject = this.onReject.bind(this);
-                
+
         var arr = expression_evalStatements(expression, compo.model, null, compo);
         var imax = arr.length,
             i = -1;
 
         this.await_ = imax;
-        while(++i < imax) {
+        while (++i < imax) {
             var x = arr[i];
             if (x == null || is_Function(x.then) === false) {
                 this.await_--;
@@ -318,13 +358,13 @@ var AwaitableExpr = class_create(class_Dfr, {
                 continue;
             }
 
-            x.then(this.onResolve, this.onReject);				
+            x.then(this.onResolve, this.onReject);
         }
         if (this.await_ === 0) {
             this.resolve(this.exports);
         }
-    },
-    onResolve: function(){
+    }
+    onResolve() {
         if (this.error) {
             return;
         }
@@ -332,18 +372,20 @@ var AwaitableExpr = class_create(class_Dfr, {
         if (--this.await_ === 0) {
             this.resolve(this.exports);
         }
-    },
-    onReject: function(error){
+    }
+    onReject(error) {
         this.error = error || Error('Rejected');
         this.reject(this.error);
-    },
-    getExports: function(){
+    }
+    getExports() {
         return this.exports;
     }
-});
+};
 
-var AwaitableRender = class_create(class_Dfr, {
-    constructor: function(name, expression, nodes, model, ctx?, container?, ctr?) {
+class AwaitableRender extends class_Dfr {
+    constructor(name, attr, expression, nodes, model, ctx?, container?, ctr?) {
+        super();
+
         this.onComplete = this.onComplete.bind(this);
         this.anchor = document.createComment('');
         container.appendChild(this.anchor);
@@ -353,26 +395,26 @@ var AwaitableRender = class_create(class_Dfr, {
             tagName: name,
             nodes: nodes,
             expression: expression,
-            attr: {},
-        };			
+            attr,
+        };
         renderer_renderAsync(node, model, (builder_Ctx as any).clone(ctx), null, ctr)
             .then(
                 this.onComplete,
                 this.rejectDelegate()
             );
-    },
-    onComplete: function(fragment) {
+    }
+    onComplete(fragment) {
         this.anchor.parentNode.insertBefore(fragment, this.anchor);
         this.resolve();
     }
-});
+};
 
-function _getNames (str) {
+function _getNames(str) {
     var names = str.split(','),
         imax = names.length,
-        i = -1, 
+        i = -1,
         arr = new Array(imax);
-    while( ++i < imax ) {
+    while (++i < imax) {
         arr[i] = names[i].trim();
     }
     return arr;

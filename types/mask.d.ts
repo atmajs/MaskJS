@@ -50,7 +50,7 @@ declare module 'mask' {
      import { m_registerModule } from 'mask/feature/modules/Module/utils'; 
      import { m_createModule } from 'mask/feature/modules/Module/utils'; 
      import { Endpoint } from 'mask/feature/modules/class/Endpoint'; 
-     import { fn_doNothing } from "mask/ref-utils/src/fn"; 
+     import { IDfrConstructor } from "mask/ref-utils/src/class/Dfr"; 
      import { Statics } from "mask/ref-utils/src/class"; 
      import { obj_getProperty, obj_setProperty, obj_extend } from "mask/ref-utils/src/obj";
     import { str_dedent } from "mask/ref-utils/src/str";
@@ -92,72 +92,7 @@ declare module 'mask' {
                     superpose: (rootA: any, rootB: any, fn: any) => any;
             };
             Module: {
-                    ModuleMask: Statics<new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
-                            (mix?: any): void;
-                            resolve(a?: any, b?: any, c?: any): any;
-                            reject(error: any): any;
-                            run(fn: any, ctx?: any): any;
-                            all(promises: any): any;
-                    } & {
-                            type: any;
-                            path: any;
-                            location: any;
-                            exports: any;
-                            state: number;
-                            constructor: (path: any, parent: any) => void;
-                            loadModule: () => any;
-                            doLoad: () => void;
-                            complete_: (error: any, exports: any) => void;
-                            onLoadSuccess_: (mix: any) => void;
-                            onLoadError_: (error: any) => void;
-                            load_: any;
-                            preprocess_: any;
-                            preprocessError_: any;
-                            register: typeof fn_doNothing;
-                            getExport: (property: any) => any;
-                    }> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
-                            (mix?: any): void;
-                            resolve(a?: any, b?: any, c?: any): any;
-                            reject(error: any): any;
-                            run(fn: any, ctx?: any): any;
-                            all(promises: any): any;
-                    } & {
-                            type: any;
-                            path: any;
-                            location: any;
-                            exports: any;
-                            state: number;
-                            constructor: (path: any, parent: any) => void;
-                            loadModule: () => any;
-                            doLoad: () => void;
-                            complete_: (error: any, exports: any) => void;
-                            onLoadSuccess_: (mix: any) => void;
-                            onLoadError_: (error: any) => void;
-                            load_: any;
-                            preprocess_: any;
-                            preprocessError_: any;
-                            register: typeof fn_doNothing;
-                            getExport: (property: any) => any;
-                    } & {
-                            type: string;
-                            scope: any;
-                            source: any;
-                            modules: any;
-                            exports: any;
-                            importItems: any;
-                            load_: (path_: any) => any;
-                            loadModule(): any;
-                            preprocessError_(error: any, next: any): void;
-                            preprocess_(mix: any, next: any): void;
-                            getHandler(name: any): any;
-                            queryHandler(selector: any): new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
-                                    scope: any;
-                                    location: any;
-                                    nodes: any;
-                                    getHandler: (name: any) => any;
-                            };
-                            getExport(misc: any): any;
-                    });
+                    ModuleMask: Statics<Statics<IDfrConstructor> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => any)> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => any);
                     Endpoint: typeof Endpoint;
                     createModule: typeof m_createModule;
                     registerModule: typeof m_registerModule;
@@ -300,13 +235,7 @@ declare module 'mask' {
             class: {
                     create: ClassFactory;
                     createError: typeof error_createClass;
-                    Deferred: {
-                            (mix?: any): void;
-                            resolve(a?: any, b?: any, c?: any): any;
-                            reject(error: any): any;
-                            run(fn: any, ctx?: any): any;
-                            all(promises: any): any;
-                    };
+                    Deferred: IDfrConstructor;
                     EventEmitter: () => void;
             };
             parser: {
@@ -728,11 +657,21 @@ declare module 'mask/feature/modules/class/Endpoint' {
     }
 }
 
-declare module 'mask/ref-utils/src/fn' {
-    export function fn_proxy(fn: any, ctx: any): () => any;
-    export function fn_apply(fn: any, ctx: any, args: any): any;
-    export function fn_doNothing(): boolean;
-    export function fn_createByPattern(definitions: any, ctx?: any): () => any;
+declare module 'mask/ref-utils/src/class/Dfr' {
+    export interface IDfrConstructor {
+        new (): typeof class_Dfr.prototype;
+        resolve: typeof static_Dfr.resolve;
+        reject: typeof static_Dfr.reject;
+        all: typeof static_Dfr.all;
+        run: typeof static_Dfr.run;
+    }
+    export const class_Dfr: IDfrConstructor;
+    const static_Dfr: {
+        resolve: (a?: any, b?: any, c?: any) => any;
+        reject: (error: any) => any;
+        run: (fn: any, ctx?: any) => any;
+        all: (promises: any) => any;
+    };
 }
 
 declare module 'mask/ref-utils/src/obj' {

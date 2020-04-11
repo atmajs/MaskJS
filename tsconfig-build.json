@@ -8,6 +8,7 @@
     "compilerOptions": {
         "outDir": "ts-temp",
         "declaration": true,
+        "experimentalDecorators": true,
         "baseUrl": "./",
         "paths": {
             "@core/*": [
