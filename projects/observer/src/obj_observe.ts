@@ -203,9 +203,9 @@ function attachProxy_(obj, property, cbs, chain) {
     }
 
     // TODO: ensure is not required, as defineCrumbs returns false when path contains null value */
-    var parent = length > 1 ? obj_ensureFieldDeep(obj, chain) : obj,
-        key = chain[length - 1],
-        currentVal = parent[key];
+    let parent = length > 1 ? obj_ensureFieldDeep(obj, chain) : obj;
+    let key = chain[length - 1];
+    let currentVal = parent[key];
 
     if ('length' === key) {
         var mutators = getSelfMutators(parent);

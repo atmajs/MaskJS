@@ -17,7 +17,7 @@ export function obj_defineCrumbs(obj, chain) {
 
         obj_defineCrumb(path, x, key, rebinder);
         x = x[key];
-        if (x == null) {
+        if (x == null || typeof x !== 'object') {
             return false;
         }
     }
