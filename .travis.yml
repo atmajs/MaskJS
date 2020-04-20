@@ -4,13 +4,14 @@ services:
   - xvfb
 
 # prevent travis from recursive gitsubmodule checkout
-#git:
-#  submodules: false
+git:
+  submodules: false
 
 addons:
   firefox: "latest"
 
 before_script:
+  - git submodule update --init
   - export DISPLAY=:99.0
   - sleep 5
   - npm run build &
