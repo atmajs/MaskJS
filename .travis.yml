@@ -4,8 +4,8 @@ services:
   - xvfb
 
 # prevent travis from recursive gitsubmodule checkout
-git:
-  submodules: false
+#git:
+#  submodules: false
 
 addons:
   firefox: "latest"
