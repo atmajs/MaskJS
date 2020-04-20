@@ -1,4 +1,4 @@
-import { builder_buildFactory } from './build';
+import { builder_buildFactory } from './builder_buildFactory';
 import { IBuilderConfig } from './IBuilderConfig';
 
 export function builder_buildDelegate (opts: IBuilderConfig){		

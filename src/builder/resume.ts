@@ -2,9 +2,10 @@ import { is_Function } from '@utils/is';
 import { coll_indexOf } from '@utils/coll';
 import { custom_Attributes } from '@core/custom/exports';
 import { builder_build } from './dom/build';
+import { BuilderData } from './BuilderData';
 
 export function builder_resumeDelegate  (ctr, model, ctx, container, children?, finilizeFn?){
-    var anchor = document.createComment('');
+    var anchor = BuilderData.document.createComment('');
     container.appendChild(anchor);
     if (children != null) {
         children.push(anchor);

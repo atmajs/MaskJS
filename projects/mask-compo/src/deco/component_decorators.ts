@@ -1,5 +1,6 @@
 import { obj_extend } from '@utils/obj';
 import { IAttrDefinition } from '@compo/model/IAttrDefinition';
+import { Children_ } from '@compo/compo/children';
 
 export function deco_slot (opts?: { name?: string, private?: boolean })
 export function deco_slot (name?: string)
@@ -97,8 +98,32 @@ function ensureMeta(proto, name: string) {
     if (m == null) m = proto.meta = { [name]: {} };
     return m[name] ?? (m[name] = {});
 }
-function ensureRef(proto, key: string, selector: string, refName: string) {
-    let refs = ensureMeta(proto, 'refs');
-    let ref = refs[refName] ?? (refs[refName] = {});
-    ref[key] = selector;
+function ensureRef(proto, key: string, selector: string, refName: 'compos' | 'elements' | 'queries') {
+
+    Object.defineProperty(proto, key, {
+        configurable: true,
+        enumerable: true,
+        get () {
+            let val = Children_[refName](this, selector);
+            if (val != null) {
+                Object.defineProperty(this, key, {
+                    configurable: true,
+                    enumerable: true,
+                    value: val
+                });
+            }
+            return val;
+        },
+        set (val) {
+            if (val != null) {
+                Object.defineProperty(this, key, {
+                    value: val
+                });
+            }
+        }
+    })
+
+    // let refs = ensureMeta(proto, 'refs');
+    // let ref = refs[refName] ?? (refs[refName] = {});
+    // ref[key] = selector;
 }

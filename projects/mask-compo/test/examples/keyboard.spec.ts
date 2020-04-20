@@ -2,7 +2,7 @@ UTest({
 	'global hotkeys' (done) {
 		UTest
 			.server
-			.request('/examples/keyboard/hotkeys.html')
+			.request('/projects/mask-compo/examples/keyboard/hotkeys.html')
 			.done(function(doc, win){
 				
 				UTest

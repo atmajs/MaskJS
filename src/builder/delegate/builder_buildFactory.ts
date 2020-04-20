@@ -11,8 +11,9 @@ import { builder_findAndRegisterCompo } from '../util';
 import { build_manyFactory } from './build_many';
 import { build_nodeFactory } from './build_node';
 import { build_compoFactory } from './build_component';
-import { build_textNode } from './build_textNode';
+import { build_textFactory } from './build_textNode';
 import { IBuilderConfig } from './IBuilderConfig';
+import { BuilderData } from '../BuilderData';
 
 /**
  * @param {MaskNode} node
@@ -26,9 +27,15 @@ import { IBuilderConfig } from './IBuilderConfig';
  * @method build
  */
 export function builder_buildFactory (config: IBuilderConfig) {
-    let build_node = build_nodeFactory(config);   
+    if (config?.document) {
+        BuilderData.document = config.document;
+    }
+
+    let build_node = build_nodeFactory(config);
     let build_many = build_manyFactory(build);
-    let build_compo = build_compoFactory(build);
+    let build_compo = build_compoFactory(build, config);
+    let build_text = build_textFactory(config);
+    let document = BuilderData.document;
 
     function build (node, model_, ctx, container_, ctr_, children_?) {
         if (node == null)
@@ -84,7 +91,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
 
         // Dom.TEXTNODE
         if (type === 2) {
-            build_textNode(node, model, ctx, container, ctr);
+            build_text(node, model, ctx, container, ctr);
             return container;
         }
 

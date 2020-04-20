@@ -6,190 +6,194 @@ import { custom_Tags } from '@core/custom/exports';
 import { compo_addChild } from '@core/util/compo';
 
 
-import { 
-    builder_findAndRegisterCompo,     
-    builder_setCompoAttributes, 
-    builder_setCompoProps, 
+import {
+    builder_findAndRegisterCompo,
+    builder_setCompoAttributes,
+    builder_setCompoProps,
     builder_setCompoModel
 } from '../util';
 
 import { builder_resumeDelegate } from '../resume'
 import { BuilderData } from '../BuilderData';
+import { IBuilderConfig } from './IBuilderConfig';
 
 
-export function build_compoFactory (build: Function) {
-    return function build_compo (node, model, ctx, container, ctr, children){
+export function build_compoFactory(build: Function, config: IBuilderConfig) {
+    // if (config.build_compoFactory) {
+    //     return config.build_compoFactory(build, config);
+    // }
+    return function build_compo(node, model, ctx, container, ctr, children) {
 
-		var compoName = node.tagName,
-			Handler;
+        var compoName = node.tagName,
+            Handler;
 
-		if (node.controller != null)
-			Handler = node.controller;
+        if (node.controller != null)
+            Handler = node.controller;
 
-		if (Handler == null)
-			Handler = custom_Tags[compoName];
+        if (Handler == null)
+            Handler = custom_Tags[compoName];
 
-		if (Handler == null && builder_findAndRegisterCompo(ctr, compoName)) {
-			Handler = custom_Tags[compoName];
-		}
-		if (Handler == null)
-			return build_NodeAsCompo(node, model, ctx, container, ctr, children);
+        if (Handler == null && builder_findAndRegisterCompo(ctr, compoName)) {
+            Handler = custom_Tags[compoName];
+        }
+        if (Handler == null)
+            return build_NodeAsCompo(node, model, ctx, container, ctr, children);
 
-		var isStatic = false,
-			handler;
+        var isStatic = false,
+            handler;
 
-		if (typeof Handler === 'function') {
-			handler = new Handler(node, model, ctx, container, ctr);
-		} else{
-			handler = Handler;
-			isStatic = true;
-		}
-		var fn = isStatic
-			? build_Static
-			: build_Component
-			;
-		return fn(handler, node, model, ctx, container, ctr, children);
-	};
+        if (typeof Handler === 'function') {
+            handler = new Handler(node, model, ctx, container, ctr);
+        } else {
+            handler = Handler;
+            isStatic = true;
+        }
+        var fn = isStatic
+            ? build_Static
+            : build_Component
+            ;
+        return fn(handler, node, model, ctx, container, ctr, children);
+    };
 
-	// PRIVATE
+    // PRIVATE
 
-	function build_Component(compo, node, model_, ctx, container, ctr, children){
-		
-		compo.ID = ++BuilderData.id;
-		compo.parent = ctr;
-		compo.expression = node.expression;
-		compo.node = node;
+    function build_Component(compo, node, model_, ctx, container, ctr, children) {
 
-		if (compo.compoName == null)
-			compo.compoName = node.tagName;
+        compo.ID = ++BuilderData.id;
+        compo.parent = ctr;
+        compo.expression = node.expression;
+        compo.node = node;
 
-		if (compo.nodes == null)
-			compo.nodes = node.nodes;
+        if (compo.compoName == null)
+            compo.compoName = node.tagName;
 
-		builder_setCompoAttributes(compo, node, model_, ctx, container);
-		builder_setCompoProps(compo, node, model_, ctx, container);
-		listeners_emit(
-			'compoCreated'
-			, compo
-			, model
-			, ctx
-			, container
-			, node
-		);
+        if (compo.nodes == null)
+            compo.nodes = node.nodes;
 
-		var model = builder_setCompoModel(compo, model_, ctx, ctr);
-		if (is_Function(compo.renderStart))
-			compo.renderStart(model, ctx, container);
+        builder_setCompoAttributes(compo, node, model_, ctx, container);
+        builder_setCompoProps(compo, node, model_, ctx, container);
+        listeners_emit(
+            'compoCreated'
+            , compo
+            , model
+            , ctx
+            , container
+            , node
+        );
+
+        var model = builder_setCompoModel(compo, model_, ctx, ctr);
+        if (is_Function(compo.renderStart))
+            compo.renderStart(model, ctx, container);
 
 
-		compo_addChild(ctr, compo);
+        compo_addChild(ctr, compo);
 
-		if (compo.async === true) {
-			var resume = builder_resumeDelegate(
-				compo
-				, model
-				, ctx
-				, container
-				, children
+        if (compo.async === true) {
+            var resume = builder_resumeDelegate(
+                compo
+                , model
+                , ctx
+                , container
+                , children
                 , compo.renderEnd
-			);
-			compo.await(resume);
-			return null;
-		}
+            );
+            compo.await(resume);
+            return null;
+        }
 
-		if (compo.tagName != null) {
-			compo.nodes = {
-				tagName: compo.tagName,
-				attr: compo.attr,
-				nodes: compo.nodes,
-				type: 1
-			};
-		}
-
-
-		if (typeof compo.render === 'function') {
-			compo.render(compo.model, ctx, container, ctr, children);
-			// Overriden render behaviour - do not render subnodes
-			return null;
-		}
-		return compo;
-	}
+        if (compo.tagName != null) {
+            compo.nodes = {
+                tagName: compo.tagName,
+                attr: compo.attr,
+                nodes: compo.nodes,
+                type: 1
+            };
+        }
 
 
-	function build_Static(static_, node, model, ctx, container, ctr, children) {
-		var Ctor = static_.__Ctor,
-			wasRendered = false,
-			elements,
-			compo,
-			clone;
+        if (typeof compo.render === 'function') {
+            compo.render(compo.model, ctx, container, ctr, children);
+            // Overriden render behaviour - do not render subnodes
+            return null;
+        }
+        return compo;
+    }
 
-		if (Ctor != null) {
-			clone = new Ctor(node, ctr);
-		}
-		else {
-			clone = static_;
 
-			for (var key in node)
-				clone[key] = node[key];
+    function build_Static(static_, node, model, ctx, container, ctr, children) {
+        var Ctor = static_.__Ctor,
+            wasRendered = false,
+            elements,
+            compo,
+            clone;
 
-			clone.parent = ctr;
-		}
+        if (Ctor != null) {
+            clone = new Ctor(node, ctr);
+        }
+        else {
+            clone = static_;
 
-		var attr = clone.attr;
-		if (attr != null) {
-			for (var key in attr) {
-				if (typeof attr[key] === 'function')
-					attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
-			}
-		}
+            for (var key in node)
+                clone[key] = node[key];
 
-		if (is_Function(clone.renderStart)) {
-			clone.renderStart(model, ctx, container, ctr, children);
-		}
+            clone.parent = ctr;
+        }
 
-		clone.ID = ++BuilderData.id;
-		compo_addChild(ctr, clone);
+        var attr = clone.attr;
+        if (attr != null) {
+            for (var key in attr) {
+                if (typeof attr[key] === 'function')
+                    attr[key] = attr[key]('attr', model, ctx, container, ctr, key);
+            }
+        }
 
-		var i = ctr.components.length - 1;
-		if (is_Function(clone.render)){
-			wasRendered = true;
-			elements = clone.render(model, ctx, container, ctr, children);
-			arr_pushMany(children, elements);
+        if (is_Function(clone.renderStart)) {
+            clone.renderStart(model, ctx, container, ctr, children);
+        }
 
-			if (is_Function(clone.renderEnd)) {
-				compo = clone.renderEnd(elements, model, ctx, container, ctr);
-				if (compo != null) {
-					// overriden
-					ctr.components[i] = compo;
-					compo.components  = clone.components == null
-						? ctr.components.splice(i + 1)
-						: clone.components
-						;
-				}
-			}
-		}
+        clone.ID = ++BuilderData.id;
+        compo_addChild(ctr, clone);
 
-		return wasRendered === true ? null : clone;
-	}
+        var i = ctr.components.length - 1;
+        if (is_Function(clone.render)) {
+            wasRendered = true;
+            elements = clone.render(model, ctx, container, ctr, children);
+            arr_pushMany(children, elements);
 
-	function build_NodeAsCompo(node, model, ctx, container, ctr, childs){
-		node.ID = ++BuilderData.id;
+            if (is_Function(clone.renderEnd)) {
+                compo = clone.renderEnd(elements, model, ctx, container, ctr);
+                if (compo != null) {
+                    // overriden
+                    ctr.components[i] = compo;
+                    compo.components = clone.components == null
+                        ? ctr.components.splice(i + 1)
+                        : clone.components
+                        ;
+                }
+            }
+        }
 
-		compo_addChild(ctr, node);
+        return wasRendered === true ? null : clone;
+    }
 
-		if (node.model == null)
-			node.model = model;
+    function build_NodeAsCompo(node, model, ctx, container, ctr, childs) {
+        node.ID = ++BuilderData.id;
 
-		var els = node.elements = [];
-		if (node.render) {
-			node.render(node.model, ctx, container, ctr, els);
-		} else {
-			build(node.nodes, node.model, ctx, container, node, els);
-		}
+        compo_addChild(ctr, node);
 
-		if (childs != null && els.length !== 0) {
-			arr_pushMany(childs, els);
-		}
-		return null;
-	}
+        if (node.model == null)
+            node.model = model;
+
+        var els = node.elements = [];
+        if (node.render) {
+            node.render(node.model, ctx, container, ctr, els);
+        } else {
+            build(node.nodes, node.model, ctx, container, node, els);
+        }
+
+        if (childs != null && els.length !== 0) {
+            arr_pushMany(childs, els);
+        }
+        return null;
+    }
 }

@@ -75,6 +75,7 @@ export const Children_ = {
             }
         }
     },
+    /** Deprecated: refs are implemented by accessors */
     selectSelf(self, refs: { compos?: any, elements?: any, queries?: any }) {
         let compos = refs.compos;
         if (compos) {
@@ -91,8 +92,29 @@ export const Children_ = {
         let els = refs.elements;
         if (els) {
             for (let prop in els) {
-                self[prop] = self.$[0].querySelector(els[prop]);
+                let selector = els[prop];
+                let x = self.$.find(selector);
+                if (x?.length > 0) {
+                    self[prop] = x[0];
+                    continue;
+                }
+                x = self.$.filter(selector);
+                self[prop] = x?.[0];
             }
         }
+    },
+    compos (self, selector) {
+        return CompoConfig.selectors.compo(self, selector);
+    },
+    queries (self, selector) {
+        return CompoConfig.selectors.$(self, selector);
+    },
+    elements (self, selector) {
+        let x = self.$.find(selector);
+        if (x?.length > 0) {
+            return x[0];
+        }
+        x = self.$.filter(selector);
+        return x?.[0];
     }
 };

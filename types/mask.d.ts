@@ -205,10 +205,10 @@ declare module 'mask' {
             clearCache: typeof renderer_clearCache;
             Utils: {
                     Expression: {
-                            'parse': typeof _parse;
-                            'eval': typeof _evaluate;
-                            'varRefs': typeof refs_extractVars;
-                            'evalStatements': typeof _evaluateStatements;
+                            parse: typeof _parse;
+                            eval: typeof _evaluate;
+                            varRefs: typeof refs_extractVars;
+                            evalStatements: typeof _evaluateStatements;
                     };
                     ensureTmplFn: typeof parser_ensureTemplateFunction;
             };
@@ -313,8 +313,8 @@ declare module 'mask' {
                     };
                     config: {
                             selectors: {
-                                    '$'(compo: any, selector: any): any;
-                                    'compo'(compo: any, selector: any): any;
+                                    $(compo: any, selector: any): any;
+                                    compo(compo: any, selector: any): any;
                             };
                             setDOMLibrary(lib: any): void;
                             getDOMLibrary(): any;
@@ -323,7 +323,6 @@ declare module 'mask' {
                     pipe: typeof PipeCtor;
                     resource(compo: any): any;
                     plugin(source: any): void;
-    
                     Dom: {
                             addEventListener: typeof dom_addEventListener;
                     };
@@ -412,11 +411,11 @@ declare module 'mask/projects/mask-compo/src/util/compo' {
 }
 
 declare module 'mask/projects/mask-compo/src/compo/find' {
-    export function compo_find(compo: any, selector: any): any;
-    export function compo_findAll(compo: any, selector: any): any;
-    export function compo_closest(compo: any, selector: any): any;
-    export function compo_children(compo: any, selector: any): any[];
-    export function compo_child(compo: any, selector: any): any;
+    export function compo_find<T = any>(compo: any, selector: string): T;
+    export function compo_findAll<T = any>(compo: any, selector: string): T[];
+    export function compo_closest<T = any>(compo: any, selector: string): T;
+    export function compo_children<T = any>(compo: any, selector: string): T[];
+    export function compo_child<T = any>(compo: any, selector: any): T;
 }
 
 declare module 'mask/projects/mask-compo/src/compo/Compo' {
@@ -906,8 +905,8 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             };
             static config: {
                     selectors: {
-                            '$'(compo: any, selector: any): any;
-                            'compo'(compo: any, selector: any): any;
+                            $(compo: any, selector: any): any;
+                            compo(compo: any, selector: any): any;
                     };
                     setDOMLibrary(lib: any): void;
                     getDOMLibrary(): any;
@@ -985,8 +984,8 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
             };
             config: {
                     selectors: {
-                            '$'(compo: any, selector: any): any;
-                            'compo'(compo: any, selector: any): any;
+                            $(compo: any, selector: any): any;
+                            compo(compo: any, selector: any): any;
                     };
                     setDOMLibrary(lib: any): void;
                     getDOMLibrary(): any;
