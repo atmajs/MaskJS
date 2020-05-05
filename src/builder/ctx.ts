@@ -26,12 +26,22 @@ export class builder_Ctx extends class_Dfr {
     _rewrite = null as string
 
     static clone (ctx: builder_Ctx){
-        var data = {};
-        for(var key in ctx) {
-            if (builder_Ctx.prototype[key] === void 0) {
+        let data = {};
+        for(let key in ctx) {
+            if (key in PRIVATE === false) {
                 data[key] = ctx[key];
             }
         }
         return new builder_Ctx(data);
     }
 };
+
+const PRIVATE = {
+    async: 1,
+    defers: 1,
+    _id: 0,
+    _models: 1,
+    _modules: 1,
+    _redirect: 1,
+    _rewrite: 1,
+}
