@@ -12,7 +12,7 @@ import {
 import { is_Array } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { ValidatorProvider } from './ValidatorProvider';
-import { expression_varRefs } from '@project/expression/src/exports';
+import { expression_varRefs, expression_eval } from '@project/expression/src/exports';
 import { Component } from '@compo/exports';
 
 export const CustomProviders = {};
@@ -55,7 +55,8 @@ export class BindingProvider {
     private pipe_domChanged: { pipe: string, signal: string}
     private pipe_objectChanged: { pipe: string, signal: string}
     private locked = false
-
+    
+    domSupportsDefault = true
     domWay: IDomWay = DomObjectTransport.domWay
     objectWay: IObjectWay = DomObjectTransport.objectWay
     
@@ -76,8 +77,10 @@ export class BindingProvider {
                 bindingType = 'single';
             }
         }
+        
         let attr = ctr.attr;
-
+        
+        this.owner = ctr.parent;
         this.bindingType = bindingType;
         this.value = attr.value;
         this.property = attr[A_property];
@@ -87,14 +90,16 @@ export class BindingProvider {
         this.objGetter = attr['obj-getter'];
         this.mapToObj = attr['map-to-obj'];
         this.mapToDom = attr['map-to-dom'];
-        this.owner = ctr.parent;
-        
         this.changeEvent = attr[A_change_event] || 'change';
+
+        let isCompoBinder = ctr.node.parent.tagName === this.owner.compoName;
+        let defs = attr['dom-supports-default'];
+        this.domSupportsDefault = defs ? expression_eval(defs) : (isCompoBinder ? false : true);
 
         /* Convert to an instance, e.g. Number, on domchange event */
         this.typeOf = attr['typeof'] || null;
         
-        let isCompoBinder = ctr.node.parent.tagName === this.owner.compoName;
+        
         switch (true) {
             case (A_dom_slot in attr): 
                 this.domListenerType = 'signal';
@@ -442,20 +447,20 @@ function apply_bind(provider: BindingProvider) {
                 if (event.indexOf(',') !== -1) {
                     let arr = event.split(',');
                     for (let i = 0; i < arr.length; i++) {
-                        attachListener(el, arr[i].trim(), onDomChange);        
+                        attachListener(el, arr[i].trim(), onDomChange);
                     }
                 }
                 attachListener(el, event, onDomChange);
                 break;
             }
             case 'observe': {
-                provider.domObserveBinder = onDomChange;            
+                provider.domObserveBinder = onDomChange;
                 expression_bind(provider.property, provider.owner, provider.ctx, null, onDomChange);
                 break;
             }
         }
-        if (provider.objectWay.get(provider, provider.expression) == null) {
-            // object has no value, so check the dom            
+        if (provider.domSupportsDefault && provider.objectWay.get(provider, provider.expression) == null) {
+            // object has no value, so check the dom
             setTimeout(function() {
                 if (provider.domWay.get(provider))
                     // and apply when exists
