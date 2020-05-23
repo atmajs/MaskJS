@@ -1,5 +1,5 @@
 import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor } from './ast';
-import { state_body, punc_Semicolon, type_Body, go_ref, punc_ParenthesisOpen, punc_ParenthesisClose, state_arguments, type_FunctionRef, punc_BraceOpen, go_objectKey, punc_BraceClose, type_Object, punc_Comma, punc_Question, type_SymbolRef, type_AccessorExpr, type_Accessor, go_acs, punc_Colon, punc_Dot, go_number, op_AsyncAccessor, op_ObserveAccessor, type_Statement, punc_BracketOpen, punc_BracketClose, type_Array, op_Minus, op_LogicalNot, op_Plus, op_Multip, op_Divide, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalAnd, op_LogicalOr, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, go_string, type_UnaryPrefix } from './scope-vars';
+import { state_body, punc_Semicolon, type_Body, go_ref, punc_ParenthesisOpen, punc_ParenthesisClose, state_arguments, type_FunctionRef, punc_BraceOpen, go_objectKey, punc_BraceClose, type_Object, punc_Comma, punc_Question, type_SymbolRef, type_AccessorExpr, type_Accessor, go_acs, punc_Colon, punc_Dot, go_number, op_AsyncAccessor, op_ObserveAccessor, type_Statement, punc_BracketOpen, punc_BracketClose, type_Array, op_Minus, op_LogicalNot, op_Plus, op_Multip, op_Divide, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalAnd, op_LogicalOr, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, go_string, type_UnaryPrefix, op_NullishCoalescing } from './scope-vars';
 import { ast_findPrev, ast_remove, ast_handlePrecedence } from './ast_utils';
 import { util_throw } from './util';
 import { __rgxEscapedChar } from '@core/scope-vars';
@@ -155,6 +155,11 @@ export function _parse(expr, earlyExit?, node?) {
                     current.optional = true;
                     break;
                 }
+                if (c === 63) {
+                    // ?
+                    directive = op_NullishCoalescing;
+                    break;
+                }
                 ast = new Ast_TernaryStatement(ast);
                 current = ast.case1;
                 continue;
@@ -265,6 +270,7 @@ export function _parse(expr, earlyExit?, node?) {
             case op_BitXOr:
             case op_BitAnd:
 
+            case op_NullishCoalescing:
             case op_LogicalAnd:
             case op_LogicalOr:
             case op_LogicalEqual:
@@ -298,8 +304,6 @@ export function _parse(expr, earlyExit?, node?) {
                         'Unexpected operator', c
                     );
                 }
-
-
                 index++;
                 continue;
             case go_string:

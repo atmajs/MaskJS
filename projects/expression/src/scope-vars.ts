@@ -7,6 +7,7 @@ export const op_Multip = '*'; //4;
 export const op_Modulo = '%'; //5;
 
 export const op_LogicalOr = '||'; //6;
+export const op_NullishCoalescing = '??';
 export const op_LogicalAnd = '&&'; //7;
 export const op_LogicalNot = '!'; //8;
 export const op_LogicalEqual = '=='; //9;

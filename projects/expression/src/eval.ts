@@ -1,6 +1,6 @@
 import { _evaluateAstAsync } from './eval_async';
 import { _parse } from './parser';
-import { type_Body, op_LogicalOr, op_LogicalAnd, op_Minus, op_Plus, op_Divide, op_Multip, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, type_Statement, type_Value, type_Array, type_Object, type_SymbolRef, type_FunctionRef, type_AccessorExpr, type_Accessor, type_UnaryPrefix, op_LogicalNot, type_Ternary } from './scope-vars';
+import { type_Body, op_LogicalOr, op_LogicalAnd, op_Minus, op_Plus, op_Divide, op_Multip, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, type_Statement, type_Value, type_Array, type_Object, type_SymbolRef, type_FunctionRef, type_AccessorExpr, type_Accessor, type_UnaryPrefix, op_LogicalNot, type_Ternary, op_NullishCoalescing } from './scope-vars';
 import { util_resolveAcc, util_resolveRefValue, util_getNodeStack, util_resolveRef } from './util';
 import { is_Function } from '@utils/is';
 import { error_ } from '@core/util/reporters';
@@ -45,7 +45,7 @@ export function _evaluate (mix, model?, ctx?, ctr?, node?) {
 export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 	if (ast == null)
 		return null;
-	
+
 	var type = ast.type,
 		result, x, length;
 
@@ -54,9 +54,14 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 
 		outer: for (var i = 0, length = ast.body.length; i < length; i++) {
 			x = ast.body[i];
-			if (prev != null && prev.join === op_LogicalOr && result) {				
-				return result;
-			}					
+			if (prev != null) {
+                if (prev.join === op_LogicalOr && result) {
+                    return result;
+                }
+                if (prev.join === op_NullishCoalescing && result != null) {
+                    return result;
+                }
+            }
 			value = _evaluateAst(x, model, ctx, ctr, preResults);
 
 			if (prev == null || prev.join == null) {
@@ -66,19 +71,26 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 			}
 
 			if (prev.join === op_LogicalAnd) {
-
 				if (!result) {
 					for (; i < length; i++) {
 						if (ast.body[i].join === op_LogicalOr) {
 							break;
 						}
 					}
-				}else{
+				} else {
 					result = value;
 				}
 			}
 			if (prev.join === op_LogicalOr) {
 				if (value) {
+					return value;
+				}
+				result = value;
+				prev = x;
+				continue;
+            }
+            if (prev.join === op_NullishCoalescing) {
+                if (value != null) {
 					return value;
 				}
 				result = value;
@@ -141,7 +153,7 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 			}
 			prev = x;
 		}
-		return result;		
+		return result;
 	}
 	if (type_Statement === type) {
 		if ((ast.async === true || ast.observe === true) && ast.preResultIndex > -1 && preResults != null) {
@@ -151,7 +163,7 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 		}
 		if (ast.next == null)
 			return result;
-		
+
 		return util_resolveAcc(result, ast.next, model, ctx, ctr, preResults);
 	}
 	if (type_Value === type) {
@@ -184,7 +196,7 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 				result = result.apply(null, args);
 			} else {
 				error_(
-					ast.body + " is not a function", 
+					ast.body + " is not a function",
 					util_getNodeStack(ast)
 				);
 			}
@@ -196,7 +208,7 @@ export function _evaluateAst(ast, model, ctx, ctr, preResults?) {
 	}
 
 	if (type_AccessorExpr 	=== type ||
-		type_Accessor 		=== type) {		
+		type_Accessor 		=== type) {
 		return util_resolveRef(ast, model, ctx, ctr);
 	}
 	if (type_UnaryPrefix === type) {
