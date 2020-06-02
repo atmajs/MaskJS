@@ -16,6 +16,7 @@ import { CompoConfig } from './CompoConfig'
 import { Pipes } from './pipes'
 
 import { Component } from './Component'
+import { Gc } from './CompoStaticsGc'
 
 
 declare var include;
@@ -102,57 +103,58 @@ export const CompoStatics = {
 
     attach: compo_attach,
 
-    gc: {
-        using: function (compo, x) {
-            if (x.dispose == null) {
-                console.warn('Expects `disposable` instance');
-                return x;
-            }
-            compo_attach(compo, 'dispose', function () {
-                x && x.dispose();
-                x = null;
-            });
-        },
-        on: function (compo, emitter, ...args) {
-            let fn = emitter.on || emitter.addListener || emitter.addEventListener || emitter.bind;
-            let fin = emitter.off || emitter.removeListener || emitter.removeEventListener || emitter.unbind;
-            if (fn == null || fin === null) {
-                console.warn('Expects `emitter` instance with any of the methods: on, addListener, addEventListener, bind');
-                return;
-            }
-            fn.apply(emitter, args);
-            compo_attach(compo, 'dispose', function () {
-                emitter && fin.apply(emitter, args);
-                emitter = null;
-            });
-        },
-        subscribe: function (compo, observable, ...args) {
-            if (observable.subscribe == null) {
-                console.warn('Expects `IObservable` instance with subscribe/unsubscribe methods');
-                return;
-            }
-            let result = observable.apply(observable, args);
-            if (observable.unsubscribe == null && (result == null || result.dispose == null)) {
-                throw Error('Invalid subscription: don`t know how to unsubscribe');
-            }
-            compo_attach(compo, 'dispose', function () {
-                if (observable == null) {
-                    return;
-                }
-                if (result && result.dispose) {
-                    result.dispose();
-                    result = null;
-                    observable = null;
-                    return;
-                }
-                if (observable.unsubscribe) {
-                    observable.unsubscribe(args[0]);
-                    observable = null;
-                    result = null;
-                }
-            });
-        }
-    },
+    // gc: {
+    //     using (compo, x: { dispose: Function }) {
+    //         if (x.dispose == null) {
+    //             console.warn('Expects `disposable` instance');
+    //             return x;
+    //         }
+    //         compo_attach(compo, 'dispose', function () {
+    //             x && x.dispose();
+    //             x = null;
+    //         });
+    //     },
+    //     on (compo, emitter, ...args) {
+    //         let fn = emitter.on || emitter.addListener || emitter.addEventListener || emitter.bind;
+    //         let fin = emitter.off || emitter.removeListener || emitter.removeEventListener || emitter.unbind;
+    //         if (fn == null || fin === null) {
+    //             console.warn('Expects `emitter` instance with any of the methods: on, addListener, addEventListener, bind');
+    //             return;
+    //         }
+    //         fn.apply(emitter, args);
+    //         compo_attach(compo, 'dispose', function () {
+    //             emitter && fin.apply(emitter, args);
+    //             emitter = null;
+    //         });
+    //     },
+    //     subscribe (compo, observable, ...args) {
+    //         if (observable.subscribe == null) {
+    //             console.warn('Expects `IObservable` instance with subscribe/unsubscribe methods');
+    //             return;
+    //         }
+    //         let result = observable.apply(observable, args);
+    //         if (observable.unsubscribe == null && (result == null || result.dispose == null)) {
+    //             throw Error('Invalid subscription: don`t know how to unsubscribe');
+    //         }
+    //         compo_attach(compo, 'dispose', function () {
+    //             if (observable == null) {
+    //                 return;
+    //             }
+    //             if (result && result.dispose) {
+    //                 result.dispose();
+    //                 result = null;
+    //                 observable = null;
+    //                 return;
+    //             }
+    //             if (observable.unsubscribe) {
+    //                 observable.unsubscribe(args[0]);
+    //                 observable = null;
+    //                 result = null;
+    //             }
+    //         });
+    //     }
+    // },
+    gc: Gc,
 
     element: {
         getCompo: function (el) {

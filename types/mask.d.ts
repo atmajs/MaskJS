@@ -6,6 +6,7 @@ declare module 'mask' {
      import { _toggle_all } from "mask/projects/mask-compo/src/signal/toggle"; 
      import { dom_addEventListener } from "mask/projects/mask-compo/src/util/dom"; 
      import { PipeCtor } from "mask/projects/mask-compo/src/compo/pipes"; 
+     import { Gc } from "mask/projects/mask-compo/src/compo/CompoStaticsGc"; 
      import { compo_attach } from "mask/projects/mask-compo/src/util/compo"; 
      import { compo_attachDisposer } from "mask/projects/mask-compo/src/util/compo"; 
      import { compo_ensureTemplate } from "mask/projects/mask-compo/src/util/compo"; 
@@ -302,11 +303,7 @@ declare module 'mask' {
                     ensureTemplate: typeof compo_ensureTemplate;
                     attachDisposer: typeof compo_attachDisposer;
                     attach: typeof compo_attach;
-                    gc: {
-                            using: (compo: any, x: any) => any;
-                            on: (compo: any, emitter: any, ...args: any[]) => void;
-                            subscribe: (compo: any, observable: any, ...args: any[]) => void;
-                    };
+                    gc: typeof Gc;
                     element: {
                             getCompo: (el: any) => any;
                             getModel: (el: any) => any;
@@ -395,6 +392,42 @@ declare module 'mask/projects/mask-compo/src/compo/pipes' {
         removeController: typeof _removeController;
         pipe: typeof PipeCtor;
     };
+}
+
+declare module 'mask/projects/mask-compo/src/compo/CompoStaticsGc' {
+    interface IOnEmitter {
+        on(...args: any[]): any;
+        off(...args: any[]): any;
+    }
+    interface IAddEventEmitter {
+        addEventListener(...args: any[]): any;
+        removeEventListener(...args: any[]): any;
+    }
+    interface IAddEmitter {
+        addListener(...args: any[]): any;
+        removeListener(...args: any[]): any;
+    }
+    interface IBindEmitter {
+        bind(...args: any[]): any;
+        unbind(...args: any[]): any;
+    }
+    interface IObservable {
+        subscribe(...args: any[]): any;
+        unsubscribe?(...args: any[]): any;
+        dispose?(...args: any[]): any;
+    }
+    export namespace Gc {
+        function using(compo: any, x: {
+            dispose: Function;
+        }): {
+            dispose: Function;
+        };
+        function on<T extends IOnEmitter>(compo: any, emitter: T, ...args: Parameters<T['on']>): any;
+        function on<T extends IAddEventEmitter>(compo: any, emitter: T, ...args: Parameters<T['addEventListener']>): any;
+        function on<T extends IAddEmitter>(compo: any, emitter: T, ...args: Parameters<T['addListener']>): any;
+        function on<T extends IBindEmitter>(compo: any, emitter: T, ...args: Parameters<T['bind']>): any;
+        function subscribe<T extends IObservable>(compo: any, observable: T, ...args: Parameters<T['subscribe']>): void;
+    }
 }
 
 declare module 'mask/projects/mask-compo/src/util/compo' {
@@ -867,6 +900,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
      import { _toggle_all } from 'mask/projects/mask-compo/src/signal/toggle'; 
      import { dom_addEventListener } from 'mask/projects/mask-compo/src/util/dom'; 
      import { PipeCtor } from 'mask/projects/mask-compo/src/compo/pipes'; 
+     import { Gc } from 'mask/projects/mask-compo/src/compo/CompoStaticsGc'; 
      import { compo_attach } from 'mask/projects/mask-compo/src/util/compo'; 
      import { compo_attachDisposer } from 'mask/projects/mask-compo/src/util/compo'; 
      import { compo_ensureTemplate } from 'mask/projects/mask-compo/src/util/compo'; 
@@ -894,11 +928,7 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             static ensureTemplate: typeof compo_ensureTemplate;
             static attachDisposer: typeof compo_attachDisposer;
             static attach: typeof compo_attach;
-            static gc: {
-                    using: (compo: any, x: any) => any;
-                    on: (compo: any, emitter: any, ...args: any[]) => void;
-                    subscribe: (compo: any, observable: any, ...args: any[]) => void;
-            };
+            static gc: typeof Gc;
             static element: {
                     getCompo: (el: any) => any;
                     getModel: (el: any) => any;
@@ -959,6 +989,7 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
     import { dom_addEventListener } from 'mask/projects/mask-compo/src/util/dom';
     import { compo_find, compo_findAll, compo_closest, compo_children, compo_child } from 'mask/projects/mask-compo/src/compo/find';
     import { Component } from 'mask/projects/mask-compo/src/compo/Component';
+    import { Gc } from 'mask/projects/mask-compo/src/compo/CompoStaticsGc';
     export const CompoStatics: {
             create(...args: any[]): any;
             createExt(Proto: any, args: any): any;
@@ -973,11 +1004,7 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
             ensureTemplate: typeof compo_ensureTemplate;
             attachDisposer: typeof compo_attachDisposer;
             attach: typeof compo_attach;
-            gc: {
-                    using: (compo: any, x: any) => any;
-                    on: (compo: any, emitter: any, ...args: any[]) => void;
-                    subscribe: (compo: any, observable: any, ...args: any[]) => void;
-            };
+            gc: typeof Gc;
             element: {
                     getCompo: (el: any) => any;
                     getModel: (el: any) => any;
