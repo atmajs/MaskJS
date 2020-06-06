@@ -23,7 +23,7 @@ import { renderer_render } from '@core/renderer/exports';
 import { parser_parse } from '@core/parser/exports';
 import { IComponent } from '@compo/model/IComponent';
 
-export const CompoProto = <IComponent> {
+export const CompoProto =  {
     type: Dom.CONTROLLER,
     __constructed: false,
     __resource: null,
@@ -189,10 +189,9 @@ export const CompoProto = <IComponent> {
             log_error('Invalid Arguments Exception @use .on(type,selector,fn)');
             return this;
         }
-
-        if (this.$ != null)
+        if (this.$ != null) {
             Events_.on(this, [x]);
-
+        }
         if (this.events == null) {
             this.events = [x];
         } else if (is_Array(this.events)) {
@@ -207,7 +206,6 @@ export const CompoProto = <IComponent> {
         compo_removeElements(this);
         compo_detachChild(this);
         compo_dispose(this);
-
         this.$ = null;
         return this;
     },
@@ -228,7 +226,7 @@ export const CompoProto = <IComponent> {
         );
         return this;
     },
-    emitIn (signalName, a1?, a2?, a3?, a4?){
+    emitIn (signalName, a1?: any, a2?: any, a3?: any, a4?: any, ...args){
         CompoSignals.signal.emitIn(
             this,
             signalName,
@@ -249,7 +247,7 @@ export const CompoProto = <IComponent> {
     serializeState  () {
         if (this.scope) {
             return { scope: this.scope };
-        }			
+        }
     },
     deserializeState  (bundle) {
         if (bundle != null && bundle.scope != null) {

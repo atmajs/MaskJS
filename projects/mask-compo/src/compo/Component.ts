@@ -4,6 +4,7 @@ import { obj_create } from '@utils/obj';
 import { compo_prepairProperties } from '../util/compo_create';
 import { CompoProto } from './CompoProto';
 import { CompoStatics } from './CompoStatics';
+import { CompoSignals } from '../signal/exports';
 import {
     deco_slot,
     deco_slotPrivate,
@@ -16,8 +17,16 @@ import {
     deco_hotkey
 } from '@compo/deco/component_decorators';
 import { IComponent } from '@compo/model/IComponent';
+import { ParametersFromSecond } from '@core/types/Parameters';
 
-export class Component extends class_create(CompoProto) implements IComponent {
+
+export class Component<
+    TSignals extends Partial<Record<keyof TSignals, (sender, ...args: any) => any>> = any,
+    TOuterModel = any,
+>
+    extends class_create(CompoProto)
+    implements IComponent<TSignals, TOuterModel>
+{
     constructor() {
         super();
         if (this.__constructed !== true) {
@@ -37,7 +46,18 @@ export class Component extends class_create(CompoProto) implements IComponent {
             this.scope = obj_create(this.scope);
         }
     }
-
+    emitIn<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>) {
+        CompoSignals.signal.emitIn(
+            this, signal, this, args
+        );
+        return this;
+    }
+    emitOut<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>) {
+        CompoSignals.signal.emitOut(
+            this, signal, this, args
+        );
+        return this;
+    }
     static create = CompoStatics.create
     static createExt = CompoStatics.createExt
     static createClass = CompoStatics.createClass

@@ -1,26 +1,26 @@
 import { is_ArrayLike } from '@utils/is';
 
 // @param sender - event if sent from DOM Event or CONTROLLER instance
-export function _fire  (ctr, slot, sender, args_, direction) {
+export function _fire  (ctr, slot: string, sender, args_: any[], direction: 1 | -1) {
     if (ctr == null) {
         return false;
     }
-    var found = false,
-        args  = args_,
-        fn = ctr.slots != null && ctr.slots[slot];
-        
+    let found = false;
+    let args  = args_;
+    let fn = ctr.slots != null && ctr.slots[slot];
+
     if (typeof fn === 'string') {
         fn = ctr[fn];
     }
     if (typeof fn === 'function') {
         found = true;
-        
-        var isDisabled = ctr.slots.__disabled != null && ctr.slots.__disabled[slot];
+
+        let isDisabled = ctr.slots.__disabled?.[slot];
         if (isDisabled !== true) {
 
-            var result = args == null
+            let result = args == null
                 ? fn.call(ctr, sender)
-                : fn.apply(ctr, [ sender ].concat(args));
+                : fn.apply(ctr, [ sender, ...args ]);
 
             if (result === false) {
                 return true;
@@ -43,7 +43,7 @@ export function _fire  (ctr, slot, sender, args_, direction) {
             found = _fire(compos[i], slot, sender, args, direction) || found;
         }
     }
-    
+
     return found;
 } // _fire()
 
@@ -77,4 +77,4 @@ export function _hasSlot  (ctr, slot, direction, isActive?) {
         }
     }
     return false;
-}; 
+};

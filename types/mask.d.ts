@@ -325,22 +325,23 @@ declare module 'mask' {
                     };
                     signal: {
                             toggle: typeof _toggle_all;
-                            emitOut: (ctr: any, slot: any, sender: any, args: any) => void;
-                            emitIn: (ctr: any, slot: any, sender?: any, args?: any) => void;
-                            enable: (ctr: any, slot: any) => void;
-                            disable: (ctr: any, slot: any) => void;
+                            emitOut(ctr: any, slot: any, sender: any, args: any): void;
+                            emitIn(ctr: any, slot: any, sender?: any, args?: any): void;
+                            enable(ctr: any, slot: any): void;
+                            disable(ctr: any, slot: any): void;
+                            _trigger(ctr: any, directon: 1 | -1, slot: any, args: any): void;
                     };
                     slot: {
                             toggle: typeof _toggle_single;
-                            enable: (ctr: any, slot: any) => void;
-                            disable: (ctr: any, slot: any) => void;
-                            invoke: (ctr: any, slot: any, event: any, args: any) => any;
+                            enable(ctr: any, slot: any): void;
+                            disable(ctr: any, slot: any): void;
+                            invoke(ctr: any, slot: any, event: any, args: any): any;
                             attach: typeof _compound;
                     };
                     DomLite: any;
                     pause: (compo: any, ctx: any) => () => void;
                     resume: (compo: any, ctx: any) => void;
-                    await: (compo: Component) => any;
+                    await: (compo: Component<any, any>) => any;
             };
             Component: typeof Component;
             jmask: typeof jMask;
@@ -912,9 +913,81 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
      import { compo_find } from 'mask/projects/mask-compo/src/compo/find'; 
      import { deco_slot, deco_slotPrivate, deco_attr, deco_refCompo, deco_refElement, deco_refQuery, deco_pipe, deco_event, deco_hotkey } from "mask/projects/mask-compo/src/deco/component_decorators";
     import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
-    const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => IComponent<any>;
-    export class Component extends Component_base implements IComponent {
+    import { ParametersFromSecond } from "mask/types/Parameters";
+    const Component_base: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
+            type: number;
+            __constructed: boolean;
+            __resource: any;
+            __frame: any;
+            __tweens: any;
+            ID: any;
+            $: any;
+            tagName: any;
+            compoName: any;
+            parent: any;
+            node: any;
+            nodes: any;
+            components: any;
+            expression: any;
+            attr: any;
+            model: any;
+            scope: any;
+            slots: any;
+            pipes: any;
+            compos: any;
+            events: any;
+            hotkeys: any;
+            async: boolean;
+            await: any;
+            resume: any;
+            meta: {
+                    mode: null;
+                    modelMode: null;
+                    attributes: null;
+                    properties: null;
+                    arguments: null;
+                    template: null;
+                    serializeNodes: null;
+                    readAttributes: null;
+                    readProperties: null;
+                    readArguments: null;
+                    refs: null;
+            };
+            getAttribute<T = any>(key: string): T;
+            setAttribute(key: string, val: any): void;
+            onAttributeSet: any;
+            onRenderStart: any;
+            onRenderStartClient: any;
+            onRenderEnd: any;
+            onRenderEndServer: any;
+            onEnterFrame: any;
+            render: any;
+            renderStart(model?: any, ctx?: any, container?: any): void;
+            renderStartClient(model?: any, ctx?: any, container?: any): void;
+            renderEnd(elements?: any, model?: any, ctx?: any, container?: any): void;
+            appendTo(el: any): any;
+            append(template: any, model: any, selector: any): any;
+            find<T_1 = any>(selector: any): T_1;
+            findAll<T_2 = any>(selector: any): T_2[];
+            closest(selector: any): any;
+            on(): any;
+            remove(): any;
+            slotState(slotName: any, isActive: any): any;
+            signalState(signalName: any, isActive: any): any;
+            emitOut(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
+            emitIn(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any, ...args: any[]): any;
+            $scope(path: any): any;
+            $eval(expr: any, model: any, ctx: any): any;
+            attach(name: any, fn: any): void;
+            serializeState(): {
+                    scope: any;
+            };
+            deserializeState(bundle: any): void;
+    };
+    export class Component<TSignals extends Partial<Record<keyof TSignals, (sender: any, ...args: any) => any>> = any, TOuterModel = any> extends Component_base implements IComponent<TSignals, TOuterModel> {
             constructor();
+            emitIn<TKey extends keyof TSignals>(signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this;
+            emitOut<TKey extends keyof TSignals>(signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this;
             static create: (...args: any[]) => any;
             static createExt: (Proto: any, args: any) => any;
             static createClass: () => never;
@@ -950,22 +1023,23 @@ declare module 'mask/projects/mask-compo/src/compo/Component' {
             };
             static signal: {
                     toggle: typeof _toggle_all;
-                    emitOut: (ctr: any, slot: any, sender: any, args: any) => void;
-                    emitIn: (ctr: any, slot: any, sender?: any, args?: any) => void;
-                    enable: (ctr: any, slot: any) => void;
-                    disable: (ctr: any, slot: any) => void;
+                    emitOut(ctr: any, slot: any, sender: any, args: any): void;
+                    emitIn(ctr: any, slot: any, sender?: any, args?: any): void;
+                    enable(ctr: any, slot: any): void;
+                    disable(ctr: any, slot: any): void;
+                    _trigger(ctr: any, directon: 1 | -1, slot: any, args: any): void;
             };
             static slot: {
                     toggle: typeof _toggle_single;
-                    enable: (ctr: any, slot: any) => void;
-                    disable: (ctr: any, slot: any) => void;
-                    invoke: (ctr: any, slot: any, event: any, args: any) => any;
+                    enable(ctr: any, slot: any): void;
+                    disable(ctr: any, slot: any): void;
+                    invoke(ctr: any, slot: any, event: any, args: any): any;
                     attach: typeof _compound;
             };
             static DomLite: any;
             static pause: (compo: any, ctx: any) => () => void;
             static resume: (compo: any, ctx: any) => void;
-            static await: (compo: Component) => any;
+            static await: (compo: Component<any, any>) => any;
             static deco: {
                     pipe: typeof deco_pipe;
                     slot: typeof deco_slot;
@@ -1026,22 +1100,23 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
             };
             signal: {
                     toggle: typeof _toggle_all;
-                    emitOut: (ctr: any, slot: any, sender: any, args: any) => void;
-                    emitIn: (ctr: any, slot: any, sender?: any, args?: any) => void;
-                    enable: (ctr: any, slot: any) => void;
-                    disable: (ctr: any, slot: any) => void;
+                    emitOut(ctr: any, slot: any, sender: any, args: any): void;
+                    emitIn(ctr: any, slot: any, sender?: any, args?: any): void;
+                    enable(ctr: any, slot: any): void;
+                    disable(ctr: any, slot: any): void;
+                    _trigger(ctr: any, directon: 1 | -1, slot: any, args: any): void;
             };
             slot: {
                     toggle: typeof _toggle_single;
-                    enable: (ctr: any, slot: any) => void;
-                    disable: (ctr: any, slot: any) => void;
-                    invoke: (ctr: any, slot: any, event: any, args: any) => any;
+                    enable(ctr: any, slot: any): void;
+                    disable(ctr: any, slot: any): void;
+                    invoke(ctr: any, slot: any, event: any, args: any): any;
                     attach: typeof _compound;
             };
             DomLite: any;
             pause: (compo: any, ctx: any) => () => void;
             resume: (compo: any, ctx: any) => void;
-            await: (compo: Component) => any;
+            await: (compo: Component<any, any>) => any;
     };
 }
 
@@ -1204,8 +1279,76 @@ declare module 'mask/projects/observer/src/exports' {
 }
 
 declare module 'mask/projects/mask-compo/src/compo/CompoProto' {
-    import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
-    export const CompoProto: IComponent<any>;
+    export const CompoProto: {
+        type: number;
+        __constructed: boolean;
+        __resource: any;
+        __frame: any;
+        __tweens: any;
+        ID: any;
+        $: any;
+        tagName: any;
+        compoName: any;
+        parent: any;
+        node: any;
+        nodes: any;
+        components: any;
+        expression: any;
+        attr: any;
+        model: any;
+        scope: any;
+        slots: any;
+        pipes: any;
+        compos: any;
+        events: any;
+        hotkeys: any;
+        async: boolean;
+        await: any;
+        resume: any;
+        meta: {
+            mode: null;
+            modelMode: null;
+            attributes: null;
+            properties: null;
+            arguments: null;
+            template: null;
+            serializeNodes: null;
+            readAttributes: null;
+            readProperties: null;
+            readArguments: null;
+            refs: null;
+        };
+        getAttribute<T = any>(key: string): T;
+        setAttribute(key: string, val: any): void;
+        onAttributeSet: any;
+        onRenderStart: any;
+        onRenderStartClient: any;
+        onRenderEnd: any;
+        onRenderEndServer: any;
+        onEnterFrame: any;
+        render: any;
+        renderStart(model?: any, ctx?: any, container?: any): void;
+        renderStartClient(model?: any, ctx?: any, container?: any): void;
+        renderEnd(elements?: any, model?: any, ctx?: any, container?: any): void;
+        appendTo(el: any): any;
+        append(template: any, model: any, selector: any): any;
+        find<T_1 = any>(selector: any): T_1;
+        findAll<T_2 = any>(selector: any): T_2[];
+        closest(selector: any): any;
+        on(): any;
+        remove(): any;
+        slotState(slotName: any, isActive: any): any;
+        signalState(signalName: any, isActive: any): any;
+        emitOut(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any): any;
+        emitIn(signalName: any, a1?: any, a2?: any, a3?: any, a4?: any, ...args: any[]): any;
+        $scope(path: any): any;
+        $eval(expr: any, model: any, ctx: any): any;
+        attach(name: any, fn: any): void;
+        serializeState(): {
+            scope: any;
+        };
+        deserializeState(bundle: any): void;
+    };
 }
 
 declare module 'mask/projects/mask-compo/src/scope-vars' {
@@ -1218,7 +1361,8 @@ declare module 'mask/projects/mask-compo/src/scope-vars' {
 
 declare module 'mask/projects/mask-compo/src/model/IComponent' {
     import { INode } from "mask/dom/INode";
-    export interface IComponent<TModel = any> {
+    import { ParametersFromSecond } from "mask/types/Parameters";
+    export interface IComponent<TSignals extends Partial<Record<keyof TSignals, <TSender = any>(sender: TSender, ...args: any) => any>> = any, TOuterModel = any> {
         type: number;
         __constructed: boolean;
         __resource: any;
@@ -1235,7 +1379,7 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         attr: {
             [key: string]: string | Function | any;
         };
-        model: TModel;
+        model: TOuterModel;
         scope: any;
         $: JQuery;
         slots: {
@@ -1273,17 +1417,17 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         getAttribute?<T = any>(key: string): T;
         setAttribute?(key: string, val: any): any;
         onAttributeSet?(name: string, val: any): any;
-        renderStart?(model: TModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderStart?(model: TModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        renderStartClient?(model: TModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderStartClient?(model: TModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderEnd?(elements: HTMLElement[], model: TModel, ctx: any, container: HTMLElement): any;
-        onRenderEndServer?(elements: HTMLElement[], model: TModel, ctx: any, container: HTMLElement): any;
-        renderEnd?(elements: HTMLElement[], model: TModel, ctx: any, container: HTMLElement): any;
+        renderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        renderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        onRenderEndServer?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        renderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
         onEnterFrame?: Function;
-        render(elements: HTMLElement[], model: TModel, ctx: any, container: HTMLElement): any;
+        render(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
         appendTo?(el: HTMLElement): any;
-        append?(template: string, model: TModel, selector: string): any;
+        append?(template: string, model: TOuterModel, selector: string): any;
         find<T = IComponent>(selector: string): T;
         findAll<T = IComponent>(selector: string): T[];
         closest<T = IComponent>(selector: any): T;
@@ -1291,8 +1435,8 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         remove(): void;
         slotState(slotName: string, isActive?: boolean): this;
         signalState(signalName: string, isActive?: boolean): this;
-        emitOut(signalName: string, a1?: any, a2?: any, a3?: any, a4?: any): this;
-        emitIn(signalName: string, a1?: any, a2?: any, a3?: any, a4?: any): this;
+        emitIn<TKey extends keyof TSignals>(signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this;
+        emitOut<TKey extends keyof TSignals>(signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this;
         $scope<T = any>(key: string): T;
         $eval<T = any>(expr: string, model?: any, ctx?: any): T;
         attach(name: keyof this, fn: Function): any;
@@ -1301,6 +1445,10 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         };
         deserializeState(bundle?: any): any;
     }
+}
+
+declare module 'mask/types/Parameters' {
+    export type ParametersFromSecond<T extends (x: any, ...args: any) => any> = T extends (x: any, ...args: infer P) => any ? P : never;
 }
 
 declare module 'mask/projects/observer/src/obj_observe' {

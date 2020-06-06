@@ -1,7 +1,15 @@
 import { INode } from '@core/dom/INode'
+import { ParametersFromSecond } from '@core/types/Parameters';
 
+interface ISignals<TSignals extends Record<keyof TSignals, <TSender = any>(sender: TSender, ...args: any[]) => any>> {
+    emitIn<TKey extends keyof TSignals> (signal: TKey, ...args: Parameters<TSignals[TKey]>): boolean | Promise<any> | any | any[]
+    emitOut<TKey extends keyof TSignals> (signal: TKey, ...args: Parameters<TSignals[TKey]>): boolean | Promise<any> | any | any[]
+}
 
-export interface IComponent<TModel = any> {
+export interface IComponent<
+    TSignals extends Partial<Record<keyof TSignals, <TSender = any>(sender: TSender, ...args: any) => any>> = any,
+    TOuterModel = any,
+> {
     type: number
     __constructed:  boolean
     __resource: any
@@ -18,7 +26,7 @@ export interface IComponent<TModel = any> {
     components: IComponent[]
     expression: string
     attr: { [key: string]: string | Function | any }
-    model: TModel
+    model: TOuterModel
     scope: any
 
     $: JQuery
@@ -26,7 +34,7 @@ export interface IComponent<TModel = any> {
     slots: { [key: string]: Function }
     pipes: { [pipe: string]: { [key: string]: Function } }
 
-    compos: { 
+    compos: {
         [key: string]: string | IComponent | any
     }
     events: { [key: string]: Function }
@@ -51,62 +59,49 @@ export interface IComponent<TModel = any> {
 
     getAttribute? <T = any> (key: string): T
 
-    setAttribute? (key: string, val: any) 
-    
+    setAttribute? (key: string, val: any)
+
     onAttributeSet? (name: string, val: any)
 
-    renderStart? (model: TModel, ctx, container: HTMLElement): Promise<any> | void 
-    onRenderStart? (model: TModel, ctx, container: HTMLElement): Promise<any> | void 
+    renderStart? (model: TOuterModel, ctx, container: HTMLElement): Promise<any> | void
+    onRenderStart? (model: TOuterModel, ctx, container: HTMLElement): Promise<any> | void
 
-    renderStartClient? (model: TModel, ctx, container: HTMLElement): Promise<any> | void 
-    onRenderStartClient? (model: TModel, ctx, container: HTMLElement): Promise<any> | void 
-    
+    renderStartClient? (model: TOuterModel, ctx, container: HTMLElement): Promise<any> | void
+    onRenderStartClient? (model: TOuterModel, ctx, container: HTMLElement): Promise<any> | void
 
-    onRenderEnd? (elements: HTMLElement[], model: TModel, ctx, container: HTMLElement)
-    onRenderEndServer? (elements: HTMLElement[], model: TModel, ctx, container: HTMLElement)
-    renderEnd? (elements: HTMLElement[], model: TModel, ctx, container: HTMLElement)
+
+    onRenderEnd? (elements: HTMLElement[], model: TOuterModel, ctx, container: HTMLElement)
+    onRenderEndServer? (elements: HTMLElement[], model: TOuterModel, ctx, container: HTMLElement)
+    renderEnd? (elements: HTMLElement[], model: TOuterModel, ctx, container: HTMLElement)
 
     onEnterFrame?: Function,
-    render (elements: HTMLElement[], model: TModel, ctx, container: HTMLElement)
-    
+    render (elements: HTMLElement[], model: TOuterModel, ctx, container: HTMLElement)
+
     appendTo? (el:HTMLElement)
-    
-    append? (template: string, model: TModel, selector: string)
+
+    append? (template: string, model: TOuterModel, selector: string)
 
     find <T = IComponent> (selector: string): T
     findAll <T = IComponent> (selector: string): T[]
-    
+
     closest <T = IComponent> (selector): T
-    
+
     on (type: string, selector: string, fn: Function)
     remove (): void
-    
+
     slotState (slotName: string, isActive?:boolean): this
-    
+
     signalState (signalName: string, isActive?: boolean): this
 
-    // emitOut (signalName: string): this
-    // emitOut <T1 = any> (signalName: string, arg1: T1): this
-    // emitOut <T1 = any, T2 = any> (signalName: string, arg1: T1, arg2: T2): this
-    // emitOut <T1 = any, T2 = any> (signalName: string, arg1: T1, arg2: T2): this
-    // emitOut <T1 = any, T2 = any, T3 = any> (signalName: string, arg1: T1, arg2: T2, arg3: T3): this
-    // emitOut <T1 = any, T2 = any, T3 = any, T4 = any> (signalName: string, arg1: T1, arg2: T2, arg3: T3, arg4: T4): this
-    emitOut (signalName: string, a1?, a2?, a3?, a4?): this
+    emitIn<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this
+    emitOut<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this
 
-    // emitIn (signalName: string): this
-    // emitIn <T1 = any> (signalName: string, arg1: T1): this
-    // emitIn <T1 = any, T2 = any> (signalName: string, arg1: T1, arg2: T2): this
-    // emitIn <T1 = any, T2 = any> (signalName: string, arg1: T1, arg2: T2): this
-    // emitIn <T1 = any, T2 = any, T3 = any> (signalName: string, arg1: T1, arg2: T2, arg3: T3): this
-    // emitIn <T1 = any, T2 = any, T3 = any, T4 = any> (signalName: string, arg1: T1, arg2: T2, arg3: T3, arg4: T4): this
-    emitIn (signalName: string, a1?, a2?, a3?, a4?): this
+    $scope <T = any> (key: string): T
 
-    $scope <T = any> (key: string): T 
-    
     $eval <T = any> (expr: string, model?, ctx?): T
-    
-    attach  (name: keyof this, fn: Function) 
-    
-    serializeState  (): { scope: any} 
+
+    attach  (name: keyof this, fn: Function)
+
+    serializeState  (): { scope: any}
     deserializeState (bundle?)
 }
