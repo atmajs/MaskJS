@@ -51,15 +51,15 @@ export class BindingProvider {
     private logExpression: string
     private signal_domChanged: string
     private signal_objectChanged: string
-    
+
     private pipe_domChanged: { pipe: string, signal: string}
     private pipe_objectChanged: { pipe: string, signal: string}
     private locked = false
-    
+
     domSupportsDefault = true
     domWay: IDomWay = DomObjectTransport.domWay
     objectWay: IObjectWay = DomObjectTransport.objectWay
-    
+
     // -
     binder: Function
     domObserveBinder: Function
@@ -77,9 +77,9 @@ export class BindingProvider {
                 bindingType = 'single';
             }
         }
-        
+
         let attr = ctr.attr;
-        
+
         this.owner = ctr.parent;
         this.bindingType = bindingType;
         this.value = attr.value;
@@ -93,25 +93,29 @@ export class BindingProvider {
         this.changeEvent = attr[A_change_event] || 'change';
 
         let isCompoBinder = ctr.node.parent.tagName === this.owner.compoName;
-        let defs = attr['dom-supports-default'];
-        this.domSupportsDefault = defs ? expression_eval(defs) : (isCompoBinder ? false : true);
+
+        let domDefaultKey = 'dom-supports-default'
+        let defs = attr[domDefaultKey];
+        this.domSupportsDefault = defs != null
+            ? (defs === domDefaultKey ? true : expression_eval(defs))
+            : (isCompoBinder ? false : true);
 
         /* Convert to an instance, e.g. Number, on domchange event */
         this.typeOf = attr['typeof'] || null;
-        
-        
+
+
         switch (true) {
-            case (A_dom_slot in attr): 
+            case (A_dom_slot in attr):
                 this.domListenerType = 'signal';
                 break;
-            case (A_change_event in attr): 
+            case (A_change_event in attr):
                 this.domListenerType = 'event';
                 break;
             case (isCompoBinder && (A_property in attr)):
                 this.domListenerType = 'observe';
                 break;
         }
-        
+
         if (isCompoBinder) {
             if (this.domListenerType === 'observe') {
                 this.domWay = DomObjectTransport.domModelWay;
@@ -136,12 +140,12 @@ export class BindingProvider {
                     if ('checkbox' === type) {
                         this.property = 'element.checked';
                         break;
-                    } 
+                    }
                     if ('radio' === type) {
                         this.domWay = DomObjectTransport.RADIO.domWay;
                         break;
                     }
-                    
+
                     if (
                         'date' === type ||
                         'time' === type ||
@@ -152,7 +156,7 @@ export class BindingProvider {
                         this.objectWay = x.objectWay;
                     } else if ('number' === type) {
                         this['typeOf'] = 'Number';
-                    } 
+                    }
                     this.changeEvent = attr[A_change_event] || 'change,input';
                     this.property = 'element.value';
                     break;
@@ -436,8 +440,8 @@ function apply_bind(provider: BindingProvider) {
     expression_bind(expr, model, provider.ctx, provider.ctr, provider.binder);
 
     if (provider.bindingType === 'dual') {
-        
-        let onDomChange = provider.domChanged.bind(provider);        
+
+        let onDomChange = provider.domChanged.bind(provider);
         switch (provider.domListenerType) {
             case 'event': {
                 let el = provider.element,

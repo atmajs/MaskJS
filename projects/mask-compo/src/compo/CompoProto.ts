@@ -23,7 +23,7 @@ import { renderer_render } from '@core/renderer/exports';
 import { parser_parse } from '@core/parser/exports';
 import { IComponent } from '@compo/model/IComponent';
 
-export const CompoProto =  {
+export const CompoProto = <IComponent<any, any>> {
     type: Dom.CONTROLLER,
     __constructed: false,
     __resource: null,

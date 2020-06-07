@@ -93,8 +93,8 @@ export interface IComponent<
 
     signalState (signalName: string, isActive?: boolean): this
 
-    emitIn<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this
-    emitOut<TKey extends keyof TSignals> (signal: TKey, ...args: ParametersFromSecond<TSignals[TKey]>): this
+    emitIn<TKey extends keyof TSignals> (signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this
+    emitOut<TKey extends keyof TSignals> (signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this
 
     $scope <T = any> (key: string): T
 
