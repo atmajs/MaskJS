@@ -2,15 +2,15 @@ import { _Array_slice } from '@utils/refs';
 import { log_error } from '@core/util/reporters';
 import { obj_getProperty } from '@utils/obj';
 import { arr_contains, arr_remove } from '@utils/arr';
-import { 
-    prop_OBS, 
-    prop_PROXY, 
-    prop_DIRTY, 
-    prop_MUTATORS, 
-    obj_getObserversProperty, 
-    obj_ensureObserversProperty, 
-    obj_defineProp, 
-    obj_ensureFieldDeep, 
+import {
+    prop_OBS,
+    prop_PROXY,
+    prop_DIRTY,
+    prop_MUTATORS,
+    obj_getObserversProperty,
+    obj_ensureObserversProperty,
+    obj_defineProp,
+    obj_ensureFieldDeep,
     obj_chainToProp,
     IObserved
 } from './obj_props';
@@ -78,12 +78,12 @@ namespace AddObserver {
                 pushListener_(ctx, prop, cb);
 
                 let x = obj_getProperty(ctx, prop);
-                
+
                 let mutators = getSelfMutators(x);
                 if (mutators) {
                     objMutator_addObserver(x, mutators, cb);
                 }
-                
+
                 return true;
             }
             return false;
@@ -233,7 +233,7 @@ function attachProxy_(obj, property, cbs, chain) {
         },
         set (x) {
             if (x === currentVal) return;
-            
+
             let imax = cbs.length;
             let oldVal = currentVal;
 
@@ -245,7 +245,7 @@ function attachProxy_(obj, property, cbs, chain) {
             }
 
             currentVal = x;
-            
+
             let mutators = getSelfMutators(x);
             if (mutators != null) {
                 for (let i = 0; i < imax; i++) {
@@ -258,8 +258,14 @@ function attachProxy_(obj, property, cbs, chain) {
                 return;
             }
 
-            for (let i = 0; i < imax; i++) {
-                cbs[i](x);
+            for (let i = 0; i < cbs.length; i++) {
+                let fn = cbs[i];
+                fn(x);
+                if (fn !== cbs[i]) {
+                    // handler has removed the cb.
+                    // ArrCopy not used due to GC optm.
+                    i--;
+                }
             }
 
             obj_sub_notifyListeners(obj, property, oldVal);
