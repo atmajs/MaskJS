@@ -22,7 +22,7 @@ export function build_nodeFactory(config: IBuilderConfig) {
             }
             //#endif
         };
-    })(typeof document === 'undefined' ? null : document, config.create);
+    })(config.document ?? (typeof document === 'undefined' ? null : document), config.create);
 
     return function build_node(node, model, ctx, container, ctr, children) {
         var el = el_create(node.tagName);
