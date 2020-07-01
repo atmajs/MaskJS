@@ -53,20 +53,22 @@ custom_Tags['script'] = class_create(ElementContent, { tagName: 'script'});
 
 var manager_get;
 (function () {
+    let manager;
+    let KEY = '__contentManager';
+
     manager_get = function (ctx, el) {
         if (ctx == null || is_DOM) {
-            return manager || (manager = new Manager(document.body));
+            return manager ?? (manager = new Manager(document.body));
         }
-        var KEY = '__contentManager';
-        return ctx[KEY] || (ctx[KEY] = new Manager(el));
+        return ctx[KEY] ?? (ctx[KEY] = new Manager(el));
     };
-    var manager;
-    var Manager = class_create({
-        constructor: function (el) {
-            this.container = el.ownerDocument.body;
-            this.ids = {};
-        },
-        append: function (tagName, node) {
+    class Manager {
+        container: HTMLElement
+        ids: any = {}
+        constructor (el) {
+            this.container = el.ownerDocument.body ?? el;
+        }
+        append (tagName, node) {
             var id = node.id;
             var el = this.ids[id];
             if (el !== void 0) {
@@ -80,7 +82,7 @@ var manager_get;
             );
             this.ids[id] = el;
         }
-    });
+    }
 }());
 function render (tagName, attr, body, id, container) {
     var el = document.createElement(tagName);

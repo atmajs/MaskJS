@@ -145,7 +145,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
                 elements = children;
             }
             if (is_ArrayLike(nodes)) {
-                build_many(nodes, model, ctx, container, ctr, elements);			
+                build_many(nodes, model, ctx, container, ctr, elements);
             } else {
                 build(nodes, model, ctx, container, ctr, elements);
             }
@@ -182,13 +182,16 @@ export function builder_buildFactory (config: IBuilderConfig) {
                 }
             }
 
-            if (is_Function(node.renderEnd))
+            //#if (!NODE)
+            if (is_Function(node.renderEnd)) {
                 node.renderEnd(elements, model, ctx, container);
+            }
+            //#endif
         }
 
-        if (children != null && elements != null && children !== elements)
+        if (children != null && elements != null && children !== elements) {
             arr_pushMany(children, elements);
-
+        }
         return container;
     }
 
