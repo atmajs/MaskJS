@@ -380,7 +380,7 @@ function interpolate_obj_(obj, placeholders, node) {
                         current += ' ' + val;
                         clone[key] = isFn ?  parser_ensureTemplateFunction (current) : current;
                         continue;
-                    }                    
+                    }
                 }
                 clone[key] = val;
             }
@@ -439,18 +439,17 @@ function interpolate_str_(mix, placeholders, node) {
             }
         }
 
-        var expr = str.substring(last, index),
-            fn = isBlockEntry ? eval_ : interpolate_,
-            x = fn(expr, placeholders, node);
-
+        let expr = str.substring(last, index);
+        let fn = isBlockEntry ? eval_ : interpolate_;
+        let x = fn(expr, placeholders, node);
         if (x != null) {
             if (is_Function(x)) {
                 isFn = true;
                 x = x();
             }
             result += x;
-        }
-        else if (placeholders.opts.extending === true) {
+        } else if (placeholders.opts.extending === true || isBlockEntry === false) {
+            // leave not block entries inplace, handles emails etc.
             result += isBlockEntry ? ('@[' + expr + ']') : expr
         }
 
