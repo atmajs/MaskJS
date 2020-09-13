@@ -125,6 +125,7 @@ export class BindingProvider {
                     if (this.domSetter == null) this.domSetter = 'setValue';
                     if (this.domGetter == null) this.domGetter = 'getValue';
                     if (attr[A_dom_slot] == null) attr[A_dom_slot] = 'input';
+                    this.domListenerType = 'signal';
                 }
             }
         }
@@ -453,6 +454,7 @@ function apply_bind(provider: BindingProvider) {
                     for (let i = 0; i < arr.length; i++) {
                         attachListener(el, arr[i].trim(), onDomChange);
                     }
+                    break;
                 }
                 attachListener(el, event, onDomChange);
                 break;
