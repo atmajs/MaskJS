@@ -1,9 +1,0 @@
-[submodule "ref-mask-node"]
-	path = ref-mask-node
-	url = https://github.com/atmajs/mask-node
-[submodule "ref-utils"]
-	path = ref-utils
-	url = https://github.com/atmajs/utils
-[submodule "wiki"]
-	path = wiki
-	url = https://github.com/atmajs/MaskJS.wiki.git
