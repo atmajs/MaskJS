@@ -428,16 +428,16 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStaticsGc' {
         function on<T extends IAddEmitter>(compo: any, emitter: T, ...args: Parameters<T['addListener']>): any;
         function on<T extends IBindEmitter>(compo: any, emitter: T, ...args: Parameters<T['bind']>): any;
         function onMany<T extends IOnEmitter>(compo: any, emitter: T, events: {
-            [key in Parameters<T['on']>[0]]: Parameters<T['on']>[1];
+            [key in Parameters<T['on']>[0]]?: Parameters<T['on']>[1];
         }): any;
         function onMany<T extends IAddEventEmitter>(compo: any, emitter: T, events: {
-            [key in Parameters<T['addEventListener']>[0]]: Parameters<T['addEventListener']>[1];
+            [key in Parameters<T['addEventListener']>[0]]?: Parameters<T['addEventListener']>[1];
         }): any;
         function onMany<T extends IAddEmitter>(compo: any, emitter: T, events: {
-            [key in Parameters<T['addListener']>[0]]: Parameters<T['addListener']>[1];
+            [key in Parameters<T['addListener']>[0]]?: Parameters<T['addListener']>[1];
         }): any;
         function onMany<T extends IBindEmitter>(compo: any, emitter: T, events: {
-            [key in Parameters<T['bind']>[0]]: Parameters<T['bind']>[1];
+            [key in Parameters<T['bind']>[0]]?: Parameters<T['bind']>[1];
         }): any;
         function subscribe<T extends IObservable>(compo: any, observable: T, ...args: Parameters<T['subscribe']>): void;
     }

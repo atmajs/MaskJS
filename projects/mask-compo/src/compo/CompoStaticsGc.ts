@@ -57,24 +57,24 @@ export namespace Gc {
         compo
         , emitter: T
         , events: {
-            [key in Parameters<T['on']>[0]]: Parameters<T['on']>[1]
+            [key in Parameters<T['on']>[0]]?: Parameters<T['on']>[1]
     })
     export function onMany<T extends IAddEventEmitter> (compo
         , emitter: T
         , events: {
-            [key in Parameters<T['addEventListener']>[0]]: Parameters<T['addEventListener']>[1]
+            [key in Parameters<T['addEventListener']>[0]]?: Parameters<T['addEventListener']>[1]
     })
     export function onMany<T extends IAddEmitter> (
         compo
         , emitter: T
         , events: {
-            [key in Parameters<T['addListener']>[0]]: Parameters<T['addListener']>[1]
+            [key in Parameters<T['addListener']>[0]]?: Parameters<T['addListener']>[1]
     })
     export function onMany<T extends IBindEmitter> (
         compo
         , emitter: T
         , events: {
-            [key in Parameters<T['bind']>[0]]: Parameters<T['bind']>[1]
+            [key in Parameters<T['bind']>[0]]?: Parameters<T['bind']>[1]
     })
     export function onMany (compo, emitter, events) {
         let fn = emitter.on || emitter.addListener || emitter.addEventListener || emitter.bind;
@@ -84,13 +84,13 @@ export namespace Gc {
             return;
         }
         for (let key in events) {
-            let fn = events[key];
-            fn.call(emitter, key, fn);
+            let eventFn = events[key];
+            fn.call(emitter, key, eventFn);
         }
         compo_attach(compo, 'dispose', function () {
             for (let key in events) {
-                let fn = events[key];
-                emitter && fin.call(emitter, key, fn);
+                let eventFn = events[key];
+                emitter && fin.call(emitter, key, eventFn);
             }
             emitter = null;
         });
