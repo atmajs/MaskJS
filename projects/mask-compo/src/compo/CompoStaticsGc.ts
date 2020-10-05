@@ -52,6 +52,49 @@ export namespace Gc {
             emitter = null;
         });
     }
+
+    export function onMany<T extends IOnEmitter> (
+        compo
+        , emitter: T
+        , events: {
+            [key in Parameters<T['on']>[0]]: Parameters<T['on']>[1]
+    })
+    export function onMany<T extends IAddEventEmitter> (compo
+        , emitter: T
+        , events: {
+            [key in Parameters<T['addEventListener']>[0]]: Parameters<T['addEventListener']>[1]
+    })
+    export function onMany<T extends IAddEmitter> (
+        compo
+        , emitter: T
+        , events: {
+            [key in Parameters<T['addListener']>[0]]: Parameters<T['addListener']>[1]
+    })
+    export function onMany<T extends IBindEmitter> (
+        compo
+        , emitter: T
+        , events: {
+            [key in Parameters<T['bind']>[0]]: Parameters<T['bind']>[1]
+    })
+    export function onMany (compo, emitter, events) {
+        let fn = emitter.on || emitter.addListener || emitter.addEventListener || emitter.bind;
+        let fin = emitter.off || emitter.removeListener || emitter.removeEventListener || emitter.unbind;
+        if (fn == null || fin === null) {
+            console.warn('Expects `emitter` instance with any of the methods: on, addListener, addEventListener, bind');
+            return;
+        }
+        for (let key in events) {
+            let fn = events[key];
+            fn.call(emitter, key, fn);
+        }
+        compo_attach(compo, 'dispose', function () {
+            for (let key in events) {
+                let fn = events[key];
+                emitter && fin.call(emitter, key, fn);
+            }
+            emitter = null;
+        });
+    }
     export function subscribe<T extends IObservable> (compo, observable: T, ...args: Parameters<T['subscribe']>) {
         if (observable.subscribe == null) {
             console.warn('Expects `IObservable` instance with subscribe/unsubscribe methods');
