@@ -325,8 +325,35 @@ export class BindingProvider {
         }
         let typeof_ = this['typeOf'];
         if (typeof_ != null) {
-            let Converter = window[typeof_];
-            val = Converter(val);
+            switch (typeof_) {
+                case 'Number':
+                case 'number':
+                    val = Number(val);
+                    break;
+                case 'Boolean':
+                case 'boolean':
+                    if (typeof val === 'boolean') {
+                        break;
+                    }
+                    if (typeof val === 'string') {
+                        if (val === 'true' || val === '1' || val === 'yes') {
+                            val = true;
+                            break;
+                        }
+                        if (val === 'false' || val === '0' || val === 'no') {
+                            val = true;
+                            break;
+                        }
+                    }
+                    val = Boolean(val);
+                    break;
+                default:
+                    let Converter = window[typeof_];
+                    val = Converter(val);
+                    break;
+
+            }
+
         }
         if (this.mapToObj != null) {
             val = expression_callFn(
