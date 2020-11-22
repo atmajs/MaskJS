@@ -341,7 +341,7 @@ export class BindingProvider {
                             break;
                         }
                         if (val === 'false' || val === '0' || val === 'no') {
-                            val = true;
+                            val = false;
                             break;
                         }
                     }
