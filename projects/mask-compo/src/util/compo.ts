@@ -29,6 +29,7 @@ export function compo_dispose(compo) {
     compo.parent = null;
     compo.model = null;
     compo.components = null;
+    compo.disposed = true;
 }
 
 export function compo_detachChild(childCompo) {
@@ -81,7 +82,7 @@ export function compo_attachDisposer(compo, disposer) {
     };
 }
 export function compo_attach (compo: Component, name: string, fn: Function) {
-    var current = obj_getProperty(compo, name);		
+    var current = obj_getProperty(compo, name);
     if (is_Function(current)) {
         var wrapper = function(){
             var args = _Array_slice.call(arguments);

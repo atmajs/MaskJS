@@ -5,7 +5,7 @@ import { builder_build } from './dom/build';
 import { BuilderData } from './BuilderData';
 
 export function builder_resumeDelegate  (ctr, model, ctx, container, children?, finilizeFn?){
-    var anchor = BuilderData.document.createComment('');
+    let anchor = BuilderData.document.createComment('');
     container.appendChild(anchor);
     if (children != null) {
         children.push(anchor);
@@ -17,7 +17,9 @@ export function builder_resumeDelegate  (ctr, model, ctx, container, children?, 
 
 
 function _resume(ctr, model, ctx, anchorEl, children, finilize) {
-
+    if (ctr.disposed === true) {
+        return;
+    }
     if (ctr.tagName != null && ctr.tagName !== ctr.compoName) {
         ctr.nodes = {
             tagName: ctr.tagName,
@@ -30,32 +32,32 @@ function _resume(ctr, model, ctx, anchorEl, children, finilize) {
         model = ctr.model;
     }
 
-    var nodes = ctr.nodes,
-        elements = [];
+    let nodes = ctr.nodes;
+    let elements = [];
     if (nodes != null) {
-        var fragment = document.createDocumentFragment();
+        let fragment = document.createDocumentFragment();
         builder_build(nodes, model, ctx, fragment, ctr, elements);
         anchorEl.parentNode.insertBefore(fragment, anchorEl);
     }
     if (children != null && elements.length > 0) {
-        var args = [0, 1].concat(elements);
-        var i = coll_indexOf(children, anchorEl);
+        let args = [0, 1].concat(elements);
+        let i = coll_indexOf(children, anchorEl);
         if (i > -1) {
             args[0] = i;
             children.splice.apply(children, args);
         }
-        var parent = ctr.parent;
+        let parent = ctr.parent;
         while(parent != null) {
-            var arr = parent.$ || parent.elements;
+            let arr = parent.$ || parent.elements;
             if (arr != null) {
-                var i = coll_indexOf(arr, anchorEl);
+                let i = coll_indexOf(arr, anchorEl);
                 if (i === -1) {
                     break;
                 }
                 args[0] = i;
                 arr.splice.apply(arr, args);
             }
-            parent = parent.parent;					
+            parent = parent.parent;
         }
     }
 
@@ -64,21 +66,16 @@ function _resume(ctr, model, ctx, anchorEl, children, finilize) {
     // in Compo.handlers.attr object
     // but only on a component, not a tag ctr
     if (ctr.tagName == null) {
-        var attrHandlers = ctr.handlers && ctr.handlers.attr,
-            attrFn,
-            key;
-        for (key in ctr.attr) {
+        let attrHandlers = ctr.handlers?.attr;
+        for (let key in ctr.attr) {
 
-            attrFn = null;
-
+            let attrFn = null;
             if (attrHandlers && is_Function(attrHandlers[key])) {
                 attrFn = attrHandlers[key];
             }
-
             if (attrFn == null && is_Function(custom_Attributes[key])) {
                 attrFn = custom_Attributes[key];
             }
-
             if (attrFn != null) {
                 attrFn(anchorEl, ctr.attr[key], model, ctx, elements[0], ctr);
             }

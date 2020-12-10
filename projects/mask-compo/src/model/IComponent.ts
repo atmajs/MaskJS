@@ -42,6 +42,7 @@ export interface IComponent<
     async: boolean
     await: Function
     resume: Function
+    disposed: boolean
 
     meta: {
         /* render modes, relevant for mask-node */

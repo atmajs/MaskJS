@@ -1277,6 +1277,7 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         async: boolean;
         await: Function;
         resume: Function;
+        disposed: boolean;
         meta: {
             mode: null;
             modelMode: null;

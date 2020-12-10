@@ -53,6 +53,7 @@ export const CompoProto = <IComponent<any, any>> {
     async: false,
     await: null,
     resume: null,
+    disposed: false,
 
     meta: null as {
         /* render modes, relevant for mask-node */
