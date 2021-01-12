@@ -893,17 +893,20 @@ declare module 'mask/projects/mask-compo/src/exports' {
 }
 
 declare module 'mask/projects/mask-j/src/jmask/jMask' {
-    export function jMask(mix: any): any;
+    export function jMask(mix?: any): any;
     export namespace jMask {
         var prototype: any;
     }
 }
 
 declare module 'mask/renderer/exports' {
+    import { Component } from "mask/projects/mask-compo/src/exports";
     
     export function renderer_render<T extends HTMLElement>(mix: any, model?: any, ctx?: any, container?: any, controller?: any): T;
     
-    export function renderer_renderAsync(template: any, model?: any, ctx?: any, container?: any, ctr?: any): PromiseLike<HTMLElement>;
+    export function renderer_renderAsync(template: any, model?: any, ctx?: any, container?: any, ctr?: any): PromiseLike<HTMLElement> & {
+        done(el: HTMLElement, ctr: Component): any;
+    };
     export function renderer_clearCache(key: any): void;
 }
 
@@ -1279,16 +1282,16 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         resume: Function;
         disposed: boolean;
         meta: {
-            mode: null;
-            modelMode: null;
-            attributes: null;
-            properties: null;
-            arguments: null;
-            template: null;
-            serializeNodes: null;
-            readAttributes: null;
-            readProperties: null;
-            readArguments: null;
+            mode?: any;
+            modelMode?: any;
+            attributes?: any;
+            properties?: any;
+            arguments?: any;
+            template?: any;
+            serializeNodes?: any;
+            readAttributes?: any;
+            readProperties?: any;
+            readArguments?: any;
         };
         getAttribute?<T = any>(key: string): T;
         setAttribute?(key: string, val: any): any;
