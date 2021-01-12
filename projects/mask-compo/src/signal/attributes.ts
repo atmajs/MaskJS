@@ -6,7 +6,7 @@ import { _Array_slice } from '@utils/refs';
 import { expression_evalStatements } from '@project/expression/src/exports';
 import { compo_attach } from '@compo/util/compo';
 
-	
+
 _create('signal');
 
 _createEvent('change');
@@ -30,19 +30,19 @@ function _create(name, asEvent?) {
         let isSlot = node === ctr;
         _attachListener(el, ctr, attrValue, asEvent, isSlot);
     });
-}	
+}
 function _attachListener(el: HTMLElement, ctr, definition: string, asEvent: string, isSlot) {
-    let hasMany = definition.indexOf(';') !== -1,
-        signals = '',
-        arr = hasMany ? definition.split(';') : null,
-        i = hasMany ? arr.length : 1;
+    let hasMany = definition.indexOf(';') !== -1;
+    let signals = '';
+    let arr = hasMany ? definition.split(';') : null;
+    let count = hasMany ? arr.length : 1;
 
-    while( --i !== -1) {
+    for (let i = 0; i < count; i++) {
         let signal = _handleDefinition(
-            el, 
-            ctr, 
-            arr == null ? definition : arr[i], 
-            asEvent, 
+            el,
+            ctr,
+            arr == null ? definition : arr[i],
+            asEvent,
             isSlot
         );
         if (signal != null) {
@@ -64,11 +64,11 @@ function _handleDefinition (el, ctr, definition: string, asEvent: string, isSlot
         log_error(`Signal definition is not resolved ${definition}. The pattern is: (source((sourceArg))?:)?signal((expression))?`);
         return null;
     }
-    var source = match[2], 
-        sourceArg = match[4], 
-        signal = match[5], 
+    var source = match[2],
+        sourceArg = match[4],
+        signal = match[5],
         signalExpr = match[7];
-    
+
     if (asEvent != null) {
         sourceArg = source;
         source = asEvent;
@@ -98,10 +98,10 @@ function _createListener (ctr, slot, expr) {
     return function(event) {
         var args;
         if (arguments.length > 1) {
-            args = _Array_slice.call(arguments, 1); 
+            args = _Array_slice.call(arguments, 1);
         }
         if (expr != null) {
-            var p = ctr, 
+            var p = ctr,
                 model;
             while(p != null && model == null)  {
                 model = p.model;

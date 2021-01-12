@@ -46,16 +46,16 @@ export interface IComponent<
 
     meta: {
         /* render modes, relevant for mask-node */
-        mode: null,
-        modelMode: null,
-        attributes: null,
-        properties: null,
-        arguments: null,
-        template: null,
-        serializeNodes: null,
-        readAttributes: null,
-        readProperties: null,
-        readArguments: null
+        mode?: any
+        modelMode?: any
+        attributes?: any
+        properties?: any
+        arguments?: any
+        template?: any
+        serializeNodes?: any
+        readAttributes?: any
+        readProperties?: any
+        readArguments?: any
     }
 
     getAttribute? <T = any> (key: string): T

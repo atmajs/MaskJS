@@ -49,16 +49,18 @@ export function renderer_render<T extends HTMLElement> (mix, model?, ctx?, conta
  * @returns {Promise} Fullfills with (`IAppendChild|Node|DocumentFragment`, `Component`)
  * @memberOf mask
  */
-export function renderer_renderAsync (template, model?, ctx?, container?, ctr?): PromiseLike<HTMLElement> {
-    if (ctx == null || ctx.constructor !== builder_Ctx)
+export function renderer_renderAsync (template, model?, ctx?, container?, ctr?): PromiseLike<HTMLElement> & { done (el: HTMLElement, ctr: Component) } {
+    if (ctx == null || ctx.constructor !== builder_Ctx) {
         ctx = new builder_Ctx(ctx);
-    if (ctr == null) ctr = new Component();
-
-    var dom = renderer_render(template, model, ctx, container, ctr),
-        dfr = new class_Dfr();
+    }
+    if (ctr == null) {
+        ctr = new Component();
+    }
+    let dom = renderer_render(template, model, ctx, container, ctr);
+    let dfr = new class_Dfr();
 
     if (ctx.async === true) {
-        ctx.done(function() {
+        ctx.done(() => {
             dfr.resolve(dom, ctr);
         });
     } else {
@@ -75,4 +77,4 @@ export function renderer_clearCache (key) {
     delete __templates[key];
 };
 
-var __templates = {};
+let __templates = {};
