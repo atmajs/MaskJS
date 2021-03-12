@@ -22,7 +22,7 @@ const protos = [];
 const getProtoOf = Object.getPrototypeOf
 
 export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
-    
+
     if (Extends == null || Extends.length === 0) {
         return compo_createSingle(Proto);
     }
@@ -102,7 +102,7 @@ export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
     for (let i = protos.length - 1; i > -1; i--) {
         template = mergeNodes(protos[i], template);
     }
-    
+
     template = mergeNodes(BaseProto, template);
     template = mergeNodes(Proto, template);
     if (template != null) {
@@ -118,7 +118,6 @@ export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
     }
 
     compo_prepairProperties(Proto);
-    obj_extendDefaults(Proto, CompoProto);
 
     var meta = Proto.meta;
     if (meta == null) {
@@ -137,6 +136,13 @@ export function compo_createExt (Proto: IProtoDefinition, Extends?: any[]) {
             Ctor.prototype[key] = Proto[key];
         }
     }
+
+    for (let key in CompoProto) {
+        if (Ctor.prototype[key] == null) {
+            Ctor.prototype[key] = CompoProto[key];
+        }
+    }
+    //obj_extendDefaults(Ctor.prototype, CompoProto);
     return Ctor;
 }
 
@@ -149,7 +155,7 @@ function compo_createSingle (Proto: IProtoDefinition) {
             ProtoCtor.apply(this, arguments);
         }
     };
-    
+
     var include = _resolve_External('include');
     if (include != null) Proto.__resource = include.url;
 

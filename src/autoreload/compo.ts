@@ -8,7 +8,7 @@ declare let mask: typeof Mask;
 
 export function compo_remove(compo) {
     let elements = null;
-    if (compo.$ && compo.$.length) {
+    if (compo.$?.length) {
         elements = compo.$.toArray();
     }
     cache_remove(compo);
@@ -16,7 +16,7 @@ export function compo_remove(compo) {
         compo.remove();
         return elements;
     }
-    compo.$ && compo.$.remove();
+    compo.$?.remove?.();
     return elements;
 };
 
@@ -25,25 +25,25 @@ export function compo_insert(fragment, placeholder, parentController, stateTree,
         if (arrivedElements.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
             arrivedElements = arrivedElements.children;
         }
-        let imax = removedElements.length,
-            jmax = arrivedElements.length,
-            max = Math.min(imax, jmax),
-            i = -1;
+        let imax = removedElements.length;
+        let jmax = arrivedElements.length;
+        let max = Math.min(imax, jmax);
+        let i = -1;
         while (++i < max) {
-            let removed = removedElements[i],
-                arrived = arrivedElements[i];
+            let removed = removedElements[i];
+            let arrived = arrivedElements[i];
             el_copyProperties(arrived, removed);
         }
     }
-    
-    if (placeholder && placeholder.anchor) {
+
+    if (placeholder?.anchor != null) {
         placeholder.anchor.parentNode.insertBefore(fragment, placeholder.anchor);
     }
 
     let last = parentController.components[parentController.components.length - 1];
-    if (last) {
+    if (last != null) {
         mask.Compo.signal.emitIn(last, 'domInsert');
-        if (stateTree) {
+        if (stateTree != null) {
             stateTree_deserialize(last, stateTree);
         }
     }
@@ -53,11 +53,11 @@ export function compo_insert(fragment, placeholder, parentController, stateTree,
             continue;
         }
         for (let key in compos) {
-            if (compos[key] === prevInstance) {					
+            if (compos[key] === prevInstance) {
                 compos[key] = last;
             }
         }
-    }		
+    }
 }
 
 export function compo_reload(compoName: string, reloadedCompoNames?, nextReloadedCompoNames?: string[]) {
@@ -68,17 +68,17 @@ export function compo_reload(compoName: string, reloadedCompoNames?, nextReloade
     let hasReloaded = false;
     for (let i = 0; i < cache.length; i++) {
 
-        let x = cache[i],
-            _instance = x.instance,
+        let oldInstance = cache[i],
+            _instance = oldInstance.instance,
             _parent = _instance.parent;
 
         if (_instance == null || !_instance.$) {
-            console.error('Mask.Reload - no instance', x);
+            console.error('Mask.Reload - no instance', oldInstance);
             continue;
         }
 
         if (hasParentOfSome(_instance, reloadedCompoNames) || hasParentOfSome(_instance, nextReloadedCompoNames)) {
-            cache_push(compoName, x);
+            cache_push(compoName, oldInstance);
             continue;
         }
         let _stateTree = stateTree_serialize(_instance);
@@ -86,9 +86,10 @@ export function compo_reload(compoName: string, reloadedCompoNames?, nextReloade
         let $placeholder = el_createPlaceholder(_instance);
         let elements = compo_remove(_instance);
 
-        let container = $placeholder && $placeholder.container;
-        let lastElement = container && container.lastElementChild;
-        let frag = mask.render(x.node, _parent.model || x.model, x.ctx, container, _parent);
+        let container = $placeholder?.container;
+        let lastElement = container?.lastElementChild;
+        let model = oldInstance.node.expression ? _parent.model : (oldInstance.model ?? _parent.model);
+        let frag = mask.render(oldInstance.node, model, oldInstance.ctx, container, _parent);
         let arrivedElements = el_getArrivedElements(container, lastElement, frag);
 
         compo_insert(frag, $placeholder, _parent, _stateTree, _instance, elements, arrivedElements);

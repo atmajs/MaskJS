@@ -10,7 +10,7 @@ import { CompoProto } from '@compo/compo/CompoProto';
 
 const COMPO_CTOR_NAME = 'CompoBase';
 const getProtoOf = Object.getPrototypeOf
-	
+
 export function compo_inherit (Proto, Extends){
     var imax = Extends.length,
         i = imax,
@@ -40,7 +40,7 @@ export function compo_inherit (Proto, Extends){
         }
         inherit_(Proto, x, 'node');
     }
-    
+
     i = -1;
     imax = ctors.length;
     if (imax > 0) {
@@ -50,12 +50,12 @@ export function compo_inherit (Proto, Extends){
         Proto.constructor = joinCtors_(ctors);
     }
     var meta = Proto.meta;
-    if (meta == null) 
+    if (meta == null)
         meta = Proto.meta = {};
-    
-    if (meta.template == null) 
+
+    if (meta.template == null)
         meta.template = 'merge';
-        
+
     return hasBase;
 };
 
@@ -79,21 +79,21 @@ function fillProtoHash (proto, hash) {
 }
 
 function inherit_(target, source, name){
-    if (target == null || source == null) 
+    if (target == null || source == null)
         return;
-    
+
     if ('node' === name) {
         var targetNodes = target.template || target.nodes,
             sourceNodes = source.template || source.nodes;
         target.template = targetNodes == null || sourceNodes == null
             ? (targetNodes || sourceNodes)
             : (mask_merge(sourceNodes, targetNodes, target, {extending: true }));
-        
+
         if (target.nodes != null) {
             target.nodes = target.template;
         }
     }
-    
+
     var hasFnOverrides = false;
     outer: for(var key in source){
         if (key === 'constructor' || ('node' === name && (key === 'template' || key === 'nodes'))) {
@@ -103,7 +103,7 @@ function inherit_(target, source, name){
         if (target[key] == null) {
             target[key] = mix;
             continue;
-        }			
+        }
         if ('node' === name) {
             switch (key) {
                 case 'renderStart':
@@ -129,7 +129,7 @@ function inherit_(target, source, name){
                         target[key] = source[key];
                     }
                     continue outer;
-            }				
+            }
         }
         if ('pipes' === name) {
             inherit_(target[key], mix, 'pipe');
@@ -140,9 +140,9 @@ function inherit_(target, source, name){
             var fnAutoCall = false;
             if ('slots' === name || 'events' === name || 'pipe' === name)
                 fnAutoCall = true;
-            else if ('node' === name && ('onRenderStart' === key || 'onRenderEnd' === key)) 
+            else if ('node' === name && ('onRenderStart' === key || 'onRenderEnd' === key))
                 fnAutoCall = true;
-            
+
             target[key] = createWrapper_(target[key], mix, fnAutoCall);
             hasFnOverrides = true;
             continue;
@@ -150,7 +150,7 @@ function inherit_(target, source, name){
         if (type !== 'object') {
             continue;
         }
-        
+
         switch(key){
             case 'slots':
             case 'pipes':
@@ -161,7 +161,7 @@ function inherit_(target, source, name){
         }
         defaults_(target[key], mix);
     }
-    
+
     if (hasFnOverrides === true) {
         if (target.super != null) {
             log_error('`super` property is reserved. Dismissed. Current prototype', target);
@@ -172,12 +172,12 @@ function inherit_(target, source, name){
 
 /*! Circular references are not handled */
 function clone_(a) {
-    if (a == null) 
+    if (a == null)
         return null;
-    
-    if (typeof a !== 'object') 
+
+    if (typeof a !== 'object')
         return a;
-    
+
     if (is_Array(a)) {
         var imax = a.length,
             i = -1,
@@ -188,12 +188,12 @@ function clone_(a) {
         }
         return arr;
     }
-    
+
     var object = obj_create(a),
         key, val;
     for(key in object){
         val = object[key];
-        if (val == null || typeof val !== 'object') 
+        if (val == null || typeof val !== 'object')
             continue;
         object[key] = clone_(val);
     }
@@ -219,7 +219,7 @@ function createWrapper_(selfFn, baseFn, autoCallFunctions){
         selfFn._fn_chain.push(baseFn);
         return selfFn;
     }
-    
+
     var compileFns = autoCallFunctions === true
         ? compileFns_autocall_
         : compileFns_
@@ -228,11 +228,11 @@ function createWrapper_(selfFn, baseFn, autoCallFunctions){
         var fn = x._fn || (x._fn = compileFns(x._fn_chain));
         return fn.apply(this, arguments);
     }
-    
+
     var x:any = compoInheritanceWrapper;
     x._fn_chain = [ selfFn, baseFn ];
     x._fn = null;
-    
+
     return x;
 }
 function compileFns_(fns){
@@ -250,9 +250,9 @@ function compileFns_autocall_(fns) {
             i = imax;
         while( --i > -1 ){
             fn = fns[i];
-            if (fn == null) 
+            if (fn == null)
                 continue;
-            
+
             x = fn_apply(fn, this, arguments);
             if (x !== void 0) {
                 result = x;
@@ -265,7 +265,7 @@ function inheritFn_(selfFn, baseFn){
     return function(){
         this.super = baseFn;
         var x = fn_apply(selfFn, this, arguments);
-        
+
         this.super = null;
         return x;
     };
@@ -281,10 +281,10 @@ var joinCtors_;
             while(--i > -1) {
                 args[i] = arguments[i];
             }
-            
+
             var i = fns.length;
             while( --i > -1 ){
-                callCtor(this, fns[i], args);				
+                callCtor(this, fns[i], args);
             }
         };
     }
@@ -294,9 +294,9 @@ var joinCtors_;
         while(--i > -1) out[i] = ensureCallableSingle(fns[i]);
         return out;
     }
-    
+
     function callCtor (self, fn, args) {
-        fn(self, args);			
+        fn(self, args);
     }
 
     var ensureCallableSingle = function (fn) {
@@ -309,11 +309,11 @@ var joinCtors_;
             }
             try {
                 caller(fn, self, args);
-                safe = true;					
+                safe = true;
             } catch (error) {
                 caller = newCaller;
                 safe = true;
-                caller(fn, self, args);					
+                caller(fn, self, args);
             }
         }
     };
@@ -325,9 +325,8 @@ var joinCtors_;
         var x = new (fn.bind.apply(fn, [null].concat(args)));
         obj_extend(self, x);
     }
-    
-    /** 
+
+    /**
      * We can't relay on Object.getOwnPropertyDescriptor(fn, 'prototype').writable to detect classes as babel doesn't define this
      */
 }());
-	

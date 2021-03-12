@@ -5,6 +5,8 @@ import { _hasSlot, _fire } from './utils';
 import { _Array_slice } from '@utils/refs';
 import { expression_evalStatements } from '@project/expression/src/exports';
 import { compo_attach } from '@compo/util/compo';
+import { IComponent } from '@compo/model/IComponent';
+import { INode } from '@core/dom/INode';
 
 
 _create('signal');
@@ -25,13 +27,14 @@ _createEvent('shortcut', 'keydown');
 function _createEvent(name, type?) {
     _create(name, type || name);
 }
-function _create(name, asEvent?) {
-    customAttr_register('x-' + name, 'client', function(node, attrValue, model, ctx, el, ctr) {
+
+function _create(name, asEvent?: string) {
+    customAttr_register(`x-${name}`, 'client', function(node, attrValue, model, ctx, el, ctr) {
         let isSlot = node === ctr;
         _attachListener(el, ctr, attrValue, asEvent, isSlot);
     });
 }
-function _attachListener(el: HTMLElement, ctr, definition: string, asEvent: string, isSlot) {
+function _attachListener(el: HTMLElement, ctr, definition: string, asEvent: string, isSlot: boolean) {
     let hasMany = definition.indexOf(';') !== -1;
     let signals = '';
     let arr = hasMany ? definition.split(';') : null;
@@ -46,7 +49,7 @@ function _attachListener(el: HTMLElement, ctr, definition: string, asEvent: stri
             isSlot
         );
         if (signal != null) {
-            signals += ',' + signal + ',';
+            signals += `,${signal},`;
         }
     }
     if (signals !== '') {

@@ -1,5 +1,6 @@
 import { Mask as mask } from '@core/mask'
 import { deco_slot } from '@compo/deco/component_decorators';
+import { IComponent } from '@compo/model/IComponent';
 const Compo = mask.Compo;
 
 declare var sinon: sinon.SinonStatic
@@ -11,11 +12,11 @@ UTest({
 				'foo': assert.await()
 			}
 		});
-		
+
 		var div = mask.render(`
 			Foo > button x-click='foo';
 		`);
-		
+
 		return UTest.domtest(div, `
 			find(button) > do click;
 		`);
@@ -28,17 +29,17 @@ UTest({
 				'foo': spy
 			}
 		});
-		
+
 		var div = mask.render(`
 			Foo {
 				var txt = "Lorem"
 				button .fromScope x-click='foo(txt)';
 				each (.) {
 					button .fromModel x-signal='click: foo(x)';
-				}	
+				}
 			}
 		`);
-		
+
 		return UTest
 			.domtest(div, `
 				find(.fromScope) > do click;
@@ -61,10 +62,10 @@ UTest({
 				'testy': spy
 			}
 		}));
-		
-		var compo = Compo.initialize('div > Foo');		
+
+		var compo = Compo.initialize('div > Foo');
 		compo.emitIn('testy', 1, 'qux');
-		
+
 		var foo = compo.find('Foo');
 		notEq_(foo, null);
 		foo.remove();
@@ -102,7 +103,7 @@ UTest({
 		},
 		'should call method on 2 signals with a negotiation' () {
 			var spy = sinon.spy();
-			var compo = {
+			var compo = <IComponent> {
 				slots: {} as any
 			};
 
@@ -123,14 +124,14 @@ UTest({
 
 			Compo.signal.emitIn(compo, 'qux');
 			eq_(spy.callCount, 1);
-			
+
 			Compo.signal.emitIn(compo, 'bar');
 			eq_(spy.callCount, 1);
 
 			Compo.signal.emitIn(compo, 'foo');
 			eq_(spy.callCount, 2);
 		}
-    }, 
+    },
     'supports decorator' () {
         let spyBar = sinon.spy();
         let spyQux = sinon.spy();

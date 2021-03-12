@@ -352,16 +352,18 @@ declare module 'mask' {
 }
 
 declare module 'mask/projects/mask-compo/src/signal/compound' {
-    export function _compound(ctr: any, slotExpression: any, cb: any): {
+    import { IComponent } from "mask/projects/mask-compo/src/model/IComponent";
+    export function _compound(ctr: IComponent, slotExpression: string, cb: any): SlotExpression;
+    class SlotExpression {
         slots: any;
         flags: any;
         cb: any;
         expression: any;
-        constructor: (expression: any, cb: any) => void;
-        signalDelegate: (name: any) => () => void;
-        call: (this: any, name: any) => void;
-        findSlot: (name: any) => any;
-    };
+        constructor(expression: any, cb: any);
+        signalDelegate(name: string): () => void;
+        call(name: string): void;
+        findSlot(name: any): any;
+    }
 }
 
 declare module 'mask/projects/mask-compo/src/signal/toggle' {
@@ -910,6 +912,95 @@ declare module 'mask/renderer/exports' {
     export function renderer_clearCache(key: any): void;
 }
 
+declare module 'mask/projects/mask-compo/src/model/IComponent' {
+    import { INode } from "mask/dom/INode";
+    import { ParametersFromSecond } from "mask/types/Parameters";
+    export interface IComponent<TSignals extends Partial<Record<keyof TSignals, <TSender = any>(sender: TSender, ...args: any) => any>> = any, TOuterModel = any> {
+        type: number;
+        __constructed: boolean;
+        __resource: any;
+        __frame: number;
+        __tweens: number;
+        ID: number;
+        tagName: string;
+        compoName: string;
+        node: INode;
+        nodes: INode | INode[];
+        parent: IComponent;
+        components: IComponent[];
+        expression: string;
+        attr: {
+            [key: string]: string | Function | any;
+        };
+        model: TOuterModel;
+        scope: any;
+        $: JQuery;
+        slots: {
+            [key: string]: Function;
+        };
+        pipes: {
+            [pipe: string]: {
+                [key: string]: Function;
+            };
+        };
+        compos: {
+            [key: string]: string | IComponent | any;
+        };
+        events: {
+            [key: string]: Function;
+        };
+        hotkeys: {
+            [key: string]: Function;
+        };
+        async: boolean;
+        await: Function;
+        resume: Function;
+        disposed: boolean;
+        meta: {
+            mode?: any;
+            modelMode?: any;
+            attributes?: any;
+            properties?: any;
+            arguments?: any;
+            template?: any;
+            serializeNodes?: any;
+            readAttributes?: any;
+            readProperties?: any;
+            readArguments?: any;
+        };
+        getAttribute?<T = any>(key: string): T;
+        setAttribute?(key: string, val: any): any;
+        onAttributeSet?(name: string, val: any): any;
+        renderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        renderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
+        onRenderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        onRenderEndServer?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        renderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        onEnterFrame?: Function;
+        render(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
+        appendTo?(el: HTMLElement): any;
+        append?(template: string, model: TOuterModel, selector: string): any;
+        find<T = IComponent>(selector: string): T;
+        findAll<T = IComponent>(selector: string): T[];
+        closest<T = IComponent>(selector: any): T;
+        on(type: string, selector: string, fn: Function): any;
+        remove(): void;
+        slotState(slotName: string, isActive?: boolean): this;
+        signalState(signalName: string, isActive?: boolean): this;
+        emitIn<TKey extends keyof TSignals>(signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this;
+        emitOut<TKey extends keyof TSignals>(signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this;
+        $scope<T = any>(key: string): T;
+        $eval<T = any>(expr: string, model?: any, ctx?: any): T;
+        attach(name: keyof this, fn: Function): any;
+        serializeState(): {
+            scope: any;
+        };
+        deserializeState(bundle?: any): any;
+    }
+}
+
 declare module 'mask/projects/mask-compo/src/compo/Component' {
     import { _compound } from 'mask/projects/mask-compo/src/signal/compound'; 
      import { _toggle_single } from 'mask/projects/mask-compo/src/signal/toggle'; 
@@ -1235,95 +1326,6 @@ declare module 'mask/projects/mask-compo/src/scope-vars' {
     export function _mask_ensureTmplFn(value: any): any;
     export function _resolve_External(key: any): any;
     export function setDomLib(lib: any): void;
-}
-
-declare module 'mask/projects/mask-compo/src/model/IComponent' {
-    import { INode } from "mask/dom/INode";
-    import { ParametersFromSecond } from "mask/types/Parameters";
-    export interface IComponent<TSignals extends Partial<Record<keyof TSignals, <TSender = any>(sender: TSender, ...args: any) => any>> = any, TOuterModel = any> {
-        type: number;
-        __constructed: boolean;
-        __resource: any;
-        __frame: number;
-        __tweens: number;
-        ID: number;
-        tagName: string;
-        compoName: string;
-        node: INode;
-        nodes: INode | INode[];
-        parent: IComponent;
-        components: IComponent[];
-        expression: string;
-        attr: {
-            [key: string]: string | Function | any;
-        };
-        model: TOuterModel;
-        scope: any;
-        $: JQuery;
-        slots: {
-            [key: string]: Function;
-        };
-        pipes: {
-            [pipe: string]: {
-                [key: string]: Function;
-            };
-        };
-        compos: {
-            [key: string]: string | IComponent | any;
-        };
-        events: {
-            [key: string]: Function;
-        };
-        hotkeys: {
-            [key: string]: Function;
-        };
-        async: boolean;
-        await: Function;
-        resume: Function;
-        disposed: boolean;
-        meta: {
-            mode?: any;
-            modelMode?: any;
-            attributes?: any;
-            properties?: any;
-            arguments?: any;
-            template?: any;
-            serializeNodes?: any;
-            readAttributes?: any;
-            readProperties?: any;
-            readArguments?: any;
-        };
-        getAttribute?<T = any>(key: string): T;
-        setAttribute?(key: string, val: any): any;
-        onAttributeSet?(name: string, val: any): any;
-        renderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderStart?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        renderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderStartClient?(model: TOuterModel, ctx: any, container: HTMLElement): Promise<any> | void;
-        onRenderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
-        onRenderEndServer?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
-        renderEnd?(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
-        onEnterFrame?: Function;
-        render(elements: HTMLElement[], model: TOuterModel, ctx: any, container: HTMLElement): any;
-        appendTo?(el: HTMLElement): any;
-        append?(template: string, model: TOuterModel, selector: string): any;
-        find<T = IComponent>(selector: string): T;
-        findAll<T = IComponent>(selector: string): T[];
-        closest<T = IComponent>(selector: any): T;
-        on(type: string, selector: string, fn: Function): any;
-        remove(): void;
-        slotState(slotName: string, isActive?: boolean): this;
-        signalState(signalName: string, isActive?: boolean): this;
-        emitIn<TKey extends keyof TSignals>(signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this;
-        emitOut<TKey extends keyof TSignals>(signal: TKey | any, ...args: ParametersFromSecond<TSignals[TKey]>): this;
-        $scope<T = any>(key: string): T;
-        $eval<T = any>(expr: string, model?: any, ctx?: any): T;
-        attach(name: keyof this, fn: Function): any;
-        serializeState(): {
-            scope: any;
-        };
-        deserializeState(bundle?: any): any;
-    }
 }
 
 declare module 'mask/types/Parameters' {
