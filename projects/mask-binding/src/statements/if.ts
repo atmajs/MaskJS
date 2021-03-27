@@ -15,14 +15,14 @@ customTag_register('+if', {
     meta: {
         serializeNodes: true
     },
-    render: function(model, ctx, container, ctr, children){
-        var node = this,
-            nodes = _getNodes('if', node, model, ctx, ctr),
-            index = 0,
-            next = node;
-        while(next.nodes !== nodes){
+    render (model, ctx, container, ctr, children){
+        let node = this;
+        let nodes = _getNodes('if', node, model, ctx, ctr);
+        let index = 0;
+        let next = node;
+        while (next.nodes !== nodes){
             index++;
-            next = node.nextSibling;
+            next = next.nextSibling;
             if (next == null || next.tagName !== 'else') {
                 index = null;
                 break;
@@ -32,8 +32,8 @@ customTag_register('+if', {
         return compo_renderElements(nodes, model, ctx, container, ctr, children);
     },
 
-    renderEnd: function(els, model, ctx, container, ctr){
-        var compo = new IFStatement(),
+    renderEnd (els, model, ctx, container, ctr){
+        let compo = new IFStatement(),
             index = this.attr['switch-index'];
 
         _renderPlaceholder(this, compo, container);
@@ -49,8 +49,8 @@ customTag_register('+if', {
         );
     },
 
-    serializeNodes: function(current){
-        var nodes = [ current ];
+    serializeNodes (current){
+        let nodes = [ current ];
         while (true) {
             current = current.nextSibling;
             if (current == null || current.tagName !== 'else') {
@@ -76,8 +76,8 @@ IFStatement.prototype = {
     Switch : null,
     binder : null,
 
-    refresh: function() {
-        var currentIndex = this.index,
+    refresh () {
+        let currentIndex = this.index,
             model = this.model,
             ctx = this.ctx,
             ctr = this.controller,
@@ -85,10 +85,10 @@ IFStatement.prototype = {
             imax = switch_.length,
             i = -1;
         while ( ++i < imax ){
-            var node = switch_[i].node;
-            var expr = node.expression;
+            let node = switch_[i].node;
+            let expr = node.expression;
             if (expr == null)
-                break;				
+                break;
             if (expression_eval_safe(expr, model, ctx, ctr, node))
                 break;
         }
@@ -106,13 +106,13 @@ IFStatement.prototype = {
 
         this.index = i;
 
-        var current = switch_[i];
+        let current = switch_[i];
         if (current.elements != null) {
             els_toggleVisibility(current.elements, true);
             return;
         }
 
-        var nodes = current.node.nodes,
+        let nodes = current.node.nodes,
             frag = _document.createDocumentFragment(),
             owner = { components: [], parent: ctr },
             els = compo_renderElements(nodes, model, ctx, frag, owner);
@@ -126,8 +126,8 @@ IFStatement.prototype = {
         }
         ctr.components.push.apply(ctr.components, owner.components);
     },
-    dispose: function(){
-        var switch_ = this.Switch,
+    dispose (){
+        let switch_ = this.Switch,
             imax = switch_.length,
             i = -1,
 
