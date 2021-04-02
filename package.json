@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.72.11",
+    "version": "0.72.13",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {

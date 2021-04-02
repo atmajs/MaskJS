@@ -152,6 +152,7 @@ export function build_compoFactory(build: Function, config: IBuilderConfig) {
         }
 
         clone.ID = ++BuilderData.id;
+        clone.node = node;
         compo_addChild(ctr, clone);
 
         var i = ctr.components.length - 1;

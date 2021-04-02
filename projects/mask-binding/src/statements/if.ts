@@ -15,12 +15,12 @@ customTag_register('+if', {
     meta: {
         serializeNodes: true
     },
-    render (model, ctx, container, ctr, children){
+    render(model, ctx, container, ctr, children) {
         let node = this;
         let nodes = _getNodes('if', node, model, ctx, ctr);
         let index = 0;
         let next = node;
-        while (next.nodes !== nodes){
+        while (next.nodes !== nodes) {
             index++;
             next = next.nextSibling;
             if (next == null || next.tagName !== 'else') {
@@ -32,9 +32,9 @@ customTag_register('+if', {
         return compo_renderElements(nodes, model, ctx, container, ctr, children);
     },
 
-    renderEnd (els, model, ctx, container, ctr){
-        let compo = new IFStatement(),
-            index = this.attr['switch-index'];
+    renderEnd(els, model, ctx, container, ctr) {
+        let compo = new IFStatement();
+        let index = this.attr['switch-index'];
 
         _renderPlaceholder(this, compo, container);
         return initialize(
@@ -49,8 +49,8 @@ customTag_register('+if', {
         );
     },
 
-    serializeNodes (current){
-        let nodes = [ current ];
+    serializeNodes(current) {
+        let nodes = [current];
         while (true) {
             current = current.nextSibling;
             if (current == null || current.tagName !== 'else') {
@@ -64,27 +64,27 @@ customTag_register('+if', {
 });
 
 
-function IFStatement() {}
+function IFStatement() { }
 
 IFStatement.prototype = {
     compoName: '+if',
-    ctx : null,
-    model : null,
-    controller : null,
+    ctx: null,
+    model: null,
+    controller: null,
 
-    index : null,
-    Switch : null,
-    binder : null,
+    index: null,
+    Switch: null,
+    binder: null,
 
-    refresh () {
-        let currentIndex = this.index,
-            model = this.model,
-            ctx = this.ctx,
-            ctr = this.controller,
-            switch_ = this.Switch,
-            imax = switch_.length,
-            i = -1;
-        while ( ++i < imax ){
+    refresh() {
+        let currentIndex = this.index;
+        let model = this.model;
+        let ctx = this.ctx;
+        let ctr = this.controller;
+        let switch_ = this.Switch;
+        let imax = switch_.length;
+        let i = -1;
+        while (++i < imax) {
             let node = switch_[i].node;
             let expr = node.expression;
             if (expr == null)
@@ -92,13 +92,12 @@ IFStatement.prototype = {
             if (expression_eval_safe(expr, model, ctx, ctr, node))
                 break;
         }
-
-        if (currentIndex === i)
+        if (currentIndex === i) {
             return;
-
-        if (currentIndex != null)
+        }
+        if (currentIndex != null) {
             els_toggleVisibility(switch_[currentIndex].elements, false);
-
+        }
         if (i === imax) {
             this.index = null;
             return;
@@ -112,10 +111,12 @@ IFStatement.prototype = {
             return;
         }
 
-        let nodes = current.node.nodes,
-            frag = _document.createDocumentFragment(),
-            owner = { components: [], parent: ctr },
-            els = compo_renderElements(nodes, model, ctx, frag, owner);
+        let parentNodeName = this.node.parent.tagName;
+        let parentGetsElements = parentNodeName === 'define' || parentNodeName === 'let';
+        let nodes = current.node.nodes;
+        let frag = _document.createDocumentFragment();
+        let owner = { components: [], parent: ctr };
+        let els = compo_renderElements(nodes, model, ctx, frag, owner);
 
         dom_insertBefore(frag, this.placeholder);
         current.elements = els;
@@ -124,16 +125,20 @@ IFStatement.prototype = {
         if (ctr.components == null) {
             ctr.components = [];
         }
-        ctr.components.push.apply(ctr.components, owner.components);
+        ctr.components.push(...owner.components);
+        if (parentGetsElements) {
+            // we add also the elements to parents set, in case the +if was the root node.
+            ctr.$?.add(els);
+        }
     },
-    dispose (){
+    dispose() {
         let switch_ = this.Switch,
             imax = switch_.length,
             i = -1,
 
             x, expr;
 
-        while( ++i < imax ){
+        while (++i < imax) {
             x = switch_[i];
             expr = x.node.expression;
 
@@ -156,36 +161,37 @@ IFStatement.prototype = {
     }
 };
 
-function initialize(compo, node, index, elements, model, ctx, container, ctr) {
+function initialize(ifCtr, nodeCtr, index, elements, model, ctx, container, parentCtr) {
 
-    compo.model = model;
-    compo.ctx = ctx;
-    compo.controller = ctr;
-    compo.refresh = fn_proxy(compo.refresh, compo);
-    compo.binder = expression_createListener(compo.refresh);
-    compo.index = index;
-    compo.Switch = [{
-        node: node,
+    ifCtr.model = model;
+    ifCtr.ctx = ctx;
+    ifCtr.controller = parentCtr;
+    ifCtr.refresh = fn_proxy(ifCtr.refresh, ifCtr);
+    ifCtr.binder = expression_createListener(ifCtr.refresh);
+    ifCtr.index = index;
+    ifCtr.node = nodeCtr.node;
+    ifCtr.Switch = [{
+        node: nodeCtr,
         elements: null
     }];
 
-    expression_bind(node.expression, model, ctx, ctr, compo.binder);
+    expression_bind(nodeCtr.expression, model, ctx, parentCtr, ifCtr.binder);
 
     while (true) {
-        node = node.nextSibling;
-        if (node == null || node.tagName !== 'else')
+        nodeCtr = nodeCtr.nextSibling;
+        if (nodeCtr == null || nodeCtr.tagName !== 'else')
             break;
 
-        compo.Switch.push({
-            node: node,
+        ifCtr.Switch.push({
+            node: nodeCtr,
             elements: null
         });
 
-        if (node.expression)
-            expression_bind(node.expression, model, ctx, ctr, compo.binder);
+        if (nodeCtr.expression)
+            expression_bind(nodeCtr.expression, model, ctx, parentCtr, ifCtr.binder);
     }
     if (index != null) {
-        compo.Switch[index].elements = elements;
+        ifCtr.Switch[index].elements = elements;
     }
-    return compo;
+    return ifCtr;
 }
