@@ -16,9 +16,9 @@ export interface IDomWay {
     set (provider: BindingProvider, value: any)
 }
 
-var objectWay = <IObjectWay> {
+let objectWay = <IObjectWay> {
     get: function(provider, expression) {
-        var getter = provider.objGetter;
+        let getter = provider.objGetter;
         if (getter == null) {
             return expression_eval(
                 expression
@@ -28,26 +28,26 @@ var objectWay = <IObjectWay> {
             );
         }
 
-        var ctr = provider.ctr.parent,
+        let ctr = provider.ctr.parent,
             model = provider.model;
         return expression_callFn(
-            getter, 
+            getter,
             provider.model,
             provider.ctx,
             ctr,
             [ expression, model, ctr ]
-        );			
+        );
     },
     set: function(obj, property, value, provider) {
-        var setter = provider.objSetter;
+        let setter = provider.objSetter;
         if (setter == null) {
             obj_setProperty(obj, property, value);
             return;
         }
-        var ctr = provider.ctr.parent,
+        let ctr = provider.ctr.parent,
             model = provider.model;
         return expression_callFn(
-            setter, 
+            setter,
             provider.model,
             provider.ctx,
             ctr,
@@ -55,46 +55,46 @@ var objectWay = <IObjectWay> {
         );
     }
 };
-var domWay  = <IDomWay> {
+let domWay  = <IDomWay> {
     get (provider: BindingProvider) {
-        var getter = provider.domGetter;
+        let getter = provider.domGetter;
         if (getter == null) {
             return obj_getProperty(provider, provider.property);
         }
-        var ctr = provider.ctr.parent;
+        let ctr = provider.ctr.parent;
         if (isValidFn_(ctr, getter, 'Getter') === false) {
             return null;
         }
         return ctr[getter](provider.element);
     },
     set (provider: BindingProvider, value) {
-        var setter = provider.domSetter;
+        let setter = provider.domSetter;
         if (setter == null) {
             obj_setProperty(provider, provider.property, value);
             return;
         }
-        var ctr = provider.ctr.parent;
+        let ctr = provider.ctr.parent;
         if (isValidFn_(ctr, setter, 'Setter') === false) {
             return;
         }
         ctr[setter](value, provider.element);
     }
 };
-var DateTimeDelegate = {
+let DateTimeDelegate = {
     domSet: function(format){
         return function(prov, val){
-            var date = date_ensure(val);
+            let date = date_ensure(val);
             prov.element.value = date == null ? '' : format(date);
         }
     },
     objSet: function(extend){
         return function(obj, prop, val){
 
-            var date = date_ensure(val);
+            let date = date_ensure(val);
             if (date == null)
                 return;
 
-            var target = obj_getProperty(obj, prop);
+            let target = obj_getProperty(obj, prop);
             if (target == null) {
                 obj_setProperty(obj, prop, date);
                 return;
@@ -131,7 +131,7 @@ export const DomObjectTransport = {
             if (i === -1)
                 return '';
 
-            var opt = el.options[i],
+            let opt = el.options[i],
                 val = opt.getAttribute('value');
             return val == null
                 ? opt.getAttribute('name') /* obsolete */
@@ -139,7 +139,7 @@ export const DomObjectTransport = {
                 ;
         },
         set (provider, val) {
-            var el = provider.element,
+            let el = provider.element,
                 options = el.options,
                 imax = options.length,
                 opt, x, i;
@@ -172,9 +172,9 @@ export const DomObjectTransport = {
             if (mix == null) {
                 return;
             }
-            var arr = is_ArrayLike(mix) ? mix : [ mix ];
+            let arr = is_ArrayLike(mix) ? mix : [ mix ];
             coll_each(arr, function(val){
-                var els = provider.element.options,
+                let els = provider.element.options,
                     imax = els.length,
                     i = -1;
                 while (++i < imax) {
@@ -192,20 +192,20 @@ export const DomObjectTransport = {
         domWay: {
             get: domWay.get,
             set (prov, val){
-                var date = date_ensure(val);
+                let date = date_ensure(val);
                 prov.element.value = date == null ? '' : formatDate(date);
             }
         },
         objectWay: {
             get: objectWay.get,
             set: DateTimeDelegate.objSet(function(a, b){
-                var offset = a.getTimezoneOffset();
+                let offset = b.getTimezoneOffset();
                 a.setFullYear(b.getFullYear());
                 a.setMonth(b.getMonth());
                 a.setDate(b.getDate());
-                var diff = offset - a.getTimezoneOffset();
+                let diff = offset - a.getTimezoneOffset();
                 if (diff !== 0) {
-                    var h = (diff / 60) | 0;
+                    let h = (diff / 60) | 0;
                     a.setHours(a.getHours() + h);
                 }
             })
@@ -241,11 +241,11 @@ export const DomObjectTransport = {
     RADIO: {
         domWay: {
             get: function(provider){
-                var el = provider.element;
+                let el = provider.element;
                 return el.checked ? el.value : null;
             },
             set: function(provider, value){
-                var el = provider.element;
+                let el = provider.element;
                 el.checked = el.value === value;
             }
         },
@@ -261,10 +261,10 @@ function isValidFn_(obj, prop, name) {
     return true;
 }
 function getAccessorObject_(provider, accessor) {
-    var ctr = provider.ctr.parent;
+    let ctr = provider.ctr.parent;
     if (ctr[accessor] != null)
         return ctr;
-    var model = provider.model;
+    let model = provider.model;
     if (model[accessor] != null)
         return model;
 
@@ -272,7 +272,7 @@ function getAccessorObject_(provider, accessor) {
     return null;
 }
 function formatDate(date) {
-    var YYYY = date.getFullYear(),
+    let YYYY = date.getFullYear(),
         MM = date.getMonth() + 1,
         DD = date.getDate();
     return YYYY
@@ -285,7 +285,7 @@ function formatDate(date) {
         ;
 }
 function formatTime(date) {
-    var H = date.getHours(),
+    let H = date.getHours(),
         M = date.getMinutes();
     return H
         + ':'
@@ -294,7 +294,7 @@ function formatTime(date) {
         ;
 }
 function formatMonth(date) {
-    var YYYY = date.getFullYear(),
+    let YYYY = date.getFullYear(),
         MM = date.getMonth() + 1;
     return YYYY
         + '-'
