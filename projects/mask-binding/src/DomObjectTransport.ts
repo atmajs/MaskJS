@@ -275,7 +275,7 @@ function formatDate(date) {
     let YYYY = date.getFullYear(),
         MM = date.getMonth() + 1,
         DD = date.getDate();
-    return YYYY
+    return (YYYY + '').padStart(4, '0')
         + '-'
         + (MM < 10 ? '0' : '')
         + (MM)
