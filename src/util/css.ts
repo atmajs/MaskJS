@@ -2,6 +2,13 @@ import { is_String } from '@utils/is';
 import { error_withNode } from './reporters';
 
 export function css_ensureScopedStyles(str: string, node, el) {
+    //#if (NODE)
+    if (el.compoName != null) {
+        // in Node the dom tree includes components as elements, so get the parent
+        el = el.parentNode;
+    }
+    //#endif
+
     let attr = node.attr;
     if (attr.scoped == null && attr[KEY] == null) {
         return str;
@@ -56,13 +63,6 @@ function getScopeIdentity(node, el) {
         el.className += ' ' + identity;
         return '.' + identity;
     }
-    if (el.setAttribute == null) {
-        if (el.attr == null) {
-            el.attr = Object.create(null);
-        }
-        el.attr.id = identity;
-    } else {
-        el.setAttribute('id', identity);
-    }
+    el.setAttribute('id', identity);
     return '#' + identity;
 }
