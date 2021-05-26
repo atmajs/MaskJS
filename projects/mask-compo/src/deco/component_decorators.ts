@@ -11,7 +11,7 @@ export function deco_slot (mix?: string | { name?: string, private?: boolean}) {
         const isPrivate = typeof mix !== 'string' ? mix?.private ?? false : false;
         const viaProperty = descriptor == null;
         const fn = viaProperty ? target[propertyKey] : descriptor.value;
-        slots [name ?? propertyKey] = !isPrivate 
+        slots [name ?? propertyKey] = !isPrivate
             ? fn
             : function (...args) {
                 fn.call(this, ...args);
@@ -33,7 +33,7 @@ export function deco_pipe (pipeName: string, signalName?: string) {
         const stream = pipes[pipeName] ?? (pipes[pipeName] = {});
         const viaProperty = descriptor == null;
         const fn = viaProperty ? target[propertyKey] : descriptor.value;
-        stream [name ?? propertyKey] = fn;
+        stream [signalName ?? propertyKey] = fn;
         return descriptor;
     };
 };

@@ -1,7 +1,7 @@
 <p align='center'>
     <img src='assets/logo.png'/>
 	</p>
-	
+
 ----
 
 <p align="center">
@@ -81,7 +81,7 @@ import CustomComponent from 'Foo.mask'
     section.content {
         span > 'Hello ~name!'
 
-        if (admins.indexOf(name) > -1) {
+        if (admins.includes(name)) {
             em > 'Admin'
         }
     }
@@ -132,32 +132,52 @@ ul {
 
 Core of the HMVC engine. Simple compo sample:
 
-```javascript
-mask.registerHandler('CustomComponent', mask.Compo({
-	slots: {
-		refreshDate: function(){
-			this.model.date = new Date();
-		},
-		domInsert: function(){
-			alert(this.$.innerWidth());
-		}
-	},
-	events: {
-		'click: button': function(){
-			alert(this.model.date);
-		}
-	},
-	onRenderStart: function(model, ctx){
+```ts
+export class CustomComponentCtr {
+
+	// slots example
+	@mask.deco.slot()
+	onRefreshDate (){
+		this.model.date = new Date();
+	}
+	@mask.deco.slot()
+	domInsert (){
+		alert(this.$.innerWidth());
+	}
+
+	// events example
+	@mask.deco.event('click: button')
+	onButtonClicked (){
+		alert(this.model.date);
+	}
+
+	onRenderStart (model, ctx) {
 		// override model
 		this.model = { date: new Date(); }
-	},
+	}
 	onRenderEnd: function(elements, model, ctx){
 		this.$ // is a domLibrary (jQuery-lite, jQuery/Zepto/Kimbo) wrapper over `elements`
-	},
-	dispose: function(){
+	}
+
+	dispose () {
 		// do some cleanup
 	}
-})
+};
+```
+
+```mask
+import './CustomComponent.less'
+import CustomComponentCtr from './CustomComponentCtr.ts'
+
+define CustomComponent extends CustomComponentCtr {
+	h1 {
+		'Date ~[bind: _.formatDate(date)]'
+	}
+	button .btn x-tap='onRefreshDate' {
+		i.material-icons > 'update'
+		'Refresh'
+	}
+}
 ```
 
 # `2.2` Bindings
@@ -209,13 +229,13 @@ _So you would never need to use the HTML._
 
 You can annotate arguments for `define` declaration or for its constructor and if you don't provide the values on initialization MaskJS will do it for you using registered IoC container.
 
-The library is not include, you can use any other DI library. MaskJS only requires an IoC container with a single method: `.resolve(Type):Any`. 
+The library is not include, you can use any other DI library. MaskJS only requires an IoC container with a single method: `.resolve(Type):Any`.
 
 ```mask
 import * as IStore from services;
 
 define UserList (store: IStore) {
-	
+
 	foreach (user of store.getUsers()) {
 		div > '~user.username'
 	}
@@ -279,7 +299,7 @@ Most simple MaskJS sample to show where you could start from:
 
 			h4 > 'Counter with 5 seconds step'
 			Counter x-interval=5;
-		</script>		
+		</script>
 		<script src='http://cdn.jsdelivr.net/g/maskjs'></script>
 	</body>
 </html>
@@ -300,7 +320,7 @@ define Counter {
 
 	slot domInsert () {
 		this.scope.timer = setTimeout(() => {
-			++this.scope.counter;						
+			++this.scope.counter;
 		}, this.xInterval)
 	}
 
@@ -332,8 +352,8 @@ $ npm test
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 _`@latest`_
 - `0.64.0`
-- **Properties** 
-	
+- **Properties**
+
 	```mask
 	div [style.backgroundColor] = 'red';
 	```
@@ -367,7 +387,7 @@ _`@latest`_
 		}
 	}
 
-	// Modules 
+	// Modules
 	import async Foo from './Foo';
 
 	heading > 'Some heading'
@@ -378,7 +398,7 @@ _`@latest`_
 
 - `0.58.0`
 - **Decorators** for methods and nodes
-	
+
 	```mask
 	[IsAuthorized]
 	div > 'Hello ~user'
@@ -389,11 +409,11 @@ _`@latest`_
 	}
 	```
 - Async and Private methods. For browsers which do not yet support `async/await` es2017 feature, please use `postmask-babel` plugin.
-	
+
 	```mask
 	slot private async upload () {
 		await MyService.doSmth();
-	} 
+	}
 	```
 
 
@@ -410,7 +430,7 @@ _`@latest`_
 		You can also configurate the base path for the routing, e.g. `mask.Module.cfg('baseNs', '/src/')`
 
 		> If the module is not loaded or not set to the namespace repository, we will load it for you by the resolved path, e.g. `'/src/services/FooService.js'`
-	
+
 	- Prefix routing
 
 		```mask
@@ -431,7 +451,7 @@ _`@latest`_
 	import * as IFoo from '/service/IFoo.js';
 	import * as IBar from '/service/IBar.js';
 	define MyCompo (foo: IFoo) {
-		function constructor (bar: IBar) { 
+		function constructor (bar: IBar) {
 			this.bar = bar;
 		}
 		span > `~[foo.someMethod()]`
@@ -444,7 +464,7 @@ _`@latest`_
 	```mask
 	import * as Service from '/services/UserService.js';
 	define UserEditor (user) {
-		
+
 		slot save () {
 			Service
 				.changeUserName(user.id, user.name)
