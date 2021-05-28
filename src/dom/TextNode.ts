@@ -16,7 +16,7 @@ export const TextNode = class_create({
 		this.parent = parent;
 	},
 	type: dom_TEXTNODE,
-	content: null,
+	content: null as string | Function,
 	parent: null,
 	sourceIndex: -1
 });

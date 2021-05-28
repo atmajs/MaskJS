@@ -66,7 +66,8 @@ export function renderer_renderAsync (template, model?, ctx?, container?, ctr?):
     } else {
         dfr.resolve(dom, ctr);
     }
-    return dfr;
+    //@TODO use single resolve object
+    return dfr as any;
 };
 
 export function renderer_clearCache (key) {

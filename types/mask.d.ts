@@ -51,12 +51,14 @@ declare module 'mask' {
      import { m_registerModule } from 'mask/feature/modules/Module/utils'; 
      import { m_createModule } from 'mask/feature/modules/Module/utils'; 
      import { Endpoint } from 'mask/feature/modules/class/Endpoint'; 
-     import { IDfrConstructor } from "mask/ref-utils/src/class/Dfr"; 
+     import { fn_doNothing } from "mask/ref-utils/src/fn"; 
      import { Statics } from "mask/ref-utils/src/class"; 
-     import { obj_getProperty, obj_setProperty, obj_extend } from "mask/ref-utils/src/obj";
+     import { class_Dfr } from "mask/ref-utils/src/class/Dfr";
+    import { obj_getProperty, obj_setProperty, obj_extend } from "mask/ref-utils/src/obj";
     import { str_dedent } from "mask/ref-utils/src/str";
     import { is_Function, is_String, is_Object, is_Date } from "mask/ref-utils/src/is";
     import { error_createClass } from "mask/ref-utils/src/error";
+    import { class_EventEmitter } from "mask/ref-utils/src/class/EventEmitter";
     import { listeners_on, listeners_off } from 'mask/util/listeners';
     import { reporter_getNodeStack } from 'mask/util/reporters';
     import { customTag_register, customTag_registerFromTemplate, customTag_get, customTag_getAll, customStatement_register, customStatement_get, customAttr_register, customAttr_get, customUtil_register, customUtil_get } from 'mask/custom/exports';
@@ -93,7 +95,60 @@ declare module 'mask' {
                     superpose: (rootA: any, rootB: any, fn: any) => any;
             };
             Module: {
-                    ModuleMask: Statics<Statics<IDfrConstructor> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => any)> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => any);
+                    ModuleMask: Statics<Statics<typeof class_Dfr> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => class_Dfr<unknown> & {
+                            type: any;
+                            path: any;
+                            location: any;
+                            exports: any;
+                            state: number;
+                            constructor: (path: any, parent: any) => void;
+                            loadModule: () => any;
+                            doLoad: () => void;
+                            complete_: (error: any, exports: any) => void;
+                            onLoadSuccess_: (mix: any) => void;
+                            onLoadError_: (error: any) => void;
+                            load_: any;
+                            preprocess_: any;
+                            preprocessError_: any;
+                            register: typeof fn_doNothing;
+                            getExport: (property: any) => any;
+                    })> & (new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => class_Dfr<unknown> & {
+                            type: any;
+                            path: any;
+                            location: any;
+                            exports: any;
+                            state: number;
+                            constructor: (path: any, parent: any) => void;
+                            loadModule: () => any;
+                            doLoad: () => void;
+                            complete_: (error: any, exports: any) => void;
+                            onLoadSuccess_: (mix: any) => void;
+                            onLoadError_: (error: any) => void;
+                            load_: any;
+                            preprocess_: any;
+                            preprocessError_: any;
+                            register: typeof fn_doNothing;
+                            getExport: (property: any) => any;
+                    } & {
+                            type: string;
+                            scope: any;
+                            source: any;
+                            modules: any;
+                            exports: any;
+                            importItems: any;
+                            load_: (path_: any) => any;
+                            loadModule(): any;
+                            preprocessError_(error: any, next: any): void;
+                            preprocess_(mix: any, next: any): void;
+                            getHandler(name: any): any;
+                            queryHandler(selector: any): new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
+                                    scope: any;
+                                    location: any;
+                                    nodes: any;
+                                    getHandler: (name: any) => any;
+                            };
+                            getExport(misc: any): any;
+                    });
                     Endpoint: typeof Endpoint;
                     createModule: typeof m_createModule;
                     registerModule: typeof m_registerModule;
@@ -158,7 +213,7 @@ declare module 'mask' {
                     TextNode: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
                             constructor: (text: any, parent: any) => void;
                             type: number;
-                            content: any;
+                            content: TimerHandler;
                             parent: any;
                             sourceIndex: number;
                     };
@@ -236,8 +291,8 @@ declare module 'mask' {
             class: {
                     create: ClassFactory;
                     createError: typeof error_createClass;
-                    Deferred: IDfrConstructor;
-                    EventEmitter: () => void;
+                    Deferred: typeof class_Dfr;
+                    EventEmitter: typeof class_EventEmitter;
             };
             parser: {
                     ObjectLexer: typeof parser_ObjectLexer;
@@ -513,12 +568,16 @@ declare module 'mask/ref-utils/src/class' {
 
 declare module 'mask/ref-utils/src/is' {
     export function is_Function(x: any): x is Function;
-    export function is_Object(x: any): x is any;
+    export function is_Object<T = {
+        [key: string]: any;
+    }>(x: any): x is T;
     export function is_Array<T = any>(arr: any): arr is T[];
     export const is_ArrayLike: typeof is_Array;
     export function is_String(x: any): x is string;
     export function is_notEmptyString(x: any): boolean;
-    export function is_rawObject(x: any): x is object;
+    export function is_rawObject(x: any): x is {
+        [key: string]: any;
+    };
     export function is_Date(x: any): x is Date;
     export function is_PromiseLike<T = any>(x: any): x is PromiseLike<T>;
     export function is_Observable(x: any): boolean;
@@ -633,7 +692,8 @@ declare module 'mask/feature/modules/cache' {
 }
 
 declare module 'mask/feature/modules/tools/build' {
-    export function tools_build(template: any, path: any, opts_?: any): any;
+    import { class_Dfr } from "mask/ref-utils/src/class/Dfr";
+    export function tools_build(template: any, path: any, opts_?: any): class_Dfr<any>;
 }
 
 declare module 'mask/feature/modules/tools/dependencies' {
@@ -704,30 +764,51 @@ declare module 'mask/feature/modules/class/Endpoint' {
     }
 }
 
+declare module 'mask/ref-utils/src/fn' {
+    export function fn_proxy(fn: any, ctx: any): () => any;
+    export function fn_apply(fn: any, ctx: any, args: any): any;
+    export function fn_doNothing(): boolean;
+    export function fn_createByPattern(definitions: any, ctx?: any): () => any;
+}
+
 declare module 'mask/ref-utils/src/class/Dfr' {
-    export interface IDfrConstructor {
-        new (): typeof class_Dfr.prototype;
-        resolve: typeof static_Dfr.resolve;
-        reject: typeof static_Dfr.reject;
-        all: typeof static_Dfr.all;
-        run: typeof static_Dfr.run;
+    export class class_Dfr<T = any> implements PromiseLike<T> {
+        _isAsync: boolean;
+        _done: any;
+        _fail: any;
+        _always: any;
+        _resolved: any;
+        _rejected: any;
+        defer(): this;
+        isResolved(): boolean;
+        isRejected(): boolean;
+        isBusy(): boolean;
+        resolve(value?: T, ...args: any[]): this;
+        reject(error: Error | any, ...args: any[]): this;
+        then<TResult1 = T, TResult2 = never>(filterSuccess?: ((value: T, ...args: any[]) => TResult1 | PromiseLike<TResult1>) | undefined | null, filterError?: ((reason: Error | any) => TResult2 | PromiseLike<TResult2>) | undefined | null): class_Dfr<TResult1 | TResult2>;
+        done<TResult1 = T, TResult2 = never>(callback: ((value: T, ...args: any[]) => TResult1 | PromiseLike<TResult1>) | undefined | null): class_Dfr<TResult1 | TResult2>;
+        fail<TResult1 = T, TResult2 = never>(callback: ((reason: Error | any) => TResult2 | PromiseLike<TResult2>) | undefined | null): class_Dfr<TResult1 | TResult2>;
+        always(callback: any): any;
+        pipe(mix: any): any;
+        pipeCallback(): (error: any) => void;
+        resolveDelegate(): () => any;
+        rejectDelegate(): () => any;
+        catch(cb: any): class_Dfr<T>;
+        finally(cb: any): any;
+        static resolve(a?: any, b?: any, c?: any): any;
+        static reject(error: any): class_Dfr<any>;
+        static run(fn: any, ctx?: any): class_Dfr<any>;
+        static all(promises: any): class_Dfr<any>;
     }
-    export const class_Dfr: IDfrConstructor;
-    const static_Dfr: {
-        resolve: (a?: any, b?: any, c?: any) => any;
-        reject: (error: any) => any;
-        run: (fn: any, ctx?: any) => any;
-        all: (promises: any) => any;
-    };
 }
 
 declare module 'mask/ref-utils/src/obj' {
     let obj_copyProperty: (target: any, source: any, key: any) => any;
     export { obj_copyProperty };
-    export function obj_getProperty(obj_: any, path: string): any;
-    export function obj_setProperty(obj_: any, path: any, val: any): void;
-    export function obj_hasProperty(obj: any, path: any): boolean;
-    export function obj_defineProperty(obj: any, path: any, dscr: any): void;
+    export function obj_getProperty<T = any>(obj_: any, path: string): T;
+    export function obj_setProperty(obj_: any, path: string, val: any): void;
+    export function obj_hasProperty(obj: any, path: string): boolean;
+    export function obj_defineProperty(obj: any, path: string, dscr: PropertyDescriptor & ThisType<any>): void;
     export function obj_extend(a: any, b: any): any;
     export function obj_extendDefaults(a: any, b: any): any;
     export const obj_extendProperties: typeof obj_extend;
@@ -743,6 +824,24 @@ declare module 'mask/ref-utils/src/obj' {
         (o: object, properties: PropertyDescriptorMap & ThisType<any>): any;
     };
     export function obj_defaults(target: any, defaults: any): any;
+    interface IObjectCleanOpts {
+        removePrivate?: boolean;
+        skipProperties?: {
+            [key: string]: any;
+        };
+        ignoreProperties?: {
+            [key: string]: any;
+        };
+        strictProperties?: {
+            [key: string]: any;
+        };
+        deep?: boolean;
+        removeEmptyArrays?: boolean;
+        removeFalsy?: boolean;
+        shouldRemove?(key: string, val: any): boolean;
+    }
+    
+    export function obj_clean<T extends any>(json: T, opts?: IObjectCleanOpts): T;
     let obj_extendDescriptors: any;
     let obj_extendDescriptorsDefaults: any;
     export { obj_extendDescriptors, obj_extendDescriptorsDefaults };
@@ -750,7 +849,7 @@ declare module 'mask/ref-utils/src/obj' {
 
 declare module 'mask/ref-utils/src/str' {
     export function str_format(str_: any, a?: any, b?: any, c?: any, d?: any): any;
-    export function str_dedent(str: any): any;
+    export function str_dedent(str: string): string;
 }
 
 declare module 'mask/ref-utils/src/error' {
@@ -759,6 +858,17 @@ declare module 'mask/ref-utils/src/error' {
     
     export function error_cursor(str: any, index: any): any[];
     export function error_formatCursor(lines: any, lineNum: any, rowNum: any): string;
+}
+
+declare module 'mask/ref-utils/src/class/EventEmitter' {
+    export class class_EventEmitter<TEvents extends Record<keyof TEvents, (...args: any) => any> = any> {
+        on<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
+        once<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
+        pipe<TKey extends keyof TEvents>(event: TKey): () => void;
+        emit<TKey extends keyof TEvents>(event: TKey, ...args: Parameters<TEvents[TKey]>): this;
+        trigger<TKey extends keyof TEvents>(event: TKey, ...args: Parameters<TEvents[TKey]>): this;
+        off<TKey extends keyof TEvents>(event: TKey, fn?: Function): this;
+    }
 }
 
 declare module 'mask/util/listeners' {
@@ -1212,7 +1322,7 @@ declare module 'mask/parser/mask/parser' {
 declare module 'mask/parser/html/parser' {
     
     export function parser_parseHtml(str: any): any;
-    export function parser_parseHtmlPartial(str: any, index: any, exitEarly: any): any[];
+    export function parser_parseHtmlPartial(str: string, index: number, exitEarly: boolean): any[];
 }
 
 declare module 'mask/parser/mask/partials/attributes' {

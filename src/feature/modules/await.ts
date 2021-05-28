@@ -210,6 +210,7 @@ class AwaitCtr {
 custom_Tags['await'] = AwaitCtr;
 
 abstract class AStrategy extends class_Dfr {
+    awaitable: AwaitableExpr;
     error = null
     constructor(public awaiter: AwaitCtr) {
         super();
@@ -242,6 +243,8 @@ class ExpressionStrategy extends AStrategy {
 };
 
 class RefOrImportStrategy extends AStrategy {
+    awaitables: { getExports: () => any[] }[]
+
     process() {
         var self = this;
         var refs = this.awaiter.expression
@@ -277,11 +280,11 @@ class RefOrImportStrategy extends AStrategy {
 };
 
 class ComponentStrategy extends AStrategy {
-    isDomInsert = false
-    constructor(awaiter, name, expr) {
+    private isDomInsert = false
+    private awaitableRender: AwaitableRender;
+
+    constructor(awaiter, public name, public expr) {
         super(awaiter);
-        this.name = name;
-        this.expr = expr;
     }
     process(model, ctx, container) {
         var module = this.awaiter.getModuleFor(this.name);
@@ -300,7 +303,7 @@ class ComponentStrategy extends AStrategy {
         let attr = Object.create(this.awaiter.attr);
         attr[this.name] = null;
 
-        this.awaitable = new AwaitableRender(
+        this.awaitableRender = new AwaitableRender(
             this.name,
             attr,
             this.expr,
@@ -310,7 +313,7 @@ class ComponentStrategy extends AStrategy {
             container,
             this.awaiter
         );
-        this.awaitable.pipe(this).then(() => {
+        this.awaitableRender.pipe(this).then(() => {
             if (this.isDomInsert) {
                 Component.signal.emitIn(this.awaiter, 'domInsert');
             }
@@ -328,9 +331,8 @@ class ComponentStrategy extends AStrategy {
 };
 
 class AwaitableModule extends class_Dfr {
-    constructor(module) {
+    constructor(public module) {
         super();
-        this.module = module;
         this.module.pipe(this);
     }
     getExports() {
@@ -338,10 +340,13 @@ class AwaitableModule extends class_Dfr {
     }
 };
 class AwaitableExpr extends class_Dfr {
+    error = null;
+    exports = []
+
+    private await_: number;
+
     constructor(compo, expression) {
         super();
-        this.error = null;
-        this.exports = [];
         this.onResolve = this.onResolve.bind(this);
         this.onReject = this.onReject.bind(this);
 
@@ -383,6 +388,8 @@ class AwaitableExpr extends class_Dfr {
 };
 
 class AwaitableRender extends class_Dfr {
+    anchor: Node
+
     constructor(name, attr, expression, nodes, model, ctx?, container?, ctr?) {
         super();
 
