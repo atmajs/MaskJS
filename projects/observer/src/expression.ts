@@ -15,9 +15,9 @@ export function expression_bind (expr, model, ctx, ctr, cb) {
     }
     toggleExpressionsBindings(
         obj_addObserver,
-        expr, 
-        model, 
-        ctr, 
+        expr,
+        model,
+        ctr,
         cb
     );
 };
@@ -30,26 +30,26 @@ export function expression_unbind (expr, model, ctr, cb) {
         return;
     }
     toggleExpressionsBindings(
-        obj_removeObserver, 
-        expr, 
-        model, 
-        ctr, 
+        obj_removeObserver,
+        expr,
+        model,
+        ctr,
         cb
     );
 };
 
 function toggleExpressionsBindings (fn, expr, model, ctr, cb) {
-    var mix = expression_varRefs(expr, model, null, ctr);
+    let mix = expression_varRefs(expr, model, null, ctr);
     if (mix == null) return null;
     if (typeof mix === 'string') {
         _toggleObserver(fn, model, ctr, mix, cb);
         return;
-    }		
-    var arr = mix,
-        imax = arr.length,
-        i = -1;
+    }
+    let arr = mix;
+    let imax = arr.length;
+    let i = -1;
     while (++i < imax) {
-        var accs = arr[i];
+        let accs = arr[i];
         if (typeof accs === 'string') {
             if (accs.charCodeAt(0) === 95 /*_*/ && accs.charCodeAt(0) === 46 /*.*/) {
                 continue;
@@ -65,14 +65,14 @@ function toggleExpressionsBindings (fn, expr, model, ctr, cb) {
 }
 
 export function expression_callFn  (accessor, model, ctx, ctr, args) {
-    var tuple = expression_getHost(
-        accessor, 
-        model, 
-        ctx, 
+    let tuple = expression_getHost(
+        accessor,
+        model,
+        ctx,
         ctr
     );
     if (tuple != null) {
-        var obj = tuple[0],
+        let obj = tuple[0],
             path = tuple[1];
 
         return obj_callMethod(obj, path, args);
@@ -84,17 +84,16 @@ export function expression_callFn  (accessor, model, ctx, ctr, args) {
  * but doesnt supply new expression value
  **/
 export function expression_createBinder (expr, model, ctx, ctr, fn) {
-    return expression_createListener(function(){
+    return expression_createListener((...args) => {
         let value = expression_eval(expr, model, ctx, ctr);
-        let args = _Array_slice.call(arguments);
-        
+
         args[0] = value == null ? '' : value;
         fn.apply(this, args);
     });
 };
 
 export function expression_createListener (callback){
-    var locks = 0;
+    let locks = 0;
     return function(){
         if (++locks > 1) {
             locks = 0;
@@ -106,12 +105,12 @@ export function expression_createListener (callback){
     }
 };
 
-export var expression_getHost;
+export let expression_getHost;
 (function () {
     // [ObjectHost, Property]
-    var tuple = [null, null];
+    let tuple = [null, null];
 expression_getHost  = function (accessor, model, ctx, ctr) {
-        var result = get(accessor, model, ctx, ctr);
+        let result = get(accessor, model, ctx, ctr);
         if (result == null || result[0] == null) {
             error_withCompo('Observable host is undefined or is not allowed: ' + accessor.toString(), ctr);
             return null;
@@ -123,7 +122,7 @@ expression_getHost  = function (accessor, model, ctx, ctr) {
             return;
 
         if (typeof accessor === 'object') {
-            var obj = expression_eval(accessor.accessor, model, null, ctr);
+            let obj = expression_eval(accessor.accessor, model, null, ctr);
             if (obj == null || typeof obj !== 'object') {
                 return null;
             }
@@ -131,31 +130,31 @@ expression_getHost  = function (accessor, model, ctx, ctr) {
             tuple[1] = accessor.ref;
             return tuple;
         }
-        var property = accessor,
+        let property = accessor,
             parts = property.split('.'),
             imax = parts.length;
 
         if (imax > 1) {
-            var first:string = parts[0];
+            let first:string = parts[0];
             if (first === 'this' || first === '$c' || first === '$') {
                 // Controller Observer
-                var owner  = _getObservable_Controller(ctr, parts[1]);					
-                var cutIdx = first.length + 1;
+                let owner  = _getObservable_Controller(ctr, parts[1]);
+                let cutIdx = first.length + 1;
                 tuple[0] = owner;
                 tuple[1] = property.substring(cutIdx);
                 return tuple;
             }
             if (first === '$scope') {
                 // Controller Observer
-                var scope = _getObservable_Scope(ctr, parts[1]);
-                var cutIdx = 6 + 1;
+                let scope = _getObservable_Scope(ctr, parts[1]);
+                let cutIdx = 6 + 1;
                 tuple[0] = scope;
                 tuple[1] = property.substring(cutIdx);
                 return tuple;
-            }				
+            }
         }
 
-        var obj = null;
+        let obj = null;
         if (_isDefined(model, parts[0])) {
             obj = model;
         }
@@ -171,10 +170,10 @@ expression_getHost  = function (accessor, model, ctx, ctr) {
     }
 }());
 
-function _toggleObserver(mutatorFn, model, ctr, accessor, callback) {		
-    var tuple = expression_getHost(accessor, model, null, ctr);
+function _toggleObserver(mutatorFn, model, ctr, accessor, callback) {
+    let tuple = expression_getHost(accessor, model, null, ctr);
     if (tuple == null) return;
-    var obj = tuple[0],
+    let obj = tuple[0],
         property = tuple[1];
 
     if (obj == null) return;
@@ -182,7 +181,7 @@ function _toggleObserver(mutatorFn, model, ctr, accessor, callback) {
 }
 
 function _getObservable_Controller(ctr_, key) {
-    var ctr = ctr_;
+    let ctr = ctr_;
     while(ctr != null){
         if (_isDefined(ctr, key))
             return ctr;
@@ -191,7 +190,7 @@ function _getObservable_Controller(ctr_, key) {
     return ctr;
 }
 function _getObservable_Scope(ctr_, property) {
-    var ctr = ctr_, scope;
+    let ctr = ctr_, scope;
     while(ctr != null){
         scope = ctr.scope;
         if (_isDefined(scope, property)) {
@@ -202,7 +201,7 @@ function _getObservable_Scope(ctr_, property) {
     return null;
 }
 function _isDefined(obj_, key_){
-    var key = key_;
+    let key = key_;
     if (key.charCodeAt(key.length - 1) === 63 /*?*/) {
         key = key.slice(0, -1);
     }

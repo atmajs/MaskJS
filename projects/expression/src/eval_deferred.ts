@@ -12,12 +12,12 @@ export function _evaluateAstDeferred  (root, model, ctx, ctr) {
     if (x.kind === SubjectKind.Stream) {
         return x;
     }
-    
+
     return x;
 }
 
 export function _evaluateAstDeferredInner  (root, model, ctx, ctr) {
-    
+
     let deferred: DeferStatement[] = getDeferrables(root.body);
     //#if (DEBUG)
     if (deferred.length === 0 && root.observe === true && root.parent == null) {
@@ -36,16 +36,16 @@ export function _evaluateAstDeferredInner  (root, model, ctx, ctr) {
                 result = new ObjectStream(result, root, model, ctx, ctr);
             }
             deferExp.kind = SubjectKind.Stream;
-            deferExp.fromStream(result);            
+            deferExp.fromStream(result);
             return deferExp;
-        }     
+        }
 
-        deferExp.kind = SubjectKind.Promise;        
+        deferExp.kind = SubjectKind.Promise;
         deferExp.next(result);
         return deferExp;
     }
 
-    var count = deferred.length,
+    let count = deferred.length,
         error = null,
         i = count;
     while(--i > -1) {
@@ -56,12 +56,12 @@ export function _evaluateAstDeferredInner  (root, model, ctx, ctr) {
     }
     function done(){
         if (--count === 0 && error == null) {
-            var preResults = [];
+            let preResults = [];
             for (let i = 0; i < deferred.length; i++) {
                 let dfr = deferred[i];
-                preResults[i] = dfr.current();                
-            }            
-            var result = _evaluateAst(root, model, ctx, ctr, preResults);
+                preResults[i] = dfr.current();
+            }
+            let result = _evaluateAst(root, model, ctx, ctr, preResults);
             deferExp.resolve(result);
         }
     }

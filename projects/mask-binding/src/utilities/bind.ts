@@ -6,6 +6,7 @@ import { expression_createBinder, expression_bind, expression_unbind } from '@pr
 import { customUtil_register } from '@core/custom/exports';
 import { Component } from '@compo/exports';
 import { expression_eval_safe } from '@binding/utils/expression';
+import { IUtilType } from '@core/custom/IUtilType';
 
 
 /**
@@ -30,9 +31,9 @@ function refresherDelegate_NODE(el){
 }
 /** Attributes */
 function refresherDelegate_ATTR(el, attrName, currentValue) {
-    var current_ = currentValue;
+    let current_ = currentValue;
     return function(value){
-        var currentAttr = el.getAttribute(attrName),
+        let currentAttr = el.getAttribute(attrName),
             attr = attr_strReplace(currentAttr, current_, value);
 
         if (attr == null || attr === '') {
@@ -44,13 +45,13 @@ function refresherDelegate_ATTR(el, attrName, currentValue) {
     };
 }
 function refresherDelegate_ATTR_COMPO(ctr, attrName, currentValue) {
-    var current_ = currentValue;
+    let current_ = currentValue;
     return function(val){
         if (current_ === val) {
             return;
         }
         current_ = val;
-        var fn = ctr.setAttribute;
+        let fn = ctr.setAttribute;
         if (is_Function(fn)) {
             fn.call(ctr, attrName, val);
             return;
@@ -79,12 +80,12 @@ function refresherDelegate_ATTR_PROP(element, attrName, currentValue) {
 
 /** Properties */
 function refresherDelegate_PROP_NODE(el, property, currentValue) {
-    return function(value){			
+    return function(value){
         obj_setProperty(el, property, value);
     };
 }
 function refresherDelegate_PROP_COMPO(ctr, property, currentValue) {
-    var current_ = currentValue;
+    let current_ = currentValue;
     return function(val){
         if (current_ === val) {
             return;
@@ -94,7 +95,7 @@ function refresherDelegate_PROP_COMPO(ctr, property, currentValue) {
     };
 }
 
-function create_refresher(type, expr, element, currentValue, attrName, ctr) {
+function create_refresher(type: IUtilType, expr, element, currentValue, attrName, ctr) {
     if ('node' === type) {
         return refresherDelegate_NODE(element);
     }
@@ -124,14 +125,16 @@ function create_refresher(type, expr, element, currentValue, attrName, ctr) {
 }
 
 
-function bind (current, expr, model, ctx, element, ctr, attrName, type){
-    let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
-    var	refresher =  create_refresher(type, expr, element, current, attrName, ctr),
-        binder = expression_createBinder(expr, model, ctx, owner, refresher);
+function bind (currentVal, expr, model, ctx, element, ctr, attrName, type: IUtilType){
+    let owner = (type === 'compo-attr' || type === 'compo-prop')
+        ? ctr.parent
+        : ctr;
+    let refresher =  create_refresher(type, expr, element, currentVal, attrName, ctr);
+    let binder = expression_createBinder(expr, model, ctx, owner, refresher);
 
     expression_bind(expr, model, ctx, owner, binder);
 
-    Component.attach(ctr, 'dispose', function(){
+    Component.attach(ctr, 'dispose', () => {
         expression_unbind(expr, model, owner, binder);
     });
 }
@@ -140,8 +143,10 @@ customUtil_register('bind', {
     mode: 'partial',
     current: null,
     element: null,
-    nodeRenderStart: function(expr, model, ctx, el, ctr, attrName, type, node){
-        let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+    nodeRenderStart (expr, model, ctx, el, ctr, attrName, type: IUtilType, node){
+        let owner = (type === 'compo-attr' || type === 'compo-prop')
+            ? ctr.parent
+            : ctr;
         let current = expression_eval_safe(expr, model, ctx, owner, node);
 
         // though we apply value's to `this` context, but it is only for immediat use
@@ -151,9 +156,9 @@ customUtil_register('bind', {
 
         return (this.current = current);
     },
-    node: function(expr, model, ctx, container, ctr){
-        var el = this.element,
-            val = this.current;
+    node (expr, model, ctx, container, ctr){
+        let el = this.element;
+        let val = this.current;
         bind(
             val
             , expr
@@ -169,21 +174,23 @@ customUtil_register('bind', {
         return el;
     },
 
-    attrRenderStart: function(expr, model, ctx, el, ctr, attrName, type, node){
-        let owner = type === 'compo-attr' || type === 'compo-prop' ? ctr.parent : ctr;
+    attrRenderStart (expr, model, ctx, el, ctr, attrName, type: IUtilType, node){
+        let owner = (type === 'compo-attr' || type === 'compo-prop')
+            ? ctr.parent
+            : ctr;
         return (this.current = expression_eval_safe(expr, model, ctx, owner, node));
     },
-    attr: function(expr, model, ctx, element, controller, attrName, type){
+    attr (expr, model, ctx, el, ctr, attrName, type: IUtilType){
         bind(
             this.current,
             expr,
             model,
             ctx,
-            element,
-            controller,
+            el,
+            ctr,
             attrName,
-            type);
-
+            type
+        );
         return this.current;
     }
 });
