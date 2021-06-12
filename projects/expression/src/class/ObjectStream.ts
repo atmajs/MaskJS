@@ -10,14 +10,14 @@ export class ObjectStream<T = any> extends PromisedStream<T> {
         this.next(value);
     }
     subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void) {
-        if (this.cbs.length === 0) {
+        if (this._cbs.length === 0) {
             expression_bind(this.astNode, this.model, this.ctx, this.ctr, this.tick);
         }
         return super.subscribe(cb, onError);
     }
     unsubscribe(cb: Function) {
         super.unsubscribe(cb);
-        if (this.cbs.length === 0) {
+        if (this._cbs.length === 0) {
             expression_unbind(this.astNode, this.model, this.ctr, this.tick);
         }
     }

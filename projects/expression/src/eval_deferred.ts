@@ -7,8 +7,8 @@ import { DeferStatement, getDeferrables } from './class/DeferStatement';
 import { ObjectStream } from './class/ObjectStream';
 
 // Avaitables and Observables
-export function _evaluateAstDeferred  (root, model, ctx, ctr) {
-    let x = _evaluateAstDeferredInner(root, model, ctx, ctr);
+export function _evaluateAstDeferred  (ast, model, ctx, ctr) {
+    let x = _evaluateAstDeferredInner(ast, model, ctx, ctr);
     if (x.kind === SubjectKind.Stream) {
         return x;
     }
@@ -16,24 +16,24 @@ export function _evaluateAstDeferred  (root, model, ctx, ctr) {
     return x;
 }
 
-export function _evaluateAstDeferredInner  (root, model, ctx, ctr) {
+export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
 
-    let deferred: DeferStatement[] = getDeferrables(root.body);
+    let deferred: DeferStatement[] = getDeferrables(ast.body);
     //#if (DEBUG)
-    if (deferred.length === 0 && root.observe === true && root.parent == null) {
-        util_throw(root.toString(), null, 'No observer found, though the statement is observable');
+    if (deferred.length === 0 && ast.observe === true && ast.parent == null) {
+        util_throw(ast.toString(), null, 'No observer found, though the statement is observable');
     }
     //#endif
 
-    let deferExp = new DeferredExp(deferred, root, model, ctx, ctr);
+    let deferExp = new DeferredExp(deferred, ast, model, ctx, ctr);
     if (deferred.length === 0) {
-        let result = _evaluateAst(root, model, ctx, ctr);
+        let result = _evaluateAst(ast, model, ctx, ctr);
         if (result == null) {
-            util_throw(root, null, 'Awaitable is undefined');
+            util_throw(ast, null, 'Awaitable is undefined');
         }
-        if (root.observe === true) {
+        if (ast.observe === true) {
             if (is_Observable(result) === false) {
-                result = new ObjectStream(result, root, model, ctx, ctr);
+                result = new ObjectStream(result, ast, model, ctx, ctr);
             }
             deferExp.kind = SubjectKind.Stream;
             deferExp.fromStream(result);
@@ -61,7 +61,7 @@ export function _evaluateAstDeferredInner  (root, model, ctx, ctr) {
                 let dfr = deferred[i];
                 preResults[i] = dfr.current();
             }
-            let result = _evaluateAst(root, model, ctx, ctr, preResults);
+            let result = _evaluateAst(ast, model, ctx, ctr, preResults);
             deferExp.resolve(result);
         }
     }

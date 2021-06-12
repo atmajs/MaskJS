@@ -38,14 +38,14 @@ export function getDeferrables (mix, out = []) {
         case type_FunctionRef:
             getDeferrables(expr.arguments, out);
             break;
-        case type_SymbolRef:        
+        case type_SymbolRef:
             getDeferrables(expr.next, out);
             break;
         case type_Statement:
         case type_UnaryPrefix:
         case type_Ternary:
             getDeferrables(expr.body, out);
-            break;        
+            break;
     }
     return out;
 }
@@ -85,14 +85,14 @@ export class DeferStatement<T = any> extends PromisedStream<T> {
         return this;
     }
     subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void) {
-        if (this.cbs.length === 0) {
+        if (this._cbs.length === 0) {
             this.deferExp.subscribe(this.next);
         }
         return super.subscribe(cb, onError);
     }
     unsubscribe(cb) {
         super.unsubscribe(cb);
-        if (this.cbs.length === 0) {
+        if (this._cbs.length === 0) {
             this.deferExp.unsubscribe(this.next);
         }
     }

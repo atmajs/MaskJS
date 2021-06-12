@@ -7,17 +7,17 @@ import { error_ } from '@core/util/reporters';
 import { Ast_FunctionRefUtil } from './astNode_utils';
 import { _evaluateAstDeferred } from './eval_deferred';
 
-const cache = {};
+const cache = Object.create(null);
 
 export function _evaluate (mix, model?, ctx?, ctr?, node?) {
     let ast;
 
-    if (null == mix)
+    if (mix == null) {
         return null;
-
-    if ('.' === mix)
+    }
+    if (mix === '.') {
         return model;
-
+    }
     if (typeof mix === 'string'){
         let node_ = node;
         if (node_ == null && ctr != null) {
@@ -27,10 +27,7 @@ export function _evaluate (mix, model?, ctx?, ctr?, node?) {
                 x = x.parent;
             }
         }
-        ast = cache.hasOwnProperty(mix) === true
-            ? (cache[mix])
-            : (cache[mix] = _parse(mix, false, node_))
-            ;
+        ast = cache[mix] ?? (cache[mix] = _parse(mix, false, node_));
     } else {
         ast = mix;
     }

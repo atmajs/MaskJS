@@ -11,12 +11,12 @@ export class PromisedStream<T = any> extends SubjectStream<T> {
             onError && onError(this._error);
             return;
         }
-        if (this._value !== void 0) {
-            onSuccess && onSuccess(this._value);
+        if (this.value !== void 0) {
+            onSuccess && onSuccess(this.value);
             return;
         }
-        this.cbs.push([onSuccess, onError, { once: true }]);
-        if (this._pipe != null && this.cbs.length === 1) {
+        this._cbs.push([onSuccess, onError, { once: true }]);
+        if (this._pipe != null && this._cbs.length === 1) {
             if ('then' in this._pipe) {
                 this._pipe.then(this.next, this.error);
                 return;
