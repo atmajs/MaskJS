@@ -38,6 +38,7 @@ import {
     customStatement_get,
     customAttr_register,
     customAttr_get,
+    customAttr_setRegister,
     customUtil_register,
     customUtil_get,
     customUtil_$utils,
@@ -116,50 +117,51 @@ export const Mask = {
      * @memberOf mask
      */
     renderAsync: renderer_renderAsync,
-    
+
     parse: parser_parse,
-    
+
     parseHtml: parser_parseHtml,
-    
+
     stringify: mask_stringify,
-    
+
     build: builder_build,
-    
+
     buildSVG: builder_buildSVG,
-    
+
     run: mask_run,
-    
+
     merge: mask_merge,
-    
+
     optimize: mask_optimize,
     registerOptimizer: mask_registerOptimizer,
-    
+
     TreeWalker: mask_TreeWalker,
-    
+
     Module: Module,
     File: Module.File,
-    
+
     Di: Di,
-    
+
     registerHandler: customTag_register,
     registerFromTemplate: customTag_registerFromTemplate,
     define: customTag_define,
     getHandler: customTag_get,
     getHandlers: customTag_getAll,
-    
+
     registerStatement: customStatement_register,
     getStatement: customStatement_get,
-    
+
+    setAttrHandlerRegister: customAttr_setRegister,
     registerAttrHandler: customAttr_register,
     getAttrHandler: customAttr_get,
-    
+
     registerUtil: customUtil_register,
     getUtil: customUtil_get,
     $utils: customUtil_$utils,
     _: customUtil_$utils,
 
     defineDecorator: Decorator.define,
-    
+
     Dom: Dom,
     /**
      * Is present only in DEBUG (not minified) version
@@ -214,7 +216,7 @@ export const Mask = {
         warn: log_warn,
         warnWithNode: warn_withNode
     },
-    
+
     on: listeners_on,
     off: listeners_off,
 

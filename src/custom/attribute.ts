@@ -1,5 +1,12 @@
-import { is_Function, is_NODE } from '@utils/is';
+import { is_Function } from '@utils/is';
 import { custom_Attributes } from './repositories';
+
+let customAttr_register_inner = function (attrName, mix, Handler?) {
+    if (is_Function(mix)) {
+        Handler = mix;
+    }
+    custom_Attributes[attrName] = Handler;
+};
 
 /**
  * Register an attribute handler. Any changes can be made to:
@@ -16,12 +23,11 @@ import { custom_Attributes } from './repositories';
  * @method registerAttrHandler
  */
 export function customAttr_register (attrName, mix, Handler?){
-    if (is_Function(mix)) {
-        Handler = mix;
-    } else if (mix === 'client' && is_NODE) {
-        return;
-    }
-    custom_Attributes[attrName] = Handler;
+    customAttr_register_inner(attrName, mix, Handler);
+};
+
+export function customAttr_setRegister (fn: typeof customAttr_register_inner){
+    customAttr_register_inner = fn;
 };
 /**
  * Get attribute  handler
