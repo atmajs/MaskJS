@@ -11,23 +11,22 @@ import {
     type_AccessorExpr,
     type_UnaryPrefix
 } from './scope-vars';
-import { class_create } from '@utils/class';
+
 import { is_String } from '@utils/is';
 
-export const Ast_Body = class_create({
-    body: null,
-    join: null,
-    constructor: function Ast_Body(parent, node) {
-        this.parent = parent;
-        this.type = type_Body;
-        this.body = [];
-        this.join = null;
-        this.node = node;
-        this.source = null;
-        this.async = false;
-        this.observe = false;
-    },
-    toString: function() {
+export class Ast_Body  {
+    body = []
+    join = null
+    type = type_Body
+    source = null
+    async = false
+    observe = false
+
+    constructor (public parent?, public node?) {
+
+    }
+
+    toString () {
         let arr = this.body,
             l = arr.length,
             str = '';
@@ -39,84 +38,85 @@ export const Ast_Body = class_create({
         }
         return str;
     }
-});
+};
 
-export const Ast_Statement = class_create({
-    constructor: function Ast_Statement(parent) {
-        this.parent = parent;
-        this.async = false;
-        this.observe = false;
-        this.preResultIndex = -1;
-    },
-    type: type_Statement,
-    join: null,
-    body: null,
-    async: null,
-    observe: null,
-    parent: null,
-    toString: function() {
-        return (this.body && this.body.toString()) || '';
+export class Ast_Statement {
+    type = type_Statement
+    join = null
+    body= null
+    async = false
+    observe = false
+    preResultIndex = -1
+    constructor (public parent) {
+
     }
-});
 
-export const Ast_Value = class_create({
-    constructor: function Ast_Value(value) {
-        this.type = type_Value;
-        this.body = value;
-        this.join = null;
-    },
-    toString: function() {
+    toString () {
+        return this.body?.toString() ?? '';
+    }
+};
+
+export class Ast_Value {
+    type = type_Value
+    join = null
+    constructor (public body) {
+
+    }
+    toString () {
         if (is_String(this.body)) {
             return "'" + this.body.replace(/'/g, "\\'") + "'";
         }
         return this.body;
     }
-});
+};
 
-export const Ast_Array = class_create({
-    constructor: function Ast_Array(parent) {
-        this.type = type_Array;
-        this.parent = parent;
+export class Ast_Array {
+    type = type_Array
+    body = null
+
+    constructor (public parent) {
         this.body = new Ast_Body(this);
-    },
-    toString: function() {
+    }
+    toString () {
         return '[' + this.body.toString() + ']';
     }
-});
+};
 
-export const Ast_Object = class_create({
-    constructor: function Ast_Object(parent) {
-        this.type = type_Object;
-        this.parent = parent;
-        this.props = {};
-    },
-    nextProp: function(prop) {
+export class Ast_Object {
+    type = type_Object
+    props = {}
+    constructor (public parent) {
+
+    }
+    nextProp (prop) {
         var body = new Ast_Statement(this);
         this.props[prop] = body;
         return body;
     }
-});
+};
 
-export const Ast_FunctionRef = class_create({
-    constructor: function Ast_FunctionRef(parent, ref) {
-        this.parent = parent;
-        this.type = type_FunctionRef;
+export class Ast_FunctionRef {
+    type = type_FunctionRef
+    body = null
+
+    arguments = []
+    next = null
+
+    constructor (public parent, ref) {
         this.body = ref;
-        this.arguments = [];
-        this.next = null;
-    },
-    newArg: function() {
+    }
+    newArg () {
         var body = new Ast_Body(this);
         this.arguments.push(body);
         return body;
-    },
-    closeArgs: function() {
+    }
+    closeArgs () {
         var last = this.arguments[this.arguments.length - 1];
         if (last.body.length === 0) {
             this.arguments.pop();
         }
-    },
-    toString: function() {
+    }
+    toString () {
         var args = this.arguments
             .map(function(x) {
                 return x.toString();
@@ -125,69 +125,71 @@ export const Ast_FunctionRef = class_create({
 
         return this.body + '(' + args + ')';
     }
-});
-
-var Ast_AccessorBase = {
-    optional: false,
-    sourceIndex: null,
-    next: null
 };
 
-export const Ast_SymbolRef = class_create(Ast_AccessorBase, {
-    type: type_SymbolRef,
-    constructor: function(parent, ref) {
-        this.parent = parent;
+export class Ast_SymbolRef {
+    type = type_SymbolRef
+    optional = false
+    sourceIndex = null
+    next = null
+    body = null
+
+    constructor (public parent, ref) {
         this.body = ref;
-    },
-    toString: function() {
-        return this.next == null 
+    }
+    toString () {
+        return this.next == null
             ? this.body
             : `${this.body}.${this.next.toString()}`;
     }
-});
-export const Ast_Accessor = class_create(Ast_AccessorBase, {
-    type: type_Accessor,
-    constructor: function(parent, ref) {
+};
+export class Ast_Accessor {
+    optional = false
+    sourceIndex = null
+    next = null
+    body = null
+    type = type_Accessor
+    constructor (public parent, ref) {
         this.parent = parent;
         this.body = ref;
-    },
-    toString: function() {
+    }
+    toString () {
         return (
             '.' + this.body + (this.next == null ? '' : this.next.toString())
         );
     }
-});
-export const Ast_AccessorExpr = class_create({
-    type: type_AccessorExpr,
-    constructor: function(parent) {
-        this.parent = parent;
+};
+export class Ast_AccessorExpr {
+    type = type_AccessorExpr
+    body = null;
+    constructor (public parent) {
         this.body = new Ast_Statement(this);
         this.body.body = new Ast_Body(this.body);
-    },
-    getBody: function() {
+    }
+    getBody () {
         return this.body.body;
-    },
-    toString: function() {
+    }
+    toString () {
         return '[' + this.body.toString() + ']';
     }
-});
+};
 
-export const Ast_UnaryPrefix = class_create({
-    type: type_UnaryPrefix,
-    body: null,
-    constructor: function Ast_UnaryPrefix(parent, prefix) {
-        this.parent = parent;
-        this.prefix = prefix;
+export class Ast_UnaryPrefix  {
+    type = type_UnaryPrefix
+    body = null
+    constructor (public parent, public prefix) {
+
     }
-});
+};
 
-export const Ast_TernaryStatement = class_create({
-    constructor: function Ast_TernaryStatement(assertions) {
+export class Ast_TernaryStatement {
+    type = type_Ternary
+
+    body = null
+    case1 = new Ast_Body(this)
+    case2 = new Ast_Body(this)
+
+    constructor (assertions) {
         this.body = assertions;
-        this.case1 = new Ast_Body(this);
-        this.case2 = new Ast_Body(this);
-    },
-    type: type_Ternary,
-    case1: null,
-    case2: null
-});
+    }
+};

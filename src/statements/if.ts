@@ -1,4 +1,4 @@
-import { expression_eval, expression_parse, expression_getType, exp_type_Sync, exp_type_Observe, exp_type_Async } from '@project/expression/src/exports';
+import { expression_eval, expression_getType, exp_type_Sync, exp_type_Observe, exp_type_Async } from '@project/expression/src/exports';
 import { custom_Statements } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
 import { is_PromiseLike, is_Observable } from '@utils/is';
@@ -10,8 +10,26 @@ import { dom_insertBefore } from '@core/util/dom';
 import { INode } from '@core/dom/INode';
 
 
+custom_Statements['if'] = {
+    getNodes: getNodesSync,
+    render (node: INode, model, ctx, container: HTMLElement, ctr, children?: HTMLElement[]) {
+        let type = expression_getType(node.expression);
+        if (type === exp_type_Sync) {
 
-function getNodesSync (node, model, ctx, ctr){    
+            let nodes = getNodesSync(node, model, ctx, ctr);
+            if (nodes != null) {
+                builder_build(nodes, model, ctx, container, ctr, children);
+            }
+            return;
+        }
+
+        let compo = new ObservableIf(node, model, ctx, container, ctr, children);
+        compo_addChild(ctr, compo);
+        compo.render();
+    }
+};
+
+function getNodesSync (node, model, ctx, ctr){
     do {
         if (expression_eval(node.expression, model, ctx, ctr, node)) {
             return node.nodes;
@@ -36,17 +54,18 @@ class ObservableNodes {
     disposed = false
 
     constructor (
-        public node: INode, 
-        public model, 
-        public ctx, 
-        public ctr, 
-        public cb) {
+        public node: INode,
+        public model,
+        public ctx,
+        public ctr,
+        public cb
+    ) {
             this.next = this.next.bind(this);
             this.tick = this.tick.bind(this);
             this.onValue = this.onValue.bind(this);
             this.cursor = node;
     }
-    start () {
+    public start () {
         this.frame++;
         this.index = 0;
         this.cursor = this.node;
@@ -54,14 +73,13 @@ class ObservableNodes {
     }
     private eval () {
         return expression_eval(
-            this.cursor.expression, 
-            this.model, 
-            this.ctx, 
-            this.ctr, 
+            this.cursor.expression,
+            this.model,
+            this.ctx,
+            this.ctr,
             this.node
         );
     }
-
     private onValue (err, val?) {
         if (err) {
             this.cb(err);
@@ -76,7 +94,7 @@ class ObservableNodes {
         if (err) {
             this.cb(err);
             return;
-        }        
+        }
         if (result) {
             this.cb(null, meta.node, this.index);
             return;
@@ -103,8 +121,6 @@ class ObservableNodes {
         s.busy = false;
         this.start();
     }
-
-
     private process () {
         let i = this.index;
         let meta = this.switch[i];
@@ -131,7 +147,7 @@ class ObservableNodes {
             value: null,
             error: null,
             result: null
-        };        
+        };
         if (is_Observable(value) && value.kind !== 2 /* SubjectKind.Promise */) {
             meta.type = exp_type_Observe;
             this.subscriptions.push(
@@ -144,12 +160,11 @@ class ObservableNodes {
             value.then(x => this.onValue(null, x), this.onValue);
             return;
         }
-        
+
 
         meta.type = exp_type_Sync;
         this.onValue(null, value);
     }
-
     public dispose () {
         this.disposed = true;
         this.subscriptions.forEach(x => x.unsubscribe());
@@ -157,30 +172,12 @@ class ObservableNodes {
 }
 
 
-custom_Statements['if'] = {
-    getNodes: getNodesSync,
-    render (node: INode, model, ctx, container, ctr, children) {
-        let type = expression_getType(node.expression);
-        if (type === exp_type_Sync) {
-            
-            let nodes = getNodesSync(node, model, ctx, ctr);
-            if (nodes != null) {
-                builder_build(nodes, model, ctx, container, ctr, children);
-            }
-            return;
-        }
-        
-        let compo = new ObservableIf(node, model, ctx, container, ctr, children);
-        compo_addChild(ctr, compo);
-        compo.render();
-    }
-};
 
 
 
 class ObservableIf {
     compoName = '+if'
-    
+
     binder = null
 
     private resumeFn: Function;
@@ -192,14 +189,14 @@ class ObservableIf {
     constructor (private node, private model, private ctx, private el, private ctr, private children) {
 
     }
-    
+
     public render () {
         this.resumeFn = Compo.pause(this, this.ctx);
         this.placeholder = el_renderPlaceholder(this.el);
         this.obs = new ObservableNodes(
             this.node, this.model, this.ctx, this.ctr, (err, node, index) => this.show(err, node, index)
         );
-        this.obs.start();     
+        this.obs.start();
     }
     private show (err, node: INode, index: number) {
         this.refresh(err, node, index);

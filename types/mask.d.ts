@@ -600,7 +600,10 @@ declare module 'mask/projects/expression/src/eval' {
 }
 
 declare module 'mask/projects/expression/src/parser' {
-    export function _parse(expr: any, earlyExit?: any, node?: any): any;
+    import { Ast_Body } from 'mask/projects/expression/src/ast';
+    export function _parse(expr: any): InstanceType<typeof Ast_Body>;
+    export function _parse(expr: any, earlyExit: false, node?: any): InstanceType<typeof Ast_Body>;
+    export function _parse(expr: any, earlyExit: true, node?: any): [InstanceType<typeof Ast_Body>, number];
     export function parser_getRef(): any;
     export function parser_getDirective(code: any): "|" | "^" | "-" | "+" | "/" | "*" | "%" | "||" | "&&" | "!" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "<" | "<=" | "->" | ">>" | "&" | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 33 | 34;
     export function ast_append(current: any, next: any): any;
@@ -1275,6 +1278,106 @@ declare module 'mask/projects/mask-compo/src/model/IAttrDefinition' {
     }
 }
 
+declare module 'mask/projects/expression/src/ast' {
+    export class Ast_Body {
+        parent?: any;
+        node?: any;
+        body: any[];
+        join: any;
+        type: number;
+        source: any;
+        async: boolean;
+        observe: boolean;
+        constructor(parent?: any, node?: any);
+        toString(): string;
+    }
+    export class Ast_Statement {
+        parent: any;
+        type: number;
+        join: any;
+        body: any;
+        async: boolean;
+        observe: boolean;
+        preResultIndex: number;
+        constructor(parent: any);
+        toString(): any;
+    }
+    export class Ast_Value {
+        body: any;
+        type: number;
+        join: any;
+        constructor(body: any);
+        toString(): any;
+    }
+    export class Ast_Array {
+        parent: any;
+        type: number;
+        body: any;
+        constructor(parent: any);
+        toString(): string;
+    }
+    export class Ast_Object {
+        parent: any;
+        type: number;
+        props: {};
+        constructor(parent: any);
+        nextProp(prop: any): Ast_Statement;
+    }
+    export class Ast_FunctionRef {
+        parent: any;
+        type: number;
+        body: any;
+        arguments: any[];
+        next: any;
+        constructor(parent: any, ref: any);
+        newArg(): Ast_Body;
+        closeArgs(): void;
+        toString(): string;
+    }
+    export class Ast_SymbolRef {
+        parent: any;
+        type: number;
+        optional: boolean;
+        sourceIndex: any;
+        next: any;
+        body: any;
+        constructor(parent: any, ref: any);
+        toString(): any;
+    }
+    export class Ast_Accessor {
+        parent: any;
+        optional: boolean;
+        sourceIndex: any;
+        next: any;
+        body: any;
+        type: number;
+        constructor(parent: any, ref: any);
+        toString(): string;
+    }
+    export class Ast_AccessorExpr {
+        parent: any;
+        type: number;
+        body: any;
+        constructor(parent: any);
+        getBody(): any;
+        toString(): string;
+    }
+    export class Ast_UnaryPrefix {
+        parent: any;
+        prefix: any;
+        type: number;
+        body: any;
+        constructor(parent: any, prefix: any);
+    }
+    export class Ast_TernaryStatement {
+        type: number;
+        body: any;
+        case1: Ast_Body;
+        case2: Ast_Body;
+        constructor(assertions: any);
+    }
+}
+
 declare module 'mask/custom/optimize' {
     export function custom_optimize(): void;
 }
@@ -1462,6 +1565,6 @@ declare module 'mask/projects/observer/src/expression' {
     
     export function expression_createBinder(expr: any, model: any, ctx: any, ctr: any, fn: any): () => void;
     export function expression_createListener(callback: any): () => void;
-    export var expression_getHost: any;
+    export let expression_getHost: any;
 }
 

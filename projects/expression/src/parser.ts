@@ -12,7 +12,10 @@ let ast;
 /*
  * earlyExit - only first statement/expression is consumed
  */
-export function _parse(expr, earlyExit?, node?) {
+export function _parse(expr): InstanceType<typeof Ast_Body>
+export function _parse(expr, earlyExit: false, node?): InstanceType<typeof Ast_Body>
+export function _parse(expr, earlyExit: true, node?): [InstanceType<typeof Ast_Body>, number]
+export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> | [InstanceType<typeof Ast_Body>, number] {
     if (earlyExit == null) {
         earlyExit = false;
     }
@@ -187,18 +190,21 @@ export function _parse(expr, earlyExit?, node?) {
             case op_ObserveAccessor:
                 t = current.type;
                 if (t !== type_SymbolRef && t !== type_Accessor && t !== type_FunctionRef) {
-                    return util_throw(template, index, 'Unexpected accessor:' + directive);
+                    util_throw(template, index, 'Unexpected accessor:' + directive);
+                    return null;
                 }
                 var ref = ast_findPrev(current, type_SymbolRef);
                 if (ref == null) {
                     ref = ast_findPrev(current, type_FunctionRef);
                 }
                 if (ref == null) {
-                    return util_throw(template, index, 'Ref not found');
+                    util_throw(template, index, 'Ref not found');
+                    return null;
                 }
                 var parent = ref.parent;
                 if (parent.type !== type_Statement) {
-                    return util_throw(template, index, 'Ref is not in a statement');
+                    util_throw(template, index, 'Ref is not in a statement');
+                    return null;
                 }
 
                 ast_remove(parent, ref);
@@ -288,9 +294,10 @@ export function _parse(expr, earlyExit?, node?) {
                 }
 
                 if (current.body == null) {
-                    return util_throw(template, index,
+                    util_throw(template, index,
                         'Unexpected operator', c
                     );
+                    return null;
                 }
 
                 current.join = directive;
@@ -300,18 +307,20 @@ export function _parse(expr, earlyExit?, node?) {
                 } while (current != null && current.type !== type_Body);
 
                 if (current == null) {
-                    return util_throw(template, index,
+                    util_throw(template, index,
                         'Unexpected operator', c
                     );
+                    return null;
                 }
                 index++;
                 continue;
             case go_string:
             case go_number:
                 if (current.body != null && current.join == null) {
-                    return util_throw(template, index,
+                    util_throw(template, index,
                         'Directive expected', c
                     );
+                    return null;
                 }
                 if (go_string === directive) {
                     index++;
@@ -398,9 +407,10 @@ export function _parse(expr, earlyExit?, node?) {
 
                 if (parser_skipWhitespace() !== 58) {
                     //:
-                    return util_throw(template, index,
+                    util_throw(template, index,
                         'Object parser. Semicolon expeted', c
                     );
+                    return null;
                 }
                 index++;
                 current = current.nextProp(key);
@@ -412,13 +422,13 @@ export function _parse(expr, earlyExit?, node?) {
     if (current.body == null &&
         current.type === type_Statement) {
 
-        return util_throw(template, index,
+        util_throw(template, index,
             'Unexpected end of expression', c
         );
+        return null;
     }
 
     ast_handlePrecedence(ast);
-
     return ast;
 }
 

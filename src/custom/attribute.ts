@@ -1,4 +1,4 @@
-import { is_Function } from '@utils/is';
+import { is_Function, is_NODE } from '@utils/is';
 import { custom_Attributes } from './repositories';
 
 /**
@@ -16,10 +16,12 @@ import { custom_Attributes } from './repositories';
  * @method registerAttrHandler
  */
 export function customAttr_register (attrName, mix, Handler?){
-	if (is_Function(mix)) {
-		Handler = mix;
-	}
-	custom_Attributes[attrName] = Handler;
+    if (is_Function(mix)) {
+        Handler = mix;
+    } else if (mix === 'client' && is_NODE) {
+        return;
+    }
+    custom_Attributes[attrName] = Handler;
 };
 /**
  * Get attribute  handler
@@ -29,9 +31,9 @@ export function customAttr_register (attrName, mix, Handler?){
  * @method getAttrHandler
  */
 export function customAttr_get (attrName){
-	return attrName != null
-		? custom_Attributes[attrName]
-		: custom_Attributes;
+    return attrName != null
+        ? custom_Attributes[attrName]
+        : custom_Attributes;
 };
 /**
  * Is called when the builder matches the node by attribute name

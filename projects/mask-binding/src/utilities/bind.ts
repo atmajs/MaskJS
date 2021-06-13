@@ -7,6 +7,7 @@ import { customUtil_register } from '@core/custom/exports';
 import { Component } from '@compo/exports';
 import { expression_eval_safe } from '@binding/utils/expression';
 import { IUtilType } from '@core/custom/IUtilType';
+import { expression_parse } from '@project/expression/src/exports';
 
 
 /**
@@ -130,13 +131,21 @@ function bind (currentVal, expr, model, ctx, element, ctr, attrName, type: IUtil
         ? ctr.parent
         : ctr;
     let refresher =  create_refresher(type, expr, element, currentVal, attrName, ctr);
+    let ast = expression_parse(expr);
+    if (ast.observe) {
+        let subscr = currentVal.subscribe(refresher);
+        Component.attach(ctr, 'dispose', () => {
+            subscr.unsubscribe();
+        });
+        return;
+    }
+
     let binder = expression_createBinder(expr, model, ctx, owner, refresher);
-
     expression_bind(expr, model, ctx, owner, binder);
-
     Component.attach(ctr, 'dispose', () => {
         expression_unbind(expr, model, owner, binder);
     });
+
 }
 
 customUtil_register('bind', {
@@ -147,12 +156,17 @@ customUtil_register('bind', {
         let owner = (type === 'compo-attr' || type === 'compo-prop')
             ? ctr.parent
             : ctr;
-        let current = expression_eval_safe(expr, model, ctx, owner, node);
+        let ast = expression_parse(expr, false, node);
+        let current = expression_eval_safe(ast, model, ctx, owner, node);
 
         // though we apply value's to `this` context, but it is only for immediat use
         // in .node() function, as `this` context is a static object that share all bind
         // utils
-        this.element = _document.createTextNode(current);
+
+        let value = (ast.async || ast.observe)
+            ? current?.value
+            : current;
+        this.element = _document.createTextNode(value);
 
         return (this.current = current);
     },
