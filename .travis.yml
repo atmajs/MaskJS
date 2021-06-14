@@ -1,5 +1,8 @@
 sudo: required
 
+cache:
+  npm: false
+
 services:
   - xvfb
 
@@ -11,7 +14,6 @@ addons:
   firefox: "latest"
 
 before_script:
-  - npm cache clean --force
   - git submodule update --init
   - export DISPLAY=:99.0
   - sleep 5
