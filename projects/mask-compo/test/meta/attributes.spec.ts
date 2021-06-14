@@ -58,10 +58,10 @@ UTest({
         }));
         let dom = mask.render('Foo x-foo=baz');
         return UTest.domtest(dom, `
-			find('.-mask-compo-errored') {
-				has text RegExp;
-			}
-		`);
+            find('.-mask-compo-errored') {
+                has text RegExp;
+            }
+        `);
     },
 
     'should accept object configuration'() {
@@ -88,10 +88,10 @@ UTest({
         // Errored
         let dom = mask.render('Foo value=-20');
         return UTest.domtest(dom, `
-			find('.-mask-compo-errored') {
-				has text ('Only positive numbers');
-			}
-		`);
+            find('.-mask-compo-errored') {
+                has text ('Only positive numbers');
+            }
+        `);
     },
     'should accept default as a factory function'() {
         mask.define('Foo', Compo({
@@ -147,17 +147,17 @@ UTest({
             }));
 
             let dom = mask.render(`
-				FooWrapper > Foo.one style="width: ~[this.xWidth + 1]px"; 
-				FooWrapper width=12 > Foo.two style="width: ~[this.xWidth + 1]px";
-			`);
+                FooWrapper > Foo.one style="width: ~[this.xWidth + 1]px";
+                FooWrapper width=12 > Foo.two style="width: ~[this.xWidth + 1]px";
+            `);
             return UTest.domtest(dom, `
-				find('.one') {
-					attr style ('width: 21px');
-				}
-				find('.two') {
-					attr style ('width: 13px');
-				}
-			`);
+                find('.one') {
+                    attr style ('width: 21px');
+                }
+                find('.two') {
+                    attr style ('width: 13px');
+                }
+            `);
         }
     }
 })

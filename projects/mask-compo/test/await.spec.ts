@@ -57,19 +57,19 @@ UTest({
         },
         'async'(done) {
             mask.define(`
-				define FooParent {
-					FooChild;
-				}
-				define FooChild {
-					function onRenderStart () {
-						return mask.class.Deferred.run(resolve => {
-							setTimeout(resolve, 100);
-						});
-					}
-					div;
+                define FooParent {
+                    FooChild;
+                }
+                define FooChild {
+                    function onRenderStart () {
+                        return mask.class.Deferred.run(resolve => {
+                            setTimeout(resolve, 100);
+                        });
+                    }
+                    div;
 
-				}
-			`);
+                }
+            `);
 
             var component = mask.Compo.initialize('FooParent');
             Compo.await(component).then(() => {

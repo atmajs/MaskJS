@@ -21,11 +21,11 @@ const EachBinded = {
     render: function(model, ctx, container, ctr, children){
         //this.modelRef = this.expression;
         var array = expression_eval(this.expression, model, ctx, ctr);
-        if (array == null) 
+        if (array == null)
             return;
-        
+
         arr_createRefs(array);
-        
+
         build(
             this.nodes,
             array,
@@ -35,15 +35,15 @@ const EachBinded = {
             children
         );
     },
-    
+
     renderEnd: function(els, model, ctx, container, ctr){
         var compo = new EachStatement(this, this.attr);
-        
+
         _renderPlaceholder(this, compo, container);
         _compo_initAndBind(compo, this, model, ctx, container, ctr);
         return compo;
     }
-    
+
 };
 
 var EachItem = class_create({
@@ -78,21 +78,21 @@ var EachStatement = class_create(LoopStatementProto, {
     constructor: function EachStatement(node, attr) {
         this.expression = node.expression;
         this.nodes = node.nodes;
-        
-        if (node.components == null) 
+
+        if (node.components == null)
             node.components = [];
-        
+
         this.node = node;
         this.components = node.components;
-    },		
+    },
     _getModel: function(compo) {
         return compo.model;
-    },		
+    },
     _build: function(node, model, ctx, component) {
         var fragment = _document.createDocumentFragment();
-        
+
         build(node.nodes, model, ctx, fragment, component);
-        
+
         return fragment;
     }
 });
@@ -103,7 +103,7 @@ function build(nodes, array, ctx, container, ctr, elements?) {
     var imax = array.length,
         nodes_ = new Array(imax),
         i = 0, node;
-    
+
     for(; i < imax; i++) {
         node = createEachNode(nodes, i);
         builder_build(node, array[i], ctx, container, ctr, elements);
@@ -113,7 +113,7 @@ function build(nodes, array, ctx, container, ctr, elements?) {
 function createEachNode(nodes, index){
     var item = new EachItem;
     item.scope = { index: index };
-    
+
     return {
         type: Dom.COMPONENT,
         tagName: 'each::item',

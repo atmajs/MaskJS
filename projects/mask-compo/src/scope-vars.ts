@@ -8,7 +8,7 @@ export var domLib;
 export var Class;
 
 
-export function	_mask_ensureTmplFn (value) {
+export function    _mask_ensureTmplFn (value) {
     return typeof value !== 'string'
         ? value
         : parser_ensureTemplateFunction(value)
@@ -39,7 +39,7 @@ export function setDomLib (lib) {
 }
 
 //#if (DEBUG)
-if (_document != null && domLib == null) {	
-	log_warn('DomLite is used. You can set jQuery-Zepto-Kimbo via `mask.Compo.config.setDOMLibrary($)`');
+if (_document != null && domLib == null) {
+    log_warn('DomLite is used. You can set jQuery-Zepto-Kimbo via `mask.Compo.config.setDOMLibrary($)`');
 }
 //#endif

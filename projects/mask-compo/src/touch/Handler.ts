@@ -2,7 +2,7 @@
 import { Touch } from './Touch'
 import { FastClick } from './FastClick';
 import { isTouchable } from '../util/event';
-	
+
 export const TouchHandler = {
     supports (type) {
         if (isTouchable === false) {

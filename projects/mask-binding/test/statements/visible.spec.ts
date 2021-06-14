@@ -4,66 +4,66 @@ const Compo = mask.Compo;
 
 
 UTest({
-	'Browser': {
-		'+visible' () {
-			var template = `
-				section >
-					for ((letter, index) of letters)>
-						+visible(index % 2 === current) >
-							span.test name='~[letter]' data-index='~[index]';
-			`;
+    'Browser': {
+        '+visible' () {
+            var template = `
+                section >
+                    for ((letter, index) of letters)>
+                        +visible(index % 2 === current) >
+                            span.test name='~[letter]' data-index='~[index]';
+            `;
 
-			var model = {
-				letters: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-				current: 0
-			};
-			let div = mask.render(template, model);
+            var model = {
+                letters: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+                current: 0
+            };
+            let div = mask.render(template, model);
             var $ = mask.$(div);
-			
 
-			$
-				.find('span.test')
-				.eq_('length', model.letters.length)
-				.each(function(){
-					var letter = this.getAttribute('name');
-					var i = model.letters.indexOf(letter);
 
-					var display = this.style.display;
-					var fn = i % 2 === 0 ? notEq_ : eq_;
-					fn(display, 'none', display + ' at ' + i);
-				});
+            $
+                .find('span.test')
+                .eq_('length', model.letters.length)
+                .each(function(){
+                    var letter = this.getAttribute('name');
+                    var i = model.letters.indexOf(letter);
 
-			model.current = 1;
-			$
-				.find('span')
-				.each(function(){
-					var letter = this.getAttribute('name');
-					var i = model.letters.indexOf(letter);
+                    var display = this.style.display;
+                    var fn = i % 2 === 0 ? notEq_ : eq_;
+                    fn(display, 'none', display + ' at ' + i);
+                });
 
-					var display = this.style.display;
-					var fn = i % 2 === 1 ? notEq_ : eq_;
-					fn(display, 'none', display + ' at ' + i);
-				});
-		},
-	},
-	'Server': {
-		// Backend
-		'$config': {
-			'http.include': [ '/test/node.libraries.js' ]
-		},
+            model.current = 1;
+            $
+                .find('span')
+                .each(function(){
+                    var letter = this.getAttribute('name');
+                    var i = model.letters.indexOf(letter);
 
-		async '+visible - backend' () {
+                    var display = this.style.display;
+                    var fn = i % 2 === 1 ? notEq_ : eq_;
+                    fn(display, 'none', display + ' at ' + i);
+                });
+        },
+    },
+    'Server': {
+        // Backend
+        '$config': {
+            'http.include': [ '/test/node.libraries.js' ]
+        },
 
-			var template = `
-				section >
-					for ((letter, index) of letters) >
-						+visible(index % 2 === current) >
-							span.test name='~[letter]' data-index='~[index]';
-			`;
+        async '+visible - backend' () {
 
-			var model = {
-				letters: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-				current: 0
+            var template = `
+                section >
+                    for ((letter, index) of letters) >
+                        +visible(index % 2 === current) >
+                            span.test name='~[letter]' data-index='~[index]';
+            `;
+
+            var model = {
+                letters: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+                current: 0
             };
             let { el, doc, win } = await $renderServer(template, {
                 model
@@ -101,7 +101,7 @@ UTest({
                     var fn = i % 2 === 1 ? notEq_ : eq_;
                     fn(display, 'none', display + ' at ' + i);
                 });
-        
-		}
-	}
+
+        }
+    }
 });

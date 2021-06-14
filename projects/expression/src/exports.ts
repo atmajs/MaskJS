@@ -40,13 +40,13 @@ export const ExpressionUtil = {
      * All symbol and function references will be looked for in
      *
      * 1. model, or via special accessors:
-     * 		- `$c` controller
-     * 		- `$ctx`
-     * 		- `$a' controllers attributes
+     *         - `$c` controller
+     *         - `$ctx`
+     *         - `$a' controllers attributes
      * 2. scope:
-     * 		controller.scope
-     * 		controller.parent.scope
-     * 		...
+     *         controller.scope
+     *         controller.parent.scope
+     *         ...
      *
      * Sample:
      * '(user.age + 20) / 2'

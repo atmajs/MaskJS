@@ -91,9 +91,9 @@ var AsyncStat = class_create(class_Dfr, {
         this.asyncExp = _evaluateAstAsync(this.node, model, ctx, ctr);
         this.asyncExp.then(function(context){
                 self.ctx = AwaitableCtx(context);
-                self.ctx.then(function(result) {							
+                self.ctx.then(function(result) {
                     self.result = result;
-                    self.resolve(self);							
+                    self.resolve(self);
                 }, function (error) {
                     self.reject(error);
                 });
@@ -108,16 +108,16 @@ var AsyncStat = class_create(class_Dfr, {
     }
 });
 
-	
+
 export function AwaitableCtx  (context) {
     if (context == null || typeof context !== 'object') {
         return new ValueCtx(context);
     }
     if (typeof context.then === 'function') {
-        return new PromiseCtx(context);	
+        return new PromiseCtx(context);
     }
     if (typeof context.subscribe === 'function') {
-        return new ObservableCtx(context);	
+        return new ObservableCtx(context);
     }
     return new ValueCtx(context);
 };

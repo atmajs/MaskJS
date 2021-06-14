@@ -2,7 +2,7 @@ import { log_warn } from '@core/util/reporters';
 import { find_findSingle } from '@compo/util/traverse';
 
 /**
- *	Get component that owns an element
+ *    Get component that owns an element
  **/
 export const Anchor = {
     create(compo) {

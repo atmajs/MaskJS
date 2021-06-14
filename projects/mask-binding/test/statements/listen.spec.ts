@@ -5,105 +5,105 @@ const Compo = mask.Compo;
 declare var sinon: any;
 
 UTest({
-	'Browser': {
-		'simple expression': {
-			$before (done) {
-				var template = `
-					section {
-						listen (letter) {
-								span.test > '~letter.name';
-						}
-					}
-				`;
-				var model = { letter: { name: 'A' } };
+    'Browser': {
+        'simple expression': {
+            $before (done) {
+                var template = `
+                    section {
+                        listen (letter) {
+                                span.test > '~letter.name';
+                        }
+                    }
+                `;
+                var model = { letter: { name: 'A' } };
 
-				var compo = Compo.initialize(template, model);
-				done(compo);
-			},
-			'should be rendered' (done, compo) {
-				eq_(compo.model.letter.name, 'A');
-				is_(compo.model.__observers.letter, 'Array');
-				eq_(compo.model.__observers.letter.length, 1);
-				compo.$.eq_('text', 'A');
-				done(compo);
-			},
-			'should modify letter' (done, compo) {
-				compo.model.letter = { name: 'B'};
-				eq_(compo.model.letter.name, 'B');
-				eq_(compo.model.__observers.letter.length, 1);
-				compo.$.eq_('text', 'B');
-				done(compo);
-			},
-			'should remove observers' (done, compo) {
-				compo.remove();
-				eq_(compo.model, null);
-				done(compo);
-			}
-		},
-		'simple event emitter': {
-			'should render and re-render on event' () {
-				var template = `
-					section {
-						listen on (MyEmitter, 'my-event') {
-							span.test > '~letter.name';
-						}
-					}
-				`;
-				var TestEmitter = mask.class.create({
-					cb: null,
-					on: sinon.spy(function(event, cb){
-						this.cb = cb;
-						eq_(event, 'my-event');
-					}),
-					off: sinon.spy(function(event, cb){
-						eq_(this.cb, cb);
-						eq_(event, 'my-event');
-					}),
-				});
-				var model = {
-					letter: { name: 'A' },
-					MyEmitter: new TestEmitter
-				};
-				var compo = Compo.initialize(template, model);
+                var compo = Compo.initialize(template, model);
+                done(compo);
+            },
+            'should be rendered' (done, compo) {
+                eq_(compo.model.letter.name, 'A');
+                is_(compo.model.__observers.letter, 'Array');
+                eq_(compo.model.__observers.letter.length, 1);
+                compo.$.eq_('text', 'A');
+                done(compo);
+            },
+            'should modify letter' (done, compo) {
+                compo.model.letter = { name: 'B'};
+                eq_(compo.model.letter.name, 'B');
+                eq_(compo.model.__observers.letter.length, 1);
+                compo.$.eq_('text', 'B');
+                done(compo);
+            },
+            'should remove observers' (done, compo) {
+                compo.remove();
+                eq_(compo.model, null);
+                done(compo);
+            }
+        },
+        'simple event emitter': {
+            'should render and re-render on event' () {
+                var template = `
+                    section {
+                        listen on (MyEmitter, 'my-event') {
+                            span.test > '~letter.name';
+                        }
+                    }
+                `;
+                var TestEmitter = mask.class.create({
+                    cb: null,
+                    on: sinon.spy(function(event, cb){
+                        this.cb = cb;
+                        eq_(event, 'my-event');
+                    }),
+                    off: sinon.spy(function(event, cb){
+                        eq_(this.cb, cb);
+                        eq_(event, 'my-event');
+                    }),
+                });
+                var model = {
+                    letter: { name: 'A' },
+                    MyEmitter: new TestEmitter
+                };
+                var compo = Compo.initialize(template, model);
 
-				'> should be rendered'
-				compo.$.eq_('text', 'A');
+                '> should be rendered'
+                compo.$.eq_('text', 'A');
 
-				'> should have been attached'
-				eq_(model.MyEmitter.on.callCount, 1);
+                '> should have been attached'
+                eq_(model.MyEmitter.on.callCount, 1);
 
-				'> should not change the dom until the event'
-				model.letter.name = 'B';
-				compo.$.eq_('text', 'A');
+                '> should not change the dom until the event'
+                model.letter.name = 'B';
+                compo.$.eq_('text', 'A');
 
-				'> should re-render'
-				model.MyEmitter.cb();
-				compo.$.eq_('text', 'B');
+                '> should re-render'
+                model.MyEmitter.cb();
+                compo.$.eq_('text', 'B');
 
-				'> should remove listener'
-				compo.remove();
-				eq_(model.MyEmitter.off.callCount, 1);
-			}
-		}
-	},
-	'Server': {
-		'$config': {
-			'http.include': [ '/test/node.libraries.js' ]
-		},
+                '> should remove listener'
+                compo.remove();
+                eq_(model.MyEmitter.off.callCount, 1);
+            }
+        }
+    },
+    'Server': {
+        '$config': {
+            'http.include': [ '/test/node.libraries.js' ]
+        },
 
-		async 'listen - backend' () {
+        async 'listen - backend' () {
 
-			var template = `
-				section {
-					listen foo (letter) {
-							span.test > '~letter.name';
-					}
-				}
-			`;
-			var model = { letter: { name: 'A' } };
+            var template = `
+                section {
+                    listen foo (letter) {
+                            span.test > '~letter.name';
+                    }
+                }
+            `;
+            var model = { letter: { name: 'A' } };
 
-			let {el, doc, win} = await $renderServer(template, { model })
-				
+            let {el, doc, win} = await $renderServer(template, { model })
+
             var $ = mask.$(el);
 
             notEq_(win.app, null);
@@ -118,7 +118,7 @@ UTest({
 
             win.app.remove();
             eq_(win.app.model, null);
-        
-		}
-	}
+
+        }
+    }
 });

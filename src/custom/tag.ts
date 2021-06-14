@@ -297,7 +297,7 @@ export const customTag_Resolver = Resolver;
 function wrapStatic(proto) {
     function Ctor(node, parent) {
         this.ID = null;
-        this.node = null;
+        this.node = node;
         this.tagName = node.tagName;
         this.attr = obj_create(node.attr);
         this.expression = node.expression;

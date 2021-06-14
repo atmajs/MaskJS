@@ -515,9 +515,9 @@ export function parser_getRef() {
             index++;
             continue;
         }
-        if ((48 <= c && c <= 57) ||		// 0-9
-            (65 <= c && c <= 90) ||		// A-Z
-            (97 <= c && c <= 122)) {	// a-z
+        if ((48 <= c && c <= 57) ||        // 0-9
+            (65 <= c && c <= 90) ||        // A-Z
+            (97 <= c && c <= 122)) {    // a-z
             index++;
             continue;
         }

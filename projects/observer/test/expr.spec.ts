@@ -1,9 +1,9 @@
-import { 
-    obj_lockObservers, 
-    obj_unlockObservers, 
-    obj_removeMutatorObserver, 
-    obj_addMutatorObserver, 
-    obj_addObserver, 
+import {
+    obj_lockObservers,
+    obj_unlockObservers,
+    obj_removeMutatorObserver,
+    obj_addMutatorObserver,
+    obj_addObserver,
     obj_removeObserver,
     expression_createBinder,
     expression_bind,
@@ -193,7 +193,7 @@ UTest({
         // MERGE !
         model_Expect = obj_Expect;
         model.sub = obj;
-        eq_(model_Count, 2);			
+        eq_(model_Count, 2);
 
         obj.title = model_Expect = obj_Expect = 'O3';
 
@@ -209,7 +209,7 @@ UTest({
         };
 
         eq_(model_Count, 0);
-        
+
         model.sub.title = model_Expect = 'M3';
         eq_(model_Count, -1);
 
@@ -543,25 +543,25 @@ UTest({
                         year: 1
                     }
                 }
-            };					
+            };
             obj_addObserver(
-                model, 
-                'event.date', 
+                model,
+                'event.date',
                 assert.avoid('Inner fn should be removed')
-            );					
+            );
             obj_addObserver(
-                model, 
-                'event', 
+                model,
+                'event',
                 assert.avoid('Outer fn never calls')
             );
             obj_removeObserver(
-                model, 
+                model,
                 'event.date'
             );
             var innerFn = sinon.spy();
             obj_addObserver(
-                model, 
-                'event.date', 
+                model,
+                'event.date',
                 innerFn
             );
 
@@ -575,7 +575,7 @@ UTest({
 
             model.event.date = { year: 3};
             eq_(innerFn.callCount, 1, 'Inner fn should be called once');
-            deepEq_(innerFn.args[0], [{year: 3}]);	
+            deepEq_(innerFn.args[0], [{year: 3}]);
         },
         'should add outer observer, deeper, then removes the deeper and calls once' () {
             var model = {
@@ -586,33 +586,33 @@ UTest({
                 }
             };
             obj_addObserver(
-                model, 
-                'event', 
+                model,
+                'event',
                 assert.await(1)
             );
             obj_addObserver(
-                model, 
-                'event.date', 
+                model,
+                'event.date',
                 assert.avoid('Inner fn should be removed')
-            );					
+            );
             obj_removeObserver(
-                model, 
+                model,
                 'event.date'
             );
             var innerFn = sinon.spy();
             obj_addObserver(
-                model, 
-                'event.date', 
+                model,
+                'event.date',
                 innerFn
             );
 
             model.event.date = { year: 3};
             eq_(innerFn.callCount, 1, 'Inner fn should be called once');
-            deepEq_(innerFn.args[0], [{year: 3}]);					
+            deepEq_(innerFn.args[0], [{year: 3}]);
 
             model.event = { date: { year: 4 } };
             eq_(innerFn.callCount, 2, 'Inner fn should be called twice');
-            deepEq_(innerFn.args[1], [{year: 4}]);	
+            deepEq_(innerFn.args[1], [{year: 4}]);
         },
         'should add deeper observer when child is null, add deeper, then removes the deeper and calls once' () {
             var model = {
@@ -620,42 +620,42 @@ UTest({
             };
             var colorSpy = sinon.spy();
             obj_addObserver(
-                model, 
-                'chart.color', 
+                model,
+                'chart.color',
                 colorSpy
             );
 
             var chartSpy = sinon.spy();
             obj_addObserver(
-                model, 
-                'chart', 
+                model,
+                'chart',
                 chartSpy
-            );					
-            
+            );
+
             var colorSpy2 = sinon.spy();
             obj_addObserver(
-                model, 
-                'chart.color', 
+                model,
+                'chart.color',
                 colorSpy2
             );
 
-            
-            
+
+
             model.chart = { color: 'cyan' };
             model.chart = { color: 'red' };
-            deepEq_(chartSpy.args[0], [{ color: 'cyan'}]);	
+            deepEq_(chartSpy.args[0], [{ color: 'cyan'}]);
             deepEq_(colorSpy.args[0], [ 'cyan' ]);
             deepEq_(colorSpy2.args[0], [ 'cyan' ]);
 
 
-            deepEq_(chartSpy.args[1], [{ color: 'red'}]);	
+            deepEq_(chartSpy.args[1], [{ color: 'red'}]);
             deepEq_(colorSpy.args[1], [ 'red' ]);
             deepEq_(colorSpy2.args[1], [ 'red' ]);
 
             model.chart.color = 'green';
             deepEq_(colorSpy.args[2], [ 'green' ]);
             deepEq_(colorSpy2.args[2], [ 'green' ]);
-                    
+
         }
     },
 })

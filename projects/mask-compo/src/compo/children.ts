@@ -5,18 +5,18 @@ import { CompoConfig } from './CompoConfig';
 export const Children_ = {
 
     /**
-    *	Component children. Example:
+    *    Component children. Example:
     *
-    *	Class({
-    *		Base: Compo,
-    *		Construct: function(){
-    *			this.compos = {
-    *				panel: '$: .container',  // querying with DOMLib
-    *				timePicker: 'compo: timePicker', // querying with Compo selector
-    *				button: '#button' // querying with querySelector***
-    *			}
-    *		}
-    *	});
+    *    Class({
+    *        Base: Compo,
+    *        Construct: function(){
+    *            this.compos = {
+    *                panel: '$: .container',  // querying with DOMLib
+    *                timePicker: 'compo: timePicker', // querying with Compo selector
+    *                button: '#button' // querying with querySelector***
+    *            }
+    *        }
+    *    });
     *
     */
     select(component, compos) {

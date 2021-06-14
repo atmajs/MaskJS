@@ -4,7 +4,7 @@ const Compo = mask.Compo;
 
 UTest({
     'simple object inheritance'() {
-        
+
         var A = {
             a: 'a',
             getA() {
@@ -158,10 +158,10 @@ UTest({
             return UTest.domtest(
                 dom,
                 `
-				filter (section) > find ('span > em') {
-					text B;
-				}
-			`
+                filter (section) > find ('span > em') {
+                    text B;
+                }
+            `
             );
         },
         'merge `template` with default `nodes`'() {
@@ -181,10 +181,10 @@ UTest({
             return UTest.domtest(
                 mask.render('bar'),
                 `
-				find('section') {
-					html ('<em>Hello</em>');
-				}
-			`
+                find('section') {
+                    html ('<em>Hello</em>');
+                }
+            `
             );
         },
         'merge `template` with inlined `nodes`'() {
@@ -203,13 +203,13 @@ UTest({
 
             return UTest.domtest(
                 mask.render(`
-				bar > @body > span > '~[this.name]'
-			`),
+                bar > @body > span > '~[this.name]'
+            `),
                 `
-				find('section') {
-					html ('<span>Baz</span>');
-				}
-			`
+                find('section') {
+                    html ('<span>Baz</span>');
+                }
+            `
             );
         }
     },

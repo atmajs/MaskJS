@@ -21,8 +21,8 @@ UTest({
         mask.define('Foo', mask.Compo({
             letter: 'a',
             template: `
-				div > '~[bind: this.letter]'
-			`
+                div > '~[bind: this.letter]'
+            `
         }));
 
         var model = {

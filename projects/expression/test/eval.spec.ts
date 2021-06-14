@@ -5,13 +5,13 @@ UTest({
     'evaluate to empty array'() {
         [
             '[]',
-            '	[ ]',
-            ' [		] ',
+            '    [ ]',
+            ' [        ] ',
             `
-				[
+                [
 
-				]
-			`
+                ]
+            `
         ]
             .forEach(x => {
                 var arr = run(x);
@@ -23,13 +23,13 @@ UTest({
     'evaluate to an array with a number'() {
         [
             '[1]',
-            '	[ 1 ]',
-            ' [		1] ',
+            '    [ 1 ]',
+            ' [        1] ',
             `
-				[1
+                [1
 
-				]
-			`
+                ]
+            `
         ]
             .forEach(x => {
                 var arr = run(x);

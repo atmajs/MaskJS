@@ -27,11 +27,11 @@ export const CompoConfig = {
         }
     },
     /**
-     *	@default, global $ is used
-     *	IDOMLibrary = {
-     *	{fn}(elements) - create dom-elements wrapper,
-     *	on(event, selector, fn) - @see jQuery 'on'
-     *	}
+     *    @default, global $ is used
+     *    IDOMLibrary = {
+     *    {fn}(elements) - create dom-elements wrapper,
+     *    on(event, selector, fn) - @see jQuery 'on'
+     *    }
      */
     setDOMLibrary(lib) {
         if (domLib === lib)

@@ -8,13 +8,13 @@ import { obj_extendMany } from '@utils/obj';
 
 
 export function jMask (mix?) {
-	if (this instanceof jMask === false)
-		return new (jMask as any)(mix);
-	if (mix == null)
-		return this;
-	if (mix.type === Dom.SET)
-		return mix;
-	return this.add(mix);
+    if (this instanceof jMask === false)
+        return new (jMask as any)(mix);
+    if (mix == null)
+        return this;
+    if (mix.type === Dom.SET)
+        return mix;
+    return this.add(mix);
 }
 
 obj_extendMany(

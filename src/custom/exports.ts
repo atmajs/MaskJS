@@ -16,9 +16,9 @@ export {
 
 export {
     customAttr_register,
-    customAttr_get,
+    customAttr_get
 } from './attribute';
-import './mock-attributes'
+import './mock-attributes';
 
 
 export {
@@ -26,7 +26,7 @@ export {
     customUtil_$utils,
     customUtil_register
 } from './util';
-import './mock-utils'
+import './mock-utils';
 
 export {
     customTag_get,
@@ -40,7 +40,7 @@ export {
     customTag_define,
     customTag_Base
 } from './tag';
-import './mock-tags'
+import './mock-tags';
 
 
 export {

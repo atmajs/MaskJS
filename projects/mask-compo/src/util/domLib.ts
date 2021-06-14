@@ -1,9 +1,9 @@
 import { KeyboardHandler } from '../keyboard/Handler';
 
 /**
- *	Combine .filter + .find
+ *    Combine .filter + .find
  */
-    
+
 export function domLib_find ($set, selector) {
     return $set.filter(selector).add($set.find(selector));
 };

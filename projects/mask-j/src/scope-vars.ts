@@ -5,12 +5,12 @@ export const _mask_render = renderer_render;
 export const _mask_parse = parser_parse;
 export const _mask_ensureTmplFnOrig = parser_ensureTemplateFunction;
 
-	
+
 
 export function _mask_ensureTmplFn(value) {
-	if (typeof value !== 'string') {
-		return value;
-	}
-	return _mask_ensureTmplFnOrig(value);
+    if (typeof value !== 'string') {
+        return value;
+    }
+    return _mask_ensureTmplFnOrig(value);
 }
 

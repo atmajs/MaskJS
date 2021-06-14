@@ -647,6 +647,8 @@ declare module 'mask/custom/tag' {
     export function customTag_getAll(ctr?: any): any;
     
     export function customTag_register(mix: any, Handler: any): void;
+    export let customTag_register_inner: (mix: any, Handler: any) => void;
+    export function customTag_createRegistrar(wrapper: (current: typeof customTag_register_inner) => typeof customTag_register_inner): void;
     
     export function customTag_registerFromTemplate(mix: any, Ctr?: any, path?: any): PromiseLike<void>;
     
@@ -917,8 +919,11 @@ declare module 'mask/custom/exports' {
     export { custom_optimize } from 'mask/custom/optimize';
     export { custom_Utils, custom_Statements, custom_Attributes, custom_Tags, custom_Tags_global, custom_Tags_defs, custom_Parsers, custom_Parsers_Transform, custom_Optimizers } from 'mask/custom/repositories';
     export { customAttr_register, customAttr_get } from 'mask/custom/attribute';
-    export { customTag_get, customTag_getAll, customTag_register, customTag_registerScoped, customTag_registerFromTemplate, customTag_registerResolver, customTag_Resolver, customTag_Compo_getHandler, customTag_define, customTag_Base } from 'mask/custom/tag';
+    
     export { customUtil_get, customUtil_$utils, customUtil_register } from 'mask/custom/util';
+    
+    export { customTag_get, customTag_getAll, customTag_register, customTag_registerScoped, customTag_registerFromTemplate, customTag_registerResolver, customTag_Resolver, customTag_Compo_getHandler, customTag_define, customTag_Base } from 'mask/custom/tag';
+    
     export { customStatement_register, customStatement_get } from 'mask/custom/statement';
 }
 
@@ -1218,7 +1223,7 @@ declare module 'mask/projects/mask-compo/src/compo/CompoStatics' {
             create(...args: any[]): any;
             createExt(Proto: any, args: any): any;
             createClass(): never;
-            initialize(mix: any, model?: any, ctx?: any, container?: any, parent?: any): any;
+            initialize(mix: string | Function | any, model?: any, ctx?: any, container?: any, parent?: any): any;
             find: typeof compo_find;
             findAll: typeof compo_findAll;
             closest: typeof compo_closest;
@@ -1383,20 +1388,22 @@ declare module 'mask/custom/optimize' {
 }
 
 declare module 'mask/custom/repositories' {
-    export const custom_Utils: {};
-    export const custom_Optimizers: {};
-    export const custom_Statements: {};
+    export const custom_Utils: any;
+    export const custom_Optimizers: any;
+    export const custom_Statements: any;
     export const custom_Attributes: any;
     export const custom_Tags: any;
     export const custom_Tags_global: any;
     export const custom_Parsers: any;
     export const custom_Parsers_Transform: any;
-    export const custom_Tags_defs: {};
+    export const custom_Tags_defs: any;
 }
 
 declare module 'mask/custom/attribute' {
+    let customAttr_register_inner: (attrName: any, mix: any, Handler?: any) => void;
     
     export function customAttr_register(attrName: any, mix: any, Handler?: any): void;
+    export function customAttr_createRegistrar(wrapper: (current: typeof customAttr_register_inner) => typeof customAttr_register_inner): void;
     
     export function customAttr_get(attrName: any): any;
 }
@@ -1406,8 +1413,10 @@ declare module 'mask/custom/util' {
     export const customUtil_$utils: any;
     
     export function customUtil_register(name: any, mix: any): void;
+    export let customUtil_register_inner: (name: any, mix: any) => void;
     
     export function customUtil_get(name: any): any;
+    export function customUtil_createRegistrar(wrapper: (current: typeof customUtil_register_inner) => typeof customUtil_register_inner): void;
 }
 
 declare module 'mask/custom/statement' {
@@ -1487,7 +1496,7 @@ declare module 'mask/parser/mask/stringify' {
 
 declare module 'mask/parser/Templates' {
     export const Templates: {
-        ensure(mix: any, ctx: {
+        ensure(mix: string | any, ctx: {
             filename?: string;
         }): any;
     };

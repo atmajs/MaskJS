@@ -3,6 +3,6 @@ import { expression_bind, expression_unbind } from '@project/observer/src/export
 import { class_create } from '@utils/class';
 
 export const ExpressionBinder = class_create(IBinder, {
-	on: expression_bind,
-	off: expression_unbind
+    on: expression_bind,
+    off: expression_unbind
 });

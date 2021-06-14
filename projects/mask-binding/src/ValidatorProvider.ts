@@ -62,7 +62,7 @@ function fn_fromModel(model, prop) {
             return fn;
         }
     }
-    
+
     var i = prop.indexOf('.');
     if (i !== -1) {
         return fn_fromModel(
@@ -118,7 +118,7 @@ function fn_byName(name, param, message) {
 }
 
 function ui_notifyInvalid(el, error, oncancel) {
-    
+
     var message = error.message || error;
     var next = domLib(el).next('.' + class_INVALID);
     if (next.length === 0) {
@@ -147,7 +147,7 @@ function ui_clearInvalid(el) {
 }
 
 export const Validators = {
-    match: function (match) {		
+    match: function (match) {
         return function (str){
             return new RegExp(match).test(str);
         };
