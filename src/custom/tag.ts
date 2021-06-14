@@ -22,7 +22,7 @@ export function customTag_get(name, ctr?) {
         );
         return customTag_getAll();
     }
-    var Ctor = custom_Tags[name];
+    let Ctor = custom_Tags[name];
     if (Ctor == null) {
         return null;
     }
@@ -30,7 +30,7 @@ export function customTag_get(name, ctr?) {
         return Ctor;
     }
 
-    var ctr_ = is_Function(ctr) ? ctr.prototype : ctr;
+    let ctr_ = is_Function(ctr) ? ctr.prototype : ctr;
     while (ctr_ != null) {
         if (is_Function(ctr_.getHandler)) {
             Ctor = ctr_.getHandler(name);
@@ -54,7 +54,7 @@ export function customTag_getAll(ctr?) {
         return custom_Tags;
     }
 
-    var obj = {},
+    let obj = {},
         ctr_ = ctr,
         x;
     while (ctr_ != null) {
@@ -69,7 +69,7 @@ export function customTag_getAll(ctr?) {
         }
         ctr_ = ctr_.parent;
     }
-    for (var key in custom_Tags) {
+    for (let key in custom_Tags) {
         x = custom_Tags[key];
         if (x == null || x === Resolver) {
             continue;
@@ -91,17 +91,29 @@ export function customTag_getAll(ctr?) {
  * @method registerHandler
  */
 export function customTag_register(mix, Handler) {
+    customTag_register_inner(mix, Handler);
+}
+
+export let customTag_register_inner = function (mix, Handler) {
     if (typeof mix !== 'string' && arguments.length === 3) {
         customTag_registerScoped.apply(this, arguments);
         return;
     }
-    var Ctor = compo_ensureCtor(Handler),
-        Repo = custom_Tags[mix] === Resolver ? custom_Tags_global : custom_Tags;
+    let Ctor = compo_ensureCtor(Handler);
+    let Repo = custom_Tags[mix] === Resolver ? custom_Tags_global : custom_Tags;
     Repo[mix] = Ctor;
 
     //> make fast properties
     obj_toFastProps(custom_Tags);
 }
+
+
+
+export function customTag_createRegistrar (wrapper: (current:  typeof customTag_register_inner) => typeof customTag_register_inner){
+    customTag_register_inner = wrapper(customTag_register_inner);
+};
+
+
 /**
  * Register components from a template
  * @param {string} template - Mask template
@@ -114,7 +126,7 @@ export function customTag_register(mix, Handler) {
 export function customTag_registerFromTemplate(mix, Ctr?, path?) {
 
     return ModuleMidd.parseMaskContent(mix, path).then(exports => {
-        
+
         let store = exports.__handlers__;
         for (let key in store) {
             if (key in exports) {
@@ -123,8 +135,8 @@ export function customTag_registerFromTemplate(mix, Ctr?, path?) {
                 continue;
             }
             customTag_registerScoped(Ctr, key, store[key]);
-        }        
-    });    
+        }
+    });
 }
 /**
  * Register a component
@@ -142,8 +154,8 @@ export function customTag_registerScoped(Ctx, name, Handler) {
         return;
     }
     customTag_registerResolver(name);
-    var obj = is_Function(Ctx) ? Ctx.prototype : Ctx;
-    var map = obj.__handlers__;
+    let obj = is_Function(Ctx) ? Ctx.prototype : Ctx;
+    let map = obj.__handlers__;
     if (map == null) {
         map = obj.__handlers__ = {};
     }
@@ -200,7 +212,7 @@ export const customTag_define = <IDefineMethod> fn_createByPattern(
         {
             pattern: [is_String, is_String],
             handler: function(name, template) {
-                var Scope = customTag_get(name);
+                let Scope = customTag_get(name);
                 return customTag_registerFromTemplate(template, Scope);
             }
         },
@@ -225,7 +237,7 @@ export const customTag_define = <IDefineMethod> fn_createByPattern(
         {
             pattern: [is_String, is_String, is_Compo],
             handler: function(scopeName, name, Ctor) {
-                var Scope = customTag_get(scopeName);
+                let Scope = customTag_get(scopeName);
                 return customTag_registerScoped(Scope, name, Ctor);
             }
         }
@@ -233,7 +245,7 @@ export const customTag_define = <IDefineMethod> fn_createByPattern(
 );
 
 export function customTag_registerResolver(name) {
-    var Ctor = custom_Tags[name];
+    let Ctor = custom_Tags[name];
     if (Ctor === Resolver) return;
 
     if (Ctor != null) custom_Tags_global[name] = Ctor;
@@ -245,7 +257,7 @@ export function customTag_registerResolver(name) {
 }
 
 export function customTag_Compo_getHandler(name) {
-    var map = this.__handlers__;
+    let map = this.__handlers__;
     return map == null ? null : map[name];
 }
 
@@ -270,7 +282,7 @@ export const customTag_Base = {
 };
 
 const Resolver = function(node, model, ctx, container, ctr) {
-    var Mix = customTag_get(node.tagName, ctr);
+    let Mix = customTag_get(node.tagName, ctr);
     if (Mix != null) {
         if (is_Function(Mix) === false) {
             return obj_create(Mix);

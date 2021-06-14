@@ -9,11 +9,11 @@ import { custom_Statements } from './repositories';
  * @method registerStatement
  */
 export function customStatement_register (name, handler){
-	//@TODO should it be not allowed to override system statements, if, switch?
-	custom_Statements[name] = is_Function(handler)
-		? { render: handler }
-		: handler
-		;
+    //@TODO should it be not allowed to override system statements, if, switch?
+    custom_Statements[name] = is_Function(handler)
+        ? { render: handler }
+        : handler
+        ;
 };
 /**
  * Get statement handler
@@ -23,10 +23,10 @@ export function customStatement_register (name, handler){
  * @method getStatement
  */
 export function customStatement_get (name){
-	return name != null
-		? custom_Statements[name]
-		: custom_Statements
-		;
+    return name != null
+        ? custom_Statements[name]
+        : custom_Statements
+        ;
 };
 /**
  * Is called when the builder matches the node by tagName

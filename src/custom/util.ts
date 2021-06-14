@@ -21,13 +21,18 @@ export const customUtil_$utils = <any> {};
  * @category Mask Util
  */
 export function customUtil_register (name, mix) {
+    customUtil_register_inner(name, mix);
+};
+
+export let customUtil_register_inner = function (name, mix) {
     if (is_Function(mix)) {
         custom_Utils[name] = mix;
         return;
     }
     custom_Utils[name] = createUtil(mix);
-    if (mix['arguments'] === 'parsed')
+    if (mix['arguments'] === 'parsed') {
         customUtil_$utils[name] = mix.process;
+    }
 };
 /**
  * Get the Util Handler
@@ -40,11 +45,16 @@ export function customUtil_get (name) {
     return name != null ? custom_Utils[name] : custom_Utils;
 };
 
+//** MaskNode creates its own wrapper */
+export function customUtil_createRegistrar (wrapper: (current:  typeof customUtil_register_inner) => typeof customUtil_register_inner){
+    customUtil_register_inner = wrapper(customUtil_register_inner);
+};
+
 function createUtil(obj) {
     if (obj['arguments'] === 'parsed') {
         return processParsedDelegate(obj.process);
     }
-    var fn = fn_proxy(obj.process || processRawFn, obj);
+    let fn = fn_proxy(obj.process || processRawFn, obj);
     // <static> save reference to the initial util object.
     // Mask.Bootstrap needs the original util
     // @workaround
@@ -62,7 +72,7 @@ function processRawFn(expr, model, ctx, el, ctr, attrName, type, node) {
 }
 function processParsedDelegate(fn) {
     return function(expr, model, ctx, el, ctr, type, node) {
-        var args = expression_evalStatements(
+        let args = expression_evalStatements(
             expr, model, ctx, ctr, node
         );
         return fn.apply(null, args);
@@ -84,7 +94,7 @@ function processParsedDelegate(fn) {
  * @abstract
  * @category Mask Util
  */
-    var IUtilHandler = {
+    let IUtilHandler = {
     'arguments': null,
     'process': null,
     'nodeRenderStart': null,

@@ -1,4 +1,4 @@
-import { is_Array } from '@utils/is';
+import { is_Array, is_NODE } from '@utils/is';
 import { _document } from '@utils/refs'
 import { log_warn, log_error } from '@core/util/reporters';
 import { domLib, setDomLib } from './scope-vars';
@@ -8,11 +8,12 @@ import { domLib_initialize } from './jcompo/jCompo';
  * Extrem simple Dom Library. If (jQuery | Kimbo | Zepto) is not used.
  * Only methods, required for the Compo library are implemented.
  */
-export var DomLite;
+export let DomLite;
 
 (function (document) {
-    if (document == null)
+    if (is_NODE) {
         return;
+    }
 
     DomLite = function (mix) {
         if (this instanceof DomLite === false) {
@@ -27,7 +28,7 @@ export var DomLite;
     if (domLib == null)
         setDomLib(DomLite);
 
-    var Proto = DomLite.fn = {
+    let Proto = DomLite.fn = {
         constructor: DomLite,
         length: 0,
         add(mix) {
@@ -36,7 +37,7 @@ export var DomLite;
             if (is_Array(mix) === true)
                 return each(mix, this.add, this);
 
-            var type = mix.nodeType;
+            let type = mix.nodeType;
             if (type === 11 /* Node.DOCUMENT_FRAGMENT_NODE */)
                 return each(mix.childNodes, this.add, this);
 
@@ -68,17 +69,17 @@ export var DomLite;
             }, new DomLite);
         },
         parent() {
-            var x = this[0];
+            let x = this[0];
             return new DomLite(x && x.parentNode);
         },
         children(sel) {
-            var set = each(this, function (node) {
+            let set = each(this, function (node) {
                 this.add(node.childNodes);
             }, new DomLite);
             return sel == null ? set : set.filter(sel);
         },
         closest(selector) {
-            var x = this[0],
+            let x = this[0],
                 dom = new DomLite;
             while (x != null && x.parentNode != null) {
                 x = x.parentNode;
@@ -88,7 +89,7 @@ export var DomLite;
             return dom;
         },
         next(selector) {
-            var x = this[0],
+            let x = this[0],
                 dom = new DomLite;
             while (x != null && x.nextElementSibling != null) {
                 x = x.nextElementSibling;
@@ -159,7 +160,7 @@ export var DomLite;
     }());
 
     (function () {
-        var Manip = {
+        let Manip = {
             append(node, el) {
                 after_(node, node.lastChild, el);
             },
@@ -174,9 +175,9 @@ export var DomLite;
             }
         };
         each(['append', 'prepend', 'before', 'after'], function (method) {
-            var fn = Manip[method];
+            let fn = Manip[method];
             Proto[method] = function (mix) {
-                var isArray = is_Array(mix);
+                let isArray = is_Array(mix);
                 return each(this, function (node) {
                     if (isArray) {
                         each(mix, function (el) {
@@ -194,7 +195,7 @@ export var DomLite;
             parent.insertBefore(el, anchor);
         }
         function after_(parent, anchor, el) {
-            var next = anchor != null ? anchor.nextSibling : null;
+            let next = anchor != null ? anchor.nextSibling : null;
             before_(parent, next, el);
         }
     }());
@@ -203,7 +204,7 @@ export var DomLite;
     function each(arr, fn, ctx?) {
         if (arr == null)
             return ctx || arr;
-        var imax = arr.length,
+        let imax = arr.length,
             i = -1;
         while (++i < imax) {
             fn.call(ctx || arr, arr[i], i);
@@ -219,7 +220,7 @@ export var DomLite;
     function indexOf(arr, fn, ctx?) {
         if (arr == null)
             return -1;
-        var imax = arr.length,
+        let imax = arr.length,
             i = -1;
         while (++i < imax) {
             if (fn.call(ctx || arr, arr[i], i) === true)
@@ -228,10 +229,10 @@ export var DomLite;
         return -1;
     }
 
-    var docEl = document.documentElement;
-    var _$$ = docEl.querySelectorAll;
-    var _is = (function () {
-        var matchesSelector =
+    let docEl = document.documentElement;
+    let _$$ = docEl.querySelectorAll;
+    let _is = (function () {
+        let matchesSelector =
             docEl.webkitMatchesSelector ||
             docEl.mozMatchesSelector ||
             docEl.msMatchesSelector ||
@@ -246,10 +247,10 @@ export var DomLite;
     }());
 
     /* Events */
-    var binder, on, off, delegate, undelegate;
+    let binder, on, off, delegate, undelegate;
     (function () {
         binder = function (bind, bindSelector, args) {
-            var length = args.length,
+            let length = args.length,
                 fn;
             if (2 === length)
                 fn = bind
@@ -272,7 +273,7 @@ export var DomLite;
         };
         delegate = function (type, selector, fn) {
             function guard(event) {
-                var el = event.target,
+                let el = event.target,
                     current = event.currentTarget;
                 if (current === el)
                     return;
@@ -298,14 +299,14 @@ export var DomLite;
                 handler.call(node, type, fn, false);
             });
         }
-        var _addEvent = docEl.addEventListener,
+        let _addEvent = docEl.addEventListener,
             _remEvent = docEl.removeEventListener;
     }());
 
     /* class handler */
     (function () {
-        var isClassListSupported = docEl.classList != null;
-        var hasClass = isClassListSupported === true
+        let isClassListSupported = docEl.classList != null;
+        let hasClass = isClassListSupported === true
             ? function (node, klass) {
                 return node.classList.contains(klass);
             }
@@ -317,7 +318,7 @@ export var DomLite;
                 return hasClass(node, klass)
             });
         };
-        var Shim;
+        let Shim;
         (function () {
             Shim = {
                 add(node, klass) {
@@ -329,7 +330,7 @@ export var DomLite;
                         remove(node, klass);
                 },
                 toggle(node, klass) {
-                    var fn = hasClass(node, klass) === true
+                    let fn = hasClass(node, klass) === true
                         ? remove
                         : add;
                     fn(node, klass);
@@ -344,10 +345,10 @@ export var DomLite;
         }());
 
         each(['add', 'remove', 'toggle'], function (method) {
-            var mutatorFn = isClassListSupported === false
+            let mutatorFn = isClassListSupported === false
                 ? Shim[method]
                 : function (node, klass) {
-                    var classList = node.classList;
+                    let classList = node.classList;
                     classList[method].call(classList, klass);
                 };
             Proto[method + 'Class'] = function (klass) {
@@ -362,23 +363,23 @@ export var DomLite;
 
     // Events
     (function () {
-        var createEvent = function (type) {
-            var event = document.createEvent('Event');
+        let createEvent = function (type) {
+            let event = document.createEvent('Event');
             event.initEvent(type, true, true);
             return event;
         };
-        var create = function (type, data) {
+        let create = function (type, data) {
             if (data == null)
                 return createEvent(type);
-            var event = document.createEvent('CustomEvent');
+            let event = document.createEvent('CustomEvent');
             event.initCustomEvent(type, true, true, data);
             return event;
         };
-        var dispatch = function (node, event) {
+        let dispatch = function (node, event) {
             node.dispatchEvent(event);
         };
         Proto['trigger'] = function (type, data) {
-            var event = create(type, data);
+            let event = create(type, data);
             return each(this, function (node) {
                 dispatch(node, event);
             });

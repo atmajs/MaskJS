@@ -26,8 +26,8 @@ export function customAttr_register (attrName, mix, Handler?){
     customAttr_register_inner(attrName, mix, Handler);
 };
 
-export function customAttr_setRegister (fn: typeof customAttr_register_inner){
-    customAttr_register_inner = fn;
+export function customAttr_createRegistrar (wrapper: (current:  typeof customAttr_register_inner) => typeof customAttr_register_inner){
+    customAttr_register_inner = wrapper(customAttr_register_inner);
 };
 /**
  * Get attribute  handler

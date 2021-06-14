@@ -17,10 +17,16 @@ export {
 export {
     customAttr_register,
     customAttr_get,
-    customAttr_setRegister,
 } from './attribute';
 import './mock-attributes'
 
+
+export {
+    customUtil_get,
+    customUtil_$utils,
+    customUtil_register
+} from './util';
+import './mock-utils'
 
 export {
     customTag_get,
@@ -34,12 +40,8 @@ export {
     customTag_define,
     customTag_Base
 } from './tag';
+import './mock-tags'
 
-export {
-    customUtil_get,
-    customUtil_$utils,
-    customUtil_register
-} from './util';
 
 export {
     customStatement_register,
