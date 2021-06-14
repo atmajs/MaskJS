@@ -38,7 +38,6 @@ import {
     customStatement_get,
     customAttr_register,
     customAttr_get,
-    customAttr_setRegister,
     customUtil_register,
     customUtil_get,
     customUtil_$utils,
@@ -151,7 +150,6 @@ export const Mask = {
     registerStatement: customStatement_register,
     getStatement: customStatement_get,
 
-    setAttrHandlerRegister: customAttr_setRegister,
     registerAttrHandler: customAttr_register,
     getAttrHandler: customAttr_get,
 

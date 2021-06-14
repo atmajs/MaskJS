@@ -1,4 +1,7 @@
-export { custom_optimize } from './optimize';
+export {
+    custom_optimize
+} from './optimize';
+
 export {
     custom_Utils,
     custom_Statements,
@@ -10,11 +13,13 @@ export {
     custom_Parsers_Transform,
     custom_Optimizers
 } from './repositories';
+
 export {
     customAttr_register,
     customAttr_get,
     customAttr_setRegister,
 } from './attribute';
+
 export {
     customTag_get,
     customTag_getAll,
@@ -28,6 +33,17 @@ export {
     customTag_Base
 } from './tag';
 
-export { customUtil_get, customUtil_$utils, customUtil_register } from './util';
+export {
+    customUtil_get,
+    customUtil_$utils,
+    customUtil_register
+} from './util';
 
-export { customStatement_register, customStatement_get } from './statement';
+export {
+    customStatement_register,
+    customStatement_get
+} from './statement';
+
+export {
+    mocked
+} from './mocked'
