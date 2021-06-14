@@ -36,8 +36,7 @@
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
         "atma-loader-ts": "^1.1.15",
-        "dts-bundle": "^0.7.3",
-        "jsdoc-to-markdown": "git+https://github.com/tenbits/jsdoc-to-markdown"
+        "dts-bundle": "^0.7.3"
     },
     "scripts": {
         "test": "atma test",
