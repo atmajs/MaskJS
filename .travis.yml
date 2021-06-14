@@ -27,4 +27,4 @@ script:
 language: node_js
 
 node_js:
-  - "10.1.0"
+  - 16
