@@ -5,9 +5,9 @@ import { custom_Attributes } from '@core/custom/exports';
 import { obj_setProperty } from '@utils/obj';
 
 export function build_nodeFactory(config: IBuilderConfig) {
-    var el_create;
-    (function(doc, factory) {
-        el_create = function(name) {
+    let el_create;
+    (function (doc, factory) {
+        el_create = function (name) {
             //#if (DEBUG)
             try {
                 //#endif
@@ -25,13 +25,13 @@ export function build_nodeFactory(config: IBuilderConfig) {
     })(config.document ?? (typeof document === 'undefined' ? null : document), config.create);
 
     return function build_node(node, model, ctx, container, ctr, children) {
-        var el = el_create(node.tagName);
+        let el = el_create(node.tagName);
         if (el == null) {
             return;
         }
         if (children != null) {
             children.push(el);
-            var id = ctr.ID;
+            let id = ctr.ID;
             if (id != null) {
                 el.setAttribute('x-compo-id', id);
             }
@@ -42,11 +42,11 @@ export function build_nodeFactory(config: IBuilderConfig) {
         if (container != null) {
             container.appendChild(el);
         }
-        var attr = node.attr;
+        let attr = node.attr;
         if (attr != null) {
             el_writeAttributes(el, node, attr, model, ctx, container, ctr);
         }
-        var props = node.props;
+        let props = node.props;
         if (props != null) {
             el_writeProps(el, node, props, model, ctx, container, ctr);
         }
@@ -54,61 +54,57 @@ export function build_nodeFactory(config: IBuilderConfig) {
     };
 }
 
-export var el_writeAttributes;
-export var el_writeProps;
-(function() {
-    el_writeAttributes = function(el, node, attr, model, ctx, container, ctr) {
-        for (var key in attr) {
-            var mix = attr[key],
-                val = is_Function(mix)
-                    ? getValByFn('attr', mix, key, model, ctx, el, ctr)
-                    : mix;
+export function el_writeAttributes(el: HTMLElement, node, attr, model, ctx, container, ctr) {
+    for (let key in attr) {
+        let mix = attr[key];
+        let val = is_Function(mix)
+            ? getValByFn('attr', mix, key, model, ctx, el, ctr)
+            : mix;
+        if (val == null) {
+            continue;
+        }
+        /** When not setting empty string as value to option tag, the inner text is used for value */
+        if (val === '' && key !== 'value') {
+            continue;
+        }
+        let fn = custom_Attributes[key];
+        if (fn != null) {
+            fn(node, val, model, ctx, el, ctr, container);
+        } else {
+            el.setAttribute(key, val);
+        }
+    }
+};
+export function el_writeProps(el, node, props, model, ctx, container, ctr) {
+    for (let key in props) {
+        // if (key.indexOf('style.') === 0) {
+        // 	key = prepairStyleProperty(el, key)
+        // }
+        let mix = props[key],
+            val = is_Function(mix)
+                ? getValByFn('prop', mix, key, model, ctx, el, ctr)
+                : mix;
 
-            if (val == null) {
-                continue;
-            }
-            /** When not setting empty string as value to option tag, the inner text is used for value*/
-            if (val === '' && key !== 'value') {
-                continue;
-            }
-            var fn = custom_Attributes[key];
-            if (fn != null) {
-                fn(node, val, model, ctx, el, ctr, container);
-            } else {
-                el.setAttribute(key, val);
-            }
+        if (val == null) {
+            continue;
         }
-    };
-    el_writeProps = function(el, node, props, model, ctx, container, ctr) {
-        for (var key in props) {
-            // if (key.indexOf('style.') === 0) {
-            // 	key = prepairStyleProperty(el, key)
-            // }
-            var mix = props[key],
-                val = is_Function(mix)
-                    ? getValByFn('prop', mix, key, model, ctx, el, ctr)
-                    : mix;
+        obj_setProperty(el, key, val);
+    }
+};
 
-            if (val == null) {
-                continue;
-            }
-            obj_setProperty(el, key, val);
-        }
-    };
-    function getValByFn(type, fn, key, model, ctx, el, ctr) {
-        var result = fn(type, model, ctx, el, ctr, key);
-        if (result == null) {
-            return null;
-        }
-        if (typeof result === 'string') {
-            return result;
-        }
-        if (is_ArrayLike(result)) {
-            if (result.length === 0) {
-                return null;
-            }
-            return result.join('');
-        }
+function getValByFn(type, fn, key, model, ctx, el, ctr) {
+    let result = fn(type, model, ctx, el, ctr, key);
+    if (result == null) {
+        return null;
+    }
+    if (typeof result === 'string') {
         return result;
     }
-})();
+    if (is_ArrayLike(result)) {
+        if (result.length === 0) {
+            return null;
+        }
+        return result.join('');
+    }
+    return result;
+}

@@ -1,8 +1,14 @@
 import { obj_toFastProps } from '@utils/obj';
-import { custom_Attributes, custom_Statements, custom_Tags, custom_Parsers, custom_Parsers_Transform } from './repositories';
+import {
+    custom_Attributes,
+    custom_Statements,
+    custom_Tags,
+    custom_Parsers,
+    custom_Parsers_Transform
+} from './repositories';
 
 export function custom_optimize (){
-    var i = _arr.length;
+    let i = _arr.length;
     while (--i > -1) {
         readProps(_arr[i]);
     }
@@ -13,20 +19,21 @@ export function custom_optimize (){
     }
     obj_toFastProps(custom_Attributes);
 };
-var _arr = [
+let _arr = [
     custom_Statements,
     custom_Tags,
     custom_Parsers,
     custom_Parsers_Transform
 ];
-var _props = {};
+let _props = {};
+
 function readProps(obj) {
-    for (var key in obj) {
+    for (let key in obj) {
         _props[key] = null;
     }
 }
 function defineProps(obj) {
-    for (var key in _props) {
+    for (let key in _props) {
         if (obj[key] === void 0) {
             obj[key] = null;
         }

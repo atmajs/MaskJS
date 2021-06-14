@@ -19,6 +19,8 @@ export {
     customAttr_get,
     customAttr_setRegister,
 } from './attribute';
+import './mock-attributes'
+
 
 export {
     customTag_get,
@@ -44,6 +46,3 @@ export {
     customStatement_get
 } from './statement';
 
-export {
-    mocked
-} from './mocked'

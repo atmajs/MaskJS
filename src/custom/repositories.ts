@@ -1,4 +1,4 @@
-import { obj_extend } from '@utils/obj';
+import { obj_create, obj_extend } from '@utils/obj';
 
 
 var _HtmlTags = {
@@ -72,14 +72,14 @@ var _HtmlAttr = {
     'disabled': null,
 };
 
-export const custom_Utils = {};
-export const custom_Optimizers   = {};
-export const custom_Statements 	= {};
-export const custom_Attributes 	= obj_extend({}, _HtmlAttr);
-export const custom_Tags 		= obj_extend({}, _HtmlTags);
-export const custom_Tags_global 	= obj_extend({}, _HtmlTags);
-export const custom_Parsers 		= obj_extend({}, _HtmlTags);
-export const custom_Parsers_Transform = obj_extend({}, _HtmlTags);
+export const custom_Utils = obj_create(null);
+export const custom_Optimizers  = obj_create(null);
+export const custom_Statements  = obj_create(null);
+export const custom_Attributes  = obj_extend(obj_create(null), _HtmlAttr);
+export const custom_Tags        = obj_extend(obj_create(null), _HtmlTags);
+export const custom_Tags_global = obj_extend(obj_create(null), _HtmlTags);
+export const custom_Parsers     = obj_extend(obj_create(null), _HtmlTags);
+export const custom_Parsers_Transform = obj_extend(obj_create(null), _HtmlTags);
 
 // use on server to define reserved tags and its meta info
-export const custom_Tags_defs = {};
+export const custom_Tags_defs = obj_create(null);
