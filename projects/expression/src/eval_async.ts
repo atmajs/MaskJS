@@ -5,34 +5,34 @@ import { class_create } from '@utils/class';
 import { class_Dfr } from '@utils/class/Dfr';
 import { type_Statement, type_Body, type_FunctionRef, type_UnaryPrefix, type_Ternary } from './scope-vars';
 
-export function _evaluateAstAsync  (root, model, ctx, ctr) {
-    var awaitables = [];
+export function _evaluateAstAsync(root, model, ctx, ctr) {
+    let awaitables = [];
     getAwaitables(root.body, awaitables);
-    var asyncExp = new AsyncExp(awaitables);
+    let asyncExp = new AsyncExp(awaitables);
 
     if (awaitables.length === 0) {
-        var result = _evaluateAst(root, model, ctx, ctr);
+        let result = _evaluateAst(root, model, ctx, ctr);
         if (result == null) {
             util_throw('Awaitable is undefined', null, root);
         }
         return asyncExp.resolve(result);
     }
 
-    var count = awaitables.length,
+    let count = awaitables.length,
         error = null,
         i = count;
-    while(--i > -1) {
+    while (--i > -1) {
         awaitables[i]
             .process(model, ctx, ctr)
             .then(done, fail);
     }
-    function done(){
+    function done() {
         if (--count === 0 && error == null) {
-            var result = _evaluateAst(root, model, ctx, ctr, awaitables);
+            let result = _evaluateAst(root, model, ctx, ctr, awaitables);
             asyncExp.resolve(result);
         }
     }
-    function fail(err){
+    function fail(err) {
         error = err;
         if (error === err) {
             asyncExp.reject(error);
@@ -40,15 +40,15 @@ export function _evaluateAstAsync  (root, model, ctx, ctr) {
     }
     return asyncExp;
 };
-function getAwaitables (mix, out) {
+function getAwaitables(mix, out) {
     if (is_Array(mix)) {
-        for(var i = 0; i < mix.length; i++) {
-            getAwaitables (mix[i], out);
+        for (let i = 0; i < mix.length; i++) {
+            getAwaitables(mix[i], out);
         }
         return;
     }
-    var expr = mix;
-    var type = expr.type;
+    let expr = mix;
+    let type = expr.type;
     if (type === type_Statement && expr.async === true) {
         expr.preResultIndex = out.length;
         out.push(new AsyncStat(expr));
@@ -71,45 +71,50 @@ function getAwaitables (mix, out) {
             return;
     }
 }
-var AsyncExp = class_create(class_Dfr, {
-    constructor: function (asyncStats) {
-        this.asyncStats = asyncStats;
-    },
-    cancel: function () {
-        this.asyncStats.map(function (x) { x.cancel() });
+class AsyncExp extends class_Dfr {
+    constructor (public asyncStats) {
+        super();
     }
-});
-var AsyncStat = class_create(class_Dfr, {
-    constructor: function (statement) {
+    cancel () {
+        this.asyncStats.map(x => x.cancel());
+    }
+};
+
+class AsyncStat extends class_Dfr {
+    result = null;
+    asyncExp = null;
+    ctx = null;
+    node = null;
+    constructor(statement) {
+        super();
         this.node = statement;
-        this.result = null;
-        this.asyncExp = null;
-        this.ctx = null;
-    },
-    process: function (model, ctx, ctr, out) {
-        var self = this;
-        this.asyncExp = _evaluateAstAsync(this.node, model, ctx, ctr);
-        this.asyncExp.then(function(context){
-                self.ctx = AwaitableCtx(context);
-                self.ctx.then(function(result) {
-                    self.result = result;
-                    self.resolve(self);
-                }, function (error) {
-                    self.reject(error);
-                });
-            }, function (error) {
-                self.reject(error);
-            });
-        return self;
-    },
-    cancel: function () {
-        this.asyncExp && this.asyncExp.cancel();
-        this.ctx && this.ctx.cancel();
     }
-});
+    process(model, ctx, ctr, out) {
+        this.asyncExp = _evaluateAstAsync(this.node, model, ctx, ctr);
+        this.asyncExp.then((context) => {
+            this.ctx = AwaitableCtx(context);
+            this.ctx.then(
+                result => {
+                    this.result = result;
+                    this.resolve(this);
+                },
+                error => {
+                    this.reject(error);
+                }
+            );
+        }, (error) => {
+            this.reject(error);
+        });
+        return self;
+    }
+    cancel() {
+        this.asyncExp?.cancel();
+        this.ctx?.cancel();
+    }
+};
 
 
-export function AwaitableCtx  (context) {
+export function AwaitableCtx(context) {
     if (context == null || typeof context !== 'object') {
         return new ValueCtx(context);
     }
@@ -121,18 +126,18 @@ export function AwaitableCtx  (context) {
     }
     return new ValueCtx(context);
 };
-var IAwaitableCtx = class_create(class_Dfr, {
+let IAwaitableCtx = class_create(class_Dfr, {
     constructor: function (ctx) {
         this.ctx = ctx;
     },
-    cancel: function () {}
+    cancel: function () { }
 });
-var ValueCtx = class_create(IAwaitableCtx, {
+let ValueCtx = class_create(IAwaitableCtx, {
     constructor: function (ctx) {
         this.resolve(ctx);
     }
 });
-var PromiseCtx = class_create(IAwaitableCtx, {
+let PromiseCtx = class_create(IAwaitableCtx, {
     constructor: function (ctx) {
         this.onSuccess = this.onSuccess.bind(this);
         this.onFail = this.onFail.bind(this);
@@ -151,7 +156,7 @@ var PromiseCtx = class_create(IAwaitableCtx, {
         this.canceled = true;
     }
 });
-var ObservableCtx = class_create(IAwaitableCtx, {
+let ObservableCtx = class_create(IAwaitableCtx, {
     constructor: function (ctx) {
         this.onValue = this.onValue.bind(this);
         ctx.subscribe(this.onValue);

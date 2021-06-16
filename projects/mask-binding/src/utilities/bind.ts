@@ -164,7 +164,7 @@ customUtil_register('bind', {
         // utils
 
         let value = (ast.async || ast.observe)
-            ? current?.value
+            ? (current?.value ?? '')
             : current;
         this.element = _document.createTextNode(value);
 
@@ -173,6 +173,7 @@ customUtil_register('bind', {
     node (expr, model, ctx, container, ctr){
         let el = this.element;
         let val = this.current;
+
         bind(
             val
             , expr

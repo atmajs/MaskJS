@@ -17,7 +17,6 @@ export function _evaluateAstDeferred  (ast, model, ctx, ctr) {
 }
 
 export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
-
     let deferred: DeferStatement[] = getDeferrables(ast.body);
     //#if (DEBUG)
     if (deferred.length === 0 && ast.observe === true && ast.parent == null) {
@@ -44,7 +43,6 @@ export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
         deferExp.next(result);
         return deferExp;
     }
-
     let count = deferred.length,
         error = null,
         i = count;

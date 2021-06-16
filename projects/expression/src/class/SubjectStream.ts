@@ -41,6 +41,9 @@ export class SubjectStream<T = any> {
         if (this._cbs.length !== 0) {
             stream.subscribe(this.next, this.error);
         }
+        if (this.value === void 0 && stream.value != null) {
+            this.value = stream.value;
+        }
     }
     subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void) {
         if (this._pipe != null && this._cbs.length === 0) {

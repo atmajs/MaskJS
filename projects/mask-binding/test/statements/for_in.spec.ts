@@ -109,7 +109,7 @@ async function TestServer (data) {
     let { el, doc, win } = await $renderServer(data.template, {
         model: data.model()
     });
-    debugger;
+
     data.check(
         mask.$(el),
         win.app.model,
