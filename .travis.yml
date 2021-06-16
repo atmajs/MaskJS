@@ -17,7 +17,7 @@ before_script:
   - git submodule update --init
   - export DISPLAY=:99.0
   - sleep 5
-  - npm run build &
+  - npm run build
   - sleep 8
   - npm run server &
   - sleep 8
