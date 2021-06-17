@@ -27,7 +27,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
     ast = new Ast_Body(null, node);
     ast.source = expr;
 
-    var current = ast,
+    let current = ast,
         state = state_body,
         c, t, next, directive;
 
@@ -54,7 +54,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
         }
 
         if (earlyExit === true) {
-            var p = current.parent;
+            let p = current.parent;
             if (p != null && p.type === type_Body && p.parent == null) {
                 // is in root body
                 if (directive === go_ref)
@@ -74,7 +74,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                 index++;
                 continue;
             case punc_ParenthesisClose:
-                var closest = type_Body;
+                let closest = type_Body;
                 if (state === state_arguments) {
                     state = state_body;
                     closest = type_FunctionRef;
@@ -163,6 +163,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     directive = op_NullishCoalescing;
                     break;
                 }
+
                 ast = new Ast_TernaryStatement(ast);
                 current = ast.case1;
                 continue;
@@ -171,7 +172,6 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                 current = ast.case2;
                 index++;
                 continue;
-
 
             case punc_Dot:
                 c = template.charCodeAt(index + 1);
@@ -193,7 +193,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     util_throw(template, index, 'Unexpected accessor:' + directive);
                     return null;
                 }
-                var ref = ast_findPrev(current, type_SymbolRef);
+                let ref = ast_findPrev(current, type_SymbolRef);
                 if (ref == null) {
                     ref = ast_findPrev(current, type_FunctionRef);
                 }
@@ -201,15 +201,15 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     util_throw(template, index, 'Ref not found');
                     return null;
                 }
-                var parent = ref.parent;
+                let parent = ref.parent;
                 if (parent.type !== type_Statement) {
                     util_throw(template, index, 'Ref is not in a statement');
                     return null;
                 }
 
                 ast_remove(parent, ref);
-                var statement = new Ast_Statement(parent);
-                var inner = new Ast_Statement(statement);
+                let statement = new Ast_Statement(parent);
+                let inner = new Ast_Statement(statement);
                 if (directive === op_AsyncAccessor) {
                     inner.async = true;
                 } else {
@@ -337,7 +337,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
 
             case go_ref:
             case go_acs:
-                var start = index,
+                let start = index,
                     ref = parser_getRef();
 
                 if (directive === go_ref) {
@@ -382,7 +382,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     // function ref
                     state = state_arguments;
                     index++;
-                    var fn = new Ast_FunctionRef(current, ref);
+                    let fn = new Ast_FunctionRef(current, ref);
                     if (directive === go_acs && current.type === type_Statement) {
                         current.next = fn;
                     } else {
@@ -392,7 +392,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     continue;
                 }
 
-                var Ctor = directive === go_ref
+                let Ctor = directive === go_ref
                     ? Ast_SymbolRef
                     : Ast_Accessor
                 current = ast_append(current, new Ctor(current, ref));
@@ -403,7 +403,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
                     continue;
 
 
-                var key = parser_getRef();
+                let key = parser_getRef();
 
                 if (parser_skipWhitespace() !== 58) {
                     //:
@@ -435,7 +435,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
 
 
 function parser_skipWhitespace() {
-    var c;
+    let c;
     while (index < length) {
         c = template.charCodeAt(index);
         if (c > 32)
@@ -445,7 +445,7 @@ function parser_skipWhitespace() {
     return null;
 };
 function parser_getString(c) {
-    var isEscaped = false,
+    let isEscaped = false,
         _char = c === 39 ? "'" : '"',
         start = index,
         nindex, string;
@@ -467,7 +467,7 @@ function parser_getString(c) {
 };
 
 function parser_getNumber() {
-    var start = index,
+    let start = index,
         code, isDouble;
     while (true) {
 
@@ -491,7 +491,7 @@ function parser_getNumber() {
 
 
 export function parser_getRef() {
-    var start = index,
+    let start = index,
         c = template.charCodeAt(index),
         ref;
 
@@ -594,7 +594,7 @@ export function parser_getDirective(code) {
             }
             return op_LogicalNot;
         case 62 /*>*/:
-            var next = template.charCodeAt(index + 1);
+            let next = template.charCodeAt(index + 1);
             if (next === 61/*=*/) {
                 index++;
                 return op_LogicalGreaterEqual;

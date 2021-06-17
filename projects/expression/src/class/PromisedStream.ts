@@ -1,3 +1,4 @@
+import { SubjectKind } from './SubjectKind';
 import { SubjectStream } from './SubjectStream';
 export class PromisedStream<T = any> extends SubjectStream<T> {
     resolve(x: T) {
@@ -15,7 +16,10 @@ export class PromisedStream<T = any> extends SubjectStream<T> {
             onSuccess && onSuccess(this.value);
             return;
         }
-        this._cbs.push([onSuccess, onError, { once: true }]);
+        let opts = this.kind === SubjectKind.Stream
+            ? null
+            : OPTS_ONCE;
+        this._cbs.push([onSuccess, onError, opts]);
         if (this._pipe != null && this._cbs.length === 1) {
             if ('then' in this._pipe) {
                 this._pipe.then(this.next, this.error);
@@ -28,3 +32,5 @@ export class PromisedStream<T = any> extends SubjectStream<T> {
         }
     }
 }
+
+const OPTS_ONCE = { once: true };

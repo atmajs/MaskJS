@@ -246,6 +246,6 @@ class ObservableIf {
         compo_addChildren(this.ctr, ...owner.components);
     }
     dispose (){
-        this.obs && this.obs.dispose();
+        this.obs?.dispose();
     }
 };

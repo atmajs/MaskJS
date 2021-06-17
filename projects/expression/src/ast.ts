@@ -189,7 +189,12 @@ export class Ast_TernaryStatement {
     case1 = new Ast_Body(this)
     case2 = new Ast_Body(this)
 
-    constructor (assertions) {
-        this.body = assertions;
+    async = false
+    observe = false
+
+    constructor (body: Ast_Body) {
+        this.body = body;
+        this.async = body.async;
+        this.observe = body.observe;
     }
 };

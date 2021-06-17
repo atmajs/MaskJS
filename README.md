@@ -5,8 +5,8 @@
 ----
 
 <p align="center">
-	<a href='https://travis-ci.org/atmajs/MaskJS' target='_blank'>
-		<img src='https://travis-ci.org/atmajs/MaskJS.png?branch=master' />
+	<a href='https://travis-ci.com/atmajs/MaskJS' target='_blank'>
+		<img src='https://api.travis-ci.com/atmajs/MaskJS.png?branch=master' />
 		</a>
 	<a href='http://badge.fury.io/js/maskjs' target='_blank'>
 		<img src='https://badge.fury.io/js/maskjs.svg' />

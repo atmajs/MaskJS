@@ -71,7 +71,7 @@ export class SubjectStream<T = any> {
             let row = this._cbs[i];
             let fn = row[index];
             let opts = row[2];
-            if (opts && opts.once === true) {
+            if (opts?.once === true) {
                 this._cbs.splice(i, 1);
             }
             fn(x);
