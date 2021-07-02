@@ -2,16 +2,29 @@ import { _Array_slice } from '@utils/refs';
 import { obj_callMethod } from './utils/obj';
 
 import { log_warn, error_withCompo } from '@core/util/reporters';
-import { expression_eval, expression_varRefs } from '@project/expression/src/exports'
+import { expression_eval, expression_getType, expression_varRefs, exp_type_Observe } from '@project/expression/src/exports'
 import { obj_addMutatorObserver, obj_addObserver, obj_removeMutatorObserver, obj_removeObserver } from './obj_observe';
+import { _evaluateAstDeferredInner } from '@project/expression/src/eval_deferred';
+import { expr_getHost } from './utils/expr';
 
 
-export function expression_bind (expr, model, ctx, ctr, cb) {
+
+export function expression_bind (expr, model, ctx, ctr, cb, opts?: { propertiesOnly: boolean }): null | { unsubscribe ()} {
     if (expr === '.') {
         if (model != null) {
             obj_addMutatorObserver(model, cb);
         }
         return;
+    }
+
+    if (opts?.propertiesOnly !== true) {
+        let type = expression_getType(expr);
+        if (type === exp_type_Observe) {
+            let obs = _evaluateAstDeferredInner(expr, model, ctx, ctr);
+            if (obs?.subscribe) {
+                return obs.subscribe(cb);
+            }
+        }
     }
     toggleExpressionsBindings(
         obj_addObserver,
@@ -20,15 +33,21 @@ export function expression_bind (expr, model, ctx, ctr, cb) {
         ctr,
         cb
     );
+    return {
+        unsubscribe () {
+            expression_unbind(expr, model, ctr, cb)
+        }
+    };
 };
 
-export function expression_unbind (expr, model, ctr, cb) {
+export function expression_unbind (expr, model, ctr, cb, opts?: { propertiesOnly: boolean }) {
     if (expr === '.') {
         if (model != null) {
             obj_removeMutatorObserver(model, cb);
         }
         return;
     }
+
     toggleExpressionsBindings(
         obj_removeObserver,
         expr,
@@ -38,11 +57,13 @@ export function expression_unbind (expr, model, ctr, cb) {
     );
 };
 
-function toggleExpressionsBindings (fn, expr, model, ctr, cb) {
+function toggleExpressionsBindings (toggleFn, expr, model, ctr, cb) {
     let mix = expression_varRefs(expr, model, null, ctr);
-    if (mix == null) return null;
+    if (mix == null) {
+        return null;
+    }
     if (typeof mix === 'string') {
-        _toggleObserver(fn, model, ctr, mix, cb);
+        _toggleObserver(toggleFn, model, ctr, mix, cb);
         return;
     }
     let arr = mix;
@@ -60,12 +81,12 @@ function toggleExpressionsBindings (fn, expr, model, ctr, cb) {
                 continue;
             }
         }
-        _toggleObserver(fn, model, ctr, accs, cb);
+        _toggleObserver(toggleFn, model, ctr, accs, cb);
     }
 }
 
 export function expression_callFn  (accessor, model, ctx, ctr, args) {
-    let tuple = expression_getHost(
+    let tuple = expr_getHost(
         accessor,
         model,
         ctx,
@@ -105,73 +126,8 @@ export function expression_createListener (callback){
     }
 };
 
-export let expression_getHost;
-(function () {
-    // [ObjectHost, Property]
-    let tuple = [null, null];
-expression_getHost  = function (accessor, model, ctx, ctr) {
-        let result = get(accessor, model, ctx, ctr);
-        if (result == null || result[0] == null) {
-            error_withCompo('Observable host is undefined or is not allowed: ' + accessor.toString(), ctr);
-            return null;
-        }
-        return result;
-    };
-    function get(accessor, model, ctx, ctr) {
-        if (accessor == null)
-            return;
-
-        if (typeof accessor === 'object') {
-            let obj = expression_eval(accessor.accessor, model, null, ctr);
-            if (obj == null || typeof obj !== 'object') {
-                return null;
-            }
-            tuple[0] = obj;
-            tuple[1] = accessor.ref;
-            return tuple;
-        }
-        let property = accessor,
-            parts = property.split('.'),
-            imax = parts.length;
-
-        if (imax > 1) {
-            let first:string = parts[0];
-            if (first === 'this' || first === '$c' || first === '$') {
-                // Controller Observer
-                let owner  = _getObservable_Controller(ctr, parts[1]);
-                let cutIdx = first.length + 1;
-                tuple[0] = owner;
-                tuple[1] = property.substring(cutIdx);
-                return tuple;
-            }
-            if (first === '$scope') {
-                // Controller Observer
-                let scope = _getObservable_Scope(ctr, parts[1]);
-                let cutIdx = 6 + 1;
-                tuple[0] = scope;
-                tuple[1] = property.substring(cutIdx);
-                return tuple;
-            }
-        }
-
-        let obj = null;
-        if (_isDefined(model, parts[0])) {
-            obj = model;
-        }
-        if (obj == null) {
-            obj = _getObservable_Scope(ctr, parts[0]);
-        }
-        if (obj == null) {
-            obj = model;
-        }
-        tuple[0] = obj;
-        tuple[1] = property;
-        return tuple;
-    }
-}());
-
 function _toggleObserver(mutatorFn, model, ctr, accessor, callback) {
-    let tuple = expression_getHost(accessor, model, null, ctr);
+    let tuple = expr_getHost(accessor, model, null, ctr);
     if (tuple == null) return;
     let obj = tuple[0],
         property = tuple[1];
@@ -179,33 +135,3 @@ function _toggleObserver(mutatorFn, model, ctr, accessor, callback) {
     if (obj == null) return;
     mutatorFn(obj, property, callback);
 }
-
-function _getObservable_Controller(ctr_, key) {
-    let ctr = ctr_;
-    while(ctr != null){
-        if (_isDefined(ctr, key))
-            return ctr;
-        ctr = ctr.parent;
-    }
-    return ctr;
-}
-function _getObservable_Scope(ctr_, property) {
-    let ctr = ctr_, scope;
-    while(ctr != null){
-        scope = ctr.scope;
-        if (_isDefined(scope, property)) {
-            return scope;
-        }
-        ctr = ctr.parent;
-    }
-    return null;
-}
-function _isDefined(obj_, key_){
-    let key = key_;
-    if (key.charCodeAt(key.length - 1) === 63 /*?*/) {
-        key = key.slice(0, -1);
-    }
-    return obj_ != null && key in obj_;
-}
-
-

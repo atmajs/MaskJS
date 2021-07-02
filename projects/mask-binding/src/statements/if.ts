@@ -1,197 +1,356 @@
+import { is_NODE, is_Observable, is_PromiseLike } from '@utils/is'
 import { _document } from '@utils/refs'
-import { expression_unbind, expression_bind, expression_createListener } from '@project/observer/src/exports';
-import { customTag_register } from '@core/custom/exports';
-import { compo_inserted } from '../utils/compo';
-import { _renderPlaceholder, _getNodes, els_toggleVisibility } from './utils';
-import { mask_stringify } from '@core/parser/exports';
-import { dom_insertBefore } from '../utils/dom';
-import { fn_proxy } from '@utils/fn';
-import { expression_eval_safe } from '../utils/expression';
-import { compo_renderElements } from '@core/util/compo';
+
+import { INode } from '@core/dom/INode'
+import { els_toggleVisibility, el_renderPlaceholder } from '@core/statements/utils'
+import { dom_insertBefore } from '@core/util/dom'
+import { customTag_register } from '@core/custom/tag'
+import { compo_addChildren, compo_emitInserted, compo_renderElements } from '@core/util/compo'
+import { SubjectKind } from '@project/expression/src/class/SubjectKind'
+import { expression_eval, exp_type_Async, exp_type_Observe, exp_type_Sync } from '@project/expression/src/exports'
+import { expression_bind } from '@project/observer/src/exports'
+import { Compo } from '@compo/exports'
+import { expression_subscribe } from '@project/observer/src/expression_subscribe'
+import { IComponent } from '@compo/model/IComponent'
 
 
-customTag_register('+if', {
-    placeholder: null,
-    meta: {
-        serializeNodes: true
-    },
-    render(model, ctx, container, ctr, children) {
-        let node = this;
-        let nodes = _getNodes('if', node, model, ctx, ctr);
-        let index = 0;
-        let next = node;
-        while (next.nodes !== nodes) {
-            index++;
-            next = next.nextSibling;
-            if (next == null || next.tagName !== 'else') {
-                index = null;
-                break;
+
+interface IElementsSwitch {
+    node: INode
+    elements: Element[]
+}
+interface IObservableSwitch {
+    node: INode
+
+    // By receiving first value
+    busy: boolean
+    type: number
+    error: Error
+
+    // Deferrable or Result
+    value: any
+    // Result
+    result: boolean
+}
+class ObservableNodes {
+    index = 0
+    cursor: INode = null
+    switch: IObservableSwitch[] = []
+
+    subscriptions = []
+    disposed = false
+
+    get busy (): boolean {
+        for (let i = 0; i < this.switch.length; i++) {
+            let x = this.switch[i];
+            if (x != null && x.busy) {
+                return true;
             }
         }
-        this.attr['switch-index'] = index;
-        return compo_renderElements(nodes, model, ctx, container, ctr, children);
-    },
-
-    renderEnd(els, model, ctx, container, ctr) {
-        let compo = new IFStatement();
-        let index = this.attr['switch-index'];
-
-        _renderPlaceholder(this, compo, container);
-        return initialize(
-            compo
-            , this
-            , index
-            , els
-            , model
-            , ctx
-            , container
-            , ctr
-        );
-    },
-
-    serializeNodes(current) {
-        let nodes = [current];
-        while (true) {
-            current = current.nextSibling;
-            if (current == null || current.tagName !== 'else') {
-                break;
-            }
-            nodes.push(current);
-        }
-        return mask_stringify(nodes);
+        return false;
     }
 
-});
+    constructor (
+        public node: INode,
+        public model,
+        public ctx,
+        public ctr,
+        public cb
+    ) {
+        this.runSwitch = this.runSwitch.bind(this);
+        this.onChanged = this.onChanged.bind(this);
+        this.onSwitchResult = this.onSwitchResult.bind(this);
+        this.cursor = node;
+    }
+    public runAll () {
+        this.index = 0;
+        this.cursor = this.node;
+        this.checkIFNode();
+    }
+    public initialize (i: number) {
+        while (this.index < i && this.moveCursorNext()) {
 
-
-function IFStatement() { }
-
-IFStatement.prototype = {
-    compoName: '+if',
-    ctx: null,
-    model: null,
-    controller: null,
-
-    index: null,
-    Switch: null,
-    binder: null,
-
-    refresh() {
-        let currentIndex = this.index;
-        let model = this.model;
-        let ctx = this.ctx;
-        let ctr = this.controller;
-        let switch_ = this.Switch;
-        let imax = switch_.length;
-        let i = -1;
-        while (++i < imax) {
-            let node = switch_[i].node;
-            let expr = node.expression;
-            if (expr == null)
-                break;
-            if (expression_eval_safe(expr, model, ctx, ctr, node))
-                break;
         }
-        if (currentIndex === i) {
+        return this.createSwitch(i);
+    }
+    public dispose () {
+        this.disposed = true;
+        this.subscriptions.forEach(x => x?.unsubscribe());
+    }
+
+    private checkIFNode () {
+        let i = this.index;
+        let meta = this.switch[i];
+        if (meta != null) {
+            switch (meta.type) {
+                case exp_type_Sync: {
+                    // we have only first statement binded, all other - re-evaluate
+                    let result = i === 0 ? meta.result : this.evalSwitchCurrent();
+                    this.onSwitchResult(null, result);
+                    return;
+                }
+                case exp_type_Async:
+                case exp_type_Observe: {
+                    if (meta.busy === false) {
+                        this.onSwitchResult(null, meta.result);
+                        return;
+                    }
+                    break;
+                }
+            }
+        }
+        this.createSwitch(i);
+    }
+
+    private runSwitch (err, result) {
+        let meta = this.switch[this.index];
+        meta.result = result;
+        meta.busy = false;
+
+        if (err) {
+            this.onResolved();
+            this.cb(err);
             return;
         }
-        if (currentIndex != null) {
+        if (result) {
+            this.onResolved();
+            this.cb(null, meta.node, this.index);
+            return;
+        }
+        if (this.moveCursorNext() === false) {
+            this.onResolved();
+            this.cb(null, null, -1);
+            return;
+        }
+        let expr = this.cursor.expression;
+        if (expr == null || expr === '') {
+            this.onResolved();
+            this.cb(null, this.cursor, this.index);
+            return;
+        }
+        this.checkIFNode();
+    }
+    private onSwitchResult (err, result?) {
+        if (err) {
+            this.cb(err);
+            return;
+        }
+        this.runSwitch(null, result);
+    }
+
+    private onChanged (err, i?, result?) {
+        if (this.disposed) {
+            return;
+        }
+        let s = this.switch[i];
+        s.result = result;
+        s.busy = false;
+        this.runAll();
+    }
+
+    private createSwitch (i: number) {
+        // wrapped value: could be promise, observable, observable expression or actual value
+        let wValue = this.evalSwitchCurrent();
+        let meta = this.switch[i] = <IObservableSwitch> {
+            busy: false,
+            type: exp_type_Sync,
+            node: this.cursor,
+            value: wValue,
+            error: null,
+            result: null
+        };
+
+        this.subscriptions.push(
+            expression_subscribe(
+                this.cursor.expression
+                , this.model
+                , this.ctx
+                , this.ctr
+                , result => {
+                    this.onChanged(null, i, result);
+                },
+                i === 0 ? false : true
+            )
+        );
+
+        // if (is_Observable(wValue) && wValue.kind !== SubjectKind.Promise) {
+        //     meta.type = exp_type_Observe;
+        //     if (wValue.value !== void 0) {
+        //         this.onSwitchResult(null, wValue.value);
+        //     } else {
+        //         meta.busy = true;
+        //     }
+        //     this.subscriptions.push(
+        //         wValue.subscribe(result => this.onChanged(null, i, result), this.onChanged)
+        //     );
+        //     return meta;
+        // }
+        // if (is_PromiseLike(wValue)) {
+        //     meta.busy = true;
+        //     meta.type = exp_type_Async;
+        //     wValue.then(result => this.onChanged(null, i, result), this.onChanged);
+        //     return meta;
+        // }
+
+        // // BIND
+        // if (i === 0 && is_NODE !== true) {
+        //     this.subscriptions.push(
+        //         expression_subscribe(
+        //             this.cursor.expression
+        //             , this.model
+        //             , this.ctx
+        //             , this.ctr
+        //             , result => {
+        //                 this.onChanged(null, i, result);
+        //             }
+        //         )
+        //     );
+        // } else {
+        //     this.onSwitchResult(null, wValue);
+        // }
+        return meta;
+    }
+
+    // UTILS
+
+    private evalSwitchCurrent () {
+        return expression_eval(
+            this.cursor.expression,
+            this.model,
+            this.ctx,
+            this.ctr,
+            this.node
+        );
+    }
+    private moveCursorNext () {
+        let next = this.cursor.nextSibling;
+        if (next?.tagName !== 'else') {
+            return false;
+        }
+        this.index++;
+        this.cursor = next;
+        return true;
+    }
+    private onResolved() {
+        if (is_NODE && this.subscriptions.length > 0) {
+            this.subscriptions.forEach(x => x?.unsubscribe());
+        }
+    }
+}
+
+
+export class ObservableIf {
+    public compoName = '+if'
+    public meta = {
+        serializeNodes: true
+    }
+
+    private attr = null;
+    private resumeFn: Function;
+    private placeholder = null;
+    private index = -1;
+    private obs: ObservableNodes
+    private Switch: IElementsSwitch[] = []
+
+    constructor (
+        private node: INode,
+        private model,
+        private ctx,
+        private el: HTMLElement,
+        private ctr: IComponent,
+        private children: HTMLElement[]
+    ) {
+
+    }
+
+    public render () {
+        this.placeholder = el_renderPlaceholder(this.el);
+        this.obs = new ObservableNodes(
+            this.node
+            , this.model
+            , this.ctx
+            , this.ctr
+            , (err, node, index) => this.show(err, node, index)
+        );
+        this.obs.runAll();
+        if (this.obs.busy) {
+            this.resumeFn = Compo.pause(this, this.ctx);
+        }
+    }
+
+    // NodeJS Bootstrap
+    public renderEnd(els, model, ctx, container, ctr) {
+
+        let index = this.attr?.['switch-index'] ?? 0;
+
+        this.index = Number(index);
+        this.placeholder = this.placeholder ?? el_renderPlaceholder(this.el);
+
+        this.obs = new ObservableNodes(
+            this.node, this.model, this.ctx, this.ctr, (err, node, index) => this.show(err, node, index)
+        );
+        let s = this.obs.initialize(this.index);
+
+        this.Switch[this.index] = {
+            node: s.node,
+            elements: els
+        };
+    }
+
+    private show (err, node: INode, index: number) {
+
+        let currentIndex = this.index;
+        let switch_ = this.Switch;
+
+        if (currentIndex === index) {
+            return;
+        }
+        if (currentIndex > -1) {
             els_toggleVisibility(switch_[currentIndex].elements, false);
         }
-        if (i === imax) {
-            this.index = null;
+        if (index === -1) {
+            this.index = -1;
             return;
         }
 
-        this.index = i;
+        this.index = index;
 
-        let current = switch_[i];
+        let current = switch_[index];
+        if (current == null) {
+            switch_[index] = current = {
+                elements: null,
+                node: node
+            };
+        }
         if (current.elements != null) {
             els_toggleVisibility(current.elements, true);
             return;
         }
-
-        let parentNodeName = this.node.parent.tagName;
+        let parentNodeName = current.node.parent?.tagName;
         let parentGetsElements = parentNodeName === 'define' || parentNodeName === 'let';
         let nodes = current.node.nodes;
         let frag = _document.createDocumentFragment();
-        let owner = { components: [], parent: ctr };
-        let els = compo_renderElements(nodes, model, ctx, frag, owner);
+        let owner = { components: [], parent: this.ctr };
+        let els = compo_renderElements(nodes, this.model, this.ctx, frag, owner);
 
         dom_insertBefore(frag, this.placeholder);
         current.elements = els;
 
-        compo_inserted(owner);
-        if (ctr.components == null) {
-            ctr.components = [];
-        }
-        ctr.components.push(...owner.components);
+        compo_emitInserted(owner);
+        compo_addChildren(this.ctr, ...owner.components);
         if (parentGetsElements) {
-            // we add also the elements to parents set, in case the +if was the root node.
-            ctr.$?.add(els);
-        }
-    },
-    dispose() {
-        let switch_ = this.Switch,
-            imax = switch_.length,
-            i = -1,
-
-            x, expr;
-
-        while (++i < imax) {
-            x = switch_[i];
-            expr = x.node.expression;
-
-            if (expr) {
-                expression_unbind(
-                    expr,
-                    this.model,
-                    this.controller,
-                    this.binder
-                );
-            }
-
-            x.node = null;
-            x.elements = null;
+            this.ctr.$?.add(els);
         }
 
-        this.controller = null;
-        this.model = null;
-        this.ctx = null;
+        if (this.resumeFn != null) {
+            this.resumeFn();
+            this.resumeFn = null;
+        }
+    }
+    dispose (){
+        this.obs?.dispose();
     }
 };
 
-function initialize(ifCtr, nodeCtr, index, elements, model, ctx, container, parentCtr) {
 
-    ifCtr.model = model;
-    ifCtr.ctx = ctx;
-    ifCtr.controller = parentCtr;
-    ifCtr.refresh = fn_proxy(ifCtr.refresh, ifCtr);
-    ifCtr.binder = expression_createListener(ifCtr.refresh);
-    ifCtr.index = index;
-    ifCtr.node = nodeCtr.node;
-    ifCtr.Switch = [{
-        node: nodeCtr,
-        elements: null
-    }];
-
-    expression_bind(nodeCtr.expression, model, ctx, parentCtr, ifCtr.binder);
-
-    while (true) {
-        nodeCtr = nodeCtr.nextSibling;
-        if (nodeCtr == null || nodeCtr.tagName !== 'else')
-            break;
-
-        ifCtr.Switch.push({
-            node: nodeCtr,
-            elements: null
-        });
-
-        if (nodeCtr.expression)
-            expression_bind(nodeCtr.expression, model, ctx, parentCtr, ifCtr.binder);
-    }
-    if (index != null) {
-        ifCtr.Switch[index].elements = elements;
-    }
-    return ifCtr;
-}
+customTag_register('+if', ObservableIf);

@@ -150,29 +150,29 @@ function bind (currentVal, expr, model, ctx, element, ctr, attrName, type: IUtil
 
 customUtil_register('bind', {
     mode: 'partial',
-    current: null,
+    wValue: null,
+    value: null,
     element: null,
     nodeRenderStart (expr, model, ctx, el, ctr, attrName, type: IUtilType, node){
         let owner = (type === 'compo-attr' || type === 'compo-prop')
             ? ctr.parent
             : ctr;
         let ast = expression_parse(expr, false, node);
-        let current = expression_eval_safe(ast, model, ctx, owner, node);
+        let wValue = expression_eval_safe(ast, model, ctx, owner, node);
 
         // though we apply value's to `this` context, but it is only for immediat use
         // in .node() function, as `this` context is a static object that share all bind
         // utils
 
         let value = (ast.async || ast.observe)
-            ? (current?.value ?? '')
-            : current;
+            ? (wValue?.value ?? '')
+            : (wValue);
         this.element = _document.createTextNode(value);
-
-        return (this.current = current);
+        this.wValue = wValue;
     },
     node (expr, model, ctx, container, ctr){
         let el = this.element;
-        let val = this.current;
+        let val = this.wValue;
 
         bind(
             val
@@ -193,11 +193,18 @@ customUtil_register('bind', {
         let owner = (type === 'compo-attr' || type === 'compo-prop')
             ? ctr.parent
             : ctr;
-        return (this.current = expression_eval_safe(expr, model, ctx, owner, node));
+        let ast = expression_parse(expr, false, node);
+        let wValue = expression_eval_safe(ast, model, ctx, owner, node);
+        let value = (ast.async || ast.observe)
+            ? (wValue?.value ?? '')
+            : (wValue);
+
+        this.value = value;
+        this.wValue = wValue;
     },
     attr (expr, model, ctx, el, ctr, attrName, type: IUtilType){
         bind(
-            this.current,
+            this.wValue,
             expr,
             model,
             ctx,
@@ -206,7 +213,7 @@ customUtil_register('bind', {
             attrName,
             type
         );
-        return this.current;
+        return this.value;
     }
 });
 

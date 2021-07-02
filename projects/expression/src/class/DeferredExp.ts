@@ -7,14 +7,14 @@ export class DeferredExp<T = any> extends PromisedStream<T> {
         super();
         this.tick = this.tick.bind(this);
     }
-    subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void) {
+    subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void, once?: boolean) {
         for (let i = 0; i < this.deferred.length; i++) {
             let dfr = this.deferred[i];
             if (dfr.kind === SubjectKind.Stream) {
                 dfr.subscribe(this.tick);
             }
         }
-        return super.subscribe(cb, onError);
+        return super.subscribe(cb, onError, once);
     }
     unsubscribe(cb: Function) {
         super.unsubscribe(cb);

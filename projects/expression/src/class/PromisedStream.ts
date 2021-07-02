@@ -9,11 +9,11 @@ export class PromisedStream<T = any> extends SubjectStream<T> {
     }
     then(onSuccess, onError?) {
         if (this._error !== void 0) {
-            onError && onError(this._error);
+            onError?.(this._error);
             return;
         }
         if (this.value !== void 0) {
-            onSuccess && onSuccess(this.value);
+            onSuccess?.(this.value);
             return;
         }
         let opts = this.kind === SubjectKind.Stream

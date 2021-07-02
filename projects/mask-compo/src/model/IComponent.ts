@@ -30,6 +30,7 @@ export interface IComponent<
     scope: any
 
     $: JQuery
+    elements?: HTMLElement[]
 
     slots: { [key: string]: Function }
     pipes: { [pipe: string]: { [key: string]: Function } }

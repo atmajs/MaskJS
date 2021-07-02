@@ -43,7 +43,7 @@ export function build_compoFactory(build: Function, config: IBuilderConfig) {
             handler;
 
         if (typeof Handler === 'function') {
-            handler = new Handler(node, model, ctx, container, ctr);
+            handler = new Handler(node, model, ctx, container, ctr, children);
         } else {
             handler = Handler;
             isStatic = true;

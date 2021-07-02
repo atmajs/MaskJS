@@ -1,15 +1,15 @@
 import { Mask as mask } from '@core/mask'
 import { $renderServer, $has, $visible } from '../utils';
-const Compo = mask.Compo;
+
 
 UTest({
     'Browser': {
         '+if' () {
 
-            var template = `
+            let template = `
                     div {
                         +if (foo == 1) > h1;
-                        else (foo == 2) > h2;
+                        else if (foo == 2) > h2;
                         else > h3;
                     }
                 `,
@@ -20,7 +20,7 @@ UTest({
                 controller = {};
 
             let div = mask.render(template, model, null, null, controller);
-            var $ = mask.$(div);
+            let $ = mask.$(div);
 
             eq_(model.__observers.foo.length, 1);
 
@@ -33,6 +33,7 @@ UTest({
             $.has_('h2');
             $.hasNot_('h3');
             $.find('h2').eq_('css', 'display', 'none');
+
 
             model.foo = 3;
             $.has_('h1');
@@ -48,12 +49,12 @@ UTest({
             $.find('h3').eq_('css', 'display', 'none');
 
 
-            Compo.dispose(controller);
+            mask.Compo.dispose(controller);
             eq_(model.__observers.foo.length, 0);
         },
 
         '+if single' () {
-            var template = ` div >
+            let template = ` div >
                     +if (message) {
                         .baz > '~[bind:message]'
                     }
@@ -74,8 +75,8 @@ UTest({
         },
 
         '+if array length' () {
-            var model = { users: [] };
-            var template = `
+            let model = { users: [] };
+            let template = `
                 span {
                     +if (users.length === 0) { i > 'Empty' }
                     else { b > 'Contains' }
@@ -102,8 +103,8 @@ UTest({
         },
 
         async '+if server' () {
-            var model = { foo: true };
-            var template = `
+            let model = { foo: true };
+            let template = `
                 #foo {
                     if (foo) > 'bang'
                     else > '?'
@@ -119,8 +120,8 @@ UTest({
         },
 
         async '+if server - binded' () {
-            var model = { foo: true };
-            var template = `
+            let model = { foo: true };
+            let template = `
                 #foo {
                     +if (foo) > .trueContainer > 'bang'
                     else > .falseContainer > 'big'

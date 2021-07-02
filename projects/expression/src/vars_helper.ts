@@ -10,7 +10,7 @@ import {
     type_Ternary
 } from './scope-vars';
 
-import { _parse } from './parser';
+import { _parse, _parseCached } from './parser';
 import { _evaluateAst } from './eval';
 
 /**
@@ -22,7 +22,7 @@ import { _evaluateAst } from './eval';
  */
 
 export function refs_extractVars(mix, model?, ctx?, ctr?) {
-    var ast = typeof mix === 'string' ? _parse(mix) : mix;
+    var ast = typeof mix === 'string' ? _parseCached(mix) : mix;
     return _extractVars(ast, model, ctx, ctr);
 }
 

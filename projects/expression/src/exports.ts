@@ -3,6 +3,7 @@ import { _parse } from './parser';
 import { _evaluate } from './eval';
 import { _evaluateStatements } from './eval_statements';
 import { refs_extractVars } from './vars_helper';
+import { IAstNode } from './ast';
 
 /**
  * ExpressionUtil
@@ -13,8 +14,8 @@ import { refs_extractVars } from './vars_helper';
 export const exp_type_Sync = 1;
 export const exp_type_Async = 2;
 export const exp_type_Observe = 3;
-export function expression_getType (expr): 1 | 2 | 3 {
-    let ast = _parse(expr);
+export function expression_getType (expr: string | IAstNode): 1 | 2 | 3 {
+    let ast = typeof expr === 'string' ? _parse(expr) : expr;
     if (ast != null) {
         if (ast.observe) {
             return exp_type_Observe;

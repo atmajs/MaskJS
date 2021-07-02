@@ -6,14 +6,14 @@ import {
     expression_unbind,
     expression_callFn,
     expression_createBinder,
-    expression_bind,
-    expression_getHost
+    expression_bind
 } from '@project/observer/src/exports';
 import { is_Array } from '@utils/is';
 import { obj_extend } from '@utils/obj';
 import { ValidatorProvider } from './ValidatorProvider';
 import { expression_varRefs, expression_eval } from '@project/expression/src/exports';
 import { Component } from '@compo/exports';
+import { expr_getHost } from '@project/observer/src/utils/expr';
 
 export const CustomProviders = {};
 
@@ -369,7 +369,7 @@ export class BindingProvider {
         if (error == null) {
             this.dismiss = 1;
 
-            var tuple = expression_getHost(
+            var tuple = expr_getHost(
                 this.value,
                 this.model,
                 null,

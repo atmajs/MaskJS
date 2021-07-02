@@ -6,7 +6,7 @@ import { _renderPlaceholder, _compo_initAndBind } from '../utils';
 import { class_create } from '@utils/class';
 import { builder_build } from '@core/builder/exports';
 import { Dom } from '@core/dom/exports';
-import { LoopStatementProto } from './proto';
+import { ALoopBindedStatement } from '../base/ALoopBindedStatement';
 import { mask_stringify } from '@core/parser/exports';
 
 
@@ -73,7 +73,7 @@ var EachItem = class_create({
     }
 });
 
-var EachStatement = class_create(LoopStatementProto, {
+var EachStatement = class_create(ALoopBindedStatement, {
     compoName: '+each',
     constructor: function EachStatement(node, attr) {
         this.expression = node.expression;

@@ -1,5 +1,5 @@
 import { _evaluateAstAsync } from './eval_async';
-import { _parse } from './parser';
+import { _parse, _parseCached } from './parser';
 import { type_Body, op_LogicalOr, op_LogicalAnd, op_Minus, op_Plus, op_Divide, op_Multip, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, type_Statement, type_Value, type_Array, type_Object, type_SymbolRef, type_FunctionRef, type_AccessorExpr, type_Accessor, type_UnaryPrefix, op_LogicalNot, type_Ternary, op_NullishCoalescing } from './scope-vars';
 import { util_resolveAcc, util_resolveRefValue, util_getNodeStack, util_resolveRef } from './util';
 import { is_Function } from '@utils/is';
@@ -7,30 +7,13 @@ import { error_ } from '@core/util/reporters';
 import { Ast_FunctionRefUtil } from './astNode_utils';
 import { _evaluateAstDeferred } from './eval_deferred';
 
-const cache = Object.create(null);
 
 export function _evaluate (mix, model?, ctx?, ctr?, node?) {
-    let ast;
-
-    if (mix == null) {
-        return null;
-    }
     if (mix === '.') {
         return model;
     }
-    if (typeof mix === 'string'){
-        let node_ = node;
-        if (node_ == null && ctr != null) {
-            let x = ctr;
-            while(node_ == null && x != null) {
-                node_ = x.node;
-                x = x.parent;
-            }
-        }
-        ast = cache[mix] ?? (cache[mix] = _parse(mix, false, node_));
-    } else {
-        ast = mix;
-    }
+
+    let ast = _parseCached(mix, ctr, node);
     if (ast == null) {
         return null;
     }

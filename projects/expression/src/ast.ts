@@ -13,8 +13,14 @@ import {
 } from './scope-vars';
 
 import { is_String } from '@utils/is';
+import { INode } from '@core/dom/INode';
 
-export class Ast_Body  {
+export interface IAstNode {
+    async?: boolean
+    observe?: boolean
+}
+
+export class Ast_Body implements IAstNode {
     body = []
     join = null
     type = type_Body
@@ -22,7 +28,7 @@ export class Ast_Body  {
     async = false
     observe = false
 
-    constructor (public parent?, public node?) {
+    constructor (public parent?, public node?: INode) {
 
     }
 
@@ -74,7 +80,7 @@ export class Ast_Array {
     type = type_Array
     body = null
 
-    constructor (public parent) {
+    constructor (public parent: IAstNode) {
         this.body = new Ast_Body(this);
     }
     toString () {

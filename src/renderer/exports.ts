@@ -39,7 +39,7 @@ export function renderer_render<T extends HTMLElement> (mix, model?, ctx?, conta
             template = __templates[mix] = parser_parse(mix, ctx.filename);
         }
     }
-    return builder_build(template, model, ctx, container, controller);
+    return builder_build(template, model, ctx, container, controller) as T;
 }
 
 /**

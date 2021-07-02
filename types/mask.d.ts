@@ -82,8 +82,8 @@ declare module 'mask' {
             parse: typeof parser_parse;
             parseHtml: typeof parser_parseHtml;
             stringify: typeof mask_stringify;
-            build: (node: any, model_: any, ctx: any, container_: any, ctr_: any, children_?: any) => any;
-            buildSVG: (node: any, model_: any, ctx: any, container_: any, ctr_: any, children_?: any) => any;
+            build: (node: any, model_: any, ctx: any, container_: HTMLElement | DocumentFragment | SVGSVGElement, ctr_: any, children_?: HTMLElement[]) => HTMLElement | DocumentFragment | SVGSVGElement;
+            buildSVG: (node: any, model_: any, ctx: any, container_: HTMLElement | DocumentFragment | SVGSVGElement, ctr_: any, children_?: HTMLElement[]) => HTMLElement | DocumentFragment | SVGSVGElement;
             run: typeof mask_run;
             merge: typeof mask_merge;
             optimize: typeof mask_optimize;
@@ -600,10 +600,11 @@ declare module 'mask/projects/expression/src/eval' {
 }
 
 declare module 'mask/projects/expression/src/parser' {
-    import { Ast_Body } from 'mask/projects/expression/src/ast';
-    export function _parse(expr: any): InstanceType<typeof Ast_Body>;
-    export function _parse(expr: any, earlyExit: false, node?: any): InstanceType<typeof Ast_Body>;
-    export function _parse(expr: any, earlyExit: true, node?: any): [InstanceType<typeof Ast_Body>, number];
+    import { Ast_Body, IAstNode } from 'mask/projects/expression/src/ast';
+    export function _parseCached(mix: string | IAstNode, ctr?: any, node?: any): IAstNode;
+    export function _parse(expr: string): InstanceType<typeof Ast_Body>;
+    export function _parse(expr: string, earlyExit: false, node?: any): InstanceType<typeof Ast_Body>;
+    export function _parse(expr: string, earlyExit: true, node?: any): [InstanceType<typeof Ast_Body>, number];
     export function parser_getRef(): any;
     export function parser_getDirective(code: any): "|" | "^" | "-" | "+" | "/" | "*" | "%" | "||" | "&&" | "!" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "<" | "<=" | "->" | ">>" | "&" | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 33 | 34;
     export function ast_append(current: any, next: any): any;
@@ -867,6 +868,11 @@ declare module 'mask/ref-utils/src/error' {
 
 declare module 'mask/ref-utils/src/class/EventEmitter' {
     export class class_EventEmitter<TEvents extends Record<keyof TEvents, (...args: any) => any> = any> {
+        _listeners: {
+            [event: string]: (Function & {
+                _once?: boolean;
+            })[];
+        };
         on<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
         once<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
         pipe<TKey extends keyof TEvents>(event: TKey): () => void;
@@ -1053,6 +1059,7 @@ declare module 'mask/projects/mask-compo/src/model/IComponent' {
         model: TOuterModel;
         scope: any;
         $: JQuery;
+        elements?: HTMLElement[];
         slots: {
             [key: string]: Function;
         };
@@ -1284,16 +1291,21 @@ declare module 'mask/projects/mask-compo/src/model/IAttrDefinition' {
 }
 
 declare module 'mask/projects/expression/src/ast' {
-    export class Ast_Body {
+    import { INode } from "mask/dom/INode";
+    export interface IAstNode {
+        async?: boolean;
+        observe?: boolean;
+    }
+    export class Ast_Body implements IAstNode {
         parent?: any;
-        node?: any;
+        node?: INode;
         body: any[];
         join: any;
         type: number;
         source: any;
         async: boolean;
         observe: boolean;
-        constructor(parent?: any, node?: any);
+        constructor(parent?: any, node?: INode);
         toString(): string;
     }
     export class Ast_Statement {
@@ -1315,10 +1327,10 @@ declare module 'mask/projects/expression/src/ast' {
         toString(): any;
     }
     export class Ast_Array {
-        parent: any;
+        parent: IAstNode;
         type: number;
         body: any;
-        constructor(parent: any);
+        constructor(parent: IAstNode);
         toString(): string;
     }
     export class Ast_Object {
@@ -1379,7 +1391,9 @@ declare module 'mask/projects/expression/src/ast' {
         body: any;
         case1: Ast_Body;
         case2: Ast_Body;
-        constructor(assertions: any);
+        async: boolean;
+        observe: boolean;
+        constructor(body: Ast_Body);
     }
 }
 
@@ -1534,7 +1548,7 @@ declare module 'mask/projects/mask-binding/src/ValidatorProvider' {
 
 declare module 'mask/projects/observer/src/exports' {
     export { obj_addObserver, obj_hasObserver, obj_removeObserver, obj_addMutatorObserver, obj_removeMutatorObserver, obj_lockObservers, obj_unlockObservers } from 'mask/projects/observer/src/obj_observe';
-    export { expression_bind, expression_unbind, expression_callFn, expression_createBinder, expression_createListener, expression_getHost } from 'mask/projects/observer/src/expression';
+    export { expression_bind, expression_unbind, expression_callFn, expression_createBinder, expression_createListener } from 'mask/projects/observer/src/expression';
 }
 
 declare module 'mask/projects/mask-compo/src/compo/CompoProto' {
@@ -1568,12 +1582,17 @@ declare module 'mask/projects/observer/src/obj_observe' {
 }
 
 declare module 'mask/projects/observer/src/expression' {
-    export function expression_bind(expr: any, model: any, ctx: any, ctr: any, cb: any): void;
-    export function expression_unbind(expr: any, model: any, ctr: any, cb: any): void;
+    export function expression_bind(expr: any, model: any, ctx: any, ctr: any, cb: any, opts?: {
+        propertiesOnly: boolean;
+    }): null | {
+        unsubscribe(): any;
+    };
+    export function expression_unbind(expr: any, model: any, ctr: any, cb: any, opts?: {
+        propertiesOnly: boolean;
+    }): void;
     export function expression_callFn(accessor: any, model: any, ctx: any, ctr: any, args: any): any;
     
     export function expression_createBinder(expr: any, model: any, ctx: any, ctr: any, fn: any): () => void;
     export function expression_createListener(callback: any): () => void;
-    export let expression_getHost: any;
 }
 

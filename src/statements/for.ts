@@ -4,24 +4,25 @@ import { builder_build } from '@core/builder/exports';
 import { is_Array } from '@utils/is';
 import { log_error, log_warn } from '@core/util/reporters';
 import { Dom } from '@core/dom/exports';
+import { INode } from '@core/dom/INode';
 
 
-var FOR_OF_ITEM = 'for..of::item',
-    FOR_IN_ITEM = 'for..in::item';
+const FOR_OF_ITEM = 'for..of::item';
+const FOR_IN_ITEM = 'for..in::item';
 
-custom_Statements['for'] = {
+export const StatementFor = {
 
     render: function(node, model, ctx, container, ctr, children){
 
         parse_For(node.expression);
 
-        var value = expression_eval(__ForDirective[3], model, ctx, ctr);
+        var value = expression_eval(FOR_DIRECTIVE[3], model, ctx, ctr);
         if (value == null)
             return;
 
         build(
             value,
-            __ForDirective,
+            FOR_DIRECTIVE,
             node.nodes,
             model,
             ctx,
@@ -43,6 +44,8 @@ custom_Statements['for'] = {
         return createForItemHandler(compoName, model);
     }
 };
+
+custom_Statements['for'] = StatementFor;
 
 (function(){
     custom_Tags[FOR_OF_ITEM] = createBootstrapCompo(FOR_OF_ITEM);
@@ -77,7 +80,7 @@ function build(value, For, nodes, model, ctx, container, ctr, childs) {
     );
 }
 
-function getNodes(nodes, value, prop1, prop2, type, expr) {
+function getNodes(nodes: INode[], value: any, prop1: string, prop2: string, type: 'in' | 'of', expr?: string) {
 
     if ('of' === type) {
         if (is_Array(value) === false) {
@@ -200,8 +203,14 @@ function for_proto_serializeScope(scope, model) {
 }
 
 
-var __ForDirective = [ 'prop1', 'prop2', 'in|of', 'expression' ],
-    i_PROP_1 = 0,
+const FOR_DIRECTIVE: [
+    /*prop1*/string,
+    /*prop2*/string,
+    /*type*/'in' | 'of',
+    /*expr*/string
+] = [ '', '', 'in', '' ];
+
+let i_PROP_1 = 0,
     i_PROP_2 = 1,
     i_TYPE = 2,
     i_EXPR = 3,
@@ -223,14 +232,12 @@ function parse_For(expr) {
     length = expr.length;
     index = 0;
 
-    var prop1,
-        prop2,
-        loopType,
-        hasBrackets,
-        c
-        ;
+    let prop1;
+    let prop2;
+    let loopType;
+    let hasBrackets;
 
-    c = parser_skipWhitespace();
+    let c = parser_skipWhitespace();
     if (c === 40) {
         // (
         hasBrackets = true;
@@ -245,7 +252,8 @@ function parse_For(expr) {
         //,
 
         if (hasBrackets !== true) {
-            return throw_('Parenthese must be used in multiple var declarion');
+            throw_('Parenthese must be used in multiple var declarion');
+            return;
         }
 
         index++;
@@ -256,15 +264,15 @@ function parse_For(expr) {
     if (hasBrackets) {
         c = parser_skipWhitespace();
 
-        if (c !== 41)
-            return throw_('Closing parenthese expected');
+        if (c !== 41) {
+            throw_('Closing parenthese expected');
+            return;
+        }
 
         index++;
     }
 
     c = parser_skipWhitespace();
-
-    var loopType;
 
     if (c === 105 && template.charCodeAt(++index) === 110) {
         // i n
@@ -277,38 +285,34 @@ function parse_For(expr) {
     }
 
     if (loopType == null) {
-        return throw_('Invalid FOR statement. (in|of) expected');
+        throw_('Invalid FOR statement. (in|of) expected');
+        return;
     }
 
-    __ForDirective[0] = prop1;
-    __ForDirective[1] = prop2;
-    __ForDirective[2] = loopType;
-    __ForDirective[3] = template.substring(++index);
+    FOR_DIRECTIVE[0] = prop1;
+    FOR_DIRECTIVE[1] = prop2;
+    FOR_DIRECTIVE[2] = loopType;
+    FOR_DIRECTIVE[3] = template.substring(++index);
 
-
-    return __ForDirective;
+    return FOR_DIRECTIVE;
 }
 
 function parser_skipWhitespace(){
-    var c;
     for(; index < length; index++ ){
-        c = template.charCodeAt(index);
-        if (c < 33)
+        let c = template.charCodeAt(index);
+        if (c < 33) {
             continue;
-
+        }
         return c;
     }
-
     return -1;
 }
 
 function parser_getVarDeclaration(){
-    var start = index,
-        var_, c;
-
+    let start = index;
     for (; index < length; index++) {
 
-        c = template.charCodeAt(index);
+        let c = template.charCodeAt(index);
 
         if (c > 48 && c < 57) {
             // 0-9
@@ -317,7 +321,6 @@ function parser_getVarDeclaration(){
 
             continue;
         }
-
         if (
             (c === 36) || // $
             (c === 95) || // _
@@ -327,12 +330,13 @@ function parser_getVarDeclaration(){
 
             continue;
         }
-
         break;
     }
 
-    if (start === index)
-        return throw_('Variable declaration expected');
+    if (start === index) {
+        throw_('Variable declaration expected');
+        return;
+    }
 
     return template.substring(start, index);
 }

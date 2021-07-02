@@ -14,6 +14,7 @@ import { build_compoFactory } from './build_component';
 import { build_textFactory } from './build_textNode';
 import { IBuilderConfig } from './IBuilderConfig';
 import { BuilderData } from '../BuilderData';
+import { INode } from '@core/dom/INode';
 
 /**
  * @param {MaskNode} node
@@ -37,25 +38,32 @@ export function builder_buildFactory (config: IBuilderConfig) {
     let build_text = build_textFactory(config);
     let document = BuilderData.document;
 
-    function build (node, model_, ctx, container_, ctr_, children_?) {
-        if (node == null)
-            return container;
+    function build (
+        node
+        , model_
+        , ctx
+        , container_: HTMLElement | DocumentFragment | SVGSVGElement
+        , ctr_
+        , children_?: HTMLElement[]
+    ) {
+        if (node == null) {
+            return container_;
+        }
 
-        var ctr = ctr_,
-            model = model_,
+        let model = model_,
             children = children_,
             container = container_,
 
             type = node.type,
-            elements,
-            key,
-            value;
+            elements;
 
-        if (ctr == null)
+        let ctr = ctr_;
+        if (ctr == null) {
             ctr = new Dom.Component();
-
-        if (ctx == null)
+        }
+        if (ctx == null) {
             ctx = new builder_Ctx;
+        }
 
         if (type == null){
             // in case if node was added manually, but type was not set
@@ -72,7 +80,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
         }
 
 
-        var tagName = node.tagName;
+        let tagName = node.tagName;
         if (tagName === 'else')
             return container;
 
@@ -103,7 +111,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
 
         // Dom.STATEMENT
         if (type === 15) {
-            var Handler = custom_Statements[tagName];
+            let Handler = custom_Statements[tagName];
             if (Handler == null) {
                 if (custom_Tags[tagName] != null || builder_findAndRegisterCompo(ctr, tagName)) {
                     // Dom.COMPONENT
@@ -114,6 +122,13 @@ export function builder_buildFactory (config: IBuilderConfig) {
                 }
             }
             if (type === 15) {
+                // let rewriteFn = Handler.rewriteNode;
+                // if (rewriteFn != null && rewriteFn(node)) {
+                //     type = 4;
+                // } else {
+                //     Handler.render(node, model, ctx, container, ctr, children);
+                //     return container;
+                // }
                 Handler.render(node, model, ctx, container, ctr, children);
                 return container;
             }
@@ -139,7 +154,7 @@ export function builder_buildFactory (config: IBuilderConfig) {
             }
         }
 
-        var nodes = node.nodes;
+        let nodes = node.nodes;
         if (nodes != null) {
             if (children != null && elements == null) {
                 elements = children;
@@ -157,19 +172,15 @@ export function builder_buildFactory (config: IBuilderConfig) {
             // in Compo.handlers.attr object
             // but only on a component, not a tag ctr
             if (node.tagName == null) {
-                var attrHandlers = node.handlers && node.handlers.attr,
-                    attrFn,
-                    val,
-                    key;
+                let attrHandlers = node.handlers?.attr;
+                for (let key in node.attr) {
 
-                for (key in node.attr) {
-
-                    val = node.attr[key];
+                    let val = node.attr[key];
 
                     if (val == null)
                         continue;
 
-                    attrFn = null;
+                    let attrFn = null;
 
                     if (attrHandlers != null && is_Function(attrHandlers[key]))
                         attrFn = attrHandlers[key];

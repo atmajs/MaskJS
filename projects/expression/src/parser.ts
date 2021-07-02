@@ -1,8 +1,32 @@
-import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor } from './ast';
+import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor, IAstNode } from './ast';
 import { state_body, punc_Semicolon, type_Body, go_ref, punc_ParenthesisOpen, punc_ParenthesisClose, state_arguments, type_FunctionRef, punc_BraceOpen, go_objectKey, punc_BraceClose, type_Object, punc_Comma, punc_Question, type_SymbolRef, type_AccessorExpr, type_Accessor, go_acs, punc_Colon, punc_Dot, go_number, op_AsyncAccessor, op_ObserveAccessor, type_Statement, punc_BracketOpen, punc_BracketClose, type_Array, op_Minus, op_LogicalNot, op_Plus, op_Multip, op_Divide, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalAnd, op_LogicalOr, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, go_string, type_UnaryPrefix, op_NullishCoalescing } from './scope-vars';
 import { ast_findPrev, ast_remove, ast_handlePrecedence } from './ast_utils';
 import { util_throw } from './util';
 import { __rgxEscapedChar } from '@core/scope-vars';
+
+
+
+const cache = Object.create(null);
+
+
+export function _parseCached (mix: string | IAstNode, ctr?, node?): IAstNode {
+    if (mix == null) {
+        return null;
+    }
+    if (typeof mix === 'string'){
+        let node_ = node;
+        if (node_ == null && ctr != null) {
+            let x = ctr;
+            while(node_ == null && x != null) {
+                node_ = x.node;
+                x = x.parent;
+            }
+        }
+        return cache[mix] ?? (cache[mix] = _parse(mix, false, node_));
+    }
+    return mix;
+}
+
 
 let index = 0;
 let length = 0;
@@ -12,10 +36,10 @@ let ast;
 /*
  * earlyExit - only first statement/expression is consumed
  */
-export function _parse(expr): InstanceType<typeof Ast_Body>
-export function _parse(expr, earlyExit: false, node?): InstanceType<typeof Ast_Body>
-export function _parse(expr, earlyExit: true, node?): [InstanceType<typeof Ast_Body>, number]
-export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> | [InstanceType<typeof Ast_Body>, number] {
+export function _parse(expr: string): InstanceType<typeof Ast_Body>
+export function _parse(expr: string, earlyExit: false, node?): InstanceType<typeof Ast_Body>
+export function _parse(expr: string, earlyExit: true, node?): [InstanceType<typeof Ast_Body>, number]
+export function _parse(expr: string, earlyExit?, node?): InstanceType<typeof Ast_Body> | [InstanceType<typeof Ast_Body>, number] {
     if (earlyExit == null) {
         earlyExit = false;
     }
@@ -27,9 +51,9 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
     ast = new Ast_Body(null, node);
     ast.source = expr;
 
-    let current = ast,
-        state = state_body,
-        c, t, next, directive;
+    let current = ast;
+    let state = state_body;
+    let c;
 
     outer: while (true) {
 
@@ -41,7 +65,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
         if (index >= length)
             break;
 
-        directive = parser_getDirective(c);
+        let directive = parser_getDirective(c);
 
         if (directive == null && index < length) {
             break;
@@ -149,7 +173,7 @@ export function _parse(expr, earlyExit?, node?): InstanceType<typeof Ast_Body> |
             case punc_Question:
                 index++;
                 c = parser_skipWhitespace();
-                t = current.type;
+                let t = current.type;
                 if ((t === type_SymbolRef || t === type_AccessorExpr || t === type_Accessor) && c === 46) {
                     // .
                     index++;

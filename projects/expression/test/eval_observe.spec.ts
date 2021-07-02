@@ -1,4 +1,5 @@
 import { expression_eval } from '@project/expression/src/exports';
+import { expression_subscribe } from '@project/observer/src/expression_subscribe';
 import sinon = require('sinon');
 
 UTest({
@@ -158,7 +159,7 @@ UTest({
         });
 
         deepEq_(fn.args, []);
-        eq_(model.__observers, null);
+
 
 
         model.numbers.next(3);
@@ -198,7 +199,7 @@ UTest({
         deepEq_(fn.args, [ [ 8 ] ]);
         eq_(model.__observers.factor.length, 0);
     },
-    'observable and ternary' () {
+    'observable ternary' () {
         let model = {
             state: new ObservableMock(),
         };
@@ -218,19 +219,196 @@ UTest({
         model.state.next(true);
         eq_(fn.callCount, 2);
         deepEq_(fn.args, [ ['no'], ['yes'] ]);
+    },
+    'observable eqeq' () {
+        let model = {
+            state: new ObservableMock(),
+        };
+        let stream = expression_eval(
+            `observe state == 'yes'`, model
+        );
 
+        let fn = sinon.spy();
+        let subscription = stream.subscribe((x) => {
+            fn(x)
+        });
+        eq_(fn.callCount, 0);
+
+        model.state.next('no');
+        eq_(fn.callCount, 1);
+        deepEq_(fn.args, [ [  false ] ]);
+
+        model.state.next('yes');
+        eq_(fn.callCount, 2);
+        deepEq_(fn.args, [ [ false ], [ true ] ]);
+    },
+    'observable >' () {
+        let model = {
+            age: new ObservableMock(),
+        };
+        let stream = expression_eval(
+            `observe age > 10`, model
+        );
+
+        let fn = sinon.spy();
+        let subscription = stream.subscribe((x) => {
+            fn(x)
+        });
+        eq_(fn.callCount, 0);
+
+        model.age.next(9);
+        eq_(fn.callCount, 1);
+        deepEq_(fn.args, [ [  false ] ]);
+
+        model.age.next(12);
+        eq_(fn.callCount, 2);
+        deepEq_(fn.args, [ [ false ], [ true ] ]);
+    },
+    'create observable from properties': {
+        'binded eqeq' () {
+            let model = {
+                state: 'no',
+            };
+            let stream = expression_eval(
+                `observe state == 'yes'`, model
+            );
+
+            let fn = sinon.spy();
+            let subscription = stream.subscribe((x) => {
+                fn(x)
+            });
+            eq_(fn.callCount, 1);
+
+            model.state = 'no';
+            eq_(fn.callCount, 1);
+            deepEq_(fn.args, [ [ false ] ]);
+
+            model.state = 'yes';
+            eq_(fn.callCount, 2);
+            deepEq_(fn.args, [ [false], [ true ] ]);
+        },
+    },
+    'observe deep': {
+        'as property evaluation' () {
+            let model = {
+                user: {
+                    age: 20
+                }
+            };
+            let stream = expression_eval(
+                `observe user.age + 2`, model
+            );
+            let fn = sinon.spy();
+            let subscription = stream.subscribe((x) => {
+                fn(x)
+            });
+
+            eq_((model as any).__observers['user.age'].length, 1)
+
+            let results = [ [ 22 ] ];
+            eq_(fn.callCount, 1);
+            deepEq_(fn.args, results);
+
+            model.user.age = 21;
+            eq_(fn.callCount, 2);
+            deepEq_(fn.args, results = results.concat([ [ 23 ] ]));
+
+            model.user = { age: 24 };
+            eq_(fn.callCount, 3);
+            deepEq_(fn.args, results = results.concat([ [ 26 ] ]));
+
+            stream.unsubscribe();
+            eq_((model as any).__observers['user.age'].length, 0)
+        },
+        'as property subscription' () {
+            let model = {
+                user: {
+                    age: 20
+                }
+            };
+
+            let fn = sinon.spy();
+            let subscription = expression_subscribe(
+                `user.age + 2`, model, null, null, fn
+            );
+
+            eq_((model as any).__observers['user.age'].length, 1)
+
+            let results = [ [ 22 ] ];
+            eq_(fn.callCount, 1);
+            deepEq_(fn.args, results);
+
+            model.user.age = 21;
+            eq_(fn.callCount, 2);
+
+            deepEq_(fn.args, results = results.concat([ [ 23 ] ]));
+
+            model.user = { age: 24 };
+            eq_(fn.callCount, 3);
+            deepEq_(fn.args, results = results.concat([ [ 26 ] ]));
+
+            subscription.unsubscribe();
+            eq_((model as any).__observers['user.age'].length, 0)
+        },
+        'as observable' () {
+            let model = {
+                user: {
+                    age: new ObservableMock(20)
+                }
+            };
+            let stream = expression_eval(
+                `observe user.age + 2`, model
+            );
+            let fn = sinon.spy();
+            let subscription = stream.subscribe((x) => {
+                fn(x)
+            });
+            eq_((model as any).__observers['user.age'].length, 1)
+            let results = [ [ 22 ] ];
+            eq_(fn.callCount, 1);
+            deepEq_(fn.args, results);
+
+
+            model.user.age.next(21);
+            eq_(fn.callCount, 2);
+            deepEq_(fn.args, results = results.concat([ [ 23 ] ]));
+
+            let nextObs = new ObservableMock(24);
+
+            model.user.age = nextObs;
+            model.user.age.next(24);
+            eq_(fn.callCount, 3);
+            deepEq_(fn.args, results = results.concat([ [ 26 ] ]));
+
+
+            model.user = { age: new ObservableMock(28) };
+            eq_(fn.callCount, 4);
+            deepEq_(fn.args, results = results.concat([ [ 30 ] ]));
+
+            subscription.unsubscribe();
+            eq_((model as any).__observers['user.age'].length, 0)
+        }
     }
 })
 
 class ObservableMock {
-    cb: Function
-    subscribe (cb) {
-        this.cb = cb;
-    }
-    unsubscribe () {
+    cbs: Function[] = [];
+
+    constructor (public value?) {
 
     }
+    subscribe (cb) {
+        this.cbs.push(cb);
+    }
+    unsubscribe (cb?) {
+        if (cb) {
+            this.cbs = this.cbs.filter(x => x !== cb);
+            return;
+        }
+        this.cbs.length = 0;
+    }
     next (val) {
-        this.cb(val)
+        this.value = val;
+        this.cbs.forEach(x => x(val));
     }
 }

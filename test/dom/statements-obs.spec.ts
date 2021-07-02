@@ -1,13 +1,15 @@
 import { renderer_render } from '@core/renderer/exports'
 import '@core/statements/exports'
+import '@project/mask-binding/src/exports'
+
 import { ComponentNode } from '@core/dom/ComponentNode';
 import { Compo } from '@compo/exports';
 import { class_Dfr } from '@utils/class/Dfr';
 
 
 UTest({
-	async 'await if' () {
-        
+    async 'await if' () {
+
         let compo = new ComponentNode();
         let template = `
             div {
@@ -20,14 +22,14 @@ UTest({
         let model = <any> { num: dfr };
         let dom = renderer_render(template, model, null, null, compo);
         $(dom).hasNot_('span');
-        
+
         eq_(model.__observers, null);
-        
+
         dfr.resolve(5)
         $(dom).has_('span');
     },
-	async 'if' () {
-        
+    async 'if' () {
+
         let compo = new ComponentNode();
         let template = `
             div {
@@ -48,7 +50,7 @@ UTest({
         eq_(model.__observers.num.length, 0);
     },
     async 'if..else' () {
-        
+
         let compo = new (Compo.create({
             isOne: assert.await((num) => {
                 return num === 1;
@@ -73,6 +75,6 @@ UTest({
         $(dom).has_('b');
 
         eq_($(dom).find('i').css('display'), 'none');
-	},
+    },
 })
 

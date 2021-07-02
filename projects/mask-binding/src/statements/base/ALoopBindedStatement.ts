@@ -1,28 +1,31 @@
 import { compo_dispose, compo_inserted } from '../../utils/compo';
 import { dom_insertBefore } from '../../utils/dom';
 import { arr_each } from '@utils/arr';
-import { arr_createRefs, list_update, list_sort, list_remove } from './utils';
-import { expression_unbind } from '@project/observer/src/exports';
+import { arr_createRefs, list_update, list_sort, list_remove } from '../loop/utils';
+import { ABindedStatement } from './ABindedStatement';
+import { ArrayMethods } from '@core/types/types-ts';
 
-export const LoopStatementProto = {
-    ctx: null,
-    model: null,
-    parent: null,
-    binder: null,
-    refresh (value, method, args, result) {
+export abstract class ALoopBindedStatement extends ABindedStatement {
 
-        let node = this.node;
-        let ctx = this.ctx;
-        let ctr = this.node;
+    abstract _getModel (compo)
+    abstract _getExpression ()
 
+
+    refresh <TMethod extends ArrayMethods> (
+        value: any[]
+        , method: TMethod
+        , args: Parameters<[][TMethod]>
+        , result: ReturnType<[][TMethod]>
+    ) {
         if (method == null) {
+
             // this was new array/object setter and not an immutable function call
-            let compos = node.components;
+            let compos = this.components;
             if (compos != null) {
                 let imax = compos.length;
                 let i = -1;
                 while (++i < imax) {
-                    if (compo_dispose(compos[i], node)) {
+                    if (compo_dispose(compos[i], this)) {
                         i--;
                         imax--;
                     }
@@ -30,10 +33,10 @@ export const LoopStatementProto = {
                 compos.length = 0;
             }
 
-            let frag = this._build(node, value, ctx, ctr);
+            let frag = this.build(value, null, null);
             if (frag != null) {
                 dom_insertBefore(frag, this.placeholder);
-                arr_each(node.components, compo_inserted);
+                arr_each(this.components, compo_inserted);
             }
             return;
         }
@@ -55,9 +58,10 @@ export const LoopStatementProto = {
                 list_update(this, 0, 1);
                 break;
             case 'splice':
-                let sliceStart = args[0];
-                let sliceRemove = args.length === 1 ? this.components.length : args[1];
-                let sliceAdded = args.length > 2 ? array.slice(args[0], args.length - 2 + args[0]) : null;
+                let sliceArgs: any[] = args;
+                let sliceStart = sliceArgs[0];
+                let sliceRemove = sliceArgs.length === 1 ? this.components.length : sliceArgs[1];
+                let sliceAdded = args.length > 2 ? array.slice(sliceArgs[0], sliceArgs.length - 2 + sliceArgs[0]) : null;
 
                 list_update(this, sliceStart, sliceRemove, sliceStart, sliceAdded);
                 break;
@@ -66,16 +70,13 @@ export const LoopStatementProto = {
                 list_sort(this, array);
                 break;
             case 'remove':
-                if (result != null && result.length) {
-                    list_remove(this, result);
+                let removed = result as any[];
+                if (removed != null && removed.length > 0) {
+                    list_remove(this, removed);
                 }
                 break;
         }
-    },
-
-    dispose () {
-        expression_unbind(
-            this.expr || this.expression, this.model, this.parent, this.binder
-        );
     }
+
+
 };

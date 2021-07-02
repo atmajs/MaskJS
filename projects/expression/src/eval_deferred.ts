@@ -31,11 +31,15 @@ export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
             util_throw(ast, null, 'Awaitable is undefined');
         }
         if (ast.observe === true) {
+            let innerStream;
             if (is_Observable(result) === false) {
                 result = new ObjectStream(result, ast, model, ctx, ctr);
+            } else {
+                innerStream = new ObjectStream(result, ast, model, ctx, ctr);
             }
+
             deferExp.kind = SubjectKind.Stream;
-            deferExp.fromStream(result);
+            deferExp.fromStream(result, innerStream);
             return deferExp;
         }
 
@@ -43,9 +47,9 @@ export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
         deferExp.next(result);
         return deferExp;
     }
-    let count = deferred.length,
-        error = null,
-        i = count;
+    let count = deferred.length;
+    let error = null;
+    let i = count;
     while(--i > -1) {
         let dfr = deferred[i];
         dfr
