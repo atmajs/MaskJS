@@ -1,5 +1,56 @@
 import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor, IAstNode } from './ast';
-import { state_body, punc_Semicolon, type_Body, go_ref, punc_ParenthesisOpen, punc_ParenthesisClose, state_arguments, type_FunctionRef, punc_BraceOpen, go_objectKey, punc_BraceClose, type_Object, punc_Comma, punc_Question, type_SymbolRef, type_AccessorExpr, type_Accessor, go_acs, punc_Colon, punc_Dot, go_number, op_AsyncAccessor, op_ObserveAccessor, type_Statement, punc_BracketOpen, punc_BracketClose, type_Array, op_Minus, op_LogicalNot, op_Plus, op_Multip, op_Divide, op_Modulo, op_BitOr, op_BitXOr, op_BitAnd, op_LogicalAnd, op_LogicalOr, op_LogicalEqual, op_LogicalEqual_Strict, op_LogicalNotEqual, op_LogicalNotEqual_Strict, op_LogicalGreater, op_LogicalGreaterEqual, op_LogicalLess, op_LogicalLessEqual, go_string, type_UnaryPrefix, op_NullishCoalescing } from './scope-vars';
+import {
+    type_Body,
+    type_SymbolRef,
+    type_AccessorExpr,
+    type_Accessor,
+    type_Statement,
+    type_Array,
+    type_UnaryPrefix,
+    type_Object,
+    type_FunctionRef,
+
+    punc_Semicolon,
+    punc_ParenthesisOpen,
+    punc_ParenthesisClose,
+    punc_BraceClose,
+    punc_Comma,
+    punc_Question,
+    punc_BracketOpen,
+    punc_BraceOpen,
+    punc_Colon,
+    punc_Dot,
+    punc_BracketClose,
+    state_body,
+    state_arguments,
+    go_objectKey,
+    go_acs,
+    go_number,
+    go_ref,
+    op_AsyncAccessor,
+    op_ObserveAccessor,
+    op_Minus,
+    op_LogicalNot,
+    op_Plus,
+    op_Multip,
+    op_Divide,
+    op_Modulo,
+    op_BitOr,
+    op_BitXOr,
+    op_BitAnd,
+    op_LogicalAnd,
+    op_LogicalOr,
+    op_LogicalEqual,
+    op_LogicalEqual_Strict,
+    op_LogicalNotEqual,
+    op_LogicalNotEqual_Strict,
+    op_LogicalGreater,
+    op_LogicalGreaterEqual,
+    op_LogicalLess,
+    op_LogicalLessEqual,
+    go_string,
+    op_NullishCoalescing
+} from './scope-vars';
 import { ast_findPrev, ast_remove, ast_handlePrecedence } from './ast_utils';
 import { util_throw } from './util';
 import { __rgxEscapedChar } from '@core/scope-vars';
@@ -9,15 +60,15 @@ import { __rgxEscapedChar } from '@core/scope-vars';
 const cache = Object.create(null);
 
 
-export function _parseCached (mix: string | IAstNode, ctr?, node?): IAstNode {
+export function _parseCached(mix: string | IAstNode, ctr?, node?): IAstNode {
     if (mix == null) {
         return null;
     }
-    if (typeof mix === 'string'){
+    if (typeof mix === 'string') {
         let node_ = node;
         if (node_ == null && ctr != null) {
             let x = ctr;
-            while(node_ == null && x != null) {
+            while (node_ == null && x != null) {
                 node_ = x.node;
                 x = x.parent;
             }
@@ -491,26 +542,37 @@ function parser_getString(c) {
 };
 
 function parser_getNumber() {
-    let start = index,
-        code, isDouble;
+    let start = index;
+    let isDouble = false;
+    let isBigInt = false;
     while (true) {
 
-        code = template.charCodeAt(index);
-        if (code === 46) {
+        let c = template.charCodeAt(index);
+        if (c === 46) {
             // .
             if (isDouble === true) {
-                util_throw(template, index, 'Invalid number', code);
+                util_throw(template, index, 'Invalid number', c);
                 return null;
             }
             isDouble = true;
         }
-        if ((code >= 48 && code <= 57 || code === 46) && index < length) {
+        if ((c >= 48 && c <= 57 || c === 46) && index < length) {
             index++;
             continue;
         }
+        if (c === 110) {
+            // n
+            isBigInt = true
+        }
         break;
     }
-    return +template.substring(start, index);
+    let str = template.substring(start, index);
+    if (isBigInt) {
+        // skip 'n'
+        index++;
+        return BigInt(str);
+    }
+    return +str;
 };
 
 
