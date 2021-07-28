@@ -1,20 +1,20 @@
 <p align='center'>
     <img src='assets/logo.png'/>
-	</p>
+    </p>
 
 ----
 
 <p align="center">
-	<a href='https://travis-ci.com/atmajs/MaskJS' target='_blank'>
-		<img src='https://api.travis-ci.com/atmajs/MaskJS.png?branch=master' />
-		</a>
-	<a href='http://badge.fury.io/js/maskjs' target='_blank'>
-		<img src='https://badge.fury.io/js/maskjs.svg' />
-		</a>
-	<a href='http://badge.fury.io/bo/maskjs' target='_blank'>
-		<img src='https://badge.fury.io/bo/maskjs.svg' />
-		</a>
-	</p>
+    <a href='https://travis-ci.com/atmajs/MaskJS' target='_blank'>
+        <img src='https://api.travis-ci.com/atmajs/MaskJS.png?branch=master' />
+        </a>
+    <a href='http://badge.fury.io/js/maskjs' target='_blank'>
+        <img src='https://badge.fury.io/js/maskjs.svg' />
+        </a>
+    <a href='http://badge.fury.io/bo/maskjs' target='_blank'>
+        <img src='https://badge.fury.io/bo/maskjs.svg' />
+        </a>
+    </p>
 
 MaskJS — is a markup | template | modular **HMVC** engine for
 modern and fast web(_Browser_), server(_NodeJS_) or mobile(_PhoneGap_) applications. Component-based architecture
@@ -27,34 +27,34 @@ Resources:
 - :books: [Wiki](https://github.com/atmajs/maskjs/wiki)
 
 - **Examples**
-	- :link: [Samples](/examples)
-	- :link: [TodoMVC app](http://todomvc.com/examples/atmajs/)
+    - :link: [Samples](/examples)
+    - :link: [TodoMVC app](http://todomvc.com/examples/atmajs/)
 - **Tools**
-	- :link: [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
-	- :link: [Sublime Package](https://github.com/tenbits/sublime-mask)
-	- :link: [Atom Package](https://github.com/tenbits/package-atom)
+    - :link: [Chrome Debug Plugin](https://chrome.google.com/webstore/detail/atmajs-devtool/bpaepkmcmoablpdahclhdceapndfhdpo)
+    - :link: [Sublime Package](https://github.com/tenbits/sublime-mask)
+    - :link: [Atom Package](https://github.com/tenbits/package-atom)
 
 ----
 
 ##### &#9776;
 
 - `1` [Markup](#1-markup)
-	- `1.1` [Mask](#11-mask-syntax)
-	- `1.2` [HTML](#12-html-syntax)
+    - `1.1` [Mask](#11-mask-syntax)
+    - `1.2` [HTML](#12-html-syntax)
 - `2` [Libraries](#2-libraries)
-	- `2.1` [Components](#21-components)
-	- `2.2` [Bindings](#22-bindings)
-	- `2.3` [jMask](#23-jmask)
-	- `2.4` [jQuery](#24-jquery)
-	- `2.5` [Dependency Injection](#25-dependency-injection)
+    - `2.1` [Components](#21-components)
+    - `2.2` [Bindings](#22-bindings)
+    - `2.3` [jMask](#23-jmask)
+    - `2.4` [jQuery](#24-jquery)
+    - `2.5` [Dependency Injection](#25-dependency-injection)
 - `3` [Performance](#3-performance)
 - `4` [NodeJS](#4-nodejs)
 - `5` [Browser Support](#5-browser-support)
 - `6` [Plugins](#6-plugins)
 - `7` [Quick Start](#7-quick-start)
 - `8` [Contribute](#8-contribute)
-	- `8.1` [Build](#82-build)
-	- `8.2` [Test ](#81-test)
+    - `8.1` [Build](#82-build)
+    - `8.2` [Test ](#81-test)
 - `9` [Changelog](#9-changelog)
 
 ----
@@ -69,9 +69,9 @@ We support `mask` and `html` syntax for writing your templates. And you can even
 - Performance. _No precompilation is required_
 - Small size. _~30% smaller than HTML_ Additionaly, there is a minification tool - [Optimizer](https://github.com/atmajs/mask-optimizer).
 - DOM Builder
-	`[Template → Mask AST → Shadow DOM → Live DOM]`
+    `[Template → Mask AST → Shadow DOM → Live DOM]`
 - HTML Builder (_nodejs_)
-	`[Template → Mask AST → HTML]`
+    `[Template → Mask AST → HTML]`
 
 ```mask
 import CustomComponent from 'Foo.mask'
@@ -103,7 +103,7 @@ Here is nothing new for you. Old good HTML syntax to define the templates. But w
 ```html
 <h4>~[name]</h4>
 <Dialog>
-	<div>Hello Foo</div>
+    <div>Hello Foo</div>
 </Dialog>
 ```
 
@@ -113,8 +113,8 @@ You can even use html blocks in a mask syntax
 
 ```mask
 ul {
-	<li> Foo
-	<li> Bar
+    <li> Foo
+    <li> Bar
 }
 ```
 
@@ -135,33 +135,33 @@ Core of the HMVC engine. Simple compo sample:
 ```ts
 export class CustomComponentCtr {
 
-	// slots example
-	@mask.deco.slot()
-	onRefreshDate (){
-		this.model.date = new Date();
-	}
-	@mask.deco.slot()
-	domInsert (){
-		alert(this.$.innerWidth());
-	}
+    // slots example
+    @mask.deco.slot()
+    onRefreshDate (){
+        this.model.date = new Date();
+    }
+    @mask.deco.slot()
+    domInsert (){
+        alert(this.$.innerWidth());
+    }
 
-	// events example
-	@mask.deco.event('click: button')
-	onButtonClicked (){
-		alert(this.model.date);
-	}
+    // events example
+    @mask.deco.event('click: button')
+    onButtonClicked (){
+        alert(this.model.date);
+    }
 
-	onRenderStart (model, ctx) {
-		// override model
-		this.model = { date: new Date(); }
-	}
-	onRenderEnd: function(elements, model, ctx){
-		this.$ // is a domLibrary (jQuery-lite, jQuery/Zepto/Kimbo) wrapper over `elements`
-	}
+    onRenderStart (model, ctx) {
+        // override model
+        this.model = { date: new Date(); }
+    }
+    onRenderEnd: function(elements, model, ctx){
+        this.$ // is a domLibrary (jQuery-lite, jQuery/Zepto/Kimbo) wrapper over `elements`
+    }
 
-	dispose () {
-		// do some cleanup
-	}
+    dispose () {
+        // do some cleanup
+    }
 };
 ```
 
@@ -170,13 +170,13 @@ import './CustomComponent.less'
 import CustomComponentCtr from './CustomComponentCtr.ts'
 
 define CustomComponent extends CustomComponentCtr {
-	h1 {
-		'Date ~[bind: _.formatDate(date)]'
-	}
-	button .btn x-tap='onRefreshDate' {
-		i.material-icons > 'update'
-		'Refresh'
-	}
+    h1 {
+        'Date ~[bind: _.formatDate(date)]'
+    }
+    button .btn x-tap='onRefreshDate' {
+        i.material-icons > 'update'
+        'Refresh'
+    }
 }
 ```
 
@@ -192,10 +192,10 @@ Simple bindings sample:
 h4 > '~[bind: fooDate.getSeconds() * barAge ]'
 
 input type=date >
-	dualbind value='fooDate';
+    dualbind value='fooDate';
 
 input type=number >
-	dualbind value='barAge';
+    dualbind value='barAge';
 /*\
  * `dualbind` component also supports much more properties and configurations
 \*/
@@ -236,14 +236,14 @@ import * as IStore from services;
 
 define UserList (store: IStore) {
 
-	foreach (user of store.getUsers()) {
-		div > '~user.username'
-	}
+    foreach (user of store.getUsers()) {
+        div > '~user.username'
+    }
 
-	// or in constructor
-	function constructor (store: IStore) {
-		this.store = store;
-	}
+    // or in constructor
+    function constructor (store: IStore) {
+        this.store = store;
+    }
 }
 ```
 
@@ -290,45 +290,45 @@ Most simple MaskJS sample to show where you could start from:
 ```html
 <!DOCTYPE html>
 <html>
-	<body>
-		<script type='text/mask' data-run='auto'>
-			import Counter from './Counter';
+    <body>
+        <script type='text/mask' data-run='auto'>
+            import Counter from './Counter';
 
-			h4 > 'Counter with 1 second step'
-			Counter x-interval=1;
+            h4 > 'Counter with 1 second step'
+            Counter x-interval=1;
 
-			h4 > 'Counter with 5 seconds step'
-			Counter x-interval=5;
-		</script>
-		<script src='http://cdn.jsdelivr.net/g/maskjs'></script>
-	</body>
+            h4 > 'Counter with 5 seconds step'
+            Counter x-interval=5;
+        </script>
+        <script src='https://unpkg.com/maskjs'></script>
+    </body>
 </html>
 ```
 ```mask
 // Create the file `Counter.mask`
 define Counter {
-	var meta = {
-		attributes: {
-			'x-interval': 'number'
-		}
-	};
+    var meta = {
+        attributes: {
+            'x-interval': 'number'
+        }
+    };
 
-	var scope = {
-		counter: 0,
-		timer: null
-	};
+    var scope = {
+        counter: 0,
+        timer: null
+    };
 
-	slot domInsert () {
-		this.scope.timer = setTimeout(() => {
-			++this.scope.counter;
-		}, this.xInterval)
-	}
+    slot domInsert () {
+        this.scope.timer = setTimeout(() => {
+            ++this.scope.counter;
+        }, this.xInterval)
+    }
 
-	function dispose () {
-		clearTimeout(this.scope.timer);
-	}
+    function dispose () {
+        clearTimeout(this.scope.timer);
+    }
 
-	div > '~[bind: this.scope.counter]
+    div > '~[bind: this.scope.counter]
 }
 ```
 
@@ -354,127 +354,127 @@ _`@latest`_
 - `0.64.0`
 - **Properties**
 
-	```mask
-	div [style.backgroundColor] = 'red';
-	```
+    ```mask
+    div [style.backgroundColor] = 'red';
+    ```
 
 
 _`@latest`_
 - `0.60.0`
 - **Await** statements, components and also modules
 
-	```mask
-	define Foo {
-		function async onRenderStart () {
-			this.model = await LoadUserExample();
-		}
-		h4 > '~userName'
-	}
+    ```mask
+    define Foo {
+        function async onRenderStart () {
+            this.model = await LoadUserExample();
+        }
+        h4 > '~userName'
+    }
 
-	// Component
-	await Foo {
-		@progress > i > 'Loading user';
-	}
+    // Component
+    await Foo {
+        @progress > i > 'Loading user';
+    }
 
-	// Promises
-	await (this.getCurrentUser()) {
-		@progress > i > 'Loading user';
-		@done (user) {
-			h4 > '~user.userName'
-		}
-		@fail (error) {
-			.danger > '~error.message'
-		}
-	}
+    // Promises
+    await (this.getCurrentUser()) {
+        @progress > i > 'Loading user';
+        @done (user) {
+            h4 > '~user.userName'
+        }
+        @fail (error) {
+            .danger > '~error.message'
+        }
+    }
 
-	// Modules
-	import async Foo from './Foo';
+    // Modules
+    import async Foo from './Foo';
 
-	heading > 'Some heading'
-	await Foo {
-		@progress > 'Loading and initilizing the module'
-	}
-	```
+    heading > 'Some heading'
+    await Foo {
+        @progress > 'Loading and initilizing the module'
+    }
+    ```
 
 - `0.58.0`
 - **Decorators** for methods and nodes
 
-	```mask
-	[IsAuthorized]
-	div > 'Hello ~user'
+    ```mask
+    [IsAuthorized]
+    div > 'Hello ~user'
 
-	[LogCall]
-	function doSmth () {
-		// ...
-	}
-	```
+    [LogCall]
+    function doSmth () {
+        // ...
+    }
+    ```
 - Async and Private methods. For browsers which do not yet support `async/await` es2017 feature, please use `postmask-babel` plugin.
 
-	```mask
-	slot private async upload () {
-		await MyService.doSmth();
-	}
-	```
+    ```mask
+    slot private async upload () {
+        await MyService.doSmth();
+    }
+    ```
 
 
 - `0.57.13`
 - **Modules**
-	- Namespace routing
+    - Namespace routing
 
-		```mask
-		import FooService from services;
+        ```mask
+        import FooService from services;
 
-		h4 > '~FooService.doSmth()'
-		```
+        h4 > '~FooService.doSmth()'
+        ```
 
-		You can also configurate the base path for the routing, e.g. `mask.Module.cfg('baseNs', '/src/')`
+        You can also configurate the base path for the routing, e.g. `mask.Module.cfg('baseNs', '/src/')`
 
-		> If the module is not loaded or not set to the namespace repository, we will load it for you by the resolved path, e.g. `'/src/services/FooService.js'`
+        > If the module is not loaded or not set to the namespace repository, we will load it for you by the resolved path, e.g. `'/src/services/FooService.js'`
 
-	- Prefix routing
+    - Prefix routing
 
-		```mask
-		import MyButton from '@controls/MyButton';
-		MyButton x-tap='clicked';
-		```
+        ```mask
+        import MyButton from '@controls/MyButton';
+        MyButton x-tap='clicked';
+        ```
 
-		You have to configurate the prefix first, e.g.:
+        You have to configurate the prefix first, e.g.:
 
-		```js
-		mask.Module.cfg('prefixes.controls', '/src/controls/{0}/{1}.mask');
-		```
+        ```js
+        mask.Module.cfg('prefixes.controls', '/src/controls/{0}/{1}.mask');
+        ```
 
 - `0.57.0`
 - Typa annotations for arguments: `(argumentName: argumentType, ...)`
 
-	```mask
-	import * as IFoo from '/service/IFoo.js';
-	import * as IBar from '/service/IBar.js';
-	define MyCompo (foo: IFoo) {
-		function constructor (bar: IBar) {
-			this.bar = bar;
-		}
-		span > `~[foo.someMethod()]`
-	}
-	```
+    ```mask
+    import * as IFoo from '/service/IFoo.js';
+    import * as IBar from '/service/IBar.js';
+    define MyCompo (foo: IFoo) {
+        function constructor (bar: IBar) {
+            this.bar = bar;
+        }
+        span > `~[foo.someMethod()]`
+    }
+    ```
 
 - `0.56.5`
 - Function scope: imports and define arguments
 
-	```mask
-	import * as Service from '/services/UserService.js';
-	define UserEditor (user) {
+    ```mask
+    import * as Service from '/services/UserService.js';
+    define UserEditor (user) {
 
-		slot save () {
-			Service
-				.changeUserName(user.id, user.name)
-				.then(() => console.log('saved!'));
-		}
+        slot save () {
+            Service
+                .changeUserName(user.id, user.name)
+                .then(() => console.log('saved!'));
+        }
 
-		input > dualbind value='user.name';
-		button x-tap=save > 'Save'
-	}
-	```
+        input > dualbind value='user.name';
+        button x-tap=save > 'Save'
+    }
+    ```
 
 - `sync` imports, as import loading for better performance is parallel, but bundles should be loaded in sync, as they register all resources then.
 
@@ -485,31 +485,31 @@ import FooCompo from './Foo';
 ```
 
 - `0.55.1`
-	- HTML markup within Mask templates
+    - HTML markup within Mask templates
 
 - `0.55.0`
-	- Async imports.
+    - Async imports.
 
-		```mask
-		import async Foo from './Foo.mask';
-		h4 > 'MyHeader'
-		await Foo;
-		```
+        ```mask
+        import async Foo from './Foo.mask';
+        h4 > 'MyHeader'
+        await Foo;
+        ```
 
-		`h4` header is rendered during the `Foo` may still being loaded.
+        `h4` header is rendered during the `Foo` may still being loaded.
 
-	- `define` and `let` support arguments
+    - `define` and `let` support arguments
 
-		```mask
-		define Foo (user) {
-			h4 > '~user.name'
-		}
+        ```mask
+        define Foo (user) {
+            h4 > '~user.name'
+        }
 
-		Foo(me);
-		```
-		```javascript
-		mask.render(template, { me: { name: 'TestUser' }});
-		```
+        Foo(me);
+        ```
+        ```javascript
+        mask.render(template, { me: { name: 'TestUser' }});
+        ```
 
 ----
 :copyright: MIT - 2017 Atma.js Project

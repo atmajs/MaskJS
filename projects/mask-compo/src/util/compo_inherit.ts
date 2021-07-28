@@ -59,23 +59,23 @@ export function compo_inherit (Proto, Extends){
     return hasBase;
 };
 
-function fillProtoHash (proto, hash) {
+function fillProtoHash (proto: object, target: object) {
     if (getProtoOf == null) {
         return proto;
     }
     let keys = Object.getOwnPropertyNames(proto);
     for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
-        if (hash[key] != null) {
+        if (target[key] != null) {
             continue;
         }
-        hash[key] = proto[key];
+        target[key] = proto[key];
     }
     let next = Object.getPrototypeOf(proto);
     if (next == null || next === Object.prototype) {
-        return hash;
+        return target;
     }
-    return fillProtoHash(next, hash);
+    return fillProtoHash(next, target);
 }
 
 function inherit_(target, source, name){
