@@ -305,7 +305,8 @@ export class ObservableIf {
         if (currentIndex === index) {
             return;
         }
-        if (currentIndex > -1) {
+        if (currentIndex > -1 && currentIndex < switch_.length) {
+            // after NodeJS prerender switch will contain no elements
             els_toggleVisibility(switch_[currentIndex].elements, false);
         }
         if (index === -1) {

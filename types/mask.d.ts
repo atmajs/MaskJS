@@ -82,8 +82,8 @@ declare module 'mask' {
             parse: typeof parser_parse;
             parseHtml: typeof parser_parseHtml;
             stringify: typeof mask_stringify;
-            build: (node: any, model_: any, ctx: any, container_: HTMLElement | DocumentFragment | SVGSVGElement, ctr_: any, children_?: HTMLElement[]) => HTMLElement | DocumentFragment | SVGSVGElement;
-            buildSVG: (node: any, model_: any, ctx: any, container_: HTMLElement | DocumentFragment | SVGSVGElement, ctr_: any, children_?: HTMLElement[]) => HTMLElement | DocumentFragment | SVGSVGElement;
+            build: (node: any, model_: any, ctx: any, container_: HTMLElement | SVGSVGElement | DocumentFragment, ctr_: any, children_?: HTMLElement[]) => HTMLElement | SVGSVGElement | DocumentFragment;
+            buildSVG: (node: any, model_: any, ctx: any, container_: HTMLElement | SVGSVGElement | DocumentFragment, ctr_: any, children_?: HTMLElement[]) => HTMLElement | SVGSVGElement | DocumentFragment;
             run: typeof mask_run;
             merge: typeof mask_merge;
             optimize: typeof mask_optimize;
@@ -213,7 +213,7 @@ declare module 'mask' {
                     TextNode: new (arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any, arg7?: any) => {
                             constructor: (text: any, parent: any) => void;
                             type: number;
-                            content: TimerHandler;
+                            content: string | Function;
                             parent: any;
                             sourceIndex: number;
                     };
@@ -606,7 +606,7 @@ declare module 'mask/projects/expression/src/parser' {
     export function _parse(expr: string, earlyExit: false, node?: any): InstanceType<typeof Ast_Body>;
     export function _parse(expr: string, earlyExit: true, node?: any): [InstanceType<typeof Ast_Body>, number];
     export function parser_getRef(): any;
-    export function parser_getDirective(code: any): "|" | "^" | "-" | "+" | "/" | "*" | "%" | "||" | "&&" | "!" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "<" | "<=" | "->" | ">>" | "&" | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 33 | 34;
+    export function parser_getDirective(code: any): 20 | 21 | "|" | "^" | "-" | "+" | "/" | "*" | "%" | "||" | "&&" | "!" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "<" | "<=" | "->" | ">>" | "&" | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 33 | 34;
     export function ast_append(current: any, next: any): any;
 }
 
@@ -875,7 +875,8 @@ declare module 'mask/ref-utils/src/class/EventEmitter' {
         };
         on<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
         once<TKey extends keyof TEvents>(event: TKey, fn: TEvents[TKey]): this;
-        pipe<TKey extends keyof TEvents>(event: TKey): () => void;
+    
+        pipe<TKey extends keyof TEvents>(event: TKey): (...args: Parameters<TEvents[TKey]>) => void;
         emit<TKey extends keyof TEvents>(event: TKey, ...args: Parameters<TEvents[TKey]>): this;
         trigger<TKey extends keyof TEvents>(event: TKey, ...args: Parameters<TEvents[TKey]>): this;
         off<TKey extends keyof TEvents>(event: TKey, fn?: Function): this;

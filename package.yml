@@ -14,10 +14,11 @@ apps:
     outputMain: lib/converter-js.js
     package:
       moduleWrapperCustomPath: "./src/umd-wrapper.js"
-    middlewares:
-      js:
-      - atma-io-middleware-condcomments:read
-      - atma-io-middleware-importer:read
+    settings:
+      atma-io-middleware-condcomments:
+        defines:
+          BROWSER: false
+          NODE: true
   browser-default:
     outputMain: lib/mask.js
     package:

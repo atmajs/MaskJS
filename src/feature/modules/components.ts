@@ -33,6 +33,9 @@ import { type_isMask } from './types';
         m_cfg('base', x);
     };
     custom_Tags['import:cfg'] = function (node, model, ctx, el, ctr) {
+        if (node.expression == null) {
+            return;
+        }
         let args = expression_evalStatements(node.expression, model, ctx, ctr);
         m_cfg.apply(null, args);
     };
