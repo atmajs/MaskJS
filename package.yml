@@ -19,6 +19,7 @@ apps:
         defines:
           BROWSER: false
           NODE: true
+
   browser-default:
     outputMain: lib/mask.js
     package:
@@ -28,6 +29,8 @@ apps:
         defines:
           BROWSER: true
           NODE: false
+      atma-loader-ts:
+        typescript: "#import ./tsconfig.json"
       atma-io-middleware-uglify:
         uglify:
           warnings: true
@@ -79,26 +82,26 @@ common:
       removeUnusedExports: true
       lazy:
         "/custom/*":
-        - modules/exports
-        - expression/src/exports
+          - modules/exports
+          - expression/src/exports
         "/expression/*":
-        - project/observer
+          - project/observer
         "/builder/*":
-        - "/feature/"
+          - "/feature/"
         "/renderer/*":
-        - compo/exports
+          - compo/exports
         "/mask-compo/*":
-        - util/reporters
-        - parser/exports
-        - builder/exports
-        - expression/src/exports
-        - renderer/exports
-        - parser/exports
-        - "/feature/"
-        CompoStatics\b:
-        - Component
+          - util/reporters
+          - parser/exports
+          - builder/exports
+          - expression/src/exports
+          - renderer/exports
+          - parser/exports
+          - "/feature/"
+        "CompoStatics\b":
+          - Component
         "/expression/*":
-        - mask-compo
+          - mask-compo
   dynamicDependencies:
   - "^vm$"
   - "^fs$"
@@ -113,7 +116,7 @@ common:
     js:
     - atma-io-middleware-condcomments:read
     - atma-io-middleware-importer:read
-    - atma-io-middleware-uglify:write
+    #- atma-io-middleware-uglify:write
     ts:
     - atma-io-middleware-condcomments:read
     - atma-io-middleware-importer:read

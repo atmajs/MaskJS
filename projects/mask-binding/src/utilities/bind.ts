@@ -145,7 +145,6 @@ function bind (currentVal, expr, model, ctx, element, ctr, attrName, type: IUtil
     Component.attach(ctr, 'dispose', () => {
         expression_unbind(expr, model, owner, binder);
     });
-
 }
 
 customUtil_register('bind', {
@@ -160,7 +159,7 @@ customUtil_register('bind', {
         let ast = expression_parse(expr, false, node);
         let wValue = expression_eval_safe(ast, model, ctx, owner, node);
 
-        // though we apply value's to `this` context, but it is only for immediat use
+        // though we apply value's to `this` context, but it is only for immediate use
         // in .node() function, as `this` context is a static object that share all bind
         // utils
 
@@ -201,6 +200,7 @@ customUtil_register('bind', {
 
         this.value = value;
         this.wValue = wValue;
+        return this.value;
     },
     attr (expr, model, ctx, el, ctr, attrName, type: IUtilType){
         bind(
