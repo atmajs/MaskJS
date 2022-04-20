@@ -4,10 +4,6 @@ apps:
     outputMain: lib/plugin.reload.js
     package:
       moduleWrapperCustomPath: "./src/autoreload/wrapper.js"
-    middlewares:
-      js:
-      - atma-io-middleware-condcomments:read
-      - atma-io-middleware-importer:read
 
   converter:
     file: projects/converter/src/Converter.ts
@@ -121,6 +117,9 @@ common:
     - atma-io-middleware-condcomments:read
     - atma-io-middleware-importer:read
     - atma-loader-ts:read
+  settings:
+      atma-loader-ts:
+        typescript: "#import ./tsconfig.json"
   options:
     include:
       routes:
