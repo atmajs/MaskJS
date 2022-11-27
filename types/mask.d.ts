@@ -785,6 +785,7 @@ declare module 'mask/ref-utils/src/class/Dfr' {
         _always: any;
         _resolved: any;
         _rejected: any;
+        get [Symbol.toStringTag](): string;
         defer(): this;
         isResolved(): boolean;
         isRejected(): boolean;

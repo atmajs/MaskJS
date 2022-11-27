@@ -16,147 +16,158 @@ import { Compo, Component } from '@compo/exports';
  * @memberOf mask
  * @method run
 */
-export function mask_run (){
-		if (_state === 0) {
-			_state = _state_All
-		}
-		var args = _Array_slice.call(arguments),
-			model, ctx, el, Ctor;
+export function mask_run() {
+    if (_state === 0) {
+        _state = _state_All
+    }
+    var args = _Array_slice.call(arguments),
+        model, ctx, el, Ctor;
 
-		var imax = args.length,
-			i = -1,
-			mix;
-		while ( ++i < imax ) {
-			mix = args[i];
-			if (mix instanceof Node) {
-				el = mix;
-				continue;
-			}
-			if (is_Function(mix)) {
-				Ctor = mix;
-				continue;
-			}
-			if (is_Object(mix)) {
-				if (model == null) {
-					model = mix;
-					continue;
-				}
-				ctx = mix;
-			}
-		}
+    var imax = args.length,
+        i = -1,
+        mix;
+    while (++i < imax) {
+        mix = args[i];
+        if (mix instanceof Node) {
+            el = mix;
+            continue;
+        }
+        if (is_Function(mix)) {
+            Ctor = mix;
+            continue;
+        }
+        if (is_Object(mix)) {
+            if (model == null) {
+                model = mix;
+                continue;
+            }
+            ctx = mix;
+        }
+    }
 
-		if (el == null)
-			el = document.body;
-		if (Ctor == null)
-			Ctor = Compo;
-		if (model == null) {
-			model = {};
-		}
+    if (el == null)
+        el = document.body;
+    if (Ctor == null)
+        Ctor = Compo;
+    if (model == null) {
+        model = {};
+    }
 
-		var ctr = new Ctor(null, model, ctx, el);
-		return _run(model, ctx, el, ctr);
-	};
+    var ctr = new Ctor(null, model, ctx, el);
+    return _run(model, ctx, el, ctr);
+};
 
-	function _run (model, ctx, container, ctr) {
-		ctr.ID = ++BuilderData.id;
+function _run(model, ctx, container, ctr) {
+    ctr.ID = ++BuilderData.id;
 
-		var scripts = _Array_slice.call(document.getElementsByTagName('script')),
-			script = null,
-			found = false,
-			ready = false,
-			wait = 0,
-			imax = scripts.length,
-			i = -1;
-		while( ++i < imax ){
-			script = scripts[i];
+    var scripts = _Array_slice.call(document.getElementsByTagName('script')),
+        script = null,
+        found = false,
+        ready = false,
+        wait = 0,
+        imax = scripts.length,
+        i = -1;
+    while (++i < imax) {
+        script = scripts[i];
 
-			var scriptType = script.getAttribute('type');
-			if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask')
-				continue;
+        var scriptType = script.getAttribute('type');
+        if (scriptType !== 'text/mask' && scriptType !== 'text/x-mask')
+            continue;
 
-			var dataRun = script.getAttribute('data-run');
-			if (dataRun == null) {
-				continue;
-			}
-			if (dataRun === 'auto') {
-				if (isCurrent(_state_Auto) === false) {
-					continue;
-				}
-			}
-			if (dataRun === 'true') {
-				if (isCurrent(_state_Manual) === false) {
-					continue;
-				}
-			}
+        var dataRun = script.getAttribute('data-run');
+        if (dataRun == null) {
+            continue;
+        }
+        if (dataRun === 'auto') {
+            if (isCurrent(_state_Auto) === false) {
+                continue;
+            }
+        }
+        if (dataRun === 'true') {
+            if (isCurrent(_state_Manual) === false) {
+                continue;
+            }
+        }
 
-			found = true;
-			var ctx_ = new builder_Ctx(ctx);
-			var fragment = builder_build(
-				parser_parse(script.textContent), model, ctx_, null, ctr
-			);
-			if (ctx_.async === true) {
-				wait++;
-				ctx_.done(resumer);
-			}
-			script.parentNode.insertBefore(fragment, script);
-		}
+        found = true;
+        var ctx_ = new builder_Ctx(ctx);
+        var fragment = builder_build(
+            parser_parse(script.textContent), model, ctx_, null, ctr
+        );
+        if (ctx_.async === true) {
+            wait++;
+            ctx_.done(resumer);
+        }
+        script.parentNode.insertBefore(fragment, script);
+    }
 
-		if (found === false) {
-			if (_state === _state_Auto) {
-				return null;
-			}
-			log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
-		}
+    if (found === false) {
+        if (_state === _state_Auto) {
+            return null;
+        }
+        log_warn("No blocks found: <script type='text/mask' data-run='true'>...</script>");
+    }
 
-		ready = true;
-		if (wait === 0) {
-			flush();
-		}
-		function resumer(){
-			if (--wait === 0 && ready)
-				flush();
-		}
-		function flush() {
-			if (is_Function(ctr.renderEnd)) {
-				ctr.renderEnd(container, model);
-			}
-			Component.signal.emitIn(ctr, 'domInsert');
-		}
+    ready = true;
+    if (wait === 0) {
+        flush();
+    }
+    function resumer() {
+        if (--wait === 0 && ready)
+            flush();
+    }
+    function flush() {
+        if (is_Function(ctr.renderEnd)) {
+            ctr.renderEnd(container, model);
+        }
+        Component.signal.emitIn(ctr, 'domInsert');
+    }
 
-		return ctr;
-	}
+    return ctr;
+}
 
-	if (document != null && document.addEventListener) {
-		document.addEventListener("DOMContentLoaded", function(event) {
-			if (_state !== 0)  return;
-			var _app;
-			_state = _state_Auto;
-			_app = mask_run();
-			_state = _state_Manual;
+if (document != null && document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", function (event) {
+        if (_state !== 0) {
+            return;
+        }
+        _state = _state_Auto;
 
-			if (_app == null) return;
-			if (_global.app == null) {
-				_global.app = _app;
-				return;
-			}
-			var source = _app.components
-			if (source == null || source.length === 0) {
-				return;
-			}
-			var target = _global.app.components
-			if (target == null || target.length === 0) {
-				_global.app.components = source;
-				return;
-			}
-			target.push.apply(target, source);
-		});
-	}
+        let _appBefore = _global.app;
+        let _app = mask_run();
+        _state = _state_Manual;
 
-	var _state_Auto = 2,
-		_state_Manual = 4,
-		_state_All = _state_Auto | _state_Manual,
-		_state = 0;
+        if (_app == null) {
+            // no mask was rendered
+            return;
+        }
+        if (_global.app == null) {
+            _global.app = _app;
+            return;
+        }
+        if (_appBefore == null) {
+            // global app was also not present BEFORE run, means that run have included all the components
+            // return as do not need to copy newly renderd components to the app
+            return;
+        }
+        var source = _app.components
+        if (source == null || source.length === 0) {
+            return;
+        }
+        var target = _global.app.components
+        if (target == null || target.length === 0) {
+            _global.app.components = source;
+            return;
+        }
+        target.push.apply(target, source);
+    });
+}
 
-	function isCurrent(state) {
-		return (_state & state) === state;
-	}
+let _state_Auto = 2;
+let _state_Manual = 4;
+let _state_All = _state_Auto | _state_Manual;
+let _state = 0;
+
+function isCurrent(state) {
+    return (_state & state) === state;
+}
