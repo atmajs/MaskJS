@@ -24,19 +24,20 @@ export function _compo_initAndBind(
     container,
     controller
 ) {
+    const expr: string = compo.expr ?? compo.expression ?? node.expression;
     compo.parent = controller;
     compo.model = model;
     compo.ctx = ctx;
     compo.refresh = fn_proxy(compo.refresh, compo);
     compo.binder = expression_createBinder(
-        compo.expr || compo.expression,
+        expr,
         model,
         ctx,
         controller,
         compo.refresh
     );
     expression_bind(
-        compo.expr || compo.expression,
+        expr,
         model,
         ctx,
         controller,

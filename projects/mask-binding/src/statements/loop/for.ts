@@ -46,47 +46,6 @@ export class ObservableFor extends ALoopBindedStatement {
         this._beforeRender();
     }
 
-    // render (model, ctx, container, ctr, children){
-    //     const directive = For.parseFor(this.expression);
-    //     const attr = this.attr;
-
-    //     attr[attr_PROP_1] = directive[0];
-    //     attr[attr_PROP_2] = directive[1];
-    //     attr[attr_TYPE] = directive[2];
-    //     attr[attr_EXPR] = directive[3];
-
-    //     let subs = expression_subscribe(
-    //         directive[3]
-    //         , model
-    //         , ctx
-    //         , ctr
-    //         , this.onChanged
-    //         , is_NODE ? true : false
-    //     );
-
-    //     let value = expression_eval(directive[3], model, ctx, ctr);
-    //     if (value == null) {
-    //         return;
-    //     }
-
-    //     if (is_Array(value)) {
-    //         arr_createRefs(value);
-    //     }
-
-    //     For.build(
-    //         value,
-    //         directive,
-    //         this.nodes,
-    //         model,
-    //         ctx,
-    //         container,
-    //         this,
-    //         children
-    //     );
-    // }
-
-
-
     getHandler (name, model){
         return For.getHandler(name, model);
     }
