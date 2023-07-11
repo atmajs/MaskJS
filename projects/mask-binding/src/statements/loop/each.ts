@@ -99,7 +99,7 @@ const EachStatement = class_create(ALoopBindedStatement, {
 // METHODS
 
 function build(nodes, array, ctx, container, ctr, elements?) {
-    let imax = array.length;
+    let imax = array?.length ?? 0;
     for(let i = 0; i < imax; i++) {
         let node = createEachNode(nodes, i);
         builder_build(node, array[i], ctx, container, ctr, elements);
