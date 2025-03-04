@@ -53,7 +53,7 @@ export class ObservableFor extends ALoopBindedStatement {
     build (model, container: HTMLElement = this.el, children = this.children) {
         let nodes = For.getNodes(this.node.nodes, model, this.prop1, this.prop2, this.type);
 
-        return builder_build(nodes, model, this.ctx, container, this, children);
+        return builder_build(nodes, this.model, this.ctx, container, this, children);
     }
 };
 

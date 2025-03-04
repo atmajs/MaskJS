@@ -5,8 +5,13 @@ module.exports = {
             exec: 'dom',
             $config: {
                 includejs: includeSettings(),
+                exec () {
+                    console.log('eval');
+                    debugger;
+                }
             },
-            tests: 'test/dom/**.spec.ts'
+            env: 'test/create_imports.js',
+            tests: './test/browser/**.spec.ts'
         },
         'node': {
             exec: 'node',
@@ -17,6 +22,7 @@ module.exports = {
             exec: 'dom',
             $config: {
                 includejs: includeSettings(),
+
             },
             tests: 'test/examples/**.spec.ts'
         },
