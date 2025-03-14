@@ -21,12 +21,12 @@ export class PromisedStream<T = any> extends SubjectStream<T> {
             : OPTS_ONCE;
         this._cbs.push([onSuccess, onError, opts]);
         if (this._pipe != null && this._cbs.length === 1) {
-            if ('then' in this._pipe) {
-                this._pipe.then(this.next, this.error);
-                return;
-            }
             if ('subscribe' in this._pipe) {
                 this._pipe.subscribe(this.next, this.error);
+                return;
+            }
+            if ('then' in this._pipe) {
+                (this._pipe as any).then(this.next, this.error);
                 return;
             }
         }

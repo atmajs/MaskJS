@@ -50,7 +50,8 @@ export class SubjectStream<T = any> {
         if (this._cbs.length !== 0) {
             this._pipeSub = stream.subscribe(this.next, this.error);
         }
-        if (this.value === void 0 && stream.value != null) {
+        if (this.value === void 0 && stream.value !== void 0) {
+            // NULL values considered to be the valid values
             this.value = stream.value;
         }
         this._innerSub = this._inner?.subscribe(this.onInnerChanged)
