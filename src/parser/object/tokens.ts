@@ -2,7 +2,7 @@ import {
     cursor_skipWhitespace,
     cursor_tokenEnd,
     cursor_groupEnd,
-    cursor_quoteEnd,
+    cursor_quoteEnd
 } from "../cursor";
 
 import { _consume } from "./consume";

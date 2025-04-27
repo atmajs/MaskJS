@@ -14,6 +14,8 @@ jobs:
     steps:
       - browser-tools/install-firefox
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: NPM Install
           command: npm install --force
