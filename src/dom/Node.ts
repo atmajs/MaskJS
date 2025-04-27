@@ -14,24 +14,24 @@ import { INode } from './INode';
  * @property {function} appendChild
  * @memberOf mask.Dom
  */
-export const Node = < (new (...args) => INode) >class_create({
-	constructor:  function Node(tagName, parent) {
-		this.type = dom_NODE;
-		this.tagName = tagName;
-		this.parent = parent;
-		this.attr = {};
-	},
-	__single: null,
-	appendChild: _appendChild,
-	attr: null,
-	props: null,
-	expression: null,
-	nodes: null,
-	parent: null,
-	sourceIndex: -1,
-	stringify: null,
-	tagName: null,
-	type: dom_NODE,
+export const Node = <(new (...args) => INode)>class_create({
+    constructor: function Node(tagName, parent) {
+        this.type = dom_NODE;
+        this.tagName = tagName;
+        this.parent = parent;
+        this.attr = {};
+    },
+    __single: null,
+    appendChild: _appendChild,
+    attr: null,
+    props: null,
+    expression: null,
+    nodes: null,
+    parent: null,
+    sourceIndex: -1,
+    stringify: null,
+    tagName: null,
+    type: dom_NODE,
     decorators: null,
     nextSibling: null
 });

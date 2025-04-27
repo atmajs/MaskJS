@@ -45,10 +45,10 @@ var ObjectLexer_sequance;
                 var start = i;
                 return x.consumer(str, i, imax, out, optional);
             case 'any':
-                return __consumeOptionals(x.consumer, str, i, imax, out, optional);	
+                return __consumeOptionals(x.consumer, str, i, imax, out, optional);
             default:
                 throw Error('Unknown sequence consumer type: ' + x.type);
-        }			
+        }
     }
     function __consumeOptionals(arr, str, i, imax, out, optional) {
         var start = i,
