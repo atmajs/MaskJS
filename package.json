@@ -31,12 +31,13 @@
         "@types/sinon": "^7.0.5",
         "app-bundler": "^0.1.2",
         "appcfg": "^0.4.64",
-        "atma": "^0.15.17",
+        "atma": "^0.15.24",
         "atma-io": "^1.2.28",
         "atma-io-middleware-condcomments": "^1.2.8",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
         "atma-loader-ts": "^1.1.19",
+        "atma-utest": "^0.21.33",
         "dts-bundle": "^0.7.3"
     },
     "scripts": {
