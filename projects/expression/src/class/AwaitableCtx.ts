@@ -23,7 +23,7 @@ abstract class IAwaitableCtx extends PromisedStream {
 
 class ValueCtx extends IAwaitableCtx {
     constructor (ctx) {
-        super(ctx);        
+        super(ctx);
         this.resolve(ctx);
     }
     cancel(){}
@@ -33,7 +33,7 @@ class PromiseCtx extends IAwaitableCtx {
     constructor (ctx) {
         super(ctx);
         this.onSuccess = this.onSuccess.bind(this);
-        this.onFail = this.onFail.bind(this);        
+        this.onFail = this.onFail.bind(this);
         ctx.then(this.onSuccess, this.onFail);
     }
     onSuccess (val) {

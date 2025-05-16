@@ -69,7 +69,7 @@ class AwaitCtr {
         }, this);
         this.nodes = null;
     }
-    prepairKeys_() {
+    private prepareKeys_() {
         for (let key in this.attr) {
             let val = this.attr[key];
             if (key !== val) {
@@ -81,13 +81,13 @@ class AwaitCtr {
             this.keys.push(key);
         }
     }
-    prepairImports_() {
+    private prepareImports_() {
         var imports = Component.closest(this, 'imports');
         if (imports != null) {
             return this.importItems = imports.importItems;
         }
     }
-    initStrategy_() {
+    private initStrategy_() {
         var expr = this.expression;
         if (expr && this.keys == null) {
             if (expr.indexOf('(') !== -1 || expr.indexOf('.') !== -1) {
@@ -125,7 +125,6 @@ class AwaitCtr {
             parent = parent.parent;
         }
         if (module == null || module.importItems == null) {
-            log_error('Module not found for import ' + name);
             return null;
         }
         var import_ = module.importItems.find(function (x) {
@@ -156,8 +155,8 @@ class AwaitCtr {
     }
     renderStart(model, ctx, container) {
         this.splitNodes_();
-        this.prepairKeys_();
-        this.prepairImports_();
+        this.prepareKeys_();
+        this.prepareImports_();
         this.initStrategy_();
         this.await_(model, ctx, container);
     }
