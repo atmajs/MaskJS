@@ -1,7 +1,7 @@
 apps:
   node-default:
     file: ./projects/mask-node/src/mask.ts
-    outputMain: lib/mask.node.js
+    outputMain: ./lib/mask.node.js
     package:
       moduleWrapperCustomPath: "./projects/mask-node/src/node-wrapper.js"
     settings:
@@ -50,7 +50,7 @@ apps:
 
   bootstrap:
     file: ./projects/mask-node/src/client/bootstrap.ts
-    outputMain: ./projects/mask-node/lib/mask.bootstrap.js
+    outputMain: ./lib/mask.bootstrap.js
     package:
       moduleWrapperCustomPath: "./projects/mask-node/src/bootstrap-wrapper.js"
     settings:

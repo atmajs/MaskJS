@@ -595,7 +595,8 @@ declare module 'mask/projects/expression/src/vars_helper' {
 }
 
 declare module 'mask/projects/expression/src/eval' {
-    export function _evaluate(mix: any, model?: any, ctx?: any, ctr?: any, node?: any): any;
+    import { IAstNode } from 'mask/projects/expression/src/ast';
+    export function _evaluate(mix: string | IAstNode, model?: any, ctx?: any, ctr?: any, node?: any): any;
     export function _evaluateAst(ast: any, model: any, ctx: any, ctr: any, preResults?: any): any;
 }
 
@@ -1646,7 +1647,8 @@ declare module 'mask/projects/observer/src/obj_observe' {
 }
 
 declare module 'mask/projects/observer/src/expression' {
-    export function expression_bind(expr: any, model: any, ctx: any, ctr: any, cb: any, opts?: {
+    import type { IAstNode } from "mask/projects/expression/src/ast";
+    export function expression_bind(expr: string | IAstNode, model: any, ctx: any, ctr: any, cb: any, opts?: {
         propertiesOnly: boolean;
     }): null | {
         unsubscribe(): any;
