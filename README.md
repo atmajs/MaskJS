@@ -1,5 +1,5 @@
 <p align='center'>
-    <img src='assets/background.png'/>
+    <img src='assets/background.jpg'/>
     </p>
 
 ----
