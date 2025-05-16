@@ -10,7 +10,7 @@ import { builder_Ctx } from '@core/builder/exports';
 
 export function compo_fragmentInsert (compo, index, fragment, placeholder) {
     if (compo.components == null) {
-        return dom_insertAfter(fragment, placeholder || compo.placeholder);
+        return dom_insertAfter(fragment, placeholder ?? compo.placeholder);
     }
     var compos = compo.components,
         anchor = null,
@@ -63,7 +63,7 @@ export function compo_renderChildren (compo, anchor, model?){
         compo
     );
     dom_insertBefore(fragment, anchor);
-    
+
     compo_inserted(compo, ctx);
 };
 // export function compo_renderElements (nodes, model, ctx, el, ctr, children?){

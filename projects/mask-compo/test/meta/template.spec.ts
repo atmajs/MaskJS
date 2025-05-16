@@ -1,6 +1,6 @@
 UTest({
     'merge behaviour' () {
-        mask.registerHandler('foo', Compo({
+        mask.registerHandler('foo', mask.Compo({
             meta: {
                 template: 'merge'
             },
@@ -25,7 +25,7 @@ UTest({
             .eq_('html', 'Body');
     },
     'join behaviour' () {
-        mask.registerHandler('foo', Compo({
+        mask.registerHandler('foo', mask.Compo({
             meta: {
                 template: 'join'
             },
@@ -44,7 +44,7 @@ UTest({
             ;
     },
     ' (default) join behaviour' () {
-        mask.registerHandler('foo', Compo({
+        mask.registerHandler('foo', mask.Compo({
             meta: {
                 template: 'replace'
             },

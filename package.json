@@ -24,25 +24,29 @@
         "MIT"
     ],
     "dependencies": {
-        "@types/node": "^12.12.17"
+        "@types/node": "^12.12.17",
+        "includejs": "^0.17.12"
     },
     "devDependencies": {
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
-        "app-bundler": "^0.1.2",
+        "app-bundler": "^0.2.18",
         "appcfg": "^0.4.64",
         "atma": "^0.15.24",
         "atma-io": "^1.2.28",
-        "atma-io-middleware-condcomments": "^1.2.8",
+        "atma-io-middleware-condcomments": "^1.2.9",
         "atma-io-middleware-importer": "^1.1.37",
         "atma-io-middleware-uglify": "^1.1.21",
-        "atma-loader-ts": "^1.1.19",
+        "atma-loader-ts": "^1.2.7",
         "atma-utest": "^0.21.33",
-        "dts-bundle": "^0.7.3"
+        "dts-bundle": "^0.7.3",
+        "shellbee": "^0.5.29"
     },
     "scripts": {
         "test": "atma test",
-        "build": "app-bundler && npm run dts",
+        "build": "npm run build:browser && npm run build:node && npm run dts",
+        "build:node": "app-bundler --config package.node.yml",
+        "build:browser": "app-bundler --config package.browser.yml",
         "watch": "app-bundler --watch",
         "build-dev": "app-bundler --inspect-brk",
         "release": "atma bump && npm run build && atma release",
@@ -77,7 +81,8 @@
                 "extensions": {
                     "js": [
                         "atma-io-middleware-condcomments:read",
-                        "atma-io-middleware-importer:read"
+                        "atma-io-middleware-importer:read",
+                        "atma-io-middleware-uglify:write"
                     ],
                     "ts": [
                         "atma-io-middleware-condcomments:read",
@@ -161,6 +166,9 @@
                             ],
                             "@project/*": [
                                 "projects/*"
+                            ],
+                            "@mask-node/*": [
+                                "projects/mask-node/src/*"
                             ]
                         },
                         "#if (TEST)": {
@@ -176,6 +184,6 @@
         }
     },
     "app-bundler": {
-        "config": "package.yml"
+        "config": "package.browser.yml"
     }
 }

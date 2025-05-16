@@ -1,22 +1,38 @@
+import type { ISubscription } from '@project/expression/src/class/ISubscription';
+
 import { _Array_slice } from '@utils/refs';
-
-import { expression_getType, expression_varRefs, exp_type_Observe } from '@project/expression/src/exports'
-import { ISubscription } from '@project/expression/src/class/ISubscription';
 import { _evaluateAstDeferredInner } from '@project/expression/src/eval_deferred';
-import { obj_addMutatorObserver, obj_addObserver, obj_removeMutatorObserver, obj_removeObserver } from './obj_observe';
+
+import {
+    expression_eval,
+    expression_getType,
+    expression_varRefs,
+    exp_type_Observe
+} from '@project/expression/src/exports'
+
+import {
+    obj_addMutatorObserver,
+    obj_addObserver,
+    obj_removeMutatorObserver,
+    obj_removeObserver
+} from './obj_observe';
+
 import { expr_getHost } from './utils/expr';
-import { _parseCached } from '@project/expression/src/parser';
-import { _evaluate } from '@project/expression/src/eval';
 
 
-export function expression_subscribe (mix, model, ctx, ctr, cb, once?: boolean): ISubscription  {
+
+/**
+ * Callback will be called immediately after the value is resolved. This is important, when the expression returns Promise<T>, then we wait for the promise to resolve.
+ */
+export function expression_subscribe (mix, model, ctx, ctr, cb, once?: boolean): ISubscription {
     if (mix === '.') {
         if (model != null) {
             obj_addMutatorObserver(model, cb);
         }
         return;
     }
-    let ast = _parseCached(mix, ctr);
+    //let ast = _parseCached(mix, ctr);
+    let ast = mix;
     let bindingsCount = 0;
 
     let type = expression_getType(ast);
@@ -32,7 +48,7 @@ export function expression_subscribe (mix, model, ctx, ctr, cb, once?: boolean):
     }
 
     function onInnerChanged (partial?, ...args) {
-        let val = _evaluate(ast, model, ctx, ctr);
+        let val = expression_eval(ast, model, ctx, ctr);
         cb(val, ...args);
     }
     if (once === true) {
@@ -49,10 +65,10 @@ export function expression_subscribe (mix, model, ctx, ctr, cb, once?: boolean):
     );
     // send current value
     onInnerChanged();
-    return new Unsubscribable(ast, model, ctr, onInnerChanged);
+    return new Subscription(ast, model, ctr, onInnerChanged);
 };
 
-class Unsubscribable {
+class Subscription {
     constructor (
         public ast,
         public model,
@@ -99,18 +115,18 @@ function toggleExpressionsBindings (toggleFn, expr, model, ctr, cb) {
     let i = -1;
     let count = 0;
     while (++i < imax) {
-        let accs = arr[i];
-        if (typeof accs === 'string') {
-            if (accs.charCodeAt(0) === 95 /*_*/ && accs.charCodeAt(0) === 46 /*.*/) {
+        let acs = arr[i];
+        if (typeof acs === 'string') {
+            if (acs.charCodeAt(0) === 95 /*_*/ && acs.charCodeAt(0) === 46 /*.*/) {
                 continue;
             }
         }
-        else if (typeof accs === 'object') {
-            if (accs.ref === '_') {
+        else if (typeof acs === 'object') {
+            if (acs.ref === '_') {
                 continue;
             }
         }
-        _toggleObserver(toggleFn, model, ctr, accs, cb);
+        _toggleObserver(toggleFn, model, ctr, acs, cb);
         count++;
     }
     return count;

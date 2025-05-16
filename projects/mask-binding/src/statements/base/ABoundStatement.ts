@@ -9,9 +9,10 @@ import { ICompo } from '@compo/compo/Compo';
 import { arr_createRefs } from '../loop/utils';
 import { INode } from '@core/dom/INode';
 import { IComponent } from '@compo/model/IComponent';
+import { dom_insertAfter } from '@binding/utils/dom';
 
 
-export abstract class ABindedStatement {
+export abstract class ABoundStatement {
     private subscription: ISubscription
     private rendered = false
     private resumeFn = null as Function;
@@ -21,7 +22,7 @@ export abstract class ABindedStatement {
     public placeholder;
     public obs: AObservableNodes
 
-    abstract build (value: any, ...args)
+    abstract build (value: any, ...args): DocumentFragment
     abstract refresh (value, ...args)
     abstract _getModel (compo)
     abstract _getExpression ()
@@ -59,24 +60,31 @@ export abstract class ABindedStatement {
             this.onChanged,
             is_NODE ? true : false
         );
-        // if onValue wasn't sync we should await for first render
+        // if onValue/onChanged wasn't sync we should await for first render
         if (this.rendered === false) {
             this.resumeFn = Compo.pause(this, this.ctx);
         }
     }
 
     renderEnd (els, model, ctx, container, ctr){
-        this.placeholder = this.placeholder ?? el_renderPlaceholder(this.el);
+        if (this.placeholder != null && this.subscription == null) {
+            // Bootstrapping from NodeJS render
+            this.rendered = true;
+        }
+
+        this.placeholder ??= el_renderPlaceholder(this.el);
         this._bootstrap();
 
-        this.subscription = expression_subscribe(
-            this._getExpression(),
-            this.model,
-            this.ctx,
-            this.ctr,
-            this.onChanged,
-            is_NODE ? true : false
-        );
+        if (this.subscription == null) {
+            this.subscription = expression_subscribe(
+                this._getExpression(),
+                this.model,
+                this.ctx,
+                this.ctr,
+                this.onChanged,
+                is_NODE ? true : false
+            );
+        }
     }
 
     onChanged (value, ...args) {
@@ -87,7 +95,9 @@ export abstract class ABindedStatement {
         if (is_Array(value)) {
             arr_createRefs(value);
         }
-        this.build(value)
+
+        this.build(value, this.placeholder);
+
         this.rendered = true;
         if (this.resumeFn != null) {
             this.resumeFn();
@@ -96,12 +106,24 @@ export abstract class ABindedStatement {
     }
 
     dispose () {
+
         this.subscription?.unsubscribe();
 
         // expression_unbind(
         //     this.expr || this.expression, this.model, this.parent, this.binder
         // );
+    }
 
+    protected append (fragment: DocumentFragment, container: HTMLElement) {
+        if (container == null) {
+            return;
+        }
+
+        if (container === this.placeholder) {
+            dom_insertAfter(fragment, this.placeholder);
+            return;
+        }
+        container.appendChild(fragment);
     }
 }
 

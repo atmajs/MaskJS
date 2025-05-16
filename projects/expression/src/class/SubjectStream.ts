@@ -56,6 +56,56 @@ export class SubjectStream<T = any> {
         }
         this._innerSub = this._inner?.subscribe(this.onInnerChanged)
     }
+    fromStreamOnce(stream: SubjectStream) {
+        let canceled = false;
+        const listener = (value) => {
+            if (canceled) {
+                return;
+            }
+            this.next(value);
+            unsubscribe();
+        };
+        const onError = err => {
+            if (canceled) {
+                return;
+            }
+            this.error(err)
+            unsubscribe();
+        };
+        const unsubscribe = () => {
+            canceled = true;
+            if (typeof stream.unsubscribe === 'function') {
+                stream.unsubscribe(listener);
+            } else if (subscription != null) {
+                subscription.unsubscribe();
+            }
+        };
+        const subscription = stream.subscribe(listener, onError);
+        return {
+            cancel () {
+                unsubscribe();
+            }
+        };
+    }
+    fromPromise(promise: PromiseLike<T>) {
+        let canceled = false;
+        promise.then(value => {
+            if (canceled) {
+                return;
+            }
+            this.next(value)
+        }, err => {
+            if (canceled) {
+                return;
+            }
+            this.error(err)
+        });
+        return {
+            cancel () {
+                canceled = true;
+            }
+        }
+    }
     subscribe(cb: (x: T) => void, onError?: (x: Error | any) => void, once?): Subscription {
         if (this._pipe != null && this._cbs.length === 0) {
             this._pipe.subscribe(this.next, this.error);

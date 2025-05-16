@@ -1,0 +1,37 @@
+{
+    "files": [
+    	"src/mask.ts"
+  	],
+	"exclude": [
+		"node_modules"
+	],
+    "compilerOptions": {
+        "outDir": "ts-temp",
+        "declaration": true,
+        "experimentalDecorators": true,
+        "baseUrl": "./",
+        "paths": {
+            "@core/*": [
+                "src/*"
+            ],
+            "@utils/*": [
+                "ref-utils/src/*"
+            ],
+            "@mask-j/*": [
+                "projects/mask-j/src/jmask/*"
+            ],
+            "@compo/*": [
+                "projects/mask-compo/src/*"
+            ],
+            "@binding/*": [
+                "projects/mask-binding/src/*"
+            ],
+            "@project/*": [
+                "projects/*"
+            ]
+
+        },
+        "module": "commonjs",
+        "target": "es6"
+    }
+}

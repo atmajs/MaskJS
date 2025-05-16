@@ -32,13 +32,13 @@ UTest({
             .eq_('length', 1)
             .eq_('text', 'foo');
 
-        '> change binded model';
+        '> change bound model';
         is_(model.__observers.name[0], 'Function');
         model.name = 'baz';
         $div.eq_('text', 'baz');
 
         '> dispose';
-        
+
         $div.emptyAndDispose();
         eq_(arr.length, 0);
         eq_(model.__observers.name.length, 0);

@@ -2,8 +2,7 @@
 <html>
     <head>
         <script src='/node_modules/jquery/dist/jquery.js'></script>
-        <script src='/node_modules/maskjs/lib/mask.js'></script>
-        <script src='/lib/compo.js'></script>
+        <script src='/lib/mask.js'></script>
         <script src='/node_modules/includejs/lib/include.js'></script>
         <script src='/node_modules/includejs/lib/include.autoreload.js'></script>
     </head>
@@ -49,7 +48,7 @@
                     this.model.current = 'at ' + Date.now() + ' - ' + name;
                 };
             }
-            mask.registerHandler(':foo', Compo({
+            mask.registerHandler(':foo', mask.Compo({
                 model: { current: '' },
                 hotkeys: hotkeys
             }));

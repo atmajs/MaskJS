@@ -6,9 +6,12 @@ export function $has($, selector, state) {
 }
 
 export function $visible($, selector, state){
-    $
-        .find(selector)
-        [state ? 'notEq_' : 'eq_' ]('css', 'display', 'none');
+    let $el = $.find(selector);
+    if($el.length === 0) {
+        eq_(state, false, `Element "${selector}" not found, should be ${state}`);
+        return;
+    }
+    $el[state ? 'notEq_' : 'eq_' ]('css', 'display', 'none');
 }
 
 

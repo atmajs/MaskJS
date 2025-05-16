@@ -1293,26 +1293,30 @@ declare module 'mask/projects/mask-compo/src/model/IAttrDefinition' {
 }
 
 declare module 'mask/projects/expression/src/ast' {
+    import { type_Ternary, type_Body, type_Statement, type_Value, type_Array, type_Object, type_FunctionRef, type_SymbolRef, type_Accessor, type_AccessorExpr, type_UnaryPrefix } from 'mask/projects/expression/src/scope-vars';
     import { INode } from "mask/dom/INode";
-    export interface IAstNode {
+    export type TNodeType = typeof type_Body | typeof type_Statement | typeof type_Value | typeof type_Array | typeof type_Object | typeof type_FunctionRef | typeof type_SymbolRef | typeof type_Accessor | typeof type_AccessorExpr | typeof type_UnaryPrefix | typeof type_Ternary;
+    export interface IAstNode<TType extends TNodeType = TNodeType> {
         async?: boolean;
         observe?: boolean;
+        type?: TType;
     }
-    export class Ast_Body implements IAstNode {
+    export type TAstNode = Ast_Body | Ast_Statement | Ast_Value | Ast_Array | Ast_Object | Ast_FunctionRef | Ast_SymbolRef | Ast_Accessor | Ast_AccessorExpr | Ast_UnaryPrefix | Ast_TernaryStatement;
+    export class Ast_Body implements IAstNode<typeof type_Body> {
         parent?: any;
         node?: INode;
-        body: any[];
+        body: TAstNode[];
         join: any;
-        type: number;
+        type: 1;
         source: any;
         async: boolean;
         observe: boolean;
         constructor(parent?: any, node?: INode);
         toString(): string;
     }
-    export class Ast_Statement {
+    export class Ast_Statement implements IAstNode<typeof type_Statement> {
         parent: any;
-        type: number;
+        type: 2;
         join: any;
         body: any;
         async: boolean;
@@ -1321,30 +1325,30 @@ declare module 'mask/projects/expression/src/ast' {
         constructor(parent: any);
         toString(): any;
     }
-    export class Ast_Value {
+    export class Ast_Value implements IAstNode<typeof type_Value> {
         body: any;
-        type: number;
+        type: 7;
         join: any;
         constructor(body: any);
         toString(): any;
     }
-    export class Ast_Array {
+    export class Ast_Array implements IAstNode<typeof type_Array> {
         parent: IAstNode;
-        type: number;
+        type: 11;
         body: any;
         constructor(parent: IAstNode);
         toString(): string;
     }
-    export class Ast_Object {
+    export class Ast_Object implements IAstNode<typeof type_Object> {
         parent: any;
-        type: number;
+        type: 10;
         props: {};
         constructor(parent: any);
         nextProp(prop: any): Ast_Statement;
     }
-    export class Ast_FunctionRef {
+    export class Ast_FunctionRef implements IAstNode<typeof type_FunctionRef> {
         parent: any;
-        type: number;
+        type: 4;
         body: any;
         arguments: any[];
         next: any;
@@ -1353,9 +1357,9 @@ declare module 'mask/projects/expression/src/ast' {
         closeArgs(): void;
         toString(): string;
     }
-    export class Ast_SymbolRef {
+    export class Ast_SymbolRef implements IAstNode<typeof type_SymbolRef> {
         parent: any;
-        type: number;
+        type: 3;
         optional: boolean;
         sourceIndex: any;
         next: any;
@@ -1363,33 +1367,33 @@ declare module 'mask/projects/expression/src/ast' {
         constructor(parent: any, ref: any);
         toString(): any;
     }
-    export class Ast_Accessor {
+    export class Ast_Accessor implements IAstNode<typeof type_Accessor> {
         parent: any;
         optional: boolean;
         sourceIndex: any;
         next: any;
         body: any;
-        type: number;
+        type: 5;
         constructor(parent: any, ref: any);
         toString(): string;
     }
-    export class Ast_AccessorExpr {
+    export class Ast_AccessorExpr implements IAstNode<typeof type_AccessorExpr> {
         parent: any;
-        type: number;
+        type: 6;
         body: any;
         constructor(parent: any);
         getBody(): any;
         toString(): string;
     }
-    export class Ast_UnaryPrefix {
+    export class Ast_UnaryPrefix implements IAstNode<typeof type_UnaryPrefix> {
         parent: any;
         prefix: any;
-        type: number;
+        type: 12;
         body: any;
         constructor(parent: any, prefix: any);
     }
-    export class Ast_TernaryStatement {
-        type: number;
+    export class Ast_TernaryStatement implements IAstNode<typeof type_Ternary> {
+        type: 13;
         body: any;
         case1: Ast_Body;
         case2: Ast_Body;
@@ -1568,6 +1572,64 @@ declare module 'mask/projects/mask-compo/src/scope-vars' {
 
 declare module 'mask/types/Parameters' {
     export type ParametersFromSecond<T extends (x: any, ...args: any) => any> = T extends (x: any, ...args: infer P) => any ? P : never;
+}
+
+declare module 'mask/projects/expression/src/scope-vars' {
+    export const op_Minus = "-";
+    export const op_Plus = "+";
+    export const op_Divide = "/";
+    export const op_Multip = "*";
+    export const op_Modulo = "%";
+    export const op_LogicalOr = "||";
+    export const op_NullishCoalescing = "??";
+    export const op_LogicalAnd = "&&";
+    export const op_LogicalNot = "!";
+    export const op_LogicalEqual = "==";
+    export const op_LogicalEqual_Strict = "===";
+    export const op_LogicalNotEqual = "!=";
+    export const op_LogicalNotEqual_Strict = "!==";
+    export const op_LogicalGreater = ">";
+    export const op_LogicalGreaterEqual = ">=";
+    export const op_LogicalLess = "<";
+    export const op_LogicalLessEqual = "<=";
+    export const op_Member = ".";
+    export const op_AsyncAccessor = "->";
+    export const op_ObserveAccessor = ">>";
+    export const op_BitOr = "|";
+    export const op_BitXOr = "^";
+    export const op_BitAnd = "&";
+    export const punc_ParenthesisOpen = 20;
+    export const punc_ParenthesisClose = 21;
+    export const punc_BracketOpen = 22;
+    export const punc_BracketClose = 23;
+    export const punc_BraceOpen = 24;
+    export const punc_BraceClose = 25;
+    export const punc_Comma = 26;
+    export const punc_Dot = 27;
+    export const punc_Question = 28;
+    export const punc_Colon = 29;
+    export const punc_Semicolon = 30;
+    export const go_ref = 31;
+    export const go_acs = 32;
+    export const go_string = 33;
+    export const go_number = 34;
+    export const go_objectKey = 35;
+    export const type_Body: 1;
+    export const type_Statement: 2;
+    export const type_SymbolRef: 3;
+    export const type_FunctionRef: 4;
+    export const type_Accessor: 5;
+    export const type_AccessorExpr: 6;
+    export const type_Value: 7;
+    export const type_Number: 8;
+    export const type_String: 9;
+    export const type_Object: 10;
+    export const type_Array: 11;
+    export const type_UnaryPrefix: 12;
+    export const type_Ternary: 13;
+    export const state_body = 1;
+    export const state_arguments = 2;
+    export const PRECEDENCE: {};
 }
 
 declare module 'mask/projects/observer/src/obj_observe' {

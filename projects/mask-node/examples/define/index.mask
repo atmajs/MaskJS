@@ -1,0 +1,56 @@
+define :counter {
+    function onRenderStart() {
+        this.model = { counter: 0 };
+    }
+    slot increment () {
+        this.model.counter++;
+    }
+
+    h4 > 'Counter component'
+    hr;
+    button x-tap='increment' > tt > 'Increment '
+    i > '~[bind: counter]'
+}
+
+define :fooos {
+    var name = 'foo';
+    h4 > 'Make Foooos'
+    section name='clickable' {
+        h6 > 'Clickable: click to add `foo`';
+        .container;
+        event click (event) {
+            event
+                .currentTarget
+                .querySelector('.container')
+                .textContent += this.scope.name;
+        }
+    }
+    section name='pressable' {
+        h6 > 'Pressable: press any key to add `foo`'
+        input {
+            event keydown (e) {
+                e.preventDefault();
+                // demo, find input via the component (not from the event)
+                var input = this.$.find('input')[0];
+                input.value += this.scope.name;
+            }
+        }
+    }
+}
+
+define :base {
+    h4 > 'Inheritance'
+    i > @body;
+}
+define :inherited extends :base {
+    @body {
+        div > b > 'Italic and Bold with qux: @attr.qux'
+        div > @content;
+    }
+}
+
+ul {
+    li name='counter' > :counter;
+    li name='foos' > :fooos;
+    li > :inherited qux='Quux' > @content > tt > 'Italic and Teletype';
+}

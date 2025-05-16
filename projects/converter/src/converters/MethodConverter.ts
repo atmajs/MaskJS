@@ -3,7 +3,6 @@ import { interpolate } from '../utils/interpolate';
 
 export const MethodConverter  = {
     convert (node: IMethodNode, target: 'func' | 'method' = 'func') {
-        console.log(node);
         let name = node.name,
             args = node.args && node.args.map(x => x.prop).join(', '),
             body = node.body,

@@ -20,12 +20,12 @@ export {
 } from './attribute';
 import './mock-attributes';
 
-
 export {
     customUtil_get,
     customUtil_$utils,
     customUtil_register
 } from './util';
+
 import './mock-utils';
 
 export {
@@ -40,8 +40,8 @@ export {
     customTag_define,
     customTag_Base
 } from './tag';
-import './mock-tags';
 
+import './mock-tags';
 
 export {
     customStatement_register,

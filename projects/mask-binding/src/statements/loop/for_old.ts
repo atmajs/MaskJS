@@ -7,7 +7,7 @@ import { mask_stringify } from '@core/parser/exports';
 import { expression_createBinder, expression_bind } from '@project/observer/src/exports'
 import { arr_createRefs } from './utils';
 import { _renderPlaceholder, _compo_initAndBind } from '../utils';
-import { ALoopBindedStatement } from '../base/ALoopBindedStatement';
+import { ALoopBoundStatement } from '../base/ALoopBoundStatement';
 import '@core/statements/exports'
 
 var For = custom_Statements['for'],
@@ -106,8 +106,8 @@ ForStatement.prototype = {
     model: null,
     parent: null,
 
-    refresh: ALoopBindedStatement.refresh,
-    dispose: ALoopBindedStatement.dispose,
+    refresh: ALoopBoundStatement.refresh,
+    dispose: ALoopBoundStatement.dispose,
 
     _getModel: function(compo) {
         return compo.scope[this.prop1];

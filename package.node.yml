@@ -1,0 +1,185 @@
+apps:
+  node-default:
+    file: ./projects/mask-node/src/mask.ts
+    outputMain: lib/mask.node.js
+    package:
+      moduleWrapperCustomPath: "./projects/mask-node/src/node-wrapper.js"
+    settings:
+      atma-io-middleware-condcomments:
+        defines:
+          BROWSER: false
+          NODE: true
+      atma-io-middleware-uglify:
+        uglify:
+          warnings: true
+          compress:
+            dead_code: true
+            unused: true
+            arguments: false
+            booleans: false
+            collapse_vars: false
+            comparisons: false
+            conditionals: false
+            hoist_funs: false
+            hoist_props: false
+            hoist_vars: false
+            if_return: false
+            inline: false
+            join_vars: false
+            keep_fnames: true
+            loops: false
+            negate_iife: false
+            reduce_funcs: false
+            reduce_vars: false
+            switches: false
+            typeofs: false
+            properties: false
+            sequences: false
+            side_effects: false
+            drop_debugger: false
+            global_defs:
+              DEBUG: false
+          mangle: false
+          parse: {}
+          output:
+            beautify: true
+            braces: true
+            quote_style: 1
+            indent_level: 2
+            comments: "^!"
+
+  bootstrap:
+    file: ./projects/mask-node/src/client/bootstrap.ts
+    outputMain: ./projects/mask-node/lib/mask.bootstrap.js
+    package:
+      moduleWrapperCustomPath: "./projects/mask-node/src/bootstrap-wrapper.js"
+    settings:
+      atma-io-middleware-condcomments:
+        defines:
+          BROWSER: true
+          NODE: false
+      atma-io-middleware-uglify:
+        uglify:
+          warnings: true
+          compress:
+            dead_code: true
+            unused: true
+            arguments: false
+            booleans: false
+            collapse_vars: false
+            comparisons: false
+            conditionals: false
+            hoist_funs: false
+            hoist_props: false
+            hoist_vars: false
+            if_return: false
+            inline: false
+            join_vars: false
+            keep_fnames: true
+            loops: false
+            negate_iife: false
+            reduce_funcs: false
+            reduce_vars: false
+            switches: false
+            typeofs: false
+            properties: false
+            sequences: false
+            side_effects: false
+            drop_debugger: false
+            global_defs:
+              DEBUG: false
+          mangle: false
+          parse: {}
+          output:
+            beautify: true
+            braces: true
+            quote_style: 1
+            indent_level: 2
+            comments: "^!"
+
+common:
+  rewrites:
+    '/src/builder/delegate/build_component.ts': '/projects/mask-node/src/builder/delegate/build_component.ts'
+    '/src/builder/delegate/builder_buildFactory.ts': '/projects/mask-node/src/builder/delegate/builder_buildFactory.ts'
+    '/src/builder/delegate/exports.ts': '/projects/mask-node/src/builder/delegate/exports.ts'
+    '/src/custom/mock-attributes.ts': '/projects/mask-node/src/mock/attr-handler.ts'
+    '/src/custom/mock-utils.ts': '/projects/mask-node/src/mock/util-handler.ts'
+    '/src/custom/mock-tags.ts': '/projects/mask-node/src/mock/tag-handler.ts'
+  dependencies:
+    'parsers/.+.ts': 'custom/exports.ts'
+    'feature/.+.ts': 'custom/exports.ts'
+    'handlers/.+.ts': 'custom/exports.ts'
+    'mask\-compo/.+.ts': 'custom/exports.ts'
+    'projects/expression': 'custom/exports.ts'
+    'PromisedStream.ts': 'SubjectStream.ts'
+    'DeferStatement.ts': 'PromisedStream.ts'
+    'DeferredExp.ts': 'PromisedStream.ts'
+    'AwaitableCtx.ts': 'PromisedStream.ts'
+    'ObjectStream.ts': 'PromisedStream.ts'
+    'compo/Component.ts': 'compo/CompoStatics.ts'
+    'compo/CompoStatics.ts': 'compo/pipes.ts'
+    'compo/CompoStatics.ts': 'signal/exports.ts'
+    'parsers/content.ts': 'content/style.ts'
+    'modules/await.ts': 'mask\-compo/src/exports.ts'
+    'DoctypeNodeInn.ts': 'ElementNodeInn.ts'
+    'builder_buildFactory.ts': 'builder/BuilderData.ts'
+
+  package:
+    module: commonjs
+    moduleWrapper: custom
+    commonjs:
+      output: simplified
+    import:
+      removeUnusedExports: true
+      lazy:
+        "/custom/*":
+        - modules/exports
+        - expression/src/exports
+        "/expression/*":
+        - project/observer
+        "/builder/*":
+        - "/feature/"
+        "/renderer/*":
+        - compo/exports
+        "/mask-compo/*":
+        - util/reporters
+        - parser/exports
+        - builder/exports
+        - expression/src/exports
+        - renderer/exports
+        - parser/exports
+        - "/feature/"
+        CompoStatics\b:
+        - Component
+        "/expression/*":
+        - mask-compo
+  dynamicDependencies:
+  - "^vm$"
+  - "^fs$"
+  - "^module$"
+  - "^path$"
+  - "html_entities"
+  extensions:
+    io:
+      type: js
+  defaultExtensions:
+    js: ts
+  middlewares:
+    js:
+    - atma-io-middleware-condcomments:read
+    - atma-io-middleware-importer:read
+    - atma-io-middleware-uglify:write
+    ts:
+    - atma-io-middleware-condcomments:read
+    - atma-io-middleware-importer:read
+    - atma-loader-ts:read
+  options:
+    include:
+      routes:
+        "@core": src/{0}
+        "@utils": ref-utils/src/{0}
+        "@mask-j": projects/mask-j/src/jmask/{0}
+        "@compo": projects/mask-compo/src/{0}
+        "@binding": projects/mask-binding/src/{0}
+        "@project": projects/{0}
+        "@mask-node": projects/mask-node/src/{0}

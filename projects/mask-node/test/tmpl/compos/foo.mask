@@ -1,0 +1,5 @@
+input value='~[text]';
+
+button x-signal="mousedown:changeToQux" {
+    "Change to baz"
+}

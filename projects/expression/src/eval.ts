@@ -6,9 +6,10 @@ import { is_Function } from '@utils/is';
 import { error_ } from '@core/util/reporters';
 import { Ast_FunctionRefUtil } from './astNode_utils';
 import { _evaluateAstDeferred } from './eval_deferred';
+import { IAstNode } from './ast';
 
 
-export function _evaluate (mix, model?, ctx?, ctr?, node?) {
+export function _evaluate (mix: string | IAstNode, model?, ctx?, ctr?, node?) {
     if (mix === '.') {
         return model;
     }

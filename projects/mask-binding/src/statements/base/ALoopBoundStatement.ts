@@ -2,10 +2,10 @@ import { compo_dispose, compo_inserted } from '../../utils/compo';
 import { dom_insertBefore } from '../../utils/dom';
 import { arr_each } from '@utils/arr';
 import { arr_createRefs, list_update, list_sort, list_remove } from '../loop/utils';
-import { ABindedStatement } from './ABindedStatement';
+import { ABoundStatement } from './ABoundStatement';
 import { ArrayMethods } from '@core/types/types-ts';
 
-export abstract class ALoopBindedStatement extends ABindedStatement {
+export abstract class ALoopBoundStatement extends ABoundStatement {
 
     abstract _getModel (compo)
     abstract _getExpression ()
@@ -17,6 +17,7 @@ export abstract class ALoopBindedStatement extends ABindedStatement {
         , args: Parameters<[][TMethod]>
         , result: ReturnType<[][TMethod]>
     ) {
+
         if (method == null) {
 
             // this was new array/object setter and not an immutable function call
@@ -44,7 +45,7 @@ export abstract class ALoopBindedStatement extends ABindedStatement {
         let array = value;
         arr_createRefs(value);
 
-        switch (method) {
+        switch (method as typeof method | 'remove') {
             case 'push':
                 list_update(this, null, null, array.length - 1, array.slice(array.length - 1));
                 break;

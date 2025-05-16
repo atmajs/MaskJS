@@ -1,0 +1,48 @@
+import { is_Function } from '@utils/is';
+import { html_serializeAttributes } from './util/html';
+import { ElementNodeInn } from './ElementNodeInn';
+
+export class StyleElementInn extends ElementNodeInn {
+
+    toString() {
+        var string = '<style',
+            attrStr = html_serializeAttributes(this);
+        if (attrStr !== '') {
+            string += ' ' + attrStr;
+        }
+        string += '>';
+
+        var content = is_Function(this.textContent)
+            ? this.textContent()
+            : this.textContent;
+        if (content) {
+            string += content;
+        }
+
+        string += '</style>';
+        return string;
+    }
+    write(stream) {
+        var open = '<style',
+            close = '</style>'
+        var attrStr = html_serializeAttributes(this);
+        if (attrStr !== '') {
+            open += ' ' + attrStr;
+        }
+        open += '>';
+
+        var content = is_Function(this.textContent)
+            ? this.textContent()
+            : this.textContent;
+
+        if (!content /*unstrict*/) {
+            stream.write(open + close);
+            return;
+        }
+        stream
+            .openBlock(open)
+            .write(content)
+            .closeBlock(close)
+            ;
+    }
+};

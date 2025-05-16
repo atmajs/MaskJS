@@ -68,7 +68,7 @@ custom_Statements['for'] = StatementFor;
 }());
 
 
-function build(value, For, nodes, model, ctx, container, ctr, childs) {
+function build(value, For, nodes, model, ctx, container, ctr, children) {
 
     builder_build(
         getNodes(nodes, value, For[0], For[1], For[2], For[3]),
@@ -76,7 +76,7 @@ function build(value, For, nodes, model, ctx, container, ctr, childs) {
         ctx,
         container,
         ctr,
-        childs
+        children
     );
 }
 
@@ -252,7 +252,7 @@ function parse_For(expr) {
         //,
 
         if (hasBrackets !== true) {
-            throw_('Parenthese must be used in multiple var declarion');
+            throw_('Parentheses must be used in multiple var declaration');
             return;
         }
 
@@ -265,7 +265,7 @@ function parse_For(expr) {
         c = parser_skipWhitespace();
 
         if (c !== 41) {
-            throw_('Closing parenthese expected');
+            throw_('Closing parentheses expected');
             return;
         }
 

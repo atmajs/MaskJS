@@ -27,16 +27,16 @@ export function expression_getType (expr: string | IAstNode): 1 | 2 | 3 {
     return exp_type_Sync;
 }
 
-export const expression_eval           = _evaluate;
-export const expression_evalStatements = _evaluateStatements;
-export const expression_varRefs = refs_extractVars;
+export const expression_eval            = _evaluate;
+export const expression_evalStatements  = _evaluateStatements;
+export const expression_varRefs         = refs_extractVars;
 export const expression_parse           = _parse;
 export const ExpressionUtil = {
     'parse': _parse,
 
     /**
-     * Expression.eval(expression [, model, cntx, controller]) -> result
-     * - expression (String): Expression, only accessors are supoorted
+     * Expression.eval(expression [, model, ctx, controller]) -> result
+     * - expression (String): Expression, only accessors are supported
      *
      * All symbol and function references will be looked for in
      *
@@ -57,7 +57,7 @@ export const ExpressionUtil = {
     'varRefs': refs_extractVars,
 
     // Return all values of a comma delimiter expressions
-    // like argumets: ' foo, bar, "4,50" ' => [ %fooValue, %barValue, "4,50" ]
+    // like arguments: ' foo, bar, "4,50" ' => [ %fooValue, %barValue, "4,50" ]
     'evalStatements': _evaluateStatements
 };
 

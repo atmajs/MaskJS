@@ -1,12 +1,12 @@
-import { is_Observable } from '@utils/is'
+import { is_Observable, is_PromiseLike } from '@utils/is'
 import { _evaluateAst } from './eval';
 import { util_throw } from './util';
 import { SubjectKind } from './class/SubjectKind';
 import { DeferredExp } from './class/DeferredExp';
-import { DeferStatement, getDeferrables } from './class/DeferStatement';
+import { DeferStatement, getDeferStatements } from './class/DeferStatement';
 import { ObjectStream } from './class/ObjectStream';
 
-// Avaitables and Observables
+// Awaitables and Observables
 export function _evaluateAstDeferred  (ast, model, ctx, ctr) {
     let x = _evaluateAstDeferredInner(ast, model, ctx, ctr);
     if (x.kind === SubjectKind.Stream) {
@@ -17,7 +17,7 @@ export function _evaluateAstDeferred  (ast, model, ctx, ctr) {
 }
 
 export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
-    let deferred: DeferStatement[] = getDeferrables(ast.body);
+    let deferred: DeferStatement[] = getDeferStatements(ast.body);
     //#if (DEBUG)
     if (deferred.length === 0 && ast.observe === true && ast.parent == null) {
         util_throw(ast.toString(), null, 'No observer found, though the statement is observable');
@@ -44,7 +44,13 @@ export function _evaluateAstDeferredInner  (ast, model, ctx, ctr) {
         }
 
         deferExp.kind = SubjectKind.Promise;
-        deferExp.next(result);
+        if (is_Observable(result)) {
+            deferExp.fromStreamOnce(result);
+        } else if (is_PromiseLike(result)) {
+            deferExp.fromPromise(result);
+        } else {
+            deferExp.next(result);
+        }
         return deferExp;
     }
     let count = deferred.length;

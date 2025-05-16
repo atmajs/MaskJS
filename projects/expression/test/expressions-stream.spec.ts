@@ -19,7 +19,7 @@ var Stream = mask.class.create(mask.class.EventEmitter, {
 });
 
 UTest({
-    async 'should evaluate simple statement with obserables' () {
+    async 'should evaluate simple statement with observables' () {
         var user = new Stream();
         var onSubscribe = sinon.spy();
         var onUnsubscribe = sinon.spy();
@@ -46,7 +46,7 @@ UTest({
         var result = await dfr;
         deepEq_(result, 'John');
     },
-    async 'should cancel simple statement with obserables' () {
+    async 'should cancel simple statement with observables' () {
         var user = new Stream();
         var onSubscribe = sinon.spy();
         var onUnsubscribe = sinon.spy();
@@ -63,6 +63,7 @@ UTest({
         eq_(onValue.callCount, 0);
 
         eq_(user._listeners.value.length, 2);
+
 
         dfr.cancel();
         eq_(onUnsubscribe.callCount, 1);

@@ -1,11 +1,13 @@
 import { custom_Statements, customTag_register } from '@core/custom/exports';
 import { builder_build } from '@core/builder/exports';
 import { _renderPlaceholder, _compo_initAndBind } from '../utils';
-import { ALoopBindedStatement } from '../base/ALoopBindedStatement';
+import { ALoopBoundStatement } from '../base/ALoopBoundStatement';
 import '@core/statements/exports'
 import { StatementFor } from '@core/statements/for';
 import { INode } from '@core/dom/INode';
 import { IComponent } from '@compo/model/IComponent';
+import { compo_fragmentInsert } from '@binding/utils/compo';
+import { dom_insertAfter } from '@binding/utils/dom';
 
 
 const For = custom_Statements['for'] as typeof StatementFor;
@@ -15,14 +17,14 @@ const attr_TYPE = 'for-type';
 const attr_EXPR = 'for-expr';
 
 
-export class ObservableFor extends ALoopBindedStatement {
+export class ObservableFor extends ALoopBoundStatement {
 
     // for expression
     public expression: string
     // for statement
     public expr: string
 
-    public attr: { [key: string]: any }
+    public attr: Record<string, any>
     public nodes: INode[]
 
     public prop1: string
@@ -50,10 +52,14 @@ export class ObservableFor extends ALoopBindedStatement {
         return For.getHandler(name, model);
     }
 
-    build (model, container: HTMLElement = this.el, children = this.children) {
+    build (model, container: HTMLElement, children = this.children) {
         let nodes = For.getNodes(this.node.nodes, model, this.prop1, this.prop2, this.type);
 
-        return builder_build(nodes, this.model, this.ctx, container, this, children);
+        let fragment = builder_build(nodes, this.model, this.ctx, null, this, children) as  DocumentFragment;
+        if (container != null) {
+            this.append(fragment, container);
+        }
+        return fragment;
     }
 };
 

@@ -1,0 +1,52 @@
+import from './heading';
+import from './counter';
+import Counter as CounterRenamed from './counter';
+import foo from './subcounter';
+import DoubleCounter from './doubleCounter';
+
+div name='counter-server' {
+    p > i > 'Server render'
+    Counter {
+        div;
+    }
+    Counter;
+}
+hr;
+div name='counter-client' {
+    p > i > 'Client render'
+    Counter x-mode='client';
+}
+hr;
+div name='counter-renamed-server' {
+    p > i > '(renamed) Server render'
+    CounterRenamed;
+}
+hr;
+div name='counter-renamed-client' {
+    p > i > '(renamed) Client render'
+    CounterRenamed x-mode='client';
+}
+
+hr;
+div name='nested-counter-server' {
+    p > i > '(nested) Server render'
+    foo;
+}
+
+hr;
+div name='nested-counter-client' {
+    p > i > '(nested) Client render'
+    foo x-mode='client';
+}
+
+hr;
+div name='nested-double-counter-server' {
+    p > i > '(inheritance) Server. Double Counter'
+    DoubleCounter;
+}
+
+hr;
+div name='nested-double-counter-client' {
+    p > i > '(inheritance) Client. Double Counter'
+    DoubleCounter x-mode='client';
+}

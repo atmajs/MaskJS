@@ -71,7 +71,7 @@ UTest({
     'Server': {
         // Backend
         '$config': {
-            'http.include': '/test/node.libraries.js'
+            //'http.include': '/test/node.libraries.js'
         },
 
         async '+for..in - server' () {
@@ -159,14 +159,14 @@ function loopTest(compoName, template){
     var $ = mask.$(div);
 
     '> compo check'
-    var compo = Compo.find(controller, compoName);
+    var compo = mask.Compo.find(controller, compoName);
 
     notEq_(compo, null);
     eq_(compo.parent, controller)
     eq_(compo.parent.components.length, 1);
     eq_(compo.components.length, 2);
     notEq_(compo.components[0].parent, null);
-    return;
+
     '> render check'
     $.eq_('text', 'foobar');
 
@@ -226,9 +226,11 @@ function loopTest(compoName, template){
     $.eq_('text', 'ade');
 
     '> dispose'
-    eq_(controller.components.length, 1);
 
-    Compo.dispose(compo);
-    //eq_(controller.components.length, 0);
-    eq_(model.__observers.names.length, 0);
+    eq_(controller.components.length, 1, `The component should be in parent`);
+    eq_(model.__observers.names.length, 1, `1 observer should be attached`);
+
+    mask.Compo.dispose(compo);
+
+    eq_(model.__observers.names.length, 0, `No observers should be attached`);
 }

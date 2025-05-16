@@ -2,7 +2,7 @@ import { _document } from '@utils/refs'
 import { Component } from '@compo/exports';
 import { dom_insertBefore } from '../../utils/dom';
 import { compo_fragmentInsert, compo_dispose } from '../../utils/compo';
-import { ALoopBindedStatement } from '../base/ALoopBindedStatement';
+import { ALoopBoundStatement } from '../base/ALoopBoundStatement';
 import { IComponent } from '@compo/model/IComponent';
 
 export function arr_createRefs (array){
@@ -20,7 +20,7 @@ export function arr_createRefs (array){
         }
     }
 };
-export function list_sort (self: ALoopBindedStatement, array: any[]){
+export function list_sort (self: ALoopBoundStatement, array: any[]){
 
     let compos = self.components;
     let i = 0;
@@ -72,7 +72,7 @@ export function list_sort (self: ALoopBindedStatement, array: any[]){
     dom_insertBefore(fragment, self.placeholder);
 };
 export function list_update (
-    self: ALoopBindedStatement
+    self: ALoopBoundStatement
     , deleteIndex: number
     , deleteCount: number
     , insertIndex?: number
@@ -111,7 +111,7 @@ export function list_update (
     }
 };
 
-export function list_remove (self: ALoopBindedStatement, removed: any[]){
+export function list_remove (self: ALoopBoundStatement, removed: any[]){
     let compos = self.components;
     let i = compos.length;
     while(--i > -1){

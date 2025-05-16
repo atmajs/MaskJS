@@ -12,6 +12,7 @@ import {
 import { obj_getProperty } from '@utils/obj';
 import { expression_eval } from '@project/expression/src/exports';
 import sinon = require('sinon');
+import { expression_subscribe } from '../src/expression_subscribe';
 
 
 UTest({
@@ -657,6 +658,36 @@ UTest({
             deepEq_(colorSpy2.args[2], [ 'green' ]);
 
         }
+    },
+    'as property subscription' () {
+        let model = {
+            user: {
+                age: 20
+            }
+        };
+
+        let fn = sinon.spy();
+        let subscription = expression_subscribe(
+            `user.age + 2`, model, null, null, fn
+        );
+
+        eq_((model as any).__observers['user.age'].length, 1);
+
+        let results = [ [ 22 ] ];
+        eq_(fn.callCount, 1);
+        deepEq_(fn.args, results);
+
+        model.user.age = 21;
+        eq_(fn.callCount, 2);
+
+        deepEq_(fn.args, results = results.concat([ [ 23 ] ]));
+
+        model.user = { age: 24 };
+        eq_(fn.callCount, 3);
+        deepEq_(fn.args, results = results.concat([ [ 26 ] ]));
+
+        subscription.unsubscribe();
+        eq_((model as any).__observers['user.age'].length, 0)
     },
 })
 

@@ -5,20 +5,21 @@ import { _evaluateAstDeferredInner } from '../eval_deferred';
 import { AwaitableCtx } from './AwaitableCtx';
 import { is_Array } from '@utils/is';
 import { type_Statement, type_Body, type_FunctionRef, type_SymbolRef, type_UnaryPrefix, type_Ternary } from '../scope-vars';
+import { IAstNode, TAstNode } from '../ast';
 
 
-export function getDeferrables (mix, out = []) {
+export function getDeferStatements (mix: TAstNode | TAstNode[], out = []): DeferStatement[] {
     if (mix == null) {
         return out;
     }
     if (is_Array(mix)) {
         for(let i = 0; i < mix.length; i++) {
-            getDeferrables (mix[i], out);
+            getDeferStatements (mix[i], out);
         }
         return out;
     }
-    var expr = mix;
-    var type = expr.type;
+    const expr = mix;
+    const type = expr.type;
     if (type === type_Statement) {
         if (expr.observe === true) {
             expr.preResultIndex = out.length;
@@ -27,24 +28,24 @@ export function getDeferrables (mix, out = []) {
         }
         if (expr.async === true) {
             expr.preResultIndex = out.length;
-            out.push(new DeferStatement(expr));
+            out.push(new DeferStatement(expr, SubjectKind.Promise));
             return out;
         }
     }
     switch (type) {
         case type_Body:
-            getDeferrables(expr.body, out);
+            getDeferStatements(expr.body, out);
             break;
         case type_FunctionRef:
-            getDeferrables(expr.arguments, out);
+            getDeferStatements(expr.arguments, out);
             break;
         case type_SymbolRef:
-            getDeferrables(expr.next, out);
+            getDeferStatements(expr.next, out);
             break;
         case type_Statement:
         case type_UnaryPrefix:
         case type_Ternary:
-            getDeferrables(expr.body, out);
+            getDeferStatements(expr.body, out);
             break;
     }
     return out;
@@ -54,8 +55,10 @@ export function getDeferrables (mix, out = []) {
 export class DeferStatement<T = any> extends PromisedStream<T> {
     deferExp: DeferredExp;
     ctx;
-    constructor(public statement) {
+    constructor(public statement, kind?: SubjectKind) {
         super();
+
+        this.kind = kind ?? this.kind;
     }
     /**
      * Get current value for the statement to calculate full expression result
@@ -101,3 +104,4 @@ export class DeferStatement<T = any> extends PromisedStream<T> {
         this.ctx && this.ctx.cancel();
     }
 }
+

@@ -1,0 +1,9 @@
+var pages = [
+    '/define',
+    '/import'
+];
+
+
+ul > for (page of pages) {
+    li > a href='~[page]' > '~[page]'
+}

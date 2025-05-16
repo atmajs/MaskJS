@@ -12,6 +12,7 @@ import { expression_bind } from '@project/observer/src/exports'
 import { Compo } from '@compo/exports'
 import { expression_subscribe } from '@project/observer/src/expression_subscribe'
 import { IComponent } from '@compo/model/IComponent'
+import { mask_stringify } from '@core/parser/exports'
 
 
 
@@ -43,7 +44,7 @@ class ObservableNodes {
     get busy (): boolean {
         for (let i = 0; i < this.switch.length; i++) {
             let x = this.switch[i];
-            if (x != null && x.busy) {
+            if (x?.busy === true) {
                 return true;
             }
         }
@@ -84,7 +85,7 @@ class ObservableNodes {
         if (meta != null) {
             switch (meta.type) {
                 case exp_type_Sync: {
-                    // we have only first statement binded, all other - re-evaluate
+                    // we have only first statement bound, all other - re-evaluate
                     let result = i === 0 ? meta.result : this.evalSwitchCurrent();
                     this.onSwitchResult(null, result);
                     return;
@@ -160,54 +161,41 @@ class ObservableNodes {
             result: null
         };
 
-        this.subscriptions.push(
-            expression_subscribe(
-                this.cursor.expression
-                , this.model
-                , this.ctx
-                , this.ctr
-                , result => {
-                    this.onChanged(null, i, result);
-                },
-                i === 0 ? false : true
-            )
-        );
+        if (is_Observable(wValue) && wValue.kind !== SubjectKind.Promise) {
+            meta.type = exp_type_Observe;
+            if (wValue.value !== void 0) {
+                this.onSwitchResult(null, wValue.value);
+            } else {
+                meta.busy = true;
+            }
+            this.subscriptions.push(
+                wValue.subscribe(result => this.onChanged(null, i, result), this.onChanged)
+            );
+            return meta;
+        }
+        if (is_PromiseLike(wValue)) {
+            meta.busy = true;
+            meta.type = exp_type_Async;
+            wValue.then(result => this.onChanged(null, i, result), this.onChanged);
+            return meta;
+        }
 
-        // if (is_Observable(wValue) && wValue.kind !== SubjectKind.Promise) {
-        //     meta.type = exp_type_Observe;
-        //     if (wValue.value !== void 0) {
-        //         this.onSwitchResult(null, wValue.value);
-        //     } else {
-        //         meta.busy = true;
-        //     }
-        //     this.subscriptions.push(
-        //         wValue.subscribe(result => this.onChanged(null, i, result), this.onChanged)
-        //     );
-        //     return meta;
-        // }
-        // if (is_PromiseLike(wValue)) {
-        //     meta.busy = true;
-        //     meta.type = exp_type_Async;
-        //     wValue.then(result => this.onChanged(null, i, result), this.onChanged);
-        //     return meta;
-        // }
-
-        // // BIND
-        // if (i === 0 && is_NODE !== true) {
-        //     this.subscriptions.push(
-        //         expression_subscribe(
-        //             this.cursor.expression
-        //             , this.model
-        //             , this.ctx
-        //             , this.ctr
-        //             , result => {
-        //                 this.onChanged(null, i, result);
-        //             }
-        //         )
-        //     );
-        // } else {
-        //     this.onSwitchResult(null, wValue);
-        // }
+        // BIND
+        if (i === 0 && is_NODE !== true) {
+            this.subscriptions.push(
+                expression_subscribe(
+                    this.cursor.expression
+                    , this.model
+                    , this.ctx
+                    , this.ctr
+                    , result => {
+                        this.onChanged(null, i, result);
+                    }
+                )
+            );
+        } else {
+            this.onSwitchResult(null, wValue);
+        }
         return meta;
     }
 
@@ -351,6 +339,18 @@ export class ObservableIf {
     dispose (){
         this.obs?.dispose();
     }
+
+     serializeNodes(current) {
+            let nodes = [ current ];
+            while (true) {
+                current = current.nextSibling;
+                if (current == null || current.tagName !== 'else') {
+                    break;
+                }
+                nodes.push(current);
+            }
+            return mask_stringify(nodes);
+        }
 };
 
 

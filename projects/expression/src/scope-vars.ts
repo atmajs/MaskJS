@@ -44,20 +44,20 @@ export const go_string = 33;
 export const go_number = 34;
 export const go_objectKey = 35;
 
-export const type_Body = 1;
-export const type_Statement = 2;
-export const type_SymbolRef = 3;
-export const type_FunctionRef = 4;
-export const type_Accessor = 5;
-export const type_AccessorExpr = 6;
-export const type_Value = 7;
+export const type_Body = 1 as const;
+export const type_Statement = 2 as const;
+export const type_SymbolRef = 3 as const;
+export const type_FunctionRef = 4 as const;
+export const type_Accessor = 5 as const;
+export const type_AccessorExpr = 6 as const;
+export const type_Value = 7 as const;
 
-export const type_Number = 8;
-export const type_String = 9;
-export const type_Object = 10;
-export const type_Array = 11;
-export const type_UnaryPrefix = 12;
-export const type_Ternary = 13;
+export const type_Number = 8 as const;
+export const type_String = 9 as const;
+export const type_Object = 10 as const;
+export const type_Array = 11 as const;
+export const type_UnaryPrefix = 12 as const;
+export const type_Ternary = 13 as const;
 
 export const state_body = 1;
 export const state_arguments = 2;

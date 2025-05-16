@@ -3,6 +3,8 @@ import { PromisedStream } from './PromisedStream';
 import { SubjectKind } from './SubjectKind';
 import { DeferStatement } from "./DeferStatement";
 export class DeferredExp<T = any> extends PromisedStream<T> {
+    private cancellable = [] as { cancel: Function }[]
+
     constructor(public deferred: DeferStatement[], public root, public model, public ctx, public ctr) {
         super();
         this.tick = this.tick.bind(this);
@@ -38,6 +40,20 @@ export class DeferredExp<T = any> extends PromisedStream<T> {
         this.next(val);
     }
     cancel() {
-        this.deferred.map(x => x.cancel());
+        this.deferred.forEach(x => x.cancel());
+        this.cancellable.forEach(x => x.cancel());
+        this.cancellable.length = 0;
+    }
+
+    fromStreamOnce(stream) {
+        let x = super.fromStreamOnce(stream);
+        this.cancellable.push(x);
+        return x;
+    }
+
+    fromPromise(promise) {
+        let x = super.fromPromise(promise);
+        this.cancellable.push(x);
+        return x;
     }
 }

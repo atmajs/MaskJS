@@ -4,7 +4,7 @@ import { builder_build } from '@core/builder/exports';
 import { compo_addChild } from '@core/util/compo';
 import { _document } from '@utils/refs';
 import { INode } from '@core/dom/INode';
-import { ObservableIf } from '@project/mask-binding/src/statements/if'
+import type { ObservableIf } from '@project/mask-binding/src/statements/if'
 
 let ObservableIfCtor = null as typeof ObservableIf;
 

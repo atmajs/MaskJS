@@ -2,7 +2,7 @@ import { Mask as mask } from '@core/mask'
 const Compo = mask.Compo;
 
 UTest({
-    'binded each'() {
+    'bound each'() {
 
         let model = {
             users: ['A', 'B', 'C']

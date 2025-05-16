@@ -6,10 +6,11 @@ import { expression_eval, expression_getType, expression_varRefs, exp_type_Obser
 import { obj_addMutatorObserver, obj_addObserver, obj_removeMutatorObserver, obj_removeObserver } from './obj_observe';
 import { _evaluateAstDeferredInner } from '@project/expression/src/eval_deferred';
 import { expr_getHost } from './utils/expr';
+import type { IAstNode } from '@project/expression/src/ast';
 
 
 
-export function expression_bind (expr, model, ctx, ctr, cb, opts?: { propertiesOnly: boolean }): null | { unsubscribe ()} {
+export function expression_bind (expr: string | IAstNode, model, ctx, ctr, cb, opts?: { propertiesOnly: boolean }): null | { unsubscribe ()} {
     if (expr === '.') {
         if (model != null) {
             obj_addMutatorObserver(model, cb);

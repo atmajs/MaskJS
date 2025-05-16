@@ -1,5 +1,6 @@
+
 import { expression_eval } from '@project/expression/src/exports';
-import { expression_subscribe } from '@project/observer/src/expression_subscribe';
+
 import sinon = require('sinon');
 
 UTest({
@@ -265,7 +266,7 @@ UTest({
         deepEq_(fn.args, [ [ false ], [ true ] ]);
     },
     'create observable from properties': {
-        'binded eqeq' () {
+        'bound eqeq' () {
             let model = {
                 state: 'no',
             };
@@ -320,36 +321,7 @@ UTest({
             stream.unsubscribe();
             eq_((model as any).__observers['user.age'].length, 0)
         },
-        'as property subscription' () {
-            let model = {
-                user: {
-                    age: 20
-                }
-            };
 
-            let fn = sinon.spy();
-            let subscription = expression_subscribe(
-                `user.age + 2`, model, null, null, fn
-            );
-
-            eq_((model as any).__observers['user.age'].length, 1)
-
-            let results = [ [ 22 ] ];
-            eq_(fn.callCount, 1);
-            deepEq_(fn.args, results);
-
-            model.user.age = 21;
-            eq_(fn.callCount, 2);
-
-            deepEq_(fn.args, results = results.concat([ [ 23 ] ]));
-
-            model.user = { age: 24 };
-            eq_(fn.callCount, 3);
-            deepEq_(fn.args, results = results.concat([ [ 26 ] ]));
-
-            subscription.unsubscribe();
-            eq_((model as any).__observers['user.age'].length, 0)
-        },
         'as observable' () {
             let model = {
                 user: {

@@ -4,7 +4,7 @@ import { custom_Statements } from './repositories';
 /**
  * Register a statement handler
  * @param {string} name - Tag name to handle
- * @param StatementHandler} handler
+ * @param {StatementHandler} handler
  * @memberOf mask
  * @method registerStatement
  */

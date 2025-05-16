@@ -2,7 +2,7 @@
     "exclude": [
         "node_modules",
         "ts_temp"
-	],
+    ],
     "compilerOptions": {
         "experimentalDecorators": true,
         "baseUrl": "./",
@@ -24,8 +24,10 @@
             ],
             "@project/*": [
                 "projects/*"
+            ],
+            "@mask-node/*": [
+                "projects/mask-node/src/*"
             ]
-
         },
         "module": "es2022"
     }

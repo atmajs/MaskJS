@@ -98,9 +98,9 @@ UTest({
     },
     'Server': {
         // Backend
-        '$config': {
-            'http.include': '/test/node.libraries.js'
-        },
+        // '$config': {
+        //     'http.include': '/test/node.libraries.js'
+        // },
 
         async '+if server' () {
             let model = { foo: true };
@@ -119,7 +119,7 @@ UTest({
                 ;
         },
 
-        async '+if server - binded' () {
+        async '+if server - bound' () {
             let model = { foo: true };
             let template = `
                 #foo {
@@ -152,7 +152,7 @@ UTest({
             eq_(win.app.model.foo, true);
 
             notEq_(win.app.model.__observers, null);
-            eq_(win.app.model.__observers.foo.length, 1);
+            eq_(win.app.model.__observers.foo.length, 1, `Should contain 'foo' observer.`);
 
             win.app.model.foo = false;
 

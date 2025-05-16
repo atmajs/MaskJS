@@ -1,4 +1,4 @@
-import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor, IAstNode } from './ast';
+import { Ast_Body, Ast_Statement, Ast_Object, Ast_TernaryStatement, Ast_AccessorExpr, Ast_Array, Ast_UnaryPrefix, Ast_Value, Ast_FunctionRef, Ast_SymbolRef, Ast_Accessor, IAstNode, TNodeType } from './ast';
 import {
     type_Body,
     type_SymbolRef,
@@ -149,7 +149,7 @@ export function _parse(expr: string, earlyExit?, node?): InstanceType<typeof Ast
                 index++;
                 continue;
             case punc_ParenthesisClose:
-                let closest = type_Body;
+                let closest: TNodeType = type_Body;
                 if (state === state_arguments) {
                     state = state_body;
                     closest = type_FunctionRef;
