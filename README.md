@@ -1,12 +1,12 @@
 <p align='center'>
-    <img src='assets/logo.png'/>
+    <img src='assets/background.png'/>
     </p>
 
 ----
 
 <p align="center">
-    <a href='https://travis-ci.com/atmajs/MaskJS' target='_blank'>
-        <img src='https://api.travis-ci.com/atmajs/MaskJS.png?branch=master' />
+    <a href='https://dl.circleci.com/status-badge/redirect/gh/atmajs/MaskJS/tree/master' target='_blank'>
+        <img src='https://dl.circleci.com/status-badge/img/gh/atmajs/MaskJS/tree/master.svg?style=svg' />
         </a>
     <a href='http://badge.fury.io/js/maskjs' target='_blank'>
         <img src='https://badge.fury.io/js/maskjs.svg' />
