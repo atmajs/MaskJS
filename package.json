@@ -1,7 +1,7 @@
 {
     "name": "maskjs",
     "description": "Template / Markup / HMVC Engine",
-    "version": "0.72.52",
+    "version": "0.73.3",
     "homepage": "http://atmajs.com/mask",
     "contributors": [
         {
@@ -10,8 +10,17 @@
         }
     ],
     "main": "./lib/mask.node.js",
-    "mainBrowser": "./lib/mask.js",
     "types": "./lib/mask.d.ts",
+    "mainBrowser": "./lib/mask.js",
+    "exports": {
+        ".": {
+            "node": {
+                "require": "./lib/mask.node.js"
+            },
+            "browser": "./lib/mask.js",
+            "types": "./lib/mask.d.ts"
+        }
+    },
     "author": "Alexander Kit <alex.kit@atmajs.com>",
     "repository": {
         "type": "git",
@@ -23,11 +32,9 @@
     "licenses": [
         "MIT"
     ],
-    "dependencies": {
-        "@types/node": "^12.12.17",
-        "includejs": "^0.17.12"
-    },
     "devDependencies": {
+        "@types/node": "^12.12.17",
+        "includejs": "^0.17.12",
         "@types/jquery": "^3.3.22",
         "@types/sinon": "^7.0.5",
         "app-bundler": "^0.2.18",

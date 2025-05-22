@@ -351,6 +351,23 @@ $ npm test
 
 :bookmark: [View complete list...**&crarr;**](CHANGELOG.md)
 _`@latest`_
+
+- `0.73.00`
+- **Async expression for Promises**
+   ```mask
+   // Same keyword "await" as you know it in javascript
+   h1 > `~[ await getUser().name ]`
+   ```
+- **Observable expression for Streams**
+
+   ```
+   // Similar to "await", but for ISubscription, e.g. RxJS, that makes the expression reactive and updates DOM on new values.
+   if (someFooNum + observe someBarNum < 10) {
+     h1 > `Less than 10`
+   }
+   ```
+
+
 - `0.64.0`
 - **Properties**
 
